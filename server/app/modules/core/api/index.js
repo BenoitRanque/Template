@@ -1,9 +1,7 @@
 import express from 'express'
 
-import session from './session'
-
 const router = express.Router()
 
-router.use('/session', session)
+router.use('/session', import('./session'))
 
 export default router

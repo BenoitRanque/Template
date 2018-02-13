@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pg-setup": "node app/pg-setup/index.js",
-    "dev": "nodemon index.js",
-    "server": "node index.js"
+    "db-setup": "node index.js db-setup",
+    "dev": "nodemon index.js server",
+    "server": "node index.js server"
   },
   "author": "Benoit Ranque",
   "license": "ISC",
