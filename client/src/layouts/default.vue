@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-layout-header>
-      <q-toolbar color="primary" glossy>
+      <q-toolbar color="primary">
         <q-btn
           flat
           dense
@@ -15,6 +15,7 @@
           Quasar App
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
+        <login-logout></login-logout>
       </q-toolbar>
     </q-layout-header>
 
@@ -60,8 +61,13 @@
 <script>
 import { openURL } from 'quasar'
 
+import LoginLogout from 'components/login-logout'
+
 export default {
   name: 'LayoutDefault',
+  components: {
+    LoginLogout
+  },
   data () {
     return {
       leftDrawerOpen: false

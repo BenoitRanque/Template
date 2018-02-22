@@ -1,2 +1,2 @@
 require('babel-register')
-require('./app/' + process.argv[2] || 'server')
+require('./app/' + (process.argv[2] || 'server'))

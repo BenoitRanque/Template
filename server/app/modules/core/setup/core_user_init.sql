@@ -1,2 +1,2 @@
-INSERT INTO users (username, password) 
+INSERT INTO "core_user" (username, password) 
 VALUES (${username}, ${password})

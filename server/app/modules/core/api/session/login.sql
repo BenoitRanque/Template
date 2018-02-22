@@ -1,1 +1,1 @@
-  SELECT id, username, password FROM users WHERE username = ${username}
+  SELECT id, username, password FROM core_user WHERE username = ${username}

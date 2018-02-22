@@ -1,8 +1,10 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
-import { BCRYPT_SALT_ROUNDS } from '../../../cfg'
+import { BCRYPT_SALT_ROUNDS } from '../../../../cfg'
 
 const router = express.Router()
+
+
 
 router.post('/login', function (req, res) {
 
@@ -13,10 +15,10 @@ router.post('/login', function (req, res) {
       bcrypt.compare(req.body.password, user.password)
         .then(match => {
           if (!match) { return res.status(403).end() }
-          
+
           delete user.password
           req.session.user = user
-          res.status(200).json({ user, })
+          res.status(200).json({ user })
         })
         .catch(err => {
           console.error(err)
