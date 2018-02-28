@@ -8,10 +8,10 @@ export function isAuthenticated ({ user }) {
 }
 
 export function isAuthorized ({ user }, { isAuthenticated }) {
-  return ({ module, name }) => {
+  return (module, privNames) => {
     return isAuthenticated() && user.roles.some(role => {
       return role.module === module && role.privileges.some(privilege => {
-        return privilege.name === name
+        return privNames.includes(privilege.name)
       })
     })
   }
