@@ -2,14 +2,13 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import { BCRYPT_SALT_ROUNDS } from '../../../../cfg'
 import authenticate from '../../../../utils/authenticate'
+import authorize from '../../../../utils/authorize';
 
 const router = express.Router()
 
-
-
 router.post('/login', function (req, res) {
 
-  req.pg.any(require('./login.sql'), { username: req.body.username })
+  req.pg.one(require('./login.sql'), { username: req.body.username })
     .then(([user]) => {
       if (!user) { return res.status(403).end() }
 
@@ -31,6 +30,12 @@ router.post('/login', function (req, res) {
 router.get('/logout', authenticate, function (req, res) {
   req.session.destroy()
   res.status(200).end()
+})
+
+router.get('user', authorize('core', 'session/user', 'get'), function (req, res) {
+  req.pg.one(require('./user_get'), { id: req.session.user.id }).then(user => {
+    res.status(200).send({ user })
+  })
 })
 
 export default router
