@@ -2,7 +2,7 @@ import pgp from 'pg-promise'
 import { PG_NAME, PG_USER, PG_PASS, PG_HOST, PG_PORT } from '../cfg'
 
 // enable require for .sql files
-require('require-sql')
+// require('require-sql')
 
 const initOptions = {
 

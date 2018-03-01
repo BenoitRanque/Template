@@ -1,1 +1,0 @@
-SELECT id, username, password FROM core_user WHERE username = ${username}

@@ -9,19 +9,31 @@ pg.any(require('./core_privilege.sql')).then(() => {
 
   pg.any(require('./core_privilege_init'), {
     module: 'core',
-    name: '',
+    name: 'view session user', // must be unique per module
     description: '',
     get_routes: [
-
+      'session/user'
     ],
     post_routes: [
-
     ],
     put_routes: [
-
     ],
     delete_routes: [
-
+    ]
+  })
+  pg.any(require('./core_privilege_init'), {
+    module: 'core',
+    name: 'edit session user', // must be unique per module
+    description: '',
+    get_routes: [
+      'session/user'
+    ],
+    post_routes: [
+    ],
+    put_routes: [
+      'session/user'
+    ],
+    delete_routes: [
     ]
   })
 })
