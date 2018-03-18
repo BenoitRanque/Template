@@ -1,18 +1,12 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import api from './api'
-import headers  from './utils/headers'
-import pg from './utils/pg'
-import session from './utils/session'
+const app = require('express')()
 
-const app = express()
+require('./db')
 
-app.request.pg = pg
+require('./modules').forEach(module => {
+  app.use('/api', require(`./modules/${module}/routes`))
+})
 
 app
-  .use(headers)
-  .use(session)
-  .use('/api', bodyParser.json(), api)
-  .use('/', express.static('app/public'))
+  .use('/', require('express').static('app/public'))
 
-export default app
+module.exports = app

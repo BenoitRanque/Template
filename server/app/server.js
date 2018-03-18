@@ -1,8 +1,5 @@
-import http from 'http'
-import app from './app'
-import { PORT, HOST } from './cfg'
-
-const server = http.createServer(app)
+const { PORT, HOST } = require('./config').server
+const server = require('http').createServer(require('./app'))
 
 server.listen(PORT, HOST, err => {
   if (err) throw err
