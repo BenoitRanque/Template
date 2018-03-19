@@ -3,6 +3,8 @@ const { HOST, PORT, NAME, USER, PASS } = require('../config').db
 module.exports = {
   dev: {
     client: 'pg',
+    // debug: true,
+    // connection: 'postgres://guembe_owner:guembe@localhost:5432/guembe'
     connection: {
       host: HOST,
       port: PORT,

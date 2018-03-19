@@ -2,9 +2,12 @@ const m = process.argv[2]
 const knex = require('./knex')
 
 if (!m) {
-  require('../modules').forEach(async md => {
-    await knex.migrate.latest(require('./knexfile').migrations(md))
-    console.log('Migrated module ', md, ' to latest')
+  let modules = require('../modules').map(md => {
+    return knex.migrate.latest(require('./knexfile').migrations(md))
+  })
+  Promise.all(modules).then(() => {
+    knex.destroy()
+    console.log('Migrated all modules to latest')
   })
 }
 else {
@@ -12,6 +15,7 @@ else {
     knex.migrate.latest(require('./knexfile').migrations(m))
     .then(() => {
       console.log('Migrated module ', m, ' to latest')
+      knex.destroy()
     })
   }
   else {
