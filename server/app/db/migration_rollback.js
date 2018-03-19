@@ -2,13 +2,17 @@ const m = process.argv[2]
 const knex = require('./knex')
 
 if (!m) {
-  let modules = require('../modules').map(md => {
-    return knex.migrate.rollback(require('./knexfile').migrations(md))
-  })
-  Promise.all(modules).then(() => {
-    knex.destroy()
+  (async () => {
+
+    for (m of require('../modules')) {
+      await knex.migrate.rollback(require('./knexfile').migrations(m))
+      console.log('Rolled back module ', m)
+    }
+
     console.log('Rolled back all modules')
-  })
+    
+    knex.destroy()
+  })()
 }
 else {
   if (require('../modules').includes(m)) {

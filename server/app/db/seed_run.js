@@ -2,13 +2,17 @@ const m = process.argv[2]
 const knex = require('./knex')
 
 if (!m) {
-  let modules = require('../modules').map(md => {
-    return knex.seed.run(require('./knexfile').seeds(m))
-  })
-  Promise.all(modules).then(() => {
-    knex.destroy()
+  (async () => {
+
+    for (m of require('../modules')) {
+      await knex.seed.run(require('./knexfile').seeds(m))
+      console.log('Ran seed for module ', m)
+    }
+
     console.log('Ran seed for all module')
-  })
+    
+    knex.destroy()
+  })()
 }
 else {
   if (require('../modules').includes(m)) {
