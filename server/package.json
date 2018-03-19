@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app/server.js"
+    "dev": "nodemon app/server.js",
+    "migration_migrate": "node app/db/migration_migrate.js",
+    "migration_rollback": "node app/db/migration_rollback.js",
+    "migration_make": "node app/db/migration_make.js",
+    "seed_make": "node app/db/seed_make.js",
+    "seed_run": "node app/db/seed_run.js"
   },
   "author": "",
   "license": "ISC",
