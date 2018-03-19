@@ -13,7 +13,7 @@ exports.up = async function(knex, Promise) {
     table.text('description')
 
     table.unique(['route', 'method'])
-    table.foreign('module_id').references('module_id').inTable('core_modules').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('module_id').references('module_id').inTable('core_modules').onUpdate('CASCADE').onDelete('CASCADE') // deleting/updating module will delete/update all records featuring that module
   })
   await knex.schema.withSchema('public').createTable('core_privileges', table => {
     table.uuid('privilege_id').unique().notNullable().primary().defaultTo(knex.raw('public.gen_random_uuid()'))

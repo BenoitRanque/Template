@@ -26,12 +26,14 @@ module.exports = {
   // paths relative to server folder, location of npm scripts
   migrations (m) {
     return {
+      loadExtensions: ['.js'],
       directory: './app/modules/' + m  + '/migrations',
       tableName: 'knex_migrations' // storage of knex migrations state
     }
   },
   seeds (m) {
     return {
+      loadExtensions: ['.js'],
       directory: './app/modules/' + m  + '/seeds'
     }
   }
