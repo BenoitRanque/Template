@@ -1,4 +1,4 @@
-const m = process.argv[2]
+let m = process.argv[2]
 const knex = require('./knex')
 
 if (!m) {

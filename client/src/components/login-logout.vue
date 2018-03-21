@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     ...mapGetters('session', {
-      authenticated: 'authenticated'
+      authenticated: 'isAuthenticated'
     })
   },
   methods: {

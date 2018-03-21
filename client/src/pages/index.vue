@@ -1,5 +1,8 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page>
+    <div :style="computedStyle">
+
+    </div>
     <img src="~assets/quasar-logo-full.svg">
   </q-page>
 </template>
@@ -9,6 +12,20 @@
 
 <script>
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  inject: {
+    layout: {}
+  },
+  computed: {
+    computedStyle () {
+      const offset =
+        (this.layout.header.space ? this.layout.header.size : 0) +
+        (this.layout.footer.space ? this.layout.footer.size : 0)
+
+      return {
+        minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh'
+      }
+    }
+  }
 }
 </script>
