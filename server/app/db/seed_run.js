@@ -3,14 +3,19 @@ const knex = require('./knex')
 
 if (!m) {
   (async () => {
+    try {
 
-    for (m of require('../modules')) {
-      await knex.seed.run(require('./knexfile').seeds(m))
-      console.log('Ran seed for module ', m)
+      for (m of require('../modules')) {
+        await knex.seed.run(require('./knexfile').seeds(m))
+        console.log('Ran seed for module ', m)
+      }
+
+      console.log('Ran seed for all module')
+
+    } catch (error) {
+      console.log(error)
     }
 
-    console.log('Ran seed for all module')
-    
     knex.destroy()
   })()
 }
@@ -20,6 +25,9 @@ else {
     .then(() => {
       knex.destroy()
       console.log('Ran seed for module ', m)
+    })
+    .catch(error => {
+      console.log(error)
     })
   }
   else {

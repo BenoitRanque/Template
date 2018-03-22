@@ -7,7 +7,7 @@ exports.up = async function(knex, Promise) {
 
     table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('CASCADE')
     table.foreign('role_id').references('role_id').inTable('core_roles').onUpdate('CASCADE').onDelete('CASCADE')
-    table.foreign('grantor_id').references('user_id').inTable('core_users')
+    table.foreign('grantor_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('CASCADE')
     table.primary(['user_id', 'role_id'])
   })
 }
