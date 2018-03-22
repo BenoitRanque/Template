@@ -1,4 +1,6 @@
 module.exports = function authenticate (req, res, next) {
-  // todo: authenticate
+  
+  // check JWT
+
   next()
 }

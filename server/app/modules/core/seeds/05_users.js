@@ -11,14 +11,14 @@ exports.seed = async function(knex, Promise) {
 
   let [userId, adminId] = await knex('core_users').insert([
     { username: 'admin', password: adminPass, displayname: 'Administrator' },
-    { username: 'user', password: userPass, displayname: 'Administrator' }
+    { username: 'user', password: userPass, displayname: 'User' }
   ], 'user_id') // return user_id
 
   let adminRoleId = await knex('core_roles').where({ role_name: 'admin' }).select([ 'role_id' ])
-  let adminRoleid = adminRoleId[0].role_id
+  adminRoleId = adminRoleId[0].role_id
 
   let userRoleId = await knex('core_roles').where({ role_name: 'user' }).select([ 'role_id' ])
-  let userRoleid = userRoleId[0].role_id
+  userRoleId = userRoleId[0].role_id
 
   await knex('core_user_roles').insert([
     { user_id: adminId, role_id: adminRoleId },
