@@ -4,16 +4,14 @@ exports.seed = async function(knex, Promise) {
   await knex('core_roles').del()
 
   // Inserts seed entries
-  let [admin_role_id, user_role_id] = await knex('core_roles').insert([
+  let [adminRoleId, userRoleId] = await knex('core_roles').insert([
     { role_name: 'admin', description: ''},
     { role_name: 'user', description: ''}
   ], 'role_id') // return role_id
 
   let privileges = await knex('core_privileges').where({ resource: 'users' }).select()
 
-  let admin_privileges = [], user_privileges = []
-
-  role_privileges = privileges.map(({ action, privilege_id }) => {
+  rolePrivileges = privileges.map(({ action, privilege_id }) => {
     switch (action) {
       case 'read:own':
       case 'create:own':
@@ -21,7 +19,7 @@ exports.seed = async function(knex, Promise) {
       case 'delete:own':
         return {
           privilege_id,
-          role_id: user_role_id,
+          role_id: userRoleId,
           attributes: ['*']
         }
       case 'read:any':
@@ -30,16 +28,16 @@ exports.seed = async function(knex, Promise) {
       case 'delete:any':
         return {
           privilege_id,
-          role_id: admin_role_id,
+          role_id: adminRoleId,
           attributes: ['*']
         }
     }
   })
 
-  await knex('core_role_privileges').insert(role_privileges)
+  await knex('core_role_privileges').insert(rolePrivileges)
 
   await knex('core_role_extend').insert([
-    { extended_role_id: admin_role_id, base_role_id: user_role_id }
+    { extended_role_id: adminRoleId, base_role_id: userRoleId }
   ])
 }
 
