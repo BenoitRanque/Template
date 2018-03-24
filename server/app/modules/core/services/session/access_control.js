@@ -9,7 +9,7 @@ module.exports = function ac (update) {
     ac = new Promise(async (resolve, reject) => {
       try {
         // get grants from db
-        let data = await knex.select().from('core_role_privileges')
+        let data = await knex(core_role_privileges).select().from('core_role_privileges')
 
         // let grants = data.map(item => {
         //   return item
