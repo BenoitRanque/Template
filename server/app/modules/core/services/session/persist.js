@@ -15,7 +15,8 @@ module.exports = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-      maxAge: MAXAGE
+      maxAge: MAXAGE,
+      domain: 'http://localhost:8080'
   },
   store
 })
