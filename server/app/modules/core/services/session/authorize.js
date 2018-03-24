@@ -12,8 +12,8 @@ module.exports = function authorize ({ resource, action, possesion }) {
     require('./authenticate')(req, res, () => {
       require('./access_control')()(req, res, () => {
 
-        // role = req.user.role
-        role = ['admin', 'guest'] // todo: get these from user session
+        let role = req.session.user.role
+        // role = ['admin', 'guest'] // todo: get these from user session
 
         req.permission = req.ac.permission({ role, resource, action, possesion })
 
