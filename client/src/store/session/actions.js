@@ -21,7 +21,8 @@ export function logout ({ commit }) {
       commit('logout')
       // $router.push('/')
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error)
       // $router.push('/')
     })
 }

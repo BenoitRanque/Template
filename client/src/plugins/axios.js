@@ -2,8 +2,8 @@ import axios from 'axios'
 
 const $axios = axios.create({
   // baseURL: 'http://localhost:80'
-  withCredentials: true,
-  timeout: 1000
+  timeout: 1000,
+  withCredentials: true
   // headers: {
   //   'header': 'value'
   // }

@@ -15,7 +15,7 @@
           Quasar App
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
-        <login-logout></login-logout>
+        <user-session></user-session>
       </q-toolbar>
     </q-layout-header>
 
@@ -61,12 +61,12 @@
 <script>
 import { openURL } from 'quasar'
 
-import LoginLogout from 'components/login-logout'
+import UserSession from 'components/UserSession'
 
 export default {
   name: 'LayoutDefault',
   components: {
-    LoginLogout
+    UserSession
   },
   data () {
     return {
