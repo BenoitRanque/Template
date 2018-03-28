@@ -1,3 +1,6 @@
+// register module aliases
+require('module-alias/register')
+
 const { PORT, HOST } = require('./config').server
 const server = require('http').createServer(require('./app'))
 

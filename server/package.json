@@ -6,11 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app/server.js",
-    "migration_migrate": "node app/db/migration_migrate.js",
-    "migration_rollback": "node app/db/migration_rollback.js",
-    "migration_make": "node app/db/migration_make.js",
-    "seed_make": "node app/db/seed_make.js",
-    "seed_run": "node app/db/seed_run.js"
+    "serve": "node app/server.js",
+    "migration_migrate": "node app/db/scripts/migration_migrate.js",
+    "migration_rollback": "node app/db/scripts/migration_rollback.js",
+    "migration_make": "node app/db/scripts/migration_make.js",
+    "seed_make": "node app/db/scripts/seed_make.js",
+    "seed_run": "node app/db/scripts/seed_run.js"
+  },
+  "_moduleAliases": {
+    "@root"      : ".",
+    "@app"      : "app",
+    "@api" : "app/api",
+    "@handlers" : "app/api/handlers",
+    "@resources" : "app/api/resources",
+    "@routes" : "app/api/routes",
+    "@services" : "app/api/services",
+    "@config" : "app/config",
+    "@db" : "app/db"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +33,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "knex": "^0.14.4",
+    "module-alias": "^2.0.6",
     "pg": "^7.4.1"
   },
   "devDependencies": {
