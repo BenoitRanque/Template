@@ -14,6 +14,7 @@ exports.seed = async function(knex, Promise) {
     { privilege_name: 'Delete own user', description: '', resource: 'users', action: 'delete:own', module_id: 'core' }
   ], 'privilege_id') // return privilege_id
 
+  // insert coresponding attributes
   let attributes = []
   privileges.forEach(privilege_id => {
     attributes = attributes.concat([

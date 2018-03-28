@@ -14,6 +14,11 @@ exports.seed = async function(knex, Promise) {
   rolePrivileges = privileges.map(({ action, privilege_id }) => {
     switch (action) {
       case 'read:own':
+        return {
+          privilege_id,
+          role_id: userRoleId,
+          attributes: ['*', '!password']
+        }
       case 'create:own':
       case 'update:own':
       case 'delete:own':
