@@ -1,3 +1,5 @@
+// register module aliases
+require('module-alias/register')
 
 const m = process.argv[2]
 const name = process.argv[3]
@@ -7,12 +9,12 @@ const knex = require('./knex')
 if (!m) {
   console.error('Module name is a required argument')
 }
-else if (!require('../modules').includes(m)) {
+else if (!require('@app/modules').includes(m)) {
   console.error('Unknown module ', m)
 }
 else if (!name) {
   console.error('Migration name is a required argument')
 }
 else {
-  knex.migrate.make(name, require('./knexfile').migrations(m))
+  knex.migrate.make(name, require('@db/knexfile').migrations(m))
 }

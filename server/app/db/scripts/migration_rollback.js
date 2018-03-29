@@ -1,12 +1,15 @@
+// register module aliases
+require('module-alias/register')
+
 let m = process.argv[2]
-const knex = require('./knex')
+const knex = require('@db/knex')
 
 if (!m) {
   (async () => {
     try {
 
-      for (m of require('../modules')) {
-        await knex.migrate.rollback(require('./knexfile').migrations(m))
+      for (m of require('@app/modules')) {
+        await knex.migrate.rollback(require('@db/knexfile').migrations(m))
         console.log('Rolled back module ', m)
       }
 
@@ -20,8 +23,8 @@ if (!m) {
   })()
 }
 else {
-  if (require('../modules').includes(m)) {
-    knex.migrate.rollback(require('./knexfile').migrations(m))
+  if (require('@app/modules').includes(m)) {
+    knex.migrate.rollback(require('@db/knexfile').migrations(m))
       .then(() => {
         knex.destroy()
         console.log('Rolled back module ', m)

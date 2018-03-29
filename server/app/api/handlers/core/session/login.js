@@ -2,9 +2,11 @@ const Users = require('../../resources/Users')
 const UserRoles = require('../../resources/UserRoles')
 const bcrypt = require('bcrypt')
 
-module.exports = async function login (username, password, session) {
- 
-  // find user    
+module.exports = async function login ({ session, body }) {
+
+  let { username, password } = body.user
+
+  // find user
   let [user] = await Users.findByUsername(username)
   if (!user) return res.status(401).end()
 

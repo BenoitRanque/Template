@@ -14,15 +14,15 @@
     "seed_run": "node app/db/scripts/seed_run.js"
   },
   "_moduleAliases": {
-    "@root"      : ".",
-    "@app"      : "app",
-    "@api" : "app/api",
-    "@handlers" : "app/api/handlers",
-    "@resources" : "app/api/resources",
-    "@routes" : "app/api/routes",
-    "@services" : "app/api/services",
-    "@config" : "app/config",
-    "@db" : "app/db"
+    "@root":      ".",
+    "@app":       "app",
+    "@api":       "app/api",
+    "@handlers":  "app/api/handlers",
+    "@resources": "app/api/resources",
+    "@routes":    "app/api/routes",
+    "@services":  "app/api/services",
+    "@config":    "app/config",
+    "@db":        "app/db"
   },
   "author": "",
   "license": "ISC",

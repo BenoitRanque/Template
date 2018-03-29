@@ -1,4 +1,4 @@
-const { HOST, PORT, NAME, USER, PASS } = require('../config').db
+const { HOST, PORT, NAME, USER, PASS } = require('@config').db
 
 module.exports = {
   dev: {
@@ -27,14 +27,14 @@ module.exports = {
   migrations (m) {
     return {
       loadExtensions: ['.js'],
-      directory: './app/modules/' + m  + '/migrations',
+      directory: './app/db/migrations/' + m,
       tableName: 'knex_migrations' // storage of knex migrations state
     }
   },
   seeds (m) {
     return {
       loadExtensions: ['.js'],
-      directory: './app/modules/' + m  + '/seeds'
+      directory: './app/db/seeds' + m
     }
   }
 }

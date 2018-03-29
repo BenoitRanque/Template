@@ -1,12 +1,15 @@
+// register module aliases
+require('module-alias/register')
+
 let m = process.argv[2]
-const knex = require('./knex')
+const knex = require('@db/knex')
 
 if (!m) {
   (async () => {
     try {
 
-      for (m of require('../modules')) {
-        await knex.seed.run(require('./knexfile').seeds(m))
+      for (m of require('@app/modules')) {
+        await knex.seed.run(require('@db/knexfile').seeds(m))
         console.log('Ran seed for module ', m)
       }
 
@@ -20,8 +23,8 @@ if (!m) {
   })()
 }
 else {
-  if (require('../modules').includes(m)) {
-    knex.seed.run(require('./knexfile').seeds(m))
+  if (require('@app/modules').includes(m)) {
+    knex.seed.run(require('@db/knexfile').seeds(m))
     .then(() => {
       knex.destroy()
       console.log('Ran seed for module ', m)

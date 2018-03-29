@@ -1,9 +1,9 @@
 const router = require('express').Router()
-const h = require('../services/handler')
+const h = require('@services/handler')
 
 router
   .route('/login')
-  .post(h(require('../handlers/session/login'), (req, res, next) => [ req.body.username, req.body.password, req.session ]))
+  .post(h(require('@handlers/core/session/login'), ({ session, body }) => ({ session, body })))
 
 router
   .route('/logout')

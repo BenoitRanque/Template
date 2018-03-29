@@ -1,45 +1,33 @@
+const AccessControl = require('accesscontrol').
 
-const knex = require('../../../../db/knex')
-const AccessControl = require('accesscontrol')
+module.exports = {
+  async authentication (session) {
+    if (!session.user) throw new Error(401)
+    return true
+  },
+  async authorization (session, resource, action) {
 
-// statefull internal reference of ac object
-let ac
+    if (!this.ac) await this.init()
 
-module.exports = function ac (update) {
-  if (update || !ac) {
-    ac = new Promise(async (resolve, reject) => {
-      try {
-        // get grants from db
-        let grants = await knex
-          .select(['core_role_privileges.role_id', 'core_role_privileges.attributes', 'core_privileges.resource', 'core_privileges.action'])
-          .from('core_role_privileges')
-          .leftJoin('core_privileges', 'core_role_privileges.privilege_id', 'core_privileges.privilege_id')
+    await this.authentication(session)
 
+    let { role } = session.user
+    let permission = this.ac.permission({ role: user.role, resource, action })
 
-        let ac = new AccessControl(grants.map(({role_id, attributes, resource, action}) => ({role: role_id, attributes, resource, action})))
+    if (!permission.granted) throw new Error(403)
 
-        let extensions = await knex
-          .select(['extended_role_id', 'base_role_id'])
-          .from('core_role_extend')
-        
-        extensions.forEach(({ base_role_id, extended_role_id }) => ac.extendRole(extended_role_id, base_role_id))
+    return permission
+  },
+  ac: null,
+  async init () {
+    let grants = await require('@resources/core/Roles').allWithPrivileges()
 
-        resolve(ac)
+    let ac = new AccessControl(grants.map(({role_id, attributes, resource, action}) => ({role: role_id, attributes, resource, action})))
 
-      } catch (error) {
-        console.log(error)
-        reject(error)
-      }
-    })
-  }
+    let extensions = await require('@resources/core/Roles').allExtensions()
 
-  return async (req, res, next) => {
-    try {
-      req.ac = await ac
-      next()
-    } catch (error) {
-      console.log(error)
-      res.status(500).end()
-    }
+    extensions.forEach(({ base_role_id, extended_role_id }) => ac.extendRole(extended_role_id, base_role_id))
+
+    this.ac = ac
   }
 }

@@ -8,10 +8,18 @@ module.exports = function handler (promise, params) {
 
       return res.json(result || { message: 'OK' })
 
-    } catch (error) {
-      console.log(error)
-      return res.status(500).end()
-      // return res.status(500) && next(error)
+    }
+    catch (error) {
+      switch (error.message) {
+        case 500:
+        case 401:
+        case 403:
+          res.status(error.message).end()
+          break
+        default:
+          console.log(error)
+          res.status(500).end()
+      }
     }
   }
 }

@@ -1,12 +1,15 @@
+// register module aliases
+require('module-alias/register')
+
 let m = process.argv[2]
-const knex = require('./knex')
+const knex = require('@db/knex')
 
 if (!m) {
   (async () => {
     try {
 
-      for (m of require('../modules')) {
-        await knex.migrate.latest(require('./knexfile').migrations(m))
+      for (m of require('@app/modules')) {
+        await knex.migrate.latest(require('@db/knexfile').migrations(m))
         console.log('Migrated module ', m, ' to latest')
       }
 
@@ -20,8 +23,8 @@ if (!m) {
   })()
 }
 else {
-  if (require('../modules').includes(m)) {
-    knex.migrate.latest(require('./knexfile').migrations(m))
+  if (require('@app/modules').includes(m)) {
+    knex.migrate.latest(require('@db/knexfile').migrations(m))
     .then(() => {
       console.log('Migrated module ', m, ' to latest')
       knex.destroy()
