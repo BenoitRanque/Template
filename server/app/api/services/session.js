@@ -1,9 +1,9 @@
 
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session)
-const knex = require('../../../../db/knex')
+const knex = require('@db/knex')
 
-const { SECRET, MAXAGE } = require('../../../../config').cookie
+const { SECRET, MAXAGE } = require('@config').cookie
 
 const store = new KnexSessionStore({
     knex: knex,

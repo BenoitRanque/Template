@@ -1,5 +1,5 @@
-const knex = require('../../../../../db/knex')
-const authorize = require('../../../services/authorize')
+const knex = require('@db/knex')
+const authorize = require('@services/authorize')
 
 module.exports = [
   authorize({ resource: 'core.user', action: 'read:any' }),

@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const routes = [
-  'admin',
-  'session'
+  // 'admin',
+  // 'session'
 ]
 
 routes.forEach(r => {
