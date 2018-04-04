@@ -10,8 +10,8 @@ exports.seed = async function(knex, Promise) {
   let adminPass = await bcrypt.hash('admin', SALT_ROUNDS)
 
   let [userId, adminId] = await knex('core_users').insert([
-    { username: 'admin', password: adminPass, displayname: 'Administrator' },
-    { username: 'user', password: userPass, displayname: 'User' }
+    { username: 'user', password: userPass, displayname: 'User' },
+    { username: 'admin', password: adminPass, displayname: 'Administrator' }
   ], 'user_id') // return user_id
 
   let adminRoleId = await knex('core_roles').where({ role_name: 'admin' }).select([ 'role_id' ])

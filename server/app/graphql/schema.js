@@ -3,6 +3,16 @@ const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt } = require('g
 
 module.exports = new GraphQLSchema({
   description: 'a test schema',
-  query: require('./query/'),
-  mutation: require('./mutation/')
+  query: new GraphQLObjectType({
+    name: 'Query',
+    fields: () => ({
+      core: require('./core/query')
+    })
+  }),
+  mutation:  new GraphQLObjectType({
+    name: 'Mutation',
+    fields: () => ({
+      core: require('./core/mutation')
+    })
+  })
 })

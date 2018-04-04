@@ -5,7 +5,8 @@ const app = express()
 
 app
   // .use(require('@api'))
-  .use(require('@app/graphql'))
+  .use(require('./services/session'))
+  .use(require('./graphql'))
   .use('/', require('express').static('app/public'))
 
 module.exports = app
