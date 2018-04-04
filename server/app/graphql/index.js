@@ -13,12 +13,7 @@ const graphql = graphqlExpress((req, res, next) => {
 
 // The GraphQL endpoint
 router.use('/graphql', require('express').json(), (req, res, next) => {
-  try {
-    graphql(req, res, next)
-  } catch (error) {
-    console.log('ERROR CAUGHT')
-    console.log(error)
-  }
+  graphql(req, res, next)
 })
 
 // router.use('/graphql', require('express').json(), graphqlExpress((req, res, next) => {

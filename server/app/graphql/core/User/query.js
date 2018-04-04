@@ -19,8 +19,6 @@ module.exports = {
     },
     resolve: async (parent, args, context, info) => {
       // TODO authorize query
-      console.log(args)
-      console.log(info)
       let [user] = await knex(TABLE).select()
       return user
     }
