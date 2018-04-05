@@ -36,6 +36,7 @@ module.exports = class BaseResolver {
   constructor(action, promise, params, resource, promises) {
     if (typeof promise !== 'string') throw new Error(`Invalid value for promise argument: expected string, got ${promise}`)
     if (promises.hasOwnProperty(promise) === false) throw new Error(`Unknown Promise in resolver:  ${promise} `)
+    if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for params argument: expected function, got ${params}`)
 
     return async (parent, args, context, info) => {
       let boundParams = params === undefined ? {} : params(parent, args, context, info)

@@ -1,8 +1,18 @@
 const router = require('express').Router()
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
 const AccessControl = require('@app/services/ac')
+const { ENV } = require('@config/server')
+
+router.use((req, res, next) => {
+  if (ENV === 'dev' && req.get('origin')) res.setHeader('Access-Control-Allow-Origin', req.get('origin'))
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+  next()
+})
 
 const graphql = graphqlExpress((req, res, next) => {
+  console.log(req.session.user)
   return {
     schema: require('./schema'),
     context: {
@@ -12,7 +22,33 @@ const graphql = graphqlExpress((req, res, next) => {
         getSessionRole: session => session.user.role,
 
       })
-    }
+    },
+    rootValue: {
+      // first arguemnt passed to
+    },
+    formatError: error => {
+      if (error.originalError && error.originalError.error_message) {
+        error.message = error.originalError.error_message;
+      }
+      console.log(error)
+    
+      return error
+    },
+
+    // a function applied to the parameters of every invocation of runQuery
+    // formatParams?: Function,
+
+    // * - (optional) validationRules: extra validation rules applied to requests
+    // validationRules?: Array<ValidationRule>,
+
+    // a function applied to each graphQL execution result
+    // formatResponse?: Function
+
+    // a custom default field resolver
+    // fieldResolver?: Function
+
+    // a boolean that will print additional debug logging if execution errors occur
+    debug: ENV === 'dev' ? true : false
   }
 })
 
@@ -27,10 +63,10 @@ router.use('/graphql', require('express').json(), (req, res, next) => {
 //     context: {
 //       session: req.session
 //     }
-//   }
+//   } 
 // }))
 
 // GraphiQL, a visual editor for queries
-router.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+router.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql',  }));
 
 module.exports = router

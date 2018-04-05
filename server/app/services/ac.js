@@ -13,13 +13,13 @@ module.exports = class AC {
 
   async authorize (session, resource, action) {
 
-    console.log(session)
-
     if (!this.ac) await this.refresh()
 
     await this.authenticate(session)
 
-    let permission = this.ac.permission({ role: session.user.role , resource, action })
+    let role = session.user.role.map(({ role_id }) => role_id)
+
+    let permission = this.ac.permission({ role, resource, action })
 
     if (!permission.granted) throw new Error('403 Access Denied')
 

@@ -1,5 +1,5 @@
 
-const session = require('express-session');
+const session = require('express-session')
 const KnexSessionStore = require('connect-session-knex')(session)
 const knex = require('@db/knex')
 
@@ -16,7 +16,7 @@ module.exports = session({
   saveUninitialized: false,
   cookie: {
       maxAge: MAXAGE,
-      domain: 'http://localhost:8080'
+      domain: 'http://localhost:80'
   },
   store
 })
