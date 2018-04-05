@@ -10,7 +10,6 @@ module.exports = {
     })
   }),
   resolve: () => {
-    console.log('resolving core')
     return {}
   }
 }

@@ -8,8 +8,5 @@ module.exports = {
       ...require('./Session/mutation')
     }),
   }),
-  resolve: () => {
-    console.log('resolving core mutation')
-    return {}
-  }
+  resolve: () => ({})
 }

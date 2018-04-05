@@ -1,12 +1,17 @@
 const router = require('express').Router()
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
-
+const AccessControl = require('@app/services/ac')
 
 const graphql = graphqlExpress((req, res, next) => {
   return {
     schema: require('./schema'),
     context: {
-      session: req.session
+      session: req.session,
+      ac: new AccessControl({
+        getSession: session => session.user,
+        getSessionRole: session => session.user.role,
+
+      })
     }
   }
 })

@@ -26,6 +26,8 @@ module.exports = {
             let auth = await bcrypt.compare(password, user.password)
             if (!auth) throw new Error(401)
 
+            user.role =  await knex.where({ user_id: user.user_id }).from('core_user_roles').select(['role_id'])
+
             session.user = user
             
             return session

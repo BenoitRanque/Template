@@ -34,7 +34,7 @@ module.exports = {
   seeds (m) {
     return {
       loadExtensions: ['.js'],
-      directory: './app/db/seeds' + m
+      directory: './app/db/seeds/' + m
     }
   }
 }

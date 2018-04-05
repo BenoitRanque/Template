@@ -16,8 +16,10 @@
   "_moduleAliases": {
     "@root": ".",
     "@app": "app",
+    "@db": "app/db",
     "@config": "app/config",
-    "@db": "app/db"
+    "@api": "app/api",
+    "@services": "app/services"
   },
   "author": "",
   "license": "ISC",

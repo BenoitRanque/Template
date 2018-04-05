@@ -1,27 +1,32 @@
 const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt } = require('graphql')
-const knex = require('@db/knex')
-// const ac = require('@app/services/ac')
-const isEmpty = require('@app/services/isEmpty')
-
-const TABLE = 'core_users'
+const UserResolver = require('./resource')
 
 
 module.exports = {
   user: {
     type: require('./schema'),
     args: {
-      id: {
+      user_id: {
         type: GraphQLString
       },
       username: {
         type: GraphQLString
       }
     },
-    resolve: async (parent, args, context, info) => {
-      // TODO authorize query
-      let [user] = await knex(TABLE).select()
-      return user
-    }
+    resolve: new UserResolver('read:any', 'getUserWhere', (parent, { user_id, username }) => {
+      
+      if (user_id === undefined && username === undefined) throw new Error('At least one of username or user_id is required')
+      
+      let params = {};
+      user_id && params[user_id];
+      username && params[username];
+      return params
+    })
+    // resolve2: async (parent, args, context, info) => {
+    //   // TODO authorize query
+    //   let [user] = await knex(TABLE).select()
+    //   return user
+    // }
   },
   users: {
     type: new GraphQLList(require('./schema')),
@@ -33,18 +38,27 @@ module.exports = {
         type: GraphQLString
       }
     },
-    resolve: async (parent, args, context, info) => {
-      // TODO authorize query
-      let users
+    resolve: new UserResolver('read:any', 'getUsersWhere', (parent, { user_id, username }) => {
+      
+      if (user_id === undefined && username === undefined) throw new Error('At least one of username or user_id is required')
+      
+      let params = {};
+      user_id && params[user_id];
+      username && params[username];
+      return params
+    })
+    // resolve: async (parent, args, context, info) => {
+    //   // TODO authorize query
+    //   let users
 
-      if (isEmpty(args)) {
-        users = await knex(TABLE).select()
-      }
-      else {
-        users = await knex(TABLE).where(args).select()
-      }
+    //   if (isEmpty(args)) {
+    //     users = await knex(TABLE).select()
+    //   }
+    //   else {
+    //     users = await knex(TABLE).where(args).select()
+    //   }
 
-      return users
-    }
+    //   return users
+    // }
   }
 }
