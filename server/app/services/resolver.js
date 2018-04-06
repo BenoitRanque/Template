@@ -36,15 +36,15 @@ const { trueType } = require('@app/services/utils')
 
 
 module.exports = class BaseResolver {
-  constructor(action, method, params, resource) {
+  constructor(action, method, params, resource, methods) {
     if (trueType(method) !== 'string') throw new Error(`Invalid value for Method argument: expected string, got ${method}`)
-    if (this.constructor.methods().hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${method} `)
+    if (methods.hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${method} `)
     if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for Params argument: expected function, got ${params}`)
 
     this.action = action
     this.params = params
     this.resource = resource
-    this.method = this.constructor.methods()[method]
+    this.method = methods[method]
 
     return async (parent, args, context, info) => {
       console.log(this)
