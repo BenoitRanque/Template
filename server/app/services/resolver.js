@@ -32,20 +32,29 @@ const resolver = new ExtendedResolver('get:own', 'hello', (parent, args, context
  *
  */
 
+
+
 module.exports = class BaseResolver {
-  constructor(action, promise, params, resource, promises) {
-    if (typeof promise !== 'string') throw new Error(`Invalid value for promise argument: expected string, got ${promise}`)
-    if (promises.hasOwnProperty(promise) === false) throw new Error(`Unknown Promise in resolver:  ${promise} `)
-    if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for params argument: expected function, got ${params}`)
+  constructor(action, method, params, resource) {
+    if (typeof method !== 'string') throw new Error(`Invalid value for Method argument: expected string, got ${method}`)
+    if (this.constructor.hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${promise} `)
+    if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for Params argument: expected function, got ${params}`)
+
+    this.action = action
+    this.params = params
+    this.resource = resource
+    this.method = this.constructor.methods()[method]
 
     return async (parent, args, context, info) => {
-      let boundParams = params === undefined ? {} : params(parent, args, context, info)
+      console.log(this)
+
+      let boundParams = this.params  === undefined ? [] : this.params(parent, args, context, info)
 
       let permission = null, { ac, session } = context
 
-      if (action !== null) permission = await ac.authorize(session, resource, action)
+      if (this.action !== null) permission = await ac.authorize(session, this.resource,  this.action)
 
-      let results = await promises[promise](...boundParams)
+      let results = await this.method(...boundParams)
 
       if (permission !== null) results = permission.filter(results)
 

@@ -17,10 +17,10 @@ module.exports = {
       
       if (user_id === undefined && username === undefined) throw new Error('At least one of username or user_id is required')
       
-      let params = {};
-      user_id && params[user_id];
-      username && params[username];
-      return params
+      let where = {}
+      if (user_id) where['user_id'] = user_id
+      if (username) where['username'] = username
+      return [where]
     })
     // resolve2: async (parent, args, context, info) => {
     //   // TODO authorize query
@@ -42,10 +42,10 @@ module.exports = {
       
       if (user_id === undefined && username === undefined) throw new Error('At least one of username or user_id is required')
       
-      let params = {};
-      user_id && params[user_id];
-      username && params[username];
-      return params
+      let where = {}
+      if (user_id) where['user_id'] = user_id
+      if (username) where['username'] = username
+      return [where]
     })
     // resolve: async (parent, args, context, info) => {
     //   // TODO authorize query

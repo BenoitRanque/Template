@@ -216,16 +216,31 @@
 
 // handler('a message', {}, { ac: null, session: null })
 
-(function({arg1, arg2}) {
-  console.log({ arg1, [arg2 ? arg2 : undefined]: arg2 })
-})({ arg1: 'hi' })
+// (function({arg1, arg2}) {
+//   console.log({ arg1, [arg2 ? arg2 : undefined]: arg2 })
+// })({ arg1: 'hi' })
 
 
 
 
-let auth = await new Promise((resolve, reject) => gapi.auth2.authorize(config, function callback (err, response) => {
-  if (err) return reject(err)
-  resolve(response)
-}))
+// let auth = await new Promise((resolve, reject) => gapi.auth2.authorize(config, function callback (err, response) => {
+//   if (err) return reject(err)
+//   resolve(response)
+// }))
 
 // auth = whatever gapi.auth2.authorizes passed to it's callback
+
+
+// class BaseResolver {
+//   init (options) {
+
+//   }
+// }
+
+// class UserResolver {
+//   constructor () {
+//     this.TABLE = 'core_users'
+//   }
+
+//   getUser: where => knex.
+// }
