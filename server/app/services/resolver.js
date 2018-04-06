@@ -32,12 +32,13 @@ const resolver = new ExtendedResolver('get:own', 'hello', (parent, args, context
  *
  */
 
+const { trueType } = require('@app/services/utils')
 
 
 module.exports = class BaseResolver {
   constructor(action, method, params, resource) {
-    if (typeof method !== 'string') throw new Error(`Invalid value for Method argument: expected string, got ${method}`)
-    if (this.constructor.hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${promise} `)
+    if (trueType(method) !== 'string') throw new Error(`Invalid value for Method argument: expected string, got ${method}`)
+    if (this.constructor.methods().hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${method} `)
     if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for Params argument: expected function, got ${params}`)
 
     this.action = action
@@ -49,6 +50,8 @@ module.exports = class BaseResolver {
       console.log(this)
 
       let boundParams = this.params  === undefined ? [] : this.params(parent, args, context, info)
+
+      if (!trueType(boundParams) !== 'array') throw new Error(`Invalid return type for resolver params function: expected Array, got ${trueType(boundParams)}`)
 
       let permission = null, { ac, session } = context
 
