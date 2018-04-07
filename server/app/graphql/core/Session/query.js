@@ -1,6 +1,8 @@
+const SessionResolver = require('./resource')
+
 module.exports = {
   session: {
     type: require('./schema'),
-    resolver: (parent, args, context, info) => context.session
+    resolver: new SessionResolver('read:own', 'getSession', (parent, args, { session }) => session)
   }
 }

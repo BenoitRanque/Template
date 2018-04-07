@@ -20,13 +20,8 @@ module.exports = {
       let where = {}
       if (user_id) where['user_id'] = user_id
       if (username) where['username'] = username
-      return [where]
+      return where
     })
-    // resolve2: async (parent, args, context, info) => {
-    //   // TODO authorize query
-    //   let [user] = await knex(TABLE).select()
-    //   return user
-    // }
   },
   users: {
     type: new GraphQLList(require('./schema')),
@@ -38,27 +33,10 @@ module.exports = {
         type: GraphQLString
       }
     },
-    resolve: new UserResolver('read:any', 'getUsersWhere', (parent, { user_id, username }) => {
-      
-      if (user_id === undefined && username === undefined) throw new Error('At least one of username or user_id is required')
-      
-      let where = {}
-      if (user_id) where['user_id'] = user_id
-      if (username) where['username'] = username
-      return [where]
+    resolve: new UserResolver({ 
+      action: 'read:any',
+      method: 'getUsersWhere',
+      params: (parent, { user_id, username }) => ({ user_id, username })
     })
-    // resolve: async (parent, args, context, info) => {
-    //   // TODO authorize query
-    //   let users
-
-    //   if (isEmpty(args)) {
-    //     users = await knex(TABLE).select()
-    //   }
-    //   else {
-    //     users = await knex(TABLE).where(args).select()
-    //   }
-
-    //   return users
-    // }
   }
 }

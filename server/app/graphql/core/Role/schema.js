@@ -1,11 +1,20 @@
 const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt } = require('graphql')
-const knex = require('@db/knex')
+const RoleResolver = require('./resource')
+const UserResolver = require('../User//resource')
+
 module.exports = new GraphQLObjectType({
   name: 'CoreRole',
   description: 'A custom user role',
   fields: () => ({
     role_id: {
       type: GraphQLString
+    },
+    grantor_id: {
+      type: GraphQLString
+    },
+    grantor: {
+      type: require('../User/schema'),
+      resolve: new UserResolver('read:any', 'userById', role =>  role.grantor_id)
     },
     role_name: {
       type: GraphQLString
@@ -15,11 +24,7 @@ module.exports = new GraphQLObjectType({
     },
     extends: {
       type: new GraphQLList(require('./schema')),
-      resolve: ({ role_id }, args, context, info) => knex
-        .where({ 'core_role_extend.extended_role_id': role_id })
-        .select(['core_roles.role_id', 'core_roles.role_name', 'core_roles.description'])
-        .from('core_role_extend')
-        .leftJoin('core_roles', 'core_role_extend.base_role_id', 'core_roles.role_id')
+      resolve: new RoleResolver('read:any', 'extendedRole', role => role.role_id)
     }
   })
 })

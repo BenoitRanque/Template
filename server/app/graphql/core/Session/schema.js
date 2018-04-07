@@ -1,16 +1,27 @@
-const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt } = require('graphql')
+const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt, GraphQLNonNull } = require('graphql')
+const SessionResolver = require('./resource')
 
 module.exports = new GraphQLObjectType({
   name: 'Session',
-  description: 'The current user\'s session',
+  description: 'The current session',
   fields: () => ({
     user: {
-      type: require('../User/schema'),
-      resolve: (parent, args, context, resolveInfo) => {
-        console.log('resolving session user')
-        return context.session.user || null
-      }
+      type: new GraphQLNonNull(new GraphQLObjectType({
+        name: 'SessionUser',
+        description: 'The current session\'s user',
+        fields: () => ({
+          user_id: {
+            type: new GraphQLNonNull(GraphQLString)
+          },
+          username: {
+            type: GraphQLString
+          },
+          role: {
+            type: new GraphQLList(require('../Role/schema'))
+          }
+        })
+      }))
     }
   }),
-  resolve: (parent, args, contex) => contex.session
+  resolve: new SessionResolver('read:own', 'getSession', (parent, args, { session }) => session)
 })

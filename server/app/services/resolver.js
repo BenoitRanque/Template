@@ -1,47 +1,25 @@
-/*
- * BASE RESOLVER
- *
- * Class to generate resolvers for graphql
- *
- * Constructor arguments:
- *
- * action: a valid accesscontrol action:ownership string
- * if ommited, access control will not be checked
- * see: https://onury.io/accesscontrol/?api=ac
- *
- * promise: a string identifying a promise available on the constructor
- * Example Usage:
- *
-
-class ExtendedResolver extends BaseResolver {
-  // this constructor is mandatory
-  constructor (action, promise, params) {
-    super (action, promise, params)
-    this.resource = 'core_User'
-  }
-
-  // list of available promises
-  static async ['hello'] (message) {
-    console.log(message)
-    return message
-  }
-}
-
-const resolver = new ExtendedResolver('get:own', 'hello', (parent, args, context, info) => ([parent, args]))
-
- *
- */
-
 const { trueType } = require('@app/services/utils')
-
+const ACTIONS = ['read:any', 'create:any', 'update:any', 'delete:any', 'read:own', 'create:own', 'update:own', 'delete:own']
 
 module.exports = class BaseResolver {
-  constructor(action, method, params, resource, methods) {
-    if (trueType(method) !== 'string') throw new Error(`Invalid value for Method argument: expected string, got ${method}`)
-    if (methods.hasOwnProperty(method) === false) throw new Error(`Unknown Method in resolver:  ${method} `)
-    if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for Params argument: expected function, got ${params}`)
+  constructor({ authenticate, authorize, action, resource, method, params, }, defaultResource, methods) {
+    if (authenticate === undefined) authenticate = true
+    if (authorize === undefined) authorize = true
+
+    
+    if (action === undefined && authorize) throw new Error('Resolver Action cannot be undefined if Authorization is required')
+    if (!ACTIONS.includes(action)) throw new Error(`Resolver Action must be one of ${ACTIONS}` )
+
+    if (resource = undefined) resource = defaultResource
+
+    if (trueType(method) !== 'string') throw new Error(`Invalid value for Resolver Method: expected string, got ${method}`)
+    if (methods.hasOwnProperty(method) === false) throw new Error(`Unknown Resolver Method:  ${method} `)
+
+    if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for resolver Params: expected function, got ${params}`)
 
     this.action = action
+    this.authenticate = authenticate
+    this.authorize = authorize
     this.params = params
     this.resource = resource
     this.method = methods[method]
@@ -54,7 +32,12 @@ module.exports = class BaseResolver {
 
       let permission = null, { ac, session } = context
 
-      if (this.action !== null) permission = await ac.authorize(session, this.resource,  this.action)
+      if (this.authorize) {
+        permission = await ac.authorize(session, this.resource,  this.action)
+      }
+      else if (this.authenticate) {
+        await ac.authenticate(session)
+      }
 
       let results = await this.method(...boundParams)
 

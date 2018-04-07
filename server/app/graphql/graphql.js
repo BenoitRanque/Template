@@ -27,7 +27,7 @@ const graphql = graphqlExpress((req, res, next) => {
     },
     formatError: error => {
       if (error.originalError && error.originalError.error_message) {
-        error.message = error.originalError.error_message;
+        error.original_message = error.originalError.error_message;
       }
       console.log(error)
     
