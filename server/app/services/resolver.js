@@ -25,12 +25,10 @@ module.exports = class BaseResolver {
     this.method = methods[method]
 
     return async (parent, args, context, info) => {
-
+      let permission = null, { ac, session } = context
       let boundParams = this.params  === undefined ? [] : this.params(parent, args, context, info)
 
       if (trueType(boundParams) !== 'array') boundParams = [boundParams]
-
-      let permission = null, { ac, session } = context
 
       if (this.authorize) {
         permission = await ac.authorize(session, this.resource,  this.action)
