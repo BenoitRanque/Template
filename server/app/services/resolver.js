@@ -47,11 +47,10 @@ module.exports = class BaseResolver {
     this.method = methods[method]
 
     return async (parent, args, context, info) => {
-      console.log(this)
 
       let boundParams = this.params  === undefined ? [] : this.params(parent, args, context, info)
 
-      if (!trueType(boundParams) !== 'array') throw new Error(`Invalid return type for resolver params function: expected Array, got ${trueType(boundParams)}`)
+      if (trueType(boundParams) !== 'array') boundParams = [boundParams]
 
       let permission = null, { ac, session } = context
 
