@@ -2,7 +2,7 @@ const { trueType } = require('@app/services/utils')
 const ACTIONS = ['read:any', 'create:any', 'update:any', 'delete:any', 'read:own', 'create:own', 'update:own', 'delete:own']
 
 module.exports = class BaseResolver {
-  constructor({ authenticate, authorize, action, resource, method, params, }, defaultResource, methods) {
+  constructor({ authenticate, authorize, action, resource, method, params, field }, defaultResource, methods) {
     if (authenticate === undefined) authenticate = true
     if (authorize === undefined) authorize = authenticate
 
@@ -19,24 +19,35 @@ module.exports = class BaseResolver {
     this.action = action
     this.authenticate = authenticate
     this.authorize = authorize
+    this.field = field
     this.params = params
     this.resource = resource
     this.method = methods[method]
 
     return async (parent, args, context, info) => {
-      let permission = null, { ac, session } = context
-      let boundParams = this.params  === undefined ? [] : this.params(parent, args, context, info)
+      let 
+        permission = null,
+        results = null,
+        boundParams = null,
+        { ac, session } = context
 
-      if (trueType(boundParams) !== 'array') boundParams = [boundParams]
-
+        
       if (this.authorize) {
         permission = await ac.authorize(session, this.resource,  this.action)
       }
       else if (this.authenticate) {
         await ac.authenticate(session)
       }
-
-      let results = await this.method(...boundParams)
+      
+      if (this.field !== undefined && parent[this.field] !== undefined) {
+        results = parent[this.field]
+      }
+      else {
+        let boundParams = this.params === undefined ? [] : this.params(parent, args, context, info)
+        if (trueType(boundParams) !== 'array') boundParams = [boundParams]
+        
+        results = await this.method(...boundParams)
+      }
 
       if (permission !== null) results = permission.filter(results)
 
