@@ -11,8 +11,7 @@ module.exports = class BaseResolver {
     if (action === undefined && authorize) throw new Error('Resolver Action cannot be undefined if Authorization is required' + authenticate + authorize + action)
     if (action !== undefined && !ACTIONS.includes(action)) throw new Error(`Resolver Action must be one of ${ACTIONS}, got ${action}` )
 
-    if (trueType(method) !== 'string') throw new Error(`Invalid value for Resolver Method: expected string, got ${method}`)
-    if (methods.hasOwnProperty(method) === false) throw new Error(`Unknown Resolver Method:  ${method} `)
+    if (trueType(method) !== 'function') throw new Error(`Invalid value for Resolver Method: expected function, got ${method}`)
 
     if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for resolver Params: expected function, got ${params}`)
 
@@ -21,8 +20,7 @@ module.exports = class BaseResolver {
     this.authorize = authorize
     this.field = field
     this.params = params
-    this.resource = resource
-    this.method = methods[method]
+    if (resource) this.resource = resource
 
     return async (parent, args, context, info) => {
       let 
@@ -46,7 +44,7 @@ module.exports = class BaseResolver {
         let boundParams = this.params === undefined ? [] : this.params(parent, args, context, info)
         if (trueType(boundParams) !== 'array') boundParams = [boundParams]
         
-        results = await this.method(...boundParams)
+        results = await this.method(this.model, ...boundParams)
       }
 
       if (permission !== null) results = permission.filter(results)
