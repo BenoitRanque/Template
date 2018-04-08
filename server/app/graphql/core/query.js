@@ -5,8 +5,8 @@ module.exports = {
     name: 'CoreQuery',
     description: 'Core Module Queries',
     fields: () => ({
-      // ...require('./Session/query'),
-      // ...require('./Role/query'),
+      ...require('./Session/query'),
+      ...require('./Role/query'),
       ...require('./User/query')
     })
   }),

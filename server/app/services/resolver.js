@@ -4,13 +4,12 @@ const ACTIONS = ['read:any', 'create:any', 'update:any', 'delete:any', 'read:own
 module.exports = class BaseResolver {
   constructor({ authenticate, authorize, action, resource, method, params, }, defaultResource, methods) {
     if (authenticate === undefined) authenticate = true
-    if (authorize === undefined) authorize = true
+    if (authorize === undefined) authorize = authenticate
 
+    if (resource === undefined) resource = defaultResource
     
-    if (action === undefined && authorize) throw new Error('Resolver Action cannot be undefined if Authorization is required')
-    if (!ACTIONS.includes(action)) throw new Error(`Resolver Action must be one of ${ACTIONS}` )
-
-    if (resource = undefined) resource = defaultResource
+    if (action === undefined && authorize) throw new Error('Resolver Action cannot be undefined if Authorization is required' + authenticate + authorize + action)
+    if (action !== undefined && !ACTIONS.includes(action)) throw new Error(`Resolver Action must be one of ${ACTIONS}, got ${action}` )
 
     if (trueType(method) !== 'string') throw new Error(`Invalid value for Resolver Method: expected string, got ${method}`)
     if (methods.hasOwnProperty(method) === false) throw new Error(`Unknown Resolver Method:  ${method} `)

@@ -15,7 +15,11 @@ module.exports = new GraphQLObjectType({
     },
     role: {
       type: new GraphQLList(require('../Role/schema')),
-      resolver: new RoleResolver('read:any', 'userRole', user => user.user_id)
+      resolve: new RoleResolver({
+        action: 'read:any',
+        method: 'byId',
+        params: user => user.user_id
+      })
     }
   })
 })

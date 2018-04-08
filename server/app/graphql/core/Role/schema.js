@@ -12,10 +12,10 @@ module.exports = new GraphQLObjectType({
     grantor_id: {
       type: GraphQLString
     },
-    grantor: {
-      type: require('../User/schema'),
-      resolve: new UserResolver('read:any', 'userById', role =>  role.grantor_id)
-    },
+    // grantor: {
+    //   type: require('../User/schema'),
+    //   resolve: new UserResolver('read:any', 'userById', role =>  role.grantor_id)
+    // },
     role_name: {
       type: GraphQLString
     },
@@ -24,7 +24,11 @@ module.exports = new GraphQLObjectType({
     },
     extends: {
       type: new GraphQLList(require('./schema')),
-      resolve: new RoleResolver('read:any', 'extendedRole', role => role.role_id)
+      resolve: new RoleResolver({
+        action: 'read:any',
+        method: 'RoleByExtendedRole',
+        params: role => role.role_id
+      })
     }
   })
 })

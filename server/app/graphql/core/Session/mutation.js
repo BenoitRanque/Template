@@ -12,10 +12,18 @@ module.exports = {
         type: new GraphQLNonNull(GraphQLString)
       }
     },
-    resolve: new SessionResolver(null, 'login', (parent, args, { session }) => ([session, args]))
+    resolve: new SessionResolver({
+      authenticate: false,
+      method: 'login',
+      params: (parent, args, { session }) => ([session, args])
+    })
   },
   logout: {
     type: require('./schema'),
-    resolve: new SessionResolver(null, 'logout', (parent, args, { session }) => session)
+    resolve: new SessionResolver({
+      authorize: false,
+      method: 'login',
+      params: (parent, args, { session }) => ([session, args])
+    })
   }
 }

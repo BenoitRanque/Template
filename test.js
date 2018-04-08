@@ -244,3 +244,16 @@
 
 //   getUser: where => knex.
 // }
+class Parent {
+  constructor (options) {
+    this.stuffa = 'a'
+    this.stuffb = 'b'
+  }
+}
+
+class Child extends Parent {
+  constructor (options) {
+    super(options)
+    this.stuffc = 'c'
+  }
+}

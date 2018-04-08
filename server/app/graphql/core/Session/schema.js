@@ -4,7 +4,7 @@ const SessionResolver = require('./resource')
 module.exports = new GraphQLObjectType({
   name: 'Session',
   description: 'The current session',
-  fields: () => ({
+  fields: (arg) => ({
     user: {
       type: new GraphQLNonNull(new GraphQLObjectType({
         name: 'SessionUser',
@@ -22,6 +22,5 @@ module.exports = new GraphQLObjectType({
         })
       }))
     }
-  }),
-  resolve: new SessionResolver('read:own', 'getSession', (parent, args, { session }) => session)
+  })
 })
