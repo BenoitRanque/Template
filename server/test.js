@@ -281,19 +281,38 @@ function toGraphQLType (type) {
   }
 }
 
+function toGraphQLResolver({ relation, modelClass, join }) {
+  switch (relation) {
+    case Model.BelongsToOneRelation: return new Resolver({
+      
+    })
+    case Model.HasOneRelation: return new Resolver({
+
+    })
+    case Model.HasManyRelation: return new Resolver({
+
+    })
+  }
+}
+
 class BaseModel extends Model {
 
   static initGraphQLType({ includeFields, excludeFields }, isInputType) {
     let fields = {}
     // map fields
     Object.keys(this.jsonSchema.properties).forEach(field => {
-      fields[field] = toGraphQLType(field)
+      fields[field] = { 
+        type: toGraphQLType(field)
+      }
     })
     // map relations
     Object.keys(this.relationMappings).forEach(field => {
       if (fields[field] !== undefined) throw new Error(`Relation ${field} already listed as field in model ${this.jsonSchema.name}`)
       
-      fields[field] = toGraphQLType(field)
+      fields[field] = {
+        type: this.relationMappings[field].modelClass.getGraphQLType(),
+        resolver: 
+      }
     })
     
     // map required
@@ -302,8 +321,9 @@ class BaseModel extends Model {
       this.fields[requiredField].type = new GraphQLNonNull(this.fields[requiredField].type )
     })
 
+    
     let options = {
-      name: this.jsonSchema.name,
+      name: this.jsonSchema.name + (isInputType ? 'Input' : ''),
       description: this.jsonSchema.description,
       fields: () => fields
     }
@@ -319,7 +339,7 @@ class BaseModel extends Model {
   }
 
   static getGraphQLType (options) {
-    return this.GraphQLType ? this.type : this.initGraphQLType(options)
+    return this.GraphQLType ? this.GraphQLType : this.initGraphQLType(options)
   }
 
   static getGraphQLInputType (options) {
@@ -328,6 +348,12 @@ class BaseModel extends Model {
 }
 
 class PrivilegeAttributes  extends BaseModel {
+
+  static get Resolver() {
+    return class PrivilegeAttributesResolver extends BaseResolver {
+
+    }
+  }
 
   static get tableName() {
     return 'core_privilege_attributes'
@@ -410,6 +436,67 @@ class Privilege extends BaseModel {
         }
       }
     }
+  }
+
+  static get GraphQLType () {
+    return new GraphQLObjectType({
+      name: 'CorePrivilege', // from json schema. Append input if input type
+      description: 'A privilege that can be assigned to a role', // jsonschema
+      fields: () => ({
+        privilege_name: {
+          type: GraphQLString
+        },
+        description: {
+          type: GraphQLString
+        },
+        resource: {
+          type: GraphQLString
+        },
+        action: {
+          type: new GraphQLEnumType({
+            name: 'AccessControlActionValues',
+            values: {
+              'read:any': {
+                name: 'Read Any',
+                description: 'Read Resource with any ownership'
+              },
+              'create:any': {
+                name: 'Create Any',
+                description: 'Create Resource with any ownership'
+              },
+              'update:any': {
+                name: 'Update Any',
+                description: 'Update Resource with any ownership'
+              },
+              'delete:any': {
+                name: 'Delete Any',
+                description: 'Delete Resource with any ownership'
+              },
+              'read:own': {
+                name: 'Read Own',
+                description: 'Read Resource with own ownership'
+              },
+              'create:own': {
+                name: 'Create Own',
+                description: 'Create Resource with own ownership'
+              },
+              'update:own': {
+                name: 'Update Own',
+                description: 'Update Resource with own ownership'
+              },
+              'delete:own': {
+                name: 'Delete Own',
+                description: 'Delete Resource with own ownership'
+              }
+            },
+            description: 'Possible values for access control actions'
+          })
+        },
+        module_id: {
+          type: GraphQLString
+        }
+      })
+    })
   }
 }
 
