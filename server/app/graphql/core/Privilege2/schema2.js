@@ -1,4 +1,4 @@
-const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt, GraphQLNonNull } = require('graphql')
+const { GraphQLObjectType, GraphQLList, GraphQLString, GraphQLInt, GraphQLNonNull, GraphQLEnumType } = require('graphql')
 
 module.exports = new GraphQLObjectType({
   name: 'CorePrivilege',
