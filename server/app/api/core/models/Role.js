@@ -19,10 +19,12 @@ module.exports = class Role extends BaseModel {
     }
   }
   static get relationMappings () {
+    const Role = require('./Role')
+    const RolePrivilege = require('./RolePrivilege')
     return {
       'privileges': {
         relation: HasManyRelation,
-        modelClass: require('./RolePrivilege'),
+        modelClass: RolePrivilege,
         join: {
           from: 'core_roles.role_id',
           to: 'core_role_privileges.role_id'
@@ -30,7 +32,7 @@ module.exports = class Role extends BaseModel {
       },
       'extends': {
         relation: ManyToManyRelation,
-        modelClass: require('./Role'),
+        modelClass: Role,
         join: {
           from: 'core_roles.role_id',
           through: {

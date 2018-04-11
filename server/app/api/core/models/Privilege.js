@@ -97,10 +97,11 @@ module.exports = class Privilege extends BaseModel {
   }
 
   static get relationMappings() {
+    const Module = require('./Module')
     return {
       module: {
         relation: BelongsToOneRelation,
-        modelClass: require('./Module'),
+        modelClass: Module,
         join: {
           from: 'core_privileges.module_id',
           to: 'core_modules.module_id'

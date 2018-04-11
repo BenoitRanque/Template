@@ -1,6 +1,6 @@
-const User = require('../models/User')
 const Resolver = require('@tools/resolver')
 const { GraphQLObjectType } = require('graphql')
+const { User } = require('../models')
 
 module.exports = {
   user: {

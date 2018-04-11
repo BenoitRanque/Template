@@ -1,28 +1,26 @@
 const { Model } = require('objection')
-const { modelToGraphQLType, modelToGraphQLFields } = require('./model_toGraphQLType')
+const { modelToGraphQLTypeConfig } = require('./model_toGraphQLType')
 const { buildEager } = require('./model_buildEager')
+const { GraphQLInputObjectType, GraphQLObjectType } = require('graphql')
 
 Model.knex(require('@db/knex'))
 
 module.exports = class BaseModel extends Model {
-  static getGraphQLFields (options) {
-    return modelToGraphQLFields(this, options)
+
+  static getGraphQLTypeConfig(options) {
+    return modelToGraphQLTypeConfig(this, options)
   }
 
-  static getGraphQLInputFields (options) {
-    return modelToGraphQLFields(this, { isInputType: true, ...options })
-  }
-
-  static getGraphQLType (options) {
+  static getGraphQLType () {
     if (this.GraphQLType === undefined) {
-      this.GraphQLType = modelToGraphQLType(this, options)
+      this.GraphQLType = new GraphQLObjectType(this.getGraphQLTypeConfig({}))
     }
     return this.GraphQLType
   }
 
-  static getGraphQLInputType (options) {
+  static getGraphQLInputType () {
     if (this.GraphQLInputType === undefined) {
-      this.GraphQLInputType = modelToGraphQLType(this, { isInputType: true, ...options })
+      this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ isInputType: true }))
     }
     return this.GraphQLInputType
   }

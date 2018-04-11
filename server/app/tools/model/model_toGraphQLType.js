@@ -6,51 +6,42 @@ const utils = require('@tools/utils')
 const { Model: { HasManyRelation, ManyToManyRelation } } = require('objection')
 const Resolver = require('@tools/resolver')
 
-function setDefaultOptions(options) {
-  return utils.setDefaults(options || {}, {
-    isInputType: false,
-    relations: true,
-    jsonSchema: true
-  })
-}
+function modelToGraphQLTypeConfig (model, options) {
 
-function validateModel (model) {
-  if (!model.jsonSchema) throw new Error(`Model must have jsonSchema. Found in ${model.name}`)
-}
-
-function modelToGraphQLType (model, options) {
-  validateModel(model)
-  options = setDefaultOptions(options)
-
-  let typeConfig = {
-    name: `${model.name}${ options.isInputType ? 'Input' : '' }`,
-    description: model.jsonSchema && model.jsonSchema.description,
-    fields: () => ({
-      ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
-      ...relationMappingsToGraphQLFields(model.relationMappings, options)
-    })
-  }
-  if (options.isInputType) {
-    return new GraphQLInputObjectType(typeConfig)
-  }
-  return new GraphQLObjectType(typeConfig)
-
-}
-
-function modelToGraphQLFields (model, options) {
-  validateModel(model)
-  options = setDefaultOptions(options)
+  // set default values
+  options = { ...{ isInputType: false }, ...options }
 
   return {
-    ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
-    ...relationMappingsToGraphQLFields(model.relationMappings, options)
+    name: `${options.name || model.name}${ options.isInputType ? 'Input' : '' }`,
+    description: model.jsonSchema && model.jsonSchema.description,
+    fields: () => {
+      let fields = {
+        ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
+        ...relationMappingsToGraphQLFields(model.relationMappings, options)
+      }
+      if (model.GraphQLFields) {
+        Object.keys(model.GraphQLFields).forEach(field => {
+          Object.keys(model.GraphQLFields[field]).forEach(prop => {
+            if (prop !== 'resolve' && !options.isInputType) fields[field][prop] = model.GraphQLFields[field][prop]
+          })
+        })
+      }
+      if (options.fields) {
+        Object.keys(options.fields).forEach(field => {
+          Object.keys(options.fields[field]).forEach(prop => {
+            if (prop !== 'resolve' && !options.isInputType) fields[field][prop] = options.fields[field][prop]
+          })
+        })
+      }
+      return fields
+    }
   }
 }
 
 function relationMappingsToGraphQLFields(relationMappings, options) {
   const mappings = {}
 
-  if (!relationMappings) return mappings
+  if (!relationMappings || options.isInputType) return mappings
   
   Object.keys(relationMappings).forEach(relationName => {
     let relation = relationMappings[relationName]
@@ -216,6 +207,5 @@ function stripRejectedCharacters (name) {
 }
 
 module.exports = {
-  modelToGraphQLType,
-  modelToGraphQLFields
+  modelToGraphQLTypeConfig
 }

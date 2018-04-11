@@ -14,15 +14,17 @@ module.exports = class User extends BaseModel {
       properties: {
         'user_id': { type: 'string' },
         'username': { type: 'string' },
+        'password': { type: 'string' },
         'description': { type: 'string' }
       }
     }
   }
   static get relationMappings () {
+    const Role = require('./Role')
     return {
       'role': {
         relation: ManyToManyRelation,
-        modelClass: require('./Role'),
+        modelClass: Role,
         join: {
           from: 'core_users.user_id',
           through: {
@@ -31,6 +33,13 @@ module.exports = class User extends BaseModel {
           },
           to: 'core_roles.role_id'
         }
+      }
+    }
+  }
+  static get GraphQLFields() {
+    return {
+      password: {
+        resolve: () => null
       }
     }
   }
