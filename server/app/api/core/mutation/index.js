@@ -5,7 +5,8 @@ module.exports = {
     name: 'CoreMutation',
     description: 'Core Module Mutations',
     fields: () => ({
-      ...require('./Session')
+      ...require('./Session'),
+      ...require('./User')
     })
   }),
   resolve: () => ({})
