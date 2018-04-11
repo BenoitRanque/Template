@@ -29,8 +29,7 @@ module.exports = class AC {
 
   async refresh () {
 
-    // let roles = await Role.query().eager('[extends, privileges.privilege]')
-    let roles = []
+    let roles = await Role.query().eager('[extends, privileges.privilege]')
 
     const grants = []
 

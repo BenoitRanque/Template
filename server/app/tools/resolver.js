@@ -82,7 +82,6 @@ module.exports = class BaseResolver {
         { ac, session } = context,
         permission = null,
         value = parent[field]
-        console.log(session)
 
       if (this.config.authorize) {
         permission = await ac.authorize(session, this.config.resource,  this.config.action)
@@ -101,7 +100,12 @@ module.exports = class BaseResolver {
       }
      
       if (permission !== null) {
-        if (permission.granted) value = permission.filter(value)
+        if (permission.granted) {
+          value = permission.filter(value)
+        }
+        else {
+          console.log('returning unfiltered values as permission has been denied')
+        }
       }
 
       return value

@@ -24,7 +24,7 @@ module.exports = {
               return user
             }
           })
-        }
+        }        
       })
     }),
     resolve: () => ({})
