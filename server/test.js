@@ -413,118 +413,120 @@ class Privilege extends BaseModel {
   }
 }
 
-
-(async function () {
-  let priv = await Privilege.query().eager('attributes')
-  console.log(priv)
-  console.log(priv[0].attributes)
-  knex.destroy()
-})()
+console.log(require('./app/services/jsonSchema').jsonSchemaToGraphQLFields(Privilege.jsonSchema))
 
 
-class Person extends Model {
-  // Table name is the only required property.
-  static get tableName() {
-    return 'persons';
-  }
+// (async function () {
+//   let priv = await Privilege.query().eager('attributes')
+//   console.log(priv)
+//   console.log(priv[0].attributes)
+//   knex.destroy()
+// })()
 
-  // Optional JSON schema. This is not the database schema!
-  // Nothing is generated based on this. This is only used
-  // for validation. Whenever a model instance is created
-  // it is checked against this schema.
-  // http://json-schema.org/.
-  static get jsonSchema () {
-    return {
-      name: 'CorePerson',
-      description: 'A Person',
-      type: 'object',
-      required: ['firstName', 'lastName'],
 
-      properties: {
-        id: {type: 'integer'},
-        parentId: {type: ['integer', 'null']},
-        firstName: {type: 'string', minLength: 1, maxLength: 255},
-        lastName: {type: 'string', minLength: 1, maxLength: 255},
-        age: {type: 'number'},
+// class Person extends Model {
+//   // Table name is the only required property.
+//   static get tableName() {
+//     return 'persons';
+//   }
 
-        // Properties defined as objects or arrays are
-        // automatically converted to JSON strings when
-        // writing to database and back to objects and arrays
-        // when reading from database. To override this
-        // behaviour, you can override the
-        // Person.jsonAttributes property.
-        address: {
-          type: 'object',
-          properties: {
-            street: {type: 'string'},
-            city: {type: 'string'},
-            zipCode: {type: 'string'}
-          }
-        }
-      }
-    };
-  }
+//   // Optional JSON schema. This is not the database schema!
+//   // Nothing is generated based on this. This is only used
+//   // for validation. Whenever a model instance is created
+//   // it is checked against this schema.
+//   // http://json-schema.org/.
+//   static get jsonSchema () {
+//     return {
+//       name: 'CorePerson',
+//       description: 'A Person',
+//       type: 'object',
+//       required: ['firstName', 'lastName'],
 
-  // This object defines the relations to other models.
-  static get relationMappings() {
-    return {
-      pets: {
-        relation: Model.HasManyRelation,
-        // The related model. This can be either a Model
-        // subclass constructor or an absolute file path
-        // to a module that exports one. We use the file
-        // path version here to prevent require loops.
-        modelClass: __dirname + '/Animal',
-        join: {
-          from: 'persons.id',
-          to: 'animals.ownerId'
-        }
-      },
+//       properties: {
+//         id: {type: 'integer'},
+//         parentId: {type: ['integer', 'null']},
+//         firstName: {type: 'string', minLength: 1, maxLength: 255},
+//         lastName: {type: 'string', minLength: 1, maxLength: 255},
+//         age: {type: 'number'},
 
-      movies: {
-        relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/Movie',
-        join: {
-          from: 'persons.id',
-          // ManyToMany relation needs the `through` object
-          // to describe the join table.
-          through: {
-            from: 'persons_movies.actorId',
-            to: 'persons_movies.movieId'
+//         // Properties defined as objects or arrays are
+//         // automatically converted to JSON strings when
+//         // writing to database and back to objects and arrays
+//         // when reading from database. To override this
+//         // behaviour, you can override the
+//         // Person.jsonAttributes property.
+//         address: {
+//           type: 'object',
+//           properties: {
+//             street: {type: 'string'},
+//             city: {type: 'string'},
+//             zipCode: {type: 'string'}
+//           }
+//         }
+//       }
+//     };
+//   }
 
-            // If you have a model class for the join table
-            // you can specify it like this:
-            //
-            // modelClass: PersonMovie,
+//   // This object defines the relations to other models.
+//   static get relationMappings() {
+//     return {
+//       pets: {
+//         relation: Model.HasManyRelation,
+//         // The related model. This can be either a Model
+//         // subclass constructor or an absolute file path
+//         // to a module that exports one. We use the file
+//         // path version here to prevent require loops.
+//         modelClass: __dirname + '/Animal',
+//         join: {
+//           from: 'persons.id',
+//           to: 'animals.ownerId'
+//         }
+//       },
 
-            // Columns listed here are automatically joined
-            // to the related models on read and written to
-            // the join table instead of the related table
-            // on insert.
-            //
-            // extra: ['someExtra']
-          },
-          to: 'movies.id'
-        }
-      },
+//       movies: {
+//         relation: Model.ManyToManyRelation,
+//         modelClass: __dirname + '/Movie',
+//         join: {
+//           from: 'persons.id',
+//           // ManyToMany relation needs the `through` object
+//           // to describe the join table.
+//           through: {
+//             from: 'persons_movies.actorId',
+//             to: 'persons_movies.movieId'
 
-      children: {
-        relation: Model.HasManyRelation,
-        modelClass: Person,
-        join: {
-          from: 'persons.id',
-          to: 'persons.parentId'
-        }
-      },
+//             // If you have a model class for the join table
+//             // you can specify it like this:
+//             //
+//             // modelClass: PersonMovie,
 
-      parent: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: Person,
-        join: {
-          from: 'persons.parentId',
-          to: 'persons.id'
-        }
-      }
-    };
-  }
-}
+//             // Columns listed here are automatically joined
+//             // to the related models on read and written to
+//             // the join table instead of the related table
+//             // on insert.
+//             //
+//             // extra: ['someExtra']
+//           },
+//           to: 'movies.id'
+//         }
+//       },
+
+//       children: {
+//         relation: Model.HasManyRelation,
+//         modelClass: Person,
+//         join: {
+//           from: 'persons.id',
+//           to: 'persons.parentId'
+//         }
+//       },
+
+//       parent: {
+//         relation: Model.BelongsToOneRelation,
+//         modelClass: Person,
+//         join: {
+//           from: 'persons.parentId',
+//           to: 'persons.id'
+//         }
+//       }
+//     }
+//   }
+// }
