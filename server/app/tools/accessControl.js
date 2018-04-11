@@ -1,5 +1,6 @@
 const AccessControl = require('accesscontrol')
 const knex = require('@db/knex')
+const Role = require('@api/core/models/Role')
 
 module.exports = class AC {
   constructor () {
@@ -28,27 +29,29 @@ module.exports = class AC {
 
   async refresh () {
 
-    let grants = await this.loadRolePrivileges()
+    let roles = await Role.query().eager('[extends, privileges.privilege]')
 
-    let ac = new AccessControl(grants.map(({role_id, attributes, resource, action}) => ({role: role_id, attributes, resource, action})))
+    const grants = []
 
-    let extensions = await this.loadRoleExtensions()
+    roles.forEach(role => {
+      role.privileges.forEach(privilege => {
+        grants.push({
+          role: role.role_id,
+          attributes: privilege.attributes,
+          resource: privilege.privilege.resource,
+          action: privilege.privilege.action
+        })
+      })
+    })
 
-    extensions.forEach(({ base_role_id, extended_role_id }) => ac.extendRole(extended_role_id, base_role_id))
+    let ac = new AccessControl(grants)
+
+    roles.forEach(role => {
+      role.extends.forEach(extendedRole => {
+        ac.extendRole(role.role_id, extendedRole.role_id)
+      })
+    })
 
     this.ac = ac
-  }
-
-  loadRolePrivileges () {
-    return knex
-      .select(['core_role_privileges.role_id', 'core_role_privileges.attributes', 'core_privileges.resource', 'core_privileges.action'])
-      .from('core_role_privileges')
-      .leftJoin('core_privileges', 'core_role_privileges.privilege_id', 'core_privileges.privilege_id')
-  }
-
-  loadRoleExtensions () {
-    return knex
-      .select(['extended_role_id', 'base_role_id'])
-      .from('core_role_extend')
   }
 }

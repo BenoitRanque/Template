@@ -5,6 +5,7 @@ exports.up = async function(knex, Promise) {
     table.text('module_id').notNullable()
     table.text('resource').notNullable()
     table.text('action').notNullable()
+    table.specificType('attributes', 'TEXT[]')
     table.text('privilege_name').notNullable()
     table.text('description')
 

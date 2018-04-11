@@ -27,6 +27,18 @@ module.exports = class Role extends BaseModel {
           from: 'core_roles.role_id',
           to: 'core_role_privileges.role_id'
         }
+      },
+      'extends': {
+        relation: ManyToManyRelation,
+        modelClass: require('./Role'),
+        join: {
+          from: 'core_roles.role_id',
+          through: {
+            from: 'core_role_extend.extended_role_id',
+            to: 'core_role_extend.base_role_id'
+          },
+          to: 'core_roles.role_id'
+        }
       }
     }
   }

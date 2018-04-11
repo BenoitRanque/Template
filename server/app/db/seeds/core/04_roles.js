@@ -9,16 +9,11 @@ exports.seed = async function(knex, Promise) {
     { role_name: 'user', description: ''}
   ], 'role_id') // return role_id
 
-  let privileges = await knex('core_privileges').where({ resource: 'core_User' }).select()
+  let privileges = await knex('core_privileges').select()
 
   rolePrivileges = privileges.map(({ action, privilege_id }) => {
     switch (action) {
       case 'read:own':
-        return {
-          privilege_id,
-          role_id: userRoleId,
-          attributes: ['*', '!password']
-        }
       case 'create:own':
       case 'update:own':
       case 'delete:own':

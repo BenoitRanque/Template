@@ -2,20 +2,10 @@ const BaseModel = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = BaseModel
 
 module.exports = class Privilege extends BaseModel {
-  static get tableName() {
-    return 'core_privileges'
-  }
-  static get idColumn() {
-    return 'privilege_id'
-  }
-
-  static get name() {
-    return 'CorePrivilege'
-  }
-
-  static get resource() {
-    return this.name
-  }
+  static get tableName() { return 'core_privileges' }
+  static get idColumn() { return 'privilege_id' }
+  static get name() { return 'CorePrivilege' }
+  static get resource() { return this.name }
 
   static get jsonSchema () {
     return {
@@ -37,13 +27,13 @@ module.exports = class Privilege extends BaseModel {
           type: 'string'
         },
         resource: {
-          description: 'Optional description',
+          description: 'Resource to be accessed using this privilege',
           type: 'string'
         },
         action: {
           type: 'string',
           name: 'CorePrivilegeAction',
-          description: 'possible action',
+          description: 'Action to be performed on resource using this privilege',
           enum: [
             'read:any',
             'create:any',
@@ -96,19 +86,24 @@ module.exports = class Privilege extends BaseModel {
               description: 'Delete Resource with own ownership'
             }
           ]
-        }
+        },
+        attributes: {
+          type: 'array',
+          items: { type: 'string' }
+        },
+        module_id: { type: 'string' }
       }
     }
   }
 
   static get relationMappings() {
     return {
-      attributes: {
-        relation: HasManyRelation,
-        modelClass: require('./PrivilegeAttribute'),
+      module: {
+        relation: BelongsToOneRelation,
+        modelClass: require('./Module'),
         join: {
-          from: 'core_privileges.privilege_id',
-          to: 'core_privilege_attributes.privilege_id'
+          from: 'core_privileges.module_id',
+          to: 'core_modules.module_id'
         }
       }
     }

@@ -3,32 +3,23 @@ exports.seed = async function(knex, Promise) {
   // Deletes ALL existing entries
   await knex('core_privileges').where({ resource: 'core_User' }).del()
 
-  let privileges = await knex('core_privileges').insert([
-    { privilege_name: 'Read any user', description: '', resource: 'core_User', action: 'read:any', module_id: 'core' },
-    { privilege_name: 'Create any user', description: '', resource: 'core_User', action: 'create:any', module_id: 'core' },
-    { privilege_name: 'Update any user', description: '', resource: 'core_User', action: 'update:any', module_id: 'core' },
-    { privilege_name: 'Delete any user', description: '', resource: 'core_User', action: 'delete:any', module_id: 'core' },
-    { privilege_name: 'Read own user', description: '', resource: 'core_User', action: 'read:own', module_id: 'core' },
-    { privilege_name: 'Create own user', description: '', resource: 'core_User', action: 'create:own', module_id: 'core' },
-    { privilege_name: 'Update own user', description: '', resource: 'core_User', action: 'update:own', module_id: 'core' },
-    { privilege_name: 'Delete own user', description: '', resource: 'core_User', action: 'delete:own', module_id: 'core' }
-  ], 'privilege_id') // return privilege_id
+  let attributes = [
+    'username',
+    'password',
+    'displayname',
+    'description',
+    'group',
+    'role'
+  ]
 
-  // insert coresponding attributes
-  let attributes = []
-  privileges.forEach(privilege_id => {
-    attributes = attributes.concat([
-        'username',
-        'password',
-        'displayname',
-        'description',
-        'group',
-        'role'
-      ].map(attribute => {
-        return { privilege_id, attribute}
-      }))
-  })
-
-  await knex('core_privilege_attributes').insert(attributes)
-
+  await knex('core_privileges').insert([
+    { privilege_name: 'Read any user', description: '', resource: 'CoreUser', action: 'read:any', attributes, module_id: 'core' },
+    { privilege_name: 'Create any user', description: '', resource: 'CoreUser', action: 'create:any', attributes, module_id: 'core' },
+    { privilege_name: 'Update any user', description: '', resource: 'CoreUser', action: 'update:any', attributes, module_id: 'core' },
+    { privilege_name: 'Delete any user', description: '', resource: 'CoreUser', action: 'delete:any', attributes, module_id: 'core' },
+    { privilege_name: 'Read own user', description: '', resource: 'CoreUser', action: 'read:own', attributes, module_id: 'core' },
+    { privilege_name: 'Create own user', description: '', resource: 'CoreUser', action: 'create:own', attributes, module_id: 'core' },
+    { privilege_name: 'Update own user', description: '', resource: 'CoreUser', action: 'update:own', attributes, module_id: 'core' },
+    { privilege_name: 'Delete own user', description: '', resource: 'CoreUser', action: 'delete:own', attributes, module_id: 'core' }
+  ])
 }
