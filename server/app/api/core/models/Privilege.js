@@ -115,4 +115,17 @@ module.exports = class Privilege extends BaseModel {
       'ReadAny': query => query.where({ 'action': 'read:any' })
     }
   }
+
+  static get filters () {
+    return {
+      name: {
+        type: 'string',
+        method: (query, value) => query.where({ 'name': value })
+      },
+      id: {
+        type: 'string',
+        method: (query, value) => query.where({ 'id': value })
+      }
+    }
+  }
 }

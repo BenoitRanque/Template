@@ -6,13 +6,17 @@ const utils = require('@tools/utils')
 const { Model: { HasManyRelation, ManyToManyRelation } } = require('objection')
 const Resolver = require('@tools/resolver')
 
+function getTypeName(name, options) {
+  return `${name}${ options.input ? 'Input' : options.filter ? 'Filter' : '' }`
+}
+
 function modelToGraphQLTypeConfig (model, options) {
 
   // set default values
-  options = { ...{ isInputType: false, isFilterType: false }, ...options }
+  options = { ...{ input: false, filter: false, relations: true }, ...options }
 
   return {
-    name: `${options.name || model.name}${ options.isInputType ? 'Input' : options.isFilterType ? 'Filter' : '' }`,
+    name: getTypeName(options.name || model.name, options),
     description: model.jsonSchema && model.jsonSchema.description,
     fields: () => {
       let fields = {
