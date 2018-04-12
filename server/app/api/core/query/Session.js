@@ -7,7 +7,7 @@ module.exports = {
     resolve: new Resolver({
       authorize: false,
       model: User ,
-      method: (model, { context }) => context.session.user
+      method: ({ model, context }) => context.session.user
     })
   }
 }

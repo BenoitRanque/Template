@@ -24,7 +24,7 @@ module.exports = {
     resolve: new Resolver({
       authenticate: false,
       model: User,
-      method: async (model, { info, args, context }) => {
+      method: async ({ model, info, args, context }) => {
         let
           { username, password } = args.input,
           { session } = context
@@ -48,7 +48,7 @@ module.exports = {
     resolve: new Resolver({
       authorize: false,
       model: User,
-      method: (model, { context }) => {
+      method: ({ model, context }) => {
         let user = context.session.user
         context.session.destroy()
         return user

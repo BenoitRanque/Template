@@ -18,13 +18,13 @@ module.exports = {
           resolve: new Resolver({
             model: User,
             action: 'create:any',
-            method: (model, { args }) => {
+            method: ({ model, args }) => {
               let user = new model(args.input)
               console.log(user)
               return user
             }
           })
-        }        
+        }
       })
     }),
     resolve: () => ({})

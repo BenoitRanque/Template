@@ -18,6 +18,13 @@ module.exports = class BaseModel extends Model {
     return this.GraphQLType
   }
 
+  static getGraphQLFilterType () {
+    if (this.GraphQLFilterType === undefined) {
+      this.GraphQLFilterType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ isFilterType: true }))
+    }
+    return this.GraphQLFilterType
+  }
+
   static getGraphQLInputType () {
     if (this.GraphQLInputType === undefined) {
       this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ isInputType: true }))

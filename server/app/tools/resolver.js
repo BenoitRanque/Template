@@ -92,7 +92,7 @@ module.exports = class BaseResolver {
 
       if (value === undefined) {
         if (this.config.method !== undefined) {
-          value = await this.config.method(this.config.model, { parent, args, context, info })
+          value = await this.config.method({ model: this.config.model, parent, args, context, info })
         }
         else {
           return null
