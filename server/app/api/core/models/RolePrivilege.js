@@ -44,4 +44,9 @@ module.exports = class RolePrivilege extends BaseModel {
       }
     }
   }
+  static get namedFilters() {
+    return {
+      'ReadAny': query => query.where('action', 'read:own')
+    }
+  }
 }

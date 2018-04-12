@@ -109,4 +109,10 @@ module.exports = class Privilege extends BaseModel {
       }
     }
   }
+
+  static get namedFilters() {
+    return {
+      'ReadAny': query => query.where({ 'action': 'read:any' })
+    }
+  }
 }
