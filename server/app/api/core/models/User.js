@@ -43,4 +43,9 @@ module.exports = class User extends BaseModel {
       }
     }
   }
+  static get namedFilters() {
+    return {
+      // todo
+    }
+  }
 }
