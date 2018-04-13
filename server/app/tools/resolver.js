@@ -128,4 +128,28 @@ module.exports = class BaseResolver {
     }
     return query
   }
+
+  static query(model, single) {
+    let queryMethod
+    if (single) {
+      queryMethod = ({ model, info, args }) => this.eager(model, this.filter(model, model.query(), args && args.filter), info).first()
+    }
+    else {
+      queryMethod = ({ model, info, args }) => this.eager(model, this.filter(model, model.query(), args && args.filter), info)
+    }
+    return {
+      type: model.getGraphQLType(),
+      args: {
+        filter: {
+          description: 'Filter the results',
+          type: model.getGraphQLFilterType()
+        }
+      },
+      resolve: new Resolver({
+        action: 'read:any',
+        model: model,
+        method: queryMethod
+      })
+    }
+  }
 }

@@ -21,5 +21,7 @@ module.exports = {
       model: Privilege,
       method: ({ model, args }) => model.query().where({ privilege_id: args.id })
     })
-  }
+  },
+  privileges: Resolver.query(Privilege),
+  privilege: Resolver.query(Privilege, true)
 }

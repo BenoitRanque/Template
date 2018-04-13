@@ -13,36 +13,62 @@ function getTypeName(name, options) {
 function modelToGraphQLTypeConfig (model, options) {
 
   // set default values
-  options = { ...{ input: false, filter: false, relations: true, suffix: '' }, ...options }
+  // mode: query, input, filter
+  options = { ...{ mode: 'query', suffix: '', relations: true, fields: {} }, ...options }
 
+  let fields = {}
+
+
+  
+  let config = {
+    name: getTypeName(options.name || model.name, options),
+    description: model.jsonSchema && model.jsonSchema.description,
+    fields: () => {
+
+    }
+  }
   return {
     name: getTypeName(options.name || model.name, options),
     description: model.jsonSchema && model.jsonSchema.description,
     fields: () => {
-      let fields = {
-        ...jsonSchemaToGraphQLFields(model.jsonSchema, options)
+      let fields = options.mode === 'filter' 
+      ?
+      filtersToGraphQLFields(model.filters, options)
+      : {
+        ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
+        ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
       }
-      if (!options.isFilterType) fields = {
-        ...fields,
-        ...relationMappingsToGraphQLFields(model.relationMappings, options)
+      let fields
+      if (options.mode === 'filter' ) {
+        fields = filtersToGraphQLFields(model.filters, options)
       }
-      if (model.GraphQLFields) {
-        Object.keys(model.GraphQLFields).forEach(field => {
-          Object.keys(model.GraphQLFields[field]).forEach(prop => {
-            if (prop !== 'resolve' && !options.isInputType) fields[field][prop] = model.GraphQLFields[field][prop]
-          })
-        })
+      else {
+        fields = {
+          ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
+          ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
+        }
       }
-      if (options.fields) {
-        Object.keys(options.fields).forEach(field => {
-          Object.keys(options.fields[field]).forEach(prop => {
-            if (prop !== 'resolve' && !options.isInputType) fields[field][prop] = options.fields[field][prop]
-          })
-        })
-      }
+      fields = overrideFields(fields, model.GraphQLFields, options)
+      fields = overrideFields(fields, options.fields, options)
       return fields
     }
   }
+}
+
+function overrideFields(fields, overrides, options) {
+  if (!overrides) return fields
+  Object.keys(overrides).forEach(field => {
+    Object.keys(overrides[field]).forEach(prop => {
+      if (prop !== 'resolve' || options.mode === 'query') fields[field][prop] = overrides[field][prop]
+    })
+  })
+  return fields
+}
+
+function filtersToGraphQLFields(filters, options) {
+  if (!filters) return {}
+
+  // todo: return object with the fields formated as graphql fields
 }
 
 function relationMappingsToGraphQLFields(relationMappings, options) {

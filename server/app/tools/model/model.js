@@ -13,21 +13,21 @@ module.exports = class BaseModel extends Model {
 
   static getGraphQLType () {
     if (this.GraphQLType === undefined) {
-      this.GraphQLType = new GraphQLObjectType(this.getGraphQLTypeConfig({}))
+      this.GraphQLType = new GraphQLObjectType(this.getGraphQLTypeConfig({ mode: 'query' }))
     }
     return this.GraphQLType
   }
 
   static getGraphQLFilterType () {
     if (this.GraphQLFilterType === undefined) {
-      this.GraphQLFilterType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ input: true, filter: true, relations: false, suffix: 'Filter' }))
+      this.GraphQLFilterType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ mode: 'filter', suffix: 'Filter' }))
     }
     return this.GraphQLFilterType
   }
 
   static getGraphQLInputType () {
     if (this.GraphQLInputType === undefined) {
-      this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ input: true , suffix: 'Input' }))
+      this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ mode: 'input' , suffix: 'Input' }))
     }
     return this.GraphQLInputType
   }
