@@ -68,20 +68,25 @@ module.exports = class BaseResolver {
    * @param {string} resource - Resource that will be accessed for this request and on which the action will be performed
    */
   constructor (config) {
-    let { action, authenticate, authorize, field, method, model, resource } = config
+    // bracket scope
+    {
+      let { action, authenticate, authorize, field, method, model, resource } = config
 
-    if (authenticate === undefined) authenticate = true
-    if (authorize === undefined) authorize = authenticate
-    if (model && resource === undefined) resource = model.resource
-    if (action === undefined) action = 'read:any'
-
-    this.config = { action, authenticate, authorize, field, method, model, resource }
+      if (model === undefined) throw new Error('Model is a required argument of the resolver constructor')
+      if (authenticate === undefined) authenticate = true
+      if (authorize === undefined) authorize = authenticate
+      if (model && resource === undefined) resource = model.resource
+      if (action === undefined) action = 'read:any'
+      if (method === undefined) method = ({ query })  => query
+  
+      this.config = { action, authenticate, authorize, field, method, model, resource }
+    }
 
     return async (parent, args, context, info) => {
       let
         { ac, session } = context,
         permission = null,
-        value = parent[field]
+        value = null
 
       if (this.config.authorize) {
         permission = await ac.authorize(session, this.config.resource,  this.config.action)
@@ -90,15 +95,13 @@ module.exports = class BaseResolver {
         await ac.authenticate(session)
       }
 
-      if (value === undefined) {
-        if (this.config.method !== undefined) {
-          value = await this.config.method({ model: this.config.model, parent, args, context, info })
-        }
-        else {
-          return null
-        }
+      if (parent[field] !== undefined) {
+        value = parent[field]
       }
-     
+      else {
+        value = await this.config.method({ model: this.config.model, parent, args, context, info })
+      }
+
       if (permission !== null) {
         if (permission.granted) {
           value = permission.filter(value)
@@ -110,5 +113,19 @@ module.exports = class BaseResolver {
 
       return value
     }
+  }
+  static eager (model, query, info) {
+    let { expression, filters } = buildEager(info.fieldNodes[0], model, info)
+    return query.eager(expression, filters)
+  }
+  static filter (model, query, filter) {
+    if (filter) {
+      Object.keys(filter).forEach(filterName => {
+        if (model.filters[filterName] === undefined || model.filters[filterName].filter === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
+
+        query = model.filters[filterName](query, filter[filterName].filter)
+      })
+    }
+    return query
   }
 }

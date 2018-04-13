@@ -20,21 +20,40 @@ module.exports = class BaseModel extends Model {
 
   static getGraphQLFilterType () {
     if (this.GraphQLFilterType === undefined) {
-      this.GraphQLFilterType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ isFilterType: true }))
+      this.GraphQLFilterType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ input: true, filter: true, relations: false, suffix: 'Filter' }))
     }
     return this.GraphQLFilterType
   }
 
   static getGraphQLInputType () {
     if (this.GraphQLInputType === undefined) {
-      this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ isInputType: true }))
+      this.GraphQLInputType = new GraphQLInputObjectType(this.getGraphQLTypeConfig({ input: true , suffix: 'Input' }))
     }
     return this.GraphQLInputType
   }
 
-  static getEager(info) {
-    let { expression, filters } = buildEager(info.fieldNodes[0], this, info)
-    return [ expression, filters ]
+  static queryResolver({ single }) {
+    let queryMethod
+    if (single) {
+      queryMethod = ({ model, info, args }) => Resolver.eager(model, Resolver.filter(model, model.query(), args && args.filter), info).first()
+    }
+    else {
+      queryMethod = ({ model, info, args }) => Resolver.eager(model, Resolver.filter(model, model.query(), args && args.filter), info)
+    }
+    return {
+      type: this.getGraphQLType(),
+      args: {
+        filter: {
+          description: 'Filter the results',
+          type: this.getGraphQLFilterType()
+        }
+      },
+      resolve: new Resolver({
+        action: 'read:any',
+        model: this,
+        method: queryMethod
+      })
+    }
   }
 }
 

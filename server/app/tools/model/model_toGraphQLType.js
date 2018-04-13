@@ -7,13 +7,13 @@ const { Model: { HasManyRelation, ManyToManyRelation } } = require('objection')
 const Resolver = require('@tools/resolver')
 
 function getTypeName(name, options) {
-  return `${name}${ options.input ? 'Input' : options.filter ? 'Filter' : '' }`
+  return `${name}${options.suffix}`
 }
 
 function modelToGraphQLTypeConfig (model, options) {
 
   // set default values
-  options = { ...{ input: false, filter: false, relations: true }, ...options }
+  options = { ...{ input: false, filter: false, relations: true, suffix: '' }, ...options }
 
   return {
     name: getTypeName(options.name || model.name, options),
@@ -79,7 +79,7 @@ function jsonSchemaToGraphQLFields(jsonSchema, options) {
     Object.keys(jsonSchema.properties).forEach(propName => {
       fields[propName] = toGraphQLField(jsonSchema.properties[propName], propName, options)
     })
-    if (jsonSchema.required && options.isInputType) {
+    if (jsonSchema.required && options.input) {
       jsonSchema.required.forEach(requiredProp => {
         if (!fields[requiredProp]) throw new Error (`Required Property ${propName} not defined in jsonSchema. Found in ${jsonSchema.name} ${jsonSchema.description}`)
         fields[requiredProp].type = new GraphQLNonNull(fields[requiredProp].type)
@@ -138,7 +138,7 @@ function typeToGraphQLField(type, jsonSchema, propName, options) {
 function enumToGraphQLField(jsonSchema, propName, options) {
   return {
     type: new GraphQLEnumType({
-      name: `${jsonSchema.name}${options.isInputType ? 'Input' : options.isFilterType ? 'Filter' : '' }`,
+      name: `${jsonSchema.name}${options.suffix}`,
       values: jsonSchema.items.reduce((values, enumValue) => {
         values[enumValue.name] = enumValue
         return values
@@ -150,7 +150,7 @@ function enumToGraphQLField(jsonSchema, propName, options) {
 function objectToGraphQLField(jsonSchema, propName, options) {
 
   let typeConfig = {
-    name: `${jsonSchema.name || propName }${ options.isInputType ? 'Input' : options.isFilterType ? 'Filter' : '' }`,
+    name: `${jsonSchema.name || propName }${ options.suffix }`,
     description: jsonSchema.description,
     fields() {
       const fields = {};
@@ -159,7 +159,7 @@ function objectToGraphQLField(jsonSchema, propName, options) {
         Object.keys(jsonSchema.properties).forEach(curPropName => {
           fields[curPropName] = toGraphQLField(jsonSchema.properties[curPropName], curPropName, options)
         })
-        if (jsonSchema.required && options.isInputType) {
+        if (jsonSchema.required && options.input) {
           jsonSchema.required.forEach(requiredProp => {
             if (!fields[requiredProp]) throw new Error (`Required Property ${propName} not defined in jsonSchema. Found in ${jsonSchema.name} ${jsonSchema.description}`)
             fields[requiredProp].type = new GraphQLNonNull(fields[requiredProp].type)
@@ -170,7 +170,7 @@ function objectToGraphQLField(jsonSchema, propName, options) {
       return fields
     }
   }
-  if (options.isInputType || options.isFilterType) {
+  if (options.input) {
     return new GraphQLInputObjectType(typeConfig)
   }
   return new GraphQLObjectType(typeConfig)

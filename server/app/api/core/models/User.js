@@ -43,9 +43,18 @@ module.exports = class User extends BaseModel {
       }
     }
   }
-  static get namedFilters() {
+  static get filters() {
     return {
-      // todo
+      id: {
+        type: 'string',
+        description: 'Filter by User ID',
+        filter: (query, value) => query.where({ 'user_id': value })
+      },
+      username: {
+        type: 'string',
+        description: 'Filter by Username',
+        filter: (query, value) => query.where({ 'username': value })
+      }
     }
   }
 }
