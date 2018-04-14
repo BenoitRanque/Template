@@ -65,10 +65,16 @@ function overrideFields(fields, overrides, options) {
   return fields
 }
 
-function filtersToGraphQLFields(filters, options) {
-  if (!filters) return {}
+function filtersToGraphQLFields(modelFilters, options) {
+  const filters = {}
 
-  // todo: return object with the fields formated as graphql fields
+  if (modelFilters) {
+    Object.keys(modelFilters).forEach(propName => {
+      fields[propName] = toGraphQLField(modelFilters[propName], propName, options)
+    })
+  }
+  
+  return filters
 }
 
 function relationMappingsToGraphQLFields(relationMappings, options) {
