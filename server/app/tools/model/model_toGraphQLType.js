@@ -6,54 +6,76 @@ const utils = require('@tools/utils')
 const { Model: { HasManyRelation, ManyToManyRelation } } = require('objection')
 const Resolver = require('@tools/resolver')
 
-function getTypeName(name, options) {
-  return `${name}${options.suffix}`
+function modelToGraphQLFilterType (model, options) {
+  options = { input: true, relations: false, ...options }
+  if (!model.filters || !Object.keys(model.filters).length) throw new Error(`No filter specified for model ${model.name}`)
+  return new GraphQLInputObjectType({
+    name: `${model.name}Filter`,
+    fields: () => Object.keys(model.filters).reduce((filters, filterName) => filters[filterName] = toGraphQLField(model.filters[filterName], filterName, options), {})
+  })
 }
 
-function modelToGraphQLTypeConfig (model, options) {
+function modelToGraphQLInputType (model, options) {
+  options = { input: true, relations: false, ...options }
+  return new GraphQLInputObjectType({
+    name: `${model.name}Input`,
+    fields: () => modelToGraphQLFields(model, options)
+  })
+}
 
-  // set default values
-  // mode: query, input, filter
-  options = { ...{ mode: 'query', suffix: '', relations: true, fields: {} }, ...options }
+function modelToGraphQLType (model, options) {
+  options = { input: false, relations: true, ...options }
+  return new GraphQLObjectType({
+    name: `${model.name}`,
+    fields: () => modelToGraphQLFields(model, options)
+  })
+}
 
-  let fields = {}
+function modelToGraphQLFields (model, options) {
+  let fields = {
+    ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
+    ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
+  }
+  fields = overrideFields(fields, model.GraphQLFields, options)
+  fields = overrideFields(fields, options.fields, options)
+  return fields
+}
 
+// function modelToGraphQLTypeConfig (model, options) {
 
+//   // set default values
+//   // mode: query, input, filter
+//   options = { ...{ mode: 'query', suffix: '', relations: true, fields: {} }, ...options }
+
+//   let fields = {}
   
-  let config = {
-    name: getTypeName(options.name || model.name, options),
-    description: model.jsonSchema && model.jsonSchema.description,
-    fields: () => {
+//   let config = {
+//     name: getTypeName(options.name || model.name, options),
+//     description: model.jsonSchema && model.jsonSchema.description,
+//     fields: () => {
 
-    }
-  }
-  return {
-    name: getTypeName(options.name || model.name, options),
-    description: model.jsonSchema && model.jsonSchema.description,
-    fields: () => {
-      let fields = options.mode === 'filter' 
-      ?
-      filtersToGraphQLFields(model.filters, options)
-      : {
-        ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
-        ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
-      }
-      let fields
-      if (options.mode === 'filter' ) {
-        fields = filtersToGraphQLFields(model.filters, options)
-      }
-      else {
-        fields = {
-          ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
-          ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
-        }
-      }
-      fields = overrideFields(fields, model.GraphQLFields, options)
-      fields = overrideFields(fields, options.fields, options)
-      return fields
-    }
-  }
-}
+//     }
+//   }
+//   return {
+//     name: getTypeName(options.name || model.name, options),
+//     description: model.jsonSchema && model.jsonSchema.description,
+//     fields: () => {
+//       let fields
+//       if (options.mode === 'filter' ) {
+//         fields = filtersToGraphQLFields(model.filters, options)
+//       }
+//       else {
+//         fields = {
+//           ...jsonSchemaToGraphQLFields(model.jsonSchema, options),
+//           ...(options.relations === true ? relationMappingsToGraphQLFields(model.relationMappings, options) : {}),
+//         }
+//       }
+//       fields = overrideFields(fields, model.GraphQLFields, options)
+//       fields = overrideFields(fields, options.fields, options)
+//       return fields
+//     }
+//   }
+// }
 
 function overrideFields(fields, overrides, options) {
   if (!overrides) return fields
@@ -65,42 +87,32 @@ function overrideFields(fields, overrides, options) {
   return fields
 }
 
-function filtersToGraphQLFields(modelFilters, options) {
-  const filters = {}
-
-  if (modelFilters) {
-    Object.keys(modelFilters).forEach(propName => {
-      fields[propName] = toGraphQLField(modelFilters[propName], propName, options)
-    })
-  }
-  
-  return filters
-}
-
 function relationMappingsToGraphQLFields(relationMappings, options) {
   const mappings = {}
 
-  if (!relationMappings || options.isInputType) return mappings
+  if (!relationMappings) return mappings
   
   Object.keys(relationMappings).forEach(relationName => {
     let relation = relationMappings[relationName]
-    let type = options.isInputType ? relation.modelClass.getGraphQLInputType() : relation.modelClass.getGraphQLType()
+    let type = options.input ? relation.modelClass.GraphQLInputType : relation.modelClass.GraphQLType
 
     if (relation.relation === HasManyRelation || relation.relation === ManyToManyRelation) {
       type = new GraphQLList(type)
     }
     mappings[relationName] = { type }
-    mappings[relationName].args = {
-      filter: {
-        type: relation.modelClass.getGraphQLFilterType()
+    if (relation.modelClass.filters) {
+      console.log(relation.modelClass.GraphQLFilterType)
+      mappings[relationName].args = {
+        filter: {
+          type: relation.modelClass.GraphQLFilterType
+        }
       }
     }
-    if (!options.isInputType) mappings[relationName].resolve = new Resolver({
+    if (!options.input) mappings[relationName].resolve = new Resolver({
       model: relation.modelClass,
       field: relationName
     })
   })
-
   return mappings
 }
 
@@ -251,5 +263,8 @@ function stripRejectedCharacters (name) {
 }
 
 module.exports = {
-  modelToGraphQLTypeConfig
+  modelToGraphQLFilterType,
+  modelToGraphQLInputType,
+  modelToGraphQLType,
+  modelToGraphQLFields
 }

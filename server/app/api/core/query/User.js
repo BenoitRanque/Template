@@ -4,7 +4,7 @@ const { User } = require('../models')
 
 module.exports = {
   users: {
-    type: new GraphQLList(User.getGraphQLType()),
+    type: new GraphQLList(User.GraphQLType),
     resolve: new Resolver({
       action: 'read:any',
       model: User,
@@ -12,7 +12,7 @@ module.exports = {
     })
   },
   user: {
-    type: User.getGraphQLType(),
+    type: User.GraphQLType,
     args: {
       id: { type: new GraphQLNonNull(GraphQLString), description: 'The user\'s unique id' }
     },

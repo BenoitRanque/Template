@@ -23,14 +23,14 @@ const graphql = graphqlExpress((req, res, next) => {
     rootValue: {
       // first arguemnt passed to
     },
-    formatError: error => {
-      if (error.originalError && error.originalError.error_message) {
-        error.original_message = error.originalError.error_message;
-      }
-      console.log(error)
+    // formatError: error => {
+    //   if (error.originalError && error.originalError.error_message) {
+    //     error.original_message = error.originalError.error_message;
+    //   }
+    //   console.log(error)
     
-      return error
-    },
+    //   return error
+    // },
 
     // a function applied to the parameters of every invocation of runQuery
     // formatParams?: Function,

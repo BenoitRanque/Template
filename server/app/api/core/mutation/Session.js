@@ -5,7 +5,7 @@ const { User } = require('../models')
 
 module.exports = {
   login: {
-    type: User.getGraphQLType(),
+    type: User.GraphQLType,
     args: {
       input: {
         type: new GraphQLInputObjectType({
@@ -44,7 +44,7 @@ module.exports = {
     })
   },
   logout: {
-    type: User.getGraphQLType(),
+    type: User.GraphQLType,
     resolve: new Resolver({
       authorize: false,
       model: User,

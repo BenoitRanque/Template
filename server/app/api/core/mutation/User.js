@@ -9,10 +9,10 @@ module.exports = {
       description: 'Core User Mutations',
       fields: () => ({
         create: {
-          type: User.getGraphQLType(),
+          type: User.GraphQLType,
           args: {
             input: {
-              type: User.getGraphQLInputType()
+              type: User.GraphQLInputType
             }
           },
           resolve: new Resolver({

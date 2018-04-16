@@ -310,7 +310,7 @@ class BaseModel extends Model {
       if (fields[field] !== undefined) throw new Error(`Relation ${field} already listed as field in model ${this.jsonSchema.name}`)
       
       fields[field] = {
-        type: this.relationMappings[field].modelClass.getGraphQLType(),
+        type: this.relationMappings[field].modelClass.GraphQLType.Query,
         resolver: 
       }
     })
