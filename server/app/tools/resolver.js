@@ -153,3 +153,72 @@ module.exports = class BaseResolver {
     }
   }
 }
+
+const cache = {}
+
+function cached(name, init) {
+  if (!cache[name]) cache[name] = init(name)
+  return cache[name]
+}
+
+
+function modelToGraphQLType (model) {}
+function modelToGraphQLFilterType (model) {
+  return cached(`${model.name}_filter`, (name) => new GraphQLInputObjectType({
+    name,
+    description: `Filter type for model ${mode.name}`,
+    fields: !model.filters ? undefined : () => Object.keys(model.filters).reduce((filters, filterName) =>  {
+      filters[filterName] = toGraphQLField(model.filters[filterName], filterName, { inputType: true })
+      return filters
+    }, {})
+  }))
+}
+function modelToGraphQLInputType (model) {}
+
+
+function toGraphQLField (schema, name, config) {
+  return {
+    type: toGraphQLType(schema, name, config),
+    description: schema.description,
+    resolve: config.inputType ? undefined : schema.resolve
+  }
+}
+
+function toGraphQLType (schema, name, config) {
+  if (schema.enum) return enumToGraphQLType(schema, name, config)
+  switch (schema.type) {
+    case 'object': return objectToGraphQLType(schema, name, config)
+    case 'array': return new GraphQLList(toGraphQLType(schema.items, name, config))
+    case 'string': return GraphQLString
+    case 'integer': return GraphQLInt
+    case 'number': return GraphQLFloat
+    case 'boolean': return GraphQLBoolean;
+    default: throw new Error(`Unable to convert type ${schema.type} on schema field ${name} to GraphQL type`)
+  }
+}
+
+function enumToGraphQLType(schema, name, config) {
+  return new GraphQLEnumType({
+    name: `${name}`,
+    values: schema.items.reduce((values, item) => {
+      values[item.name] = item
+      return values
+    }, {})
+  })
+}
+
+function objectToGraphQLType(schema, name, config) {
+  let typeConfig = {
+    name: `${name}`,
+    description: schema.description,
+    fields: () => Object.keys(schema.properties).reduce((fields, fieldName) => {
+      fields[fieldName] = toGraphQLField(schema.properties[fieldName], fieldName, config)
+      return fields
+    }, {})
+  }
+  if (config.input) return new GraphQLInputObjectType(typeConfig)
+  return new GraphQLObjectType(typeConfig)
+}
+
+
+
