@@ -114,10 +114,14 @@ module.exports = class BaseResolver {
       return value
     }
   }
+
   static eager (model, query, info) {
-    let { expression, filters } = buildEager(info.fieldNodes[0], model, info)
+    let { expression, filters } = require('./model/model_buildEager').buildEager(info.fieldNodes[0], model, info)
+    console.log(expression)
+    console.log(this.filters)
     return query.eager(expression, filters)
   }
+
   static filter (model, query, filter) {
     if (filter) {
       Object.keys(filter).forEach(filterName => {
@@ -138,14 +142,14 @@ module.exports = class BaseResolver {
       queryMethod = ({ model, info, args }) => this.eager(model, this.filter(model, model.query(), args && args.filter), info)
     }
     return {
-      type: model.getGraphQLType(),
-      args: {
+      type: model.GraphQLType,
+      args: model.filters ?  {
         filter: {
           description: 'Filter the results',
-          type: model.getGraphQLFilterType()
+          type: model.GraphQLFilterType
         }
-      },
-      resolve: new Resolver({
+      } : undefined,
+      resolve: new BaseResolver({
         action: 'read:any',
         model: model,
         method: queryMethod
