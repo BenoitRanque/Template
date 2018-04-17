@@ -11,9 +11,13 @@ module.exports = class User extends BaseModel {
       name: this.name,
       description: 'A User of the core module',
       type: 'object',
+      required: ['username'],
       properties: {
         'user_id': { type: 'string' },
-        'username': { type: 'string' },
+        'username': { 
+          description: 'a unique user identifier',
+          type: 'string'
+        },
         'password': { type: 'string' },
         'description': { type: 'string' }
       }

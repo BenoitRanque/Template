@@ -12,6 +12,7 @@ module.exports = {
           type: User.GraphQLType,
           args: {
             input: {
+              description: 'the new User',
               type: User.GraphQLInputType
             }
           },
