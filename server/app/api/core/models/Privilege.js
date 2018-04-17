@@ -44,48 +44,40 @@ module.exports = class Privilege extends BaseModel {
             'update:own',
             'delete:own'
           ],
-          items: [
-            {
-              name: 'ReadAny',
+          items: {
+            'ReadAny': {
               value: 'read:any',
               description: 'Read Resource with any ownership'
             },
-            {
-              name: 'CreateAny',
+            'CreateAny': {
               value: 'create:any',
               description: 'Create Resource with any ownership'
             },
-            {
-              name: 'UpdateAny',
+            'UpdateAny': {
               value: 'update:any',
               description: 'Update Resource with any ownership'
             },
-            {
-              name: 'DeleteAny',
+            'DeleteAny': {
               value: 'delete:any',
               description: 'Delete Resource with any ownership'
             },
-            {
-              name: 'ReadOwn',
+            'ReadOwn': {
               value: 'read:own',
               description: 'Read Resource with own ownership'
             },
-            {
-              name: 'CreateOwn',
+            'CreateOwn': {
               value: 'create:own',
               description: 'Create Resource with own ownership'
             },
-            {
-              name: 'UpdateOwn',
+            'UpdateOwn': {
               value: 'update:own',
               description: 'Update Resource with own ownership'
             },
-            {
-              name: 'DeleteOwn',
+            'DeleteOwn': {
               value: 'delete:own',
               description: 'Delete Resource with own ownership'
             }
-          ]
+          }
         },
         attributes: {
           type: 'array',
@@ -110,21 +102,15 @@ module.exports = class Privilege extends BaseModel {
     }
   }
 
-  static get namedFilters() {
-    return {
-      'ReadAny': query => query.where({ 'action': 'read:any' })
-    }
-  }
-
   static get filters () {
     return {
       name: {
         type: 'string',
-        method: (query, value) => query.where({ 'name': value })
+        method: (query, value) => query.where({ 'privilege_name': value })
       },
       id: {
         type: 'string',
-        method: (query, value) => query.where({ 'id': value })
+        method: (query, value) => query.where({ 'privilege_id': value })
       }
     }
   }

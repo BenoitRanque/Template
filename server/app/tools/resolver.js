@@ -95,8 +95,8 @@ module.exports = class BaseResolver {
         await ac.authenticate(session)
       }
 
-      if (parent[field] !== undefined) {
-        value = parent[field]
+      if (this.config.field && parent[this.config.field] !== undefined) {
+        value = parent[this.config.field]
       }
       else {
         value = await this.config.method({ model: this.config.model, parent, args, context, info })
@@ -110,37 +110,29 @@ module.exports = class BaseResolver {
           console.log('returning unfiltered values as permission has been denied')
         }
       }
-
       return value
     }
   }
 
   static eager (model, query, info) {
-    let { expression, filters } = require('./model/model_buildEager').buildEager(info.fieldNodes[0], model, info)
-    console.log(expression)
-    console.log(this.filters)
+    let { expression, filters } = buildEager(model, info)
     return query.eager(expression, filters)
   }
 
   static filter (model, query, filter) {
+    console.log(filter)
     if (filter) {
       Object.keys(filter).forEach(filterName => {
-        if (model.filters[filterName] === undefined || model.filters[filterName].filter === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
+        if (model.filters[filterName] === undefined || model.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
 
-        query = model.filters[filterName](query, filter[filterName].filter)
+        query = model.filters[filterName].method(query, filter[filterName])
       })
     }
     return query
   }
 
-  static query(model, single) {
-    let queryMethod
-    if (single) {
-      queryMethod = ({ model, info, args }) => this.eager(model, this.filter(model, model.query(), args && args.filter), info).first()
-    }
-    else {
-      queryMethod = ({ model, info, args }) => this.eager(model, this.filter(model, model.query(), args && args.filter), info)
-    }
+  static query(model, queryModifier) {
+    let method = ({ model, info, args }) => this.eager(model, this.filter(model, queryModifier ? queryModifier(model.query()) : model.query(), args && args.filter), info)
     return {
       type: model.GraphQLType,
       args: model.filters ?  {
@@ -152,77 +144,74 @@ module.exports = class BaseResolver {
       resolve: new BaseResolver({
         action: 'read:any',
         model: model,
-        method: queryMethod
+        method
       })
     }
   }
 }
 
-const cache = {}
+function buildEager(model, info) {
+  let FILTER_INDEX = 0
 
-function cached(name, init) {
-  if (!cache[name]) cache[name] = init(name)
-  return cache[name]
-}
+  return buildEagerSegment(model, info.fieldNodes[0], info)
 
+  function buildEagerSegment(model, astNode, astRoot) {
+    const filters = {};
+    const relations = model.getRelations();
+    let expression = '';
 
-function modelToGraphQLType (model) {}
-function modelToGraphQLFilterType (model) {
-  return cached(`${model.name}_filter`, (name) => new GraphQLInputObjectType({
-    name,
-    description: `Filter type for model ${mode.name}`,
-    fields: !model.filters ? undefined : () => Object.keys(model.filters).reduce((filters, filterName) =>  {
-      filters[filterName] = toGraphQLField(model.filters[filterName], filterName, { inputType: true })
-      return filters
-    }, {})
-  }))
-}
-function modelToGraphQLInputType (model) {}
+    astNode.selectionSet.selections.forEach(selectionNode => {
+      let relation = relations[selectionNode.name.value]
+      if (relation) {
+        expression = buildEagerRelationSegment(selectionNode, relation, expression, filters, astRoot)
+      }
+    })
 
+    if (expression.length) expression = `[${expression}]`
 
-function toGraphQLField (schema, name, config) {
-  return {
-    type: toGraphQLType(schema, name, config),
-    description: schema.description,
-    resolve: config.inputType ? undefined : schema.resolve
+    return {
+      expression,
+      filters
+    }
+  }
+
+  function buildEagerRelationSegment(selectionNode, relation, expression, filters, astRoot) {
+    let relExpr = selectionNode.name.value;
+
+    const filterNames = [];
+
+    if (selectionNode.arguments) {
+      let filterArgument = selectionNode.arguments.find(arg => arg.name.value === 'filter')
+      if (filterArgument) {
+        filterArgument.value.fields.forEach(filterField => {
+          if (relation.relatedModelClass.filters[filterName] === undefined || relation.relatedModelClass.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterField.name.value} in model ${relation.relatedModelClass.name}`)
+
+          let filterFunc = relation.relatedModelClass.filters[filterField.name.value].method
+          let filterName = `filter_${FILTER_INDEX}_${filterField.name.value}`
+          FILTER_INDEX += 1
+          filterNames.push(filterName)
+
+          filters[filterName] = query => filterFunc(query, filterField.value.value)
+        })
+      }
+    }
+
+    if (filterNames.length) {
+      relExpr += `(${filterNames.join(', ')})`;
+    }
+
+    const subExpr = buildEagerSegment(relation.relatedModelClass, selectionNode, astRoot);
+
+    if (subExpr.expression.length) {
+      relExpr += `.${subExpr.expression}`;
+      Object.assign(filters, subExpr.filters);
+    }
+
+    if (expression.length) {
+      expression += ', ';
+    }
+
+    return expression + relExpr;
   }
 }
-
-function toGraphQLType (schema, name, config) {
-  if (schema.enum) return enumToGraphQLType(schema, name, config)
-  switch (schema.type) {
-    case 'object': return objectToGraphQLType(schema, name, config)
-    case 'array': return new GraphQLList(toGraphQLType(schema.items, name, config))
-    case 'string': return GraphQLString
-    case 'integer': return GraphQLInt
-    case 'number': return GraphQLFloat
-    case 'boolean': return GraphQLBoolean;
-    default: throw new Error(`Unable to convert type ${schema.type} on schema field ${name} to GraphQL type`)
-  }
-}
-
-function enumToGraphQLType(schema, name, config) {
-  return new GraphQLEnumType({
-    name: `${name}`,
-    values: schema.items.reduce((values, item) => {
-      values[item.name] = item
-      return values
-    }, {})
-  })
-}
-
-function objectToGraphQLType(schema, name, config) {
-  let typeConfig = {
-    name: `${name}`,
-    description: schema.description,
-    fields: () => Object.keys(schema.properties).reduce((fields, fieldName) => {
-      fields[fieldName] = toGraphQLField(schema.properties[fieldName], fieldName, config)
-      return fields
-    }, {})
-  }
-  if (config.input) return new GraphQLInputObjectType(typeConfig)
-  return new GraphQLObjectType(typeConfig)
-}
-
-
 

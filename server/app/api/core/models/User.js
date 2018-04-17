@@ -36,25 +36,24 @@ module.exports = class User extends BaseModel {
       }
     }
   }
-  static get GraphQLFields() {
-    return {
-      password: {
-        resolve: () => null
-      }
-    }
-  }
   static get filters() {
     return {
       id: {
         type: 'string',
         description: 'Filter by User ID',
-        filter: (query, value) => query.where({ 'user_id': value })
+        method: (query, value) => query.where({ 'user_id': value })
       },
       username: {
         type: 'string',
         description: 'Filter by Username',
-        filter: (query, value) => query.where({ 'username': value })
+        method: (query, value) => query.where({ 'username': value })
       }
+    }
+  }
+
+  static get resolvers () {
+    return {
+      password: () => null
     }
   }
 }

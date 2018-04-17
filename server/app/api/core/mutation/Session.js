@@ -8,7 +8,7 @@ module.exports = {
     type: User.GraphQLType,
     args: {
       input: {
-        type: new GraphQLInputObjectType({
+        type: new GraphQLNonNull(new GraphQLInputObjectType({
           name: 'LoginInput',
           fields: () => ({
             username: {
@@ -18,7 +18,7 @@ module.exports = {
               type: new GraphQLNonNull(GraphQLString)
             }
           })
-        })
+        }))
       }
     },
     resolve: new Resolver({
@@ -38,8 +38,9 @@ module.exports = {
         delete user.password
 
         session.user = user
-
-        return model.query().where({ user_id: user.user_id }).eager(...model.getEager(info)).first()
+        
+        return Resolver.eager(model, model.query().where({ user_id: user.user_id, }), info).first()
+        // return model.query().where({ user_id: user.user_id }).eager(...model.getEager(info)).first()
       }
     })
   },
