@@ -32,3 +32,32 @@ module.exports = {
     resolve: () => ({})
   }
 }
+
+let graphSchema = {
+    'name': {
+      action: 'create:own'
+    }
+  }
+}
+
+
+let input = autorizeGraph(model, input, {
+  role: {
+    action: 'create:any',
+    validate: role => role.role_id, // role must have id
+    relations: {
+      privileges: {
+
+      }
+    }
+  }
+})
+
+
+function autorizeGraph(model, input,  graphSchema) {
+
+  // autorize and filter each prop before creation. Recursive
+
+  // note: must filter props using accessControl, but do not filter relations
+  
+}
