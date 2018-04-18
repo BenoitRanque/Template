@@ -163,7 +163,7 @@ function buildEager(model, info) {
     astNode.selectionSet.selections.forEach(selectionNode => {
       let relation = relations[selectionNode.name.value]
       if (relation) {
-        expression = buildEagerRelationSegment(selectionNode, relation, expression, filters, astRoot)
+        expression = buildEagerRelationSegment(selectionNode, relation.relatedModelClass, expression, filters, astRoot)
       }
     })
 
@@ -184,9 +184,9 @@ function buildEager(model, info) {
       let filterArgument = selectionNode.arguments.find(arg => arg.name.value === 'filter')
       if (filterArgument) {
         filterArgument.value.fields.forEach(filterField => {
-          if (relation.relatedModelClass.filters[filterName] === undefined || relation.relatedModelClass.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterField.name.value} in model ${relation.relatedModelClass.name}`)
+          if (relation.filters[filterName] === undefined || relation.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterField.name.value} in model ${relation.relatedModelClass.name}`)
 
-          let filterFunc = relation.relatedModelClass.filters[filterField.name.value].method
+          let filterFunc = relation.filters[filterField.name.value].method
           let filterName = `filter_${FILTER_INDEX}_${filterField.name.value}`
           FILTER_INDEX += 1
           filterNames.push(filterName)
@@ -200,7 +200,7 @@ function buildEager(model, info) {
       relExpr += `(${filterNames.join(', ')})`;
     }
 
-    const subExpr = buildEagerSegment(relation.relatedModelClass, selectionNode, astRoot);
+    const subExpr = buildEagerSegment(relation, selectionNode, astRoot);
 
     if (subExpr.expression.length) {
       relExpr += `.${subExpr.expression}`;
