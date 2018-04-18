@@ -28,7 +28,6 @@ function cached(name, init) {
   return cache[name]
 }
 
-
 function modelToGraphQLType (model) {
   let config = { inputType: false }
   let name = `${model.name}`
@@ -36,7 +35,7 @@ function modelToGraphQLType (model) {
     name,
     description: `Filter type for model ${model.name}`,
     fields: () => ({
-      ...schemaToGraphQLFields(model.jsonSchema.properties, model.resolvers, config),
+      ...schemaToGraphQLFields(model.jsonSchema.properties, model.jsonSchema.required, model.resolvers, config),
       ...relationsToGraphQLFields(model.relationMappings, model => model.GraphQLType, config)
     })
   })
@@ -49,7 +48,7 @@ function modelToGraphQLFilterType (model) {
   let initFunc = () => new GraphQLInputObjectType({
     name,
     description: `Filter type for model ${model.name}`,
-    fields: () => schemaToGraphQLFields(model.filters, null, config),
+    fields: () => schemaToGraphQLFields(model.filters, model.jsonSchema.required, null, config),
   })
   return cached(name, initFunc)
 }
@@ -61,7 +60,7 @@ function modelToGraphQLInputType (model) {
     name,
     description: `Filter type for model ${model.name}`,
     fields: () => ({
-      ...schemaToGraphQLFields(model.jsonSchema.properties, null, config),
+      ...schemaToGraphQLFields(model.jsonSchema.properties, model.jsonSchema.required, null, config),
       ...relationsToGraphQLFields(model.relationMappings, model => model.GraphQLInputType, config)
     })
   })
@@ -101,7 +100,7 @@ function relationsToGraphQLFields(relations, getModelType, config) {
   return relationObject
 }
 
-function schemaToGraphQLFields (schema, resolvers, config) {
+function schemaToGraphQLFields (schema, requiredFields, resolvers, config) {
   return Object.keys(schema).reduce((fields, fieldName) =>  {
     let field = {
       type: toGraphQLType(schema[fieldName], fieldName, config),
@@ -109,8 +108,7 @@ function schemaToGraphQLFields (schema, resolvers, config) {
     }
 
     // input type wil respecte required fields
-    if (config.inputType && schema.required) console.log(fieldName)
-    if (config.inputType && schema.required && schema.required.inlcudes(fieldName)) field.type = new GraphQLNonNull(field.type)
+    if (config.inputType && requiredFields && requiredFields.includes(fieldName)) field.type = new GraphQLNonNull(field.type)
 
 
     if (!config.inputType && resolvers) {
