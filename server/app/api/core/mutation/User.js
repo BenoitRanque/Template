@@ -21,7 +21,7 @@ module.exports = {
             action: 'create:any',
             method: ({ model, args }) => {
               console.log(args.input)
-              let user = new model(args.input)
+              let user = await model.query().insert(args.input)
               console.log(user)
               return user
             }
