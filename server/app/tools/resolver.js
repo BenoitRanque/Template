@@ -114,25 +114,26 @@ module.exports = class BaseResolver {
     }
   }
 
-  static eager (model, query, info) {
-    let { expression, filters } = buildEager(model, info)
-    return query.eager(expression, filters)
-  }
+  // static eager (model, query, info) {
+  //   let { expression, filters } = buildEager(model, info)
+  //   return query.eager(expression, filters)
+  // }
 
-  static filter (model, query, filter) {
-    console.log(filter)
-    if (filter) {
-      Object.keys(filter).forEach(filterName => {
-        if (model.filters[filterName] === undefined || model.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
+  // static filter (model, query, filter) {
+  //   console.log(filter)
+  //   if (filter) {
+  //     Object.keys(filter).forEach(filterName => {
+  //       if (model.filters[filterName] === undefined || model.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
 
-        query = model.filters[filterName].method(query, filter[filterName])
-      })
-    }
-    return query
-  }
+  //       query = model.filters[filterName].method(query, filter[filterName])
+  //     })
+  //   }
+  //   return query
+  // }
 
-  static query(model, queryModifier) {
-    let method = ({ model, info, args }) => this.eager(model, this.filter(model, queryModifier ? queryModifier(model.query()) : model.query(), args && args.filter), info)
+  static query(model, action, allowEager, queryModifier) {
+    let baseMethod = ({ model, info, args }) => modifier(model.query().allowEager(allowEager).autoEager(info).autoFilter(args && args.filter))
+    let method = queryModifier ? queryModifier(baseMethod) : baseMethod
     return {
       type: model.GraphQLType,
       args: model.filters ?  {
@@ -142,76 +143,10 @@ module.exports = class BaseResolver {
         }
       } : undefined,
       resolve: new BaseResolver({
-        action: 'read:any',
-        model: model,
+        action,
+        model,
         method
       })
     }
   }
 }
-
-function buildEager(model, info) {
-  let FILTER_INDEX = 0
-
-  return buildEagerSegment(model, info.fieldNodes[0], info)
-
-  function buildEagerSegment(model, astNode, astRoot) {
-    const filters = {};
-    const relations = model.getRelations();
-    let expression = '';
-
-    astNode.selectionSet.selections.forEach(selectionNode => {
-      let relation = relations[selectionNode.name.value]
-      if (relation) {
-        expression = buildEagerRelationSegment(selectionNode, relation.relatedModelClass, expression, filters, astRoot)
-      }
-    })
-
-    if (expression.length) expression = `[${expression}]`
-
-    return {
-      expression,
-      filters
-    }
-  }
-
-  function buildEagerRelationSegment(selectionNode, relation, expression, filters, astRoot) {
-    let relExpr = selectionNode.name.value;
-
-    const filterNames = [];
-
-    if (selectionNode.arguments) {
-      let filterArgument = selectionNode.arguments.find(arg => arg.name.value === 'filter')
-      if (filterArgument) {
-        filterArgument.value.fields.forEach(filterField => {
-          if (relation.filters[filterName] === undefined || relation.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterField.name.value} in model ${relation.relatedModelClass.name}`)
-
-          let filterFunc = relation.filters[filterField.name.value].method
-          let filterName = `filter_${FILTER_INDEX}_${filterField.name.value}`
-          FILTER_INDEX += 1
-          filterNames.push(filterName)
-
-          filters[filterName] = query => filterFunc(query, filterField.value.value)
-        })
-      }
-    }
-
-    if (filterNames.length) {
-      relExpr += `(${filterNames.join(', ')})`;
-    }
-
-    const subExpr = buildEagerSegment(relation, selectionNode, astRoot);
-
-    if (subExpr.expression.length) {
-      relExpr += `.${subExpr.expression}`;
-      Object.assign(filters, subExpr.filters);
-    }
-
-    if (expression.length) {
-      expression += ', ';
-    }
-
-    return expression + relExpr;
-  }
-}
-
