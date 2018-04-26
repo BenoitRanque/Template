@@ -21,7 +21,7 @@ module.exports = class AC {
 
     let permission = this.ac.permission({ role, resource, action })
 
-    // if (!permission.granted) throw new Error('403 Access Denied')
+    // if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     if (!permission.granted) console.log('Permission to ' + action + ' resource ' + resource  + ' denied')
 
     return permission
