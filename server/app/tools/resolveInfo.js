@@ -91,8 +91,8 @@ class resolverInfo {
   }
 
   getOwnership (model, data) {
-    if (!model.getOwnership) return false
-    return model.getOwnership(model, data, this.session)
+    if (!model.getOwnership || !this.session || !this.session.user || !this.session.user || !this.session.user.user_id) return false
+    return model.getOwnership(data, this.session.user.user_id, this.action)
   }
 
   getPermision (resource, action, ownership) {
@@ -102,6 +102,7 @@ class resolverInfo {
     
     if (!this.permissions[resource][actionOwnership]) {
       // create permision
+      this.permissions[resource][actionOwnership] = ac.authorize(this.session, resource, actionOwnership)
     }
 
     let permision = this.permissions[resource][actionOwnership]
