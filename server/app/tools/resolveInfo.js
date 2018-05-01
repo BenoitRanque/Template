@@ -36,6 +36,21 @@ class resolverInfo {
 
 }
 
+function filter (data, { model, permission, relations }) {
+  if (!data || !permission.granted) return null
+  if (Array.isArray(data)) return data.map(item => filter(item, { model, action, relations }))
+
+  data = permission.filter(data)
+
+  Object.keys(relations).forEach(relationName => {
+    if (!data[relationName]) return
+    
+  })
+}
+
+
+
+
 cachedPermissions = {
   'Resource': {
     'action:ownership': permission
@@ -54,3 +69,47 @@ function hasOwnerShip (node, model) {
 }
 // function to detemine what permision object create permission object
 // send to cache
+
+
+
+
+
+class resolverInfo {
+  constructor (info, model, { ac, session } , action) {
+    this.ac = ac
+    this.session = session
+
+    this.action = action
+    this.permissions = {}
+
+  }
+
+
+
+  getFiltered(model, data) {
+    return this.getPermision(model.resource, this.action, this.getOwnership(model, data)).filter(data)
+  }
+
+  getOwnership (model, data) {
+    if (!model.getOwnership || !this.session || !this.session.user || !this.session.user || !this.session.user.user_id) return false
+    return model.getOwnership(data, this.session.user.user_id, this.action)
+  }
+
+  getPermision (resource, action, ownership) {
+    let actionOwnership = `${action}:${ownership ? 'own' : 'any'}`
+
+    if (!this.permissions[resource]) this.permissions[resource] = {}
+    
+    if (!this.permissions[resource][actionOwnership]) {
+      // create permision
+      this.permissions[resource][actionOwnership] = ac.authorize(this.session, resource, actionOwnership)
+    }
+
+    let permision = this.permissions[resource][actionOwnership]
+
+    // if ownership is had and permission is not granted, default to any ownership
+    if (!permision.granted && ownership) return this.getPermision(resource, action, false)
+
+    return permision
+  }
+}
