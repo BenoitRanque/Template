@@ -5,10 +5,25 @@ module.exports = class BaseResolver {
       method, // the method tha will be unique per resolver
     } = config
 
-    this.config = { method, action }
+    this.config = { method }
     // return resolver function
 
     return async (parent, { filter, action, input }, { ac, session }, info) => {
+
+      
+      let
+        { ac, session } = context,
+        permission = null,
+        value = null
+
+      if (this.config.authorize) {
+        permission = await ac.authorize(session, this.config.resource,  this.config.action)
+      }
+      else if (this.config.authenticate) {
+        await ac.authenticate(session)
+      }
+
+
       this.config.method({
         // model
         // parent
@@ -17,7 +32,7 @@ module.exports = class BaseResolver {
         // filter input (recursive)
         eager: () => this.__eager(),
         input: () => this.__input(),
-        filter: query => query
+        filter: query => this.__filter(query, this.config.model, filter)
       })
     }
   }
@@ -28,6 +43,58 @@ module.exports = class BaseResolver {
 
   __input (data, info) {
     // return filtered input
+  }
+
+  __filter(query, filters) {
+    if (!filters) return query
+
+    Object.keys(filters).forEach(filterName => { this.config.model.filters[filterName](query, filters[filterName]) })
+
+    return query
+  }
+
+  recursiveFilter() {
+
+  }
+
+  async __filterOutput(ac, session, model, action, data) {
+
+    let permission = this.__permission(ac, session, model.resource, action, this.__ownership(model, action, data))
+    if (!permission.granted) return null
+    data = permission.filter(data)
+    
+    const handleRelations = item => {
+      let relations = model.getRelations()
+      Object.keys.forEach(relationName => {
+        let relation = relations[relationName]
+        if (relation) {
+          item[relationName] = this.__filterOutput(ac, session, relation.relatedModelClass, action, item[relationName])
+        }
+      })
+      return item      
+    }
+
+    if (Array.isArray(data)) {
+      data = data.map(handleRelations)
+    }
+    else {
+      data = handleRelations(data)
+    }
+  }
+
+  async __permission(ac, session, resource, action, ownership) {
+    let actionOwnership = `${action}:${ownership ? 'own' : 'any'}`
+
+    let permission = await ac.permission(session, resource, actionOwnership)
+
+    // if permission denied as owner, try any
+    if (!permission.granted && ownership) return await this.__permission(data, action, false)
+    
+    return permission
+  }
+
+  __ownership(model, action, data) {
+    return model.ownership ? model.ownership(data, action) : false
   }
 }
 

@@ -3,27 +3,33 @@ const knex = require('@db/knex')
 const Role = require('@api/core/models/Role')
 
 module.exports = class AC {
-  constructor () {
-    this.refresh()
+  async constructor () {
+    await this.refresh()
   }
 
-  async authenticate (session) {
+  authenticate (session) {
     if (!session.user) throw new Error('401 Authentication Required')
   }
 
-  async authorize (session, resource, action) {
+  authorize (session, resource, action) {
 
     if (!this.ac) await this.refresh()
 
     await this.authenticate(session)
 
-    let role = session.user.role.map(({ role_id }) => role_id)
-
-    let permission = this.ac.permission({ role, resource, action })
+    let permission = await this.permission(session, resource, action)
 
     // if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     if (!permission.granted) console.log('Permission to ' + action + ' resource ' + resource  + ' denied')
 
+    return permission
+  }
+
+  permission (session, resource, action) {
+    if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) this.refresh() // refresh every 10 minutes
+
+    let role = session.user.role.map(({ role_id }) => role_id)
+    let permission = this.ac.permission({ role, resource, action })
     return permission
   }
 
@@ -53,5 +59,6 @@ module.exports = class AC {
     })
 
     this.ac = ac
+    this.lastRefreshTime = Date.now()
   }
 }
