@@ -3,8 +3,8 @@ const knex = require('@db/knex')
 const Role = require('@api/core/models/Role')
 
 module.exports = class AC {
-  async constructor () {
-    await this.refresh()
+  constructor () {
+    this.refresh()
   }
 
   authenticate (session) {
@@ -13,11 +13,9 @@ module.exports = class AC {
 
   authorize (session, resource, action) {
 
-    if (!this.ac) await this.refresh()
+    this.authenticate(session)
 
-    await this.authenticate(session)
-
-    let permission = await this.permission(session, resource, action)
+    let permission = this.permission(session, resource, action)
 
     // if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     if (!permission.granted) console.log('Permission to ' + action + ' resource ' + resource  + ' denied')
