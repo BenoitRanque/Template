@@ -19,20 +19,24 @@ class CustomErrror {
   }
 }
 
-function resolve (method, params) {
+function resolve (model, method, params) {
   return async (req, res, next) => {
     try {
       // method is called with standarized options
       let config = {
         params = params(req, res, next),
-        data: req.body,
         ac,
         session,
         action: 'read',
         own: false,
         data
       }
-
+      let info = {
+        action: 'stuff',
+        own: true
+      }
+      // standarize paramsters
+      // still needs more thought
       let result = await method(data, config, tools, info)
 
       res.status(200).send(result)
@@ -45,9 +49,15 @@ function resolve (method, params) {
 }
 
 
-function action () {
+function action (info, data, config) {
    // take standarized params, return value, throw err
-
+  // info: query information, such as action, ownership, eager, graph
+  info = {
+    action: 'read',
+    own: true,
+    eager: (model, query) => query.eager(...buildEager(model))
+    graph: '' // desired graph upsert/insert authorization
+  }
 }
 
 
