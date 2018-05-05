@@ -1,152 +1,66 @@
-// const { trueType } = require('@app/services/utils')
-// const ACTIONS = ['read:any', 'create:any', 'update:any', 'delete:any', 'read:own', 'create:own', 'update:own', 'delete:own']
-
-// module.exports = class BaseResolver {
-//   constructor({ authenticate, authorize, action, resource, method, params, field }, defaultResource, methods) {
-//     if (authenticate === undefined) authenticate = true
-//     if (authorize === undefined) authorize = authenticate
-
-//     if (resource === undefined) resource = defaultResource
-    
-//     if (action === undefined && authorize) throw new Error('Resolver Action cannot be undefined if Authorization is required' + authenticate + authorize + action)
-//     if (action !== undefined && !ACTIONS.includes(action)) throw new Error(`Resolver Action must be one of ${ACTIONS}, got ${action}` )
-
-//     if (trueType(method) !== 'function') throw new Error(`Invalid value for Resolver Method: expected function, got ${method}`)
-
-//     if (params !== undefined && typeof params !== 'function') throw new Error(`Invalid value for resolver Params: expected function, got ${params}`)
-
-//     this.action = action
-//     this.authenticate = authenticate
-//     this.authorize = authorize
-//     this.field = field
-//     this.params = params
-//     if (resource) this.resource = resource
-
-//     return async (parent, args, context, info) => {
-//       let 
-//         permission = null,
-//         results = null,
-//         boundParams = null,
-//         { ac, session } = context
-
+module.exports = class Resolve {
+  constructor (method) {
+    return (req, res, next) => {
+      try {
+        let result 
+      } catch (error) {
         
-//       if (this.authorize) {
-//         permission = await ac.authorize(session, this.resource,  this.action)
-//       }
-//       else if (this.authenticate) {
-//         await ac.authenticate(session)
-//       }
-      
-//       if (this.field !== undefined && parent[this.field] !== undefined) {
-//         results = parent[this.field]
-//       }
-//       else {
-//         let boundParams = this.params === undefined ? [] : this.params(parent, args, context, info)
-//         if (trueType(boundParams) !== 'array') boundParams = [boundParams]
-        
-//         results = await this.method(this.model, ...boundParams)
-//       }
-
-//       if (permission !== null) results = permission.filter(results)
-
-//       return results
-//     }
-//   }
-// }
-
-
-
-module.exports = class BaseResolver {
-  /*
-   * @constructor
-   * @param {string} action - Action that will be performed. One of ['read:any', 'create:any', 'update:any', 'delete:any', 'read:own', 'create:own', 'update:own', 'delete:own']
-   * @param {boolean} authenticate - Whether authentication is required. Defaults to true
-   * @param {boolean} authorize - Whether authorization is required. Defaults to same as authenticate param
-   * @param {string} field - The field this resolver is for, if the data is already present there it will simply be returned after auth is checked
-   * @param {function} method - Will be executed to fetch the data, if the data is not already present on the parent
-   * @param {object} model - Objection.js model for this field
-   * @param {string} resource - Resource that will be accessed for this request and on which the action will be performed
-   */
-  constructor (config) {
-    // bracket scope
-    {
-      let { action, authenticate, authorize, field, method, model, resource } = config
-
-      if (model === undefined) throw new Error('Model is a required argument of the resolver constructor')
-      if (authenticate === undefined) authenticate = true
-      if (authorize === undefined) authorize = authenticate
-      if (model && resource === undefined) resource = model.resource
-      if (action === undefined) action = 'read:any'
-      if (method === undefined) method = ({ query })  => query
-  
-      this.config = { action, authenticate, authorize, field, method, model, resource }
-    }
-
-    return async (parent, args, context, info) => {
-      let
-        { ac, session } = context,
-        permission = null,
-        value = null
-
-      if (this.config.authorize) {
-        permission = await ac.authorize(session, this.config.resource,  this.config.action)
       }
-      else if (this.config.authenticate) {
-        await ac.authenticate(session)
-      }
-
-      if (this.config.field && parent[this.config.field] !== undefined) {
-        value = parent[this.config.field]
-      }
-      else {
-        value = await this.config.method({ model: this.config.model, parent, args, context, info })
-      }
-
-      if (permission !== null) {
-        if (permission.granted) {
-          value = permission.filter(value)
-        }
-        else {
-          console.log('returning unfiltered values as permission has been denied')
-        }
-      }
-      return value
-    }
-  }
-
-  // static eager (model, query, info) {
-  //   let { expression, filters } = buildEager(model, info)
-  //   return query.eager(expression, filters)
-  // }
-
-  // static filter (model, query, filter) {
-  //   console.log(filter)
-  //   if (filter) {
-  //     Object.keys(filter).forEach(filterName => {
-  //       if (model.filters[filterName] === undefined || model.filters[filterName].method === undefined ) throw new Error(`Could not find filter ${filterName} in model ${model.name}`)
-
-  //       query = model.filters[filterName].method(query, filter[filterName])
-  //     })
-  //   }
-  //   return query
-  // }
-
-  static query(model, action, allowEager, queryModifier) {
-    let baseMethod = ({ model, info, args }) => modifier(model.query().allowEager(allowEager).autoEager(info).autoFilter(args && args.filter))
-    let method = queryModifier ? queryModifier(baseMethod) : baseMethod
-    return {
-      type: model.GraphQLType,
-      args: model.filters ?  {
-        filter: {
-          description: 'Filter the results',
-          type: model.GraphQLFilterType
-        }
-      } : undefined,
-      resolve: new BaseResolver({
-        action,
-        model,
-        method
-      })
     }
   }
 }
+// idea:
+// create custom error Object
+// use to provide more customized errors
+class CustomErrror {
+  constructor(httpStatusCode, message) {
+    this.httpStatusCode = httpStatusCode
+    this.message = message
+  }
+}
+
+function resolve (model, method, params) {
+  return async (req, res, next) => {
+    try {
+      // method is called with standarized options
+      let config = {
+        params = params(req, res, next),
+        ac,
+        session,
+        action: 'read',
+        own: false,
+        data
+      }
+      let info = {
+        action: 'stuff',
+        own: true
+      }
+      // standarize paramsters
+      // still needs more thought
+      let result = await method(data, config, tools, info)
+
+      res.status(200).send(result)
+    } catch (error) {
+      // an error has been caught
+      return console.log(error)
+      res.status(500).end()
+    }
+  }
+}
+
+
+function action (info, data, config) {
+   // take standarized params, return value, throw err
+  // info: query information, such as action, ownership, eager, graph
+  info = {
+    action: 'read',
+    own: true,
+    eager: (model, query) => query.eager(...buildEager(model))
+    graph: '' // desired graph upsert/insert authorization
+  }
+}
+
+
+
+
+router.route('/core/session').all(resolve(require('./action')))
