@@ -28,7 +28,6 @@ class Resolver {
           ownership = req.query ? !!req.query.own : false,
           actionownership = `${action}:${ ownership ? 'own' : 'any' }`,
           resource = this.config.resource,
-          permit = resource => ac.permission(session, resource, actionownership)
 
         if (this.config.authorize) {
           permission = await ac.authorize(session, this.model.resource,  actionownership)
@@ -38,7 +37,7 @@ class Resolver {
         }
 
         let
-          graph = new QueryGraph(req.query ? req.query.graph : null, true).authorize(),
+          graph = new QueryGraph(this.model, req.query ? req.query.graph : null, true).authorize(resource => ac.permission(session, resource, action)),
           params = this.config.params ? this.config.params(req, res, next) : null,
           info = {
             permission,
@@ -67,7 +66,8 @@ class Resolver {
 }
 
 class QueryGraph {
-  constructor (graph, encoded) {
+  constructor (model, graph, encoded) {
+    this.model = model
     if (encoded) graph = this.decode(graph)
     this.graph = graph || []
   }
@@ -80,7 +80,7 @@ class QueryGraph {
     return JSON.parse(atob(decodeURI(this.graph)))
   }
 
-  authorize() {
+  authorize(permit) {
     // validate this graph as authorized
   }
 
