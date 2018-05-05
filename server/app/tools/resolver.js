@@ -1,10 +1,51 @@
+function encode (query) {
+  return encodeURI(btoa(query))
+}
+
+function decode (query) {
+  return atob(decodeURI(query))
+}
+
+
+
 module.exports = class Resolve {
-  constructor (method) {
+  constructor (model, method, params, config) {
+    // model: the model for the resolver instance
+    // method: the main method for this resolver
+    // params: returns additional params for resolver
+    // config: additional options (auth etc)
+    this.model = model
+    this.method = method
+    this.params = params
+    this.config = { authenticate: true, authorize: true, ...config }
+
     return (req, res, next) => {
+      let { ac, session, body } = req
+
+      let context = { ac, session}
+      let data = body
+
+      let info = {
+        action: 'read',
+        ownership: 'boolean',
+        graph: () => genEager(this.model, decode(req.query.graph)),
+        graph: {
+          eager
+          allow
+        }
+      }
+
       try {
-        let result 
-      } catch (error) {
+        let results = this.method(this.model, data, info, context)
         
+        results = filter(results)
+
+        res.status(200).json({ data: results })
+
+      }
+      catch (error) {
+        console.log(error)
+        res.status(500).end(error)
       }
     }
   }
@@ -49,7 +90,18 @@ function resolve (model, method, params) {
 }
 
 
-function action (info, data, config) {
+let { ac, session, body } = req
+
+let data = body.data
+let context = { ac, session, query: new QueryObject(decode(req.params.query)) }
+let info = {
+  action: String,
+  ownership: Boolean,
+  query: ['field', {filter: 1}]
+}
+
+
+function action (info, data, context) {
    // take standarized params, return value, throw err
   // info: query information, such as action, ownership, eager, graph
   info = {
@@ -60,7 +112,10 @@ function action (info, data, config) {
   }
 }
 
-
+queryParams = {
+  own: Boolean,
+  query: ['field', { filter: 1, otherFilter: 2 }, 'field', 'field2']
+}
 
 
 router.route('/core/session').all(resolve(require('./action')))
