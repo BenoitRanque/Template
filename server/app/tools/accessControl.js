@@ -1,8 +1,7 @@
 const AccessControl = require('accesscontrol')
-const knex = require('@db/knex')
 const Role = require('@api/core/models/Role')
 
-module.exports = class AC {
+class AC {
   constructor () {
     this.refresh()
   }
@@ -11,24 +10,28 @@ module.exports = class AC {
     if (!session.user) throw new Error('401 Authentication Required')
   }
 
-  authorize (session, resource, action) {
-
-    this.authenticate(session)
-
-    let permission = this.permission(session, resource, action)
-
+  authorize (session, resource, action, posession) {
+    
+    let permission = this.permission(session, resource, action, posession)  
     // if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     if (!permission.granted) console.log('Permission to ' + action + ' resource ' + resource  + ' denied')
-
+    
     return permission
   }
-
-  permission (session, resource, action) {
-    if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) this.refresh() // refresh every 10 minutes
+  
+  permission (session, resource, action, posession) {   
+    
+    this.authenticate(session)
 
     let role = session.user.role.map(({ role_id }) => role_id)
-    let permission = this.ac.permission({ role, resource, action })
+    let permission = this.ac.permission({ role, resource, action, posession: posession ? posession : 'any' })
     return permission
+  }
+  
+  async middleware (req, res, next) {
+    req.accessControl = this
+    if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) await this.refresh() // refresh every 10 minutes
+    next()
   }
 
   async refresh () {
@@ -60,3 +63,5 @@ module.exports = class AC {
     this.lastRefreshTime = Date.now()
   }
 }
+
+module.exports = new AC
