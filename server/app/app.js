@@ -4,7 +4,6 @@ const express = require('express')
 const app = express()
 
 app
-  .use(require('@tools/session'))
   .use(require('@api/v1'))
   // .use(require('@api/graphql'))
   .use('/', require('express').static('app/public'))
