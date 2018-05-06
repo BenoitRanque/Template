@@ -1,12 +1,10 @@
 const router = require('express').Router()
 const Resolver = require('@tools/resolver')
 
-const { User } = require(`../models/index`)
-const session = require('../resources/session')
+const { login, logout } = require('@resources/core/session')
 
-router.route('session')
-  .use(new Resolver(User, session, {
-    authenticate: false
-  }))
+
+routes.post('login', new Resolver(login))
+routes.delete('logout', new Resolver(logout))
 
 module.exports = router
