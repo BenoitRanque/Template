@@ -19,7 +19,11 @@
     "@db": "app/db",
     "@config": "app/config",
     "@api": "app/api",
+    "@routes": "app/api/routes",
+    "@models": "app/api/models",
+    "@resources": "app/api/resources",
     "@tools": "app/tools"
+
   },
   "author": "",
   "license": "ISC",

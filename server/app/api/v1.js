@@ -11,7 +11,7 @@ const modules = [
 ]
 
 modules.forEach(moduleName => {
-  router.use(require(`./${moduleName}/routes`))
+  router.use(require(`./routes/${moduleName}`))
 })
 
 module.exports = router
