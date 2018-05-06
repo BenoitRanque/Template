@@ -15,8 +15,10 @@ class BaseQueryBuilder extends QueryBuilder {
 
   applyFilters(filters) {
     /*
-     * example filter
+     * example filters
      * 
+     * first: (query, value) => query.limit(value),
+     * after: (query, value) => query.offset(value)
      * user_id: (query, user_id) => query.where({ user_id })
      * 
      */
