@@ -13,13 +13,20 @@ class AC {
   authorize (session, resource, action, posession) {
     
     let permission = this.permission(session, resource, action, posession)  
-    // if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
-    if (!permission.granted) console.log('Permission to ' + action + ' resource ' + resource  + ' denied')
+    if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     
     return permission
   }
   
   permission (session, resource, action, posession) {   
+    
+    // spoof of real function, for dev
+    console.log(`permission to access ${resource} to ${action}:${posession} spoofed. TURN OFF IN PRODUCTION`)
+    return {
+      granted: true,
+      filter: items => items,
+      attributes: ['*']
+    }
     
     this.authenticate(session)
 
