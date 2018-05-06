@@ -16,7 +16,7 @@ class Resolver {
         ...config
       }
     }
-    
+    // separate read requests from the rest.
     return async (req, res, next) => {
       try {
         let
@@ -155,109 +155,5 @@ function filterOutput (data, model, permit) {
     return data
   }
 }
-
-function filterInput () {
-
-}
-
-
-// idea:
-// create custom error Object
-// use to provide more customized errors
-class CustomErrror {
-  constructor(httpStatusCode, message) {
-    this.httpStatusCode = httpStatusCode
-    this.message = message
-  }
-}
-
-function resolve (model, method, params) {
-  return async (req, res, next) => {
-    try {
-      // method is called with standarized options
-      let config = {
-        params = params(req, res, next),
-        ac,
-        session,
-        action: 'read',
-        own: false,
-        data
-      }
-      let info = {
-        action: 'stuff',
-        own: true
-      }
-      // standarize paramsters
-      // still needs more thought
-      let result = await method(data, config, tools, info)
-
-      res.status(200).send(result)
-    } catch (error) {
-      // an error has been caught
-      return console.log(error)
-      res.status(500).end()
-    }
-  }
-}
-
-
-let { ac, session, body } = req
-
-let data = body.data
-let context = { ac, session, query: new QueryObject(decode(req.params.query)) }
-let info = {
-  action: String,
-  ownership: Boolean,
-  query: ['field', {filter: 1}]
-}
-
-
-function action (info, data, context) {
-   // take standarized params, return value, throw err
-  // info: query information, such as action, ownership, eager, graph
-  info = {
-    action: 'read',
-    own: true,
-    eager: (model, query) => query.eager(...buildEager(model))
-    graph: '' // desired graph upsert/insert authorization
-  }
-}
-
-queryParams = {
-  own: Boolean,
-  query: ['field', { filter: 1, otherFilter: 2 }, 'field', 'field2']
-}
-
-
-router.route('/core/session').all(resolve(require('./action')))
-
-
-
-
-[
-  'fieldname',
-  {
-    fist: 20,
-    after: 0,
-    owner_id: '1234567890'
-  },
-  'propname',
-  'propname',
-  [
-    'fieldname',
-    'propname',
-    'propname',
-    'propname'
-  ],
-  [
-    'fieldname',
-    {
-      filter: 1,
-      by: 2,
-      where: 3
-    },
-    'prop'
-  ]
-]
 
 module.exports = Resolver

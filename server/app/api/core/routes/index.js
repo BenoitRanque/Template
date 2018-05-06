@@ -1,16 +1,6 @@
 const router = require('express').Router()
 
 router.route('core')
+  .use(require('./session'))
 
 module.exports = router
-
-
-
-// example query
-`
-resource {
-  subresource (filter: value, last: value) {
-    subsurresoure
-  }
-}
-`
