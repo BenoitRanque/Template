@@ -20,7 +20,7 @@ module.exports = function buildEager(model, fields, owner) {
       let subFields = []
       let filters = []
 
-      if (owner) {
+      if (owner && model.queryFilters['own']) {
         filters.push(buildEagerFilter('own', owner, model))
       }
       
@@ -56,7 +56,9 @@ module.exports = function buildEager(model, fields, owner) {
   function buildEagerFilter (filterName, filterValue, model) {
     let filterKey = `f${FILTER_INDEX}_${model.name}_${filterName}_${filterValue}`
     let filterFunction = model.queryFilters[filterName]
+    if (!filterFunction) throw new Error(`could not find filter ${filterName} on model ${model.name}`)
     EAGERFILTERS[filterKey] = query => filterFunction(query, filterValue)
     FILTER_INDEX += 1
+    return filterKey
   }
 }

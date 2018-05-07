@@ -38,7 +38,9 @@ class AC {
   middleware () {
     return async (req, res, next) => {
       req.accessControl = this
-      if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) await this.refresh() // refresh every 10 minutes
+      if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) {
+        await this.refresh() // refresh every 10 minutes
+      }
       next()
     }
   }

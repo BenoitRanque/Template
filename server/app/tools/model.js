@@ -46,11 +46,9 @@ class BaseModel extends Model {
   static get QueryBuilder() {
     return BaseQueryBuilder
   }
-
 }
 
 module.exports = function (config) {
-
   const {
     tableName,
     idColumn,
@@ -58,11 +56,11 @@ module.exports = function (config) {
     description,
     filters,
     schema,
-    relations,
+    relations
   } = config
 
   // todo: validate model
-  
+
   return {
     [name]: class extends BaseModel {
       static get tableName() { return tableName }
@@ -77,9 +75,9 @@ module.exports = function (config) {
         }
       }
       static get relationMappings () {
-        return relations()
+        return relations ? relations() : {}
       }
-      static get queryFilters() { return filters }
+      static get queryFilters() { return { ...filters } }
     }
   }[name]
 }

@@ -1,28 +1,25 @@
-const BaseModel = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = BaseModel
+const Model = require('@tools/model')
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
 
-module.exports = class RolePrivilege extends BaseModel {
-  static get tableName() { return 'core_role_privileges' }
-  static get idColumn() { return ['role_id', 'privilege_id'] }
-  static get name() { return 'CoreRolePrivilege' }
-  static get resource() { return this.name }
-  static get jsonSchema () {
-    return {
-      name: this.name,
-      description: 'A Privielge assigned to a role',
-      type: 'object',
-      properties: {
-        'role_id': { type: 'string' },
-        'privilege_id': { type: 'string' },
-        'attributes': {
-          type: 'array',
-          items: { type: 'string' },
-          description: 'The privilege has been granted for these atributes. [*] means all, [!] denies access'
-        }
+module.exports = new Model({
+  tableName: 'core_role_privileges',
+  idColumn: ['role_id', 'privilege_id'],
+  name: 'CoreRolePrivilege',
+  description: 'A Privielge assigned to a role',
+  resource: 'CoreRolePrivilege',
+  schema: {
+    type: 'object',
+    properties: {
+      'role_id': { type: 'string' },
+      'privilege_id': { type: 'string' },
+      'attributes': {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'The privilege has been granted for these atributes. [*] means all, [!] denies access'
       }
     }
-  }
-  static get relationMappings () {
+  },
+  relations: () => {
     const Privilege = require('./Privilege')
     const Role = require('./Role')
     return {
@@ -43,10 +40,6 @@ module.exports = class RolePrivilege extends BaseModel {
         }
       }
     }
-  }
-  static get namedFilters() {
-    return {
-      'ReadAny': query => query.where('action', 'read:own')
-    }
-  }
-}
+  },
+  filters: {}
+})

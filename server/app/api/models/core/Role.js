@@ -1,24 +1,21 @@
-const BaseModel = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = BaseModel
+const Model = require('@tools/model')
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
 
-module.exports = class Role extends BaseModel {
-  static get tableName() { return 'core_roles' }
-  static get idColumn() { return 'role_id' }
-  static get name() { return 'CoreRole' }
-  static get resource() { return this.name }
-  static get jsonSchema () {
-    return {
-      name: this.name,
-      description: 'A Role wich can be assigned to a user, granting privileges',
-      type: 'object',
-      properties: {
-        'role_id': { type: 'string' },
-        'role_name': { type: 'string' },
-        'description': { type: 'string', description: 'The role\'s description' }
-      }
+module.exports = new Model({
+  tableName: 'core_roles',
+  idColumn: 'role_id',
+  name: 'CoreRole',
+  resource: 'CoreRole',
+  description: 'A Role wich can be assigned to a user, granting privileges',
+  schema: {
+    type: 'object',
+    properties: {
+      'role_id': { type: 'string' },
+      'role_name': { type: 'string' },
+      'description': { type: 'string', description: 'The role\'s description' }
     }
-  }
-  static get relationMappings () {
+  },
+  relations: () => {
     const Role = require('./Role')
     const RolePrivilege = require('./RolePrivilege')
     return {
@@ -44,4 +41,4 @@ module.exports = class Role extends BaseModel {
       }
     }
   }
-}
+})

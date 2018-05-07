@@ -1,5 +1,5 @@
 const Model = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = BaseModel
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
 
 module.exports = new Model({
   tableName: 'core_users',
