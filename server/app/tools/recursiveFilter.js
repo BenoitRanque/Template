@@ -25,10 +25,10 @@ module.exports = function recursiveFilter (model, accessControl, data, action, p
   
   function filterObject (model, data) {
     let relations = model.getRelations()
-    Object.keys(data).forEach(propName => {
-      let relation = relations[propName]
+    Object.keys(relations).forEach(relationName => {
+      let relation = relations[relationName]
       if (!relation) return
-      data[propName] = filter(relation.relatedModelClass, data[propName])               
+      data[relationName] = filter(relation.relatedModelClass, data[relationName])
     })
     return data
   }
