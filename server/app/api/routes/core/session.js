@@ -3,7 +3,7 @@ const Resolver = require('@tools/resolver')
 
 const { login, logout } = require('@resources/core/session')
 
-routes.post('login', new Resolver(login))
-routes.delete('logout', new Resolver(logout))
+router.post('login', new Resolver(login))
+router.delete('logout', new Resolver(logout))
 
 module.exports = router

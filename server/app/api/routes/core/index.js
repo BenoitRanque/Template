@@ -5,7 +5,7 @@ const routes = [
 ]
 
 routes.forEach(route => {
-  router.route('core').use(require(`./${route}`))
+  router.use('/core', require(`./${route}`))
 })
 
 module.exports = router

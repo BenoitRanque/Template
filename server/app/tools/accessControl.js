@@ -1,5 +1,5 @@
 const AccessControl = require('accesscontrol')
-const Role = require('@api/core/models/Role')
+const Role = require('@models/core/Role')
 
 class AC {
   constructor () {
@@ -35,10 +35,12 @@ class AC {
     return permission
   }
   
-  async middleware (req, res, next) {
-    req.accessControl = this
-    if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) await this.refresh() // refresh every 10 minutes
-    next()
+  middleware () {
+    return async (req, res, next) => {
+      req.accessControl = this
+      if (Date.now() > this.lastRefreshTime + (1000 * 60 * 10)) await this.refresh() // refresh every 10 minutes
+      next()
+    }
   }
 
   async refresh () {
