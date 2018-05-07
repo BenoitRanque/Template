@@ -28,6 +28,16 @@
         link
         inset-delimiter
       >
+        <q-list-header>Modules</q-list-header>
+        <q-collapsible v-for="(routeGroup, index) in routes" :key="`${index}_${routeGroup.path}`" :label="routeGroup.meta.label" group="main-sidebar">
+          <q-list no-border>
+            <q-item v-for="(route, index) in routeGroup.children" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace>
+              <q-item-main>
+                {{route.meta.label}}
+              </q-item-main>
+            </q-item>
+          </q-list>
+        </q-collapsible>
         <q-list-header>Essential Links</q-list-header>
         <q-item @click.native="openURL('http://quasar-framework.org')">
           <q-item-side icon="school" />
@@ -61,6 +71,9 @@
 <script>
 import { openURL } from 'quasar'
 
+import configurationRoutes from 'src/router/configuration'
+import documentationRoutes from 'src/router/documentation'
+
 import UserSession from 'components/UserSession'
 
 export default {
@@ -70,7 +83,8 @@ export default {
   },
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      routes: [].concat(configurationRoutes).concat(documentationRoutes)
     }
   },
   methods: {
