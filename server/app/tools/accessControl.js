@@ -10,28 +10,27 @@ class AC {
     if (!session.user) throw new Error('401 Authentication Required')
   }
 
-  authorize (session, resource, action, posession) {
+  authorize (session, resource, action, possession) {
     
-    let permission = this.permission(session, resource, action, posession)  
+    let permission = this.permission(session, resource, action, possession)  
     if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
     
     return permission
   }
   
-  permission (session, resource, action, posession) {   
+  permission (session, resource, action, possession) {   
     
     // spoof of real function, for dev
-    console.log(`permission to access ${resource} to ${action}:${posession} spoofed. TURN OFF IN PRODUCTION`)
+    console.log(`permission to ${resource} to ${action}:${possession} spoofed. TURN OFF IN PRODUCTION`)
     return {
       granted: true,
       filter: items => items,
       attributes: ['*']
     }
-    
     this.authenticate(session)
 
-    let role = session.user.role.map(({ role_id }) => role_id)
-    let permission = this.ac.permission({ role, resource, action, posession: posession ? posession : 'any' })
+    let role = session.user.role
+    let permission = this.ac.permission({ role, resource, action, possession: possession ? possession : 'any' })
     return permission
   }
   
@@ -57,7 +56,8 @@ class AC {
           role: role.role_id,
           attributes: privilege.attributes,
           resource: privilege.privilege.resource,
-          action: privilege.privilege.action
+          action: privilege.privilege.action,
+          possession: privilege.privilege.possession
         })
       })
     })
