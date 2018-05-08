@@ -53,12 +53,14 @@ module.exports = function (config) {
     tableName,
     idColumn,
     name,
+    resource,
     description,
     filters,
     schema,
     relations
   } = config
 
+  if (!resource) throw new Error(`No resource specified for model ${name}`)
   // todo: validate model
 
   return {
