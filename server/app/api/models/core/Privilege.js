@@ -29,52 +29,21 @@ module.exports = new Model({
       },
       action: {
         type: 'string',
-        name: 'CorePrivilegeAction',
         description: 'Action to be performed on resource using this privilege',
         enum: [
-          'read:any',
-          'create:any',
-          'update:any',
-          'delete:any',
-          'read:own',
-          'create:own',
-          'update:own',
-          'delete:own'
+          'read',
+          'create',
+          'update',
+          'delete'
         ],
-        items: {
-          'ReadAny': {
-            value: 'read:any',
-            description: 'Read Resource with any ownership'
-          },
-          'CreateAny': {
-            value: 'create:any',
-            description: 'Create Resource with any ownership'
-          },
-          'UpdateAny': {
-            value: 'update:any',
-            description: 'Update Resource with any ownership'
-          },
-          'DeleteAny': {
-            value: 'delete:any',
-            description: 'Delete Resource with any ownership'
-          },
-          'ReadOwn': {
-            value: 'read:own',
-            description: 'Read Resource with own ownership'
-          },
-          'CreateOwn': {
-            value: 'create:own',
-            description: 'Create Resource with own ownership'
-          },
-          'UpdateOwn': {
-            value: 'update:own',
-            description: 'Update Resource with own ownership'
-          },
-          'DeleteOwn': {
-            value: 'delete:own',
-            description: 'Delete Resource with own ownership'
-          }
-        }
+      },
+      possession: {
+        type: 'string',
+        description: 'Posession required for this privilege',
+        enum: [
+          'any',
+          'own'
+        ],
       },
       attributes: {
         type: 'array',
