@@ -11,21 +11,15 @@ exports.seed = async function(knex, Promise) {
 
   let privileges = await knex('core_privileges').select()
 
-  rolePrivileges = privileges.map(({ action, privilege_id }) => {
-    switch (action) {
-      case 'read:own':
-      case 'create:own':
-      case 'update:own':
-      case 'delete:own':
+  rolePrivileges = privileges.map(({ possession, privilege_id }) => {
+    switch (possession) {
+      case 'own':
         return {
           privilege_id,
           role_id: userRoleId,
           attributes: ['*']
         }
-      case 'read:any':
-      case 'create:any':
-      case 'update:any':
-      case 'delete:any':
+      case 'any':
         return {
           privilege_id,
           role_id: adminRoleId,
@@ -34,6 +28,7 @@ exports.seed = async function(knex, Promise) {
     }
   })
 
+  await knex('core_role_privileges').del()
   await knex('core_role_privileges').insert(rolePrivileges)
 
   await knex('core_role_extend').del()

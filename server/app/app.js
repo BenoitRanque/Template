@@ -3,8 +3,14 @@ const express = require('express')
 
 const app = express()
 
+app.use((req, res, next) => {
+  console.log('REQUEST')
+  console.log(req.path)
+  next()
+})
+
 app
-  .use(require('@api/v1'))
+  .use('/api', require('@api/v1'))
   // .use(require('@api/graphql'))
   .use('/', require('express').static('app/public'))
 

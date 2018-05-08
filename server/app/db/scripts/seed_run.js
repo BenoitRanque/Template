@@ -30,6 +30,7 @@ else {
       console.log('Ran seed for module ', m)
     })
     .catch(error => {
+      knex.destroy()
       console.log(error)
     })
   }
