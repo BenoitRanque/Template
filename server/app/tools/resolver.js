@@ -30,9 +30,11 @@ module.exports = class Resolver {
           decode
         }
 
+        let input = body
+
         let params = this.params(req, res, next)
 
-        let output = await this.method(info, tools, body, params)
+        let output = await this.method(info, tools, input, params)
 
         res.status(200).json(output)
       }

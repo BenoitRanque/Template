@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import session from './session'
+import core from './core'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
-    session
+    core
   }
 })
 

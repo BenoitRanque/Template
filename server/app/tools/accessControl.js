@@ -29,7 +29,7 @@ class AC {
     }
     this.authenticate(session)
 
-    let role = session.user.role
+    let { role } = session
     let permission = this.ac.permission({ role, resource, action, possession: possession ? possession : 'any' })
     return permission
   }

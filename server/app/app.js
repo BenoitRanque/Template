@@ -10,7 +10,7 @@ app.use((req, res, next) => {
 })
 
 app
-  .use('/api', require('@api/v1'))
+  .use(require('@api'))
   // .use(require('@api/graphql'))
   .use('/', require('express').static('app/public'))
 
