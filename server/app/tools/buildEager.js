@@ -1,7 +1,7 @@
 module.exports = function buildEager(model, fields, owner) {
   let FILTER_INDEX = 0
   const EAGERFILTERS = {}
-  const relations = mode.getRelations()
+  const relations = model.getRelations()
 
   const expression = buildEagerFields(fields, relations)
   

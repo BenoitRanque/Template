@@ -1,15 +1,13 @@
-module.exports = function recursiveFilter (model, accessControl, data, action, possession) {
+module.exports = function recursiveFilter (model, permission, session, data, action, possession = 'any') {
   const permissionCache = {}
-  let permission = (resource, action) => {
-    if (!permissionCache[resource]) permissionCache[resource] = {}
-    if (!permissionCache[resource][action]) permissionCache[resource][action] = accessControl.permission(session, resource, action, possession)
-    return permissionCache[resource][action]
+  
+  function getPermission (resource) {
+    if (!permissionCache[resource]) permissionCache[resource] = permission(session, resource, action, possession)
+    return permissionCache[resource]
   }
 
   function filter (model, data) {
-    let permission = permission(model.resource, action).filter(data)
-    if (!permission.granted) return
-    data = permission.filter(data)
+    data = getPermission(model.resource).filter(data)
   
     if (Array.isArray(data)) {
       return filterArray(model, data)

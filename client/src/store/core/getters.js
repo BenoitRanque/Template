@@ -15,16 +15,15 @@ export function isAuthorized ({ session }, { isAuthenticated }) {
     //     action: ['posession'],
     //   }
     // }
-    const { privileges } = session
 
     const optionalArrayIteration = (values, method) => {
       return Array.isArray(values) ? values.some(method) : method(values)
     }
 
     return isAuthenticated() && optionalArrayIteration(resource, resource => {
-      return privileges.hasOwnProperty(resource) && optionalArrayIteration(action, action => {
-        return privileges[resource].hasOwnProperty(action) && optionalArrayIteration(possession, possession => {
-          return privileges[resource][action].includes(possession)
+      return session.privileges.hasOwnProperty(resource) && optionalArrayIteration(action, action => {
+        return session.privileges[resource].hasOwnProperty(action) && optionalArrayIteration(possession, possession => {
+          return session.privileges[resource][action].includes(possession)
         })
       })
     })

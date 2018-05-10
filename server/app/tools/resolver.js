@@ -25,7 +25,7 @@ module.exports = class Resolver {
           authenticate: () => accessControl.authenticate(session),
           authorize: (resource, action, possession) => accessControl.authorize(session, resource, action || info.action, possession || info.possession),
           permission: (resource, action, possession) => accessControl.permission(session, resource, action || info.action, possession || info.possession),
-          recursiveFilter: (model, data, action, possession) => recursiveFilter(model, accessControl, data, action || info.action, possession || info.possession),
+          recursiveFilter: (model, data, action, possession) => recursiveFilter(model, accessControl.permission, session, data, action || info.action, possession || info.possession),
           encode,
           decode
         }
@@ -38,17 +38,13 @@ module.exports = class Resolver {
 
         res.status(200).json(output)
       }
-      catch (error) {
-        switch (error && error.message) {
-          case 401:
-          case '401':
-          case 403:
-          case '403':
-          case 500:
-          case '500':
-            res.status(error.message).end(error.message)
+      catch (error) {          
+        switch (error.message) {
+          case '401 Authentication Required': return res.status(401).end(error.message)
+          case '403 Access Denied': return res.status(403).end(error.message)
           default:
-            res.status(500).end(error)
+            console.log(error)
+            res.status(500).end(error.message)
         }
       }
     }

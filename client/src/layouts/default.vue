@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <q-layout-header>
       <q-toolbar color="primary">
         <q-btn
@@ -12,8 +12,8 @@
         </q-btn>
 
         <q-toolbar-title>
-          Quasar App
-          <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
+          {{$t($route.meta.label)}}
+          <div v-if="authenticated" slot="subtitle">{{ authenticated ? $store.state.core.session.user.displayname : '' }}</div>
         </q-toolbar-title>
         <user-session></user-session>
       </q-toolbar>
@@ -28,36 +28,19 @@
         link
         inset-delimiter
       >
-        <q-list-header>Modules</q-list-header>
-        <q-collapsible v-for="(routeGroup, index) in routes" :key="`${index}_${routeGroup.path}`" :label="routeGroup.meta.label" group="main-sidebar">
-          <q-list no-border>
-            <q-item v-for="(route, index) in routeGroup.children" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace>
-              <q-item-main>
-                {{route.meta.label}}
-              </q-item-main>
-            </q-item>
-          </q-list>
-        </q-collapsible>
-        <q-list-header>Essential Links</q-list-header>
-        <q-item @click.native="openURL('http://quasar-framework.org')">
-          <q-item-side icon="school" />
-          <q-item-main label="Docs" sublabel="quasar-framework.org" />
-        </q-item>
-        <q-item @click.native="openURL('https://github.com/quasarframework/')">
-          <q-item-side icon="code" />
-          <q-item-main label="GitHub" sublabel="github.com/quasarframework" />
-        </q-item>
-        <q-item @click.native="openURL('http://forum.quasar-framework.org')">
-          <q-item-side icon="record_voice_over" />
-          <q-item-main label="Forum" sublabel="forum.quasar-framework.org" />
-        </q-item>
-        <q-item @click.native="openURL('https://gitter.im/quasarframework/Lobby')">
-          <q-item-side icon="chat" />
-          <q-item-main label="Gitter Channel" sublabel="Quasar Lobby" />
-        </q-item>
-        <q-item @click.native="openURL('https://twitter.com/quasarframework')">
-          <q-item-side icon="rss feed" />
-          <q-item-main label="Twitter" sublabel="@quasarframework" />
+        <template v-if="$route.meta.pages">
+          <q-list-header>{{$t('pages')}}</q-list-header>
+          <q-item inset v-for="(route, index) in $route.meta.pages" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace exact>
+            <q-item-main>
+              {{route.meta.label}}
+            </q-item-main>
+          </q-item>
+        </template>
+        <q-list-header>{{$t('modules')}}</q-list-header>
+        <q-item inset v-for="(route, index) in routes" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace exact>
+          <q-item-main>
+            {{route.meta.label}}
+          </q-item-main>
         </q-item>
       </q-list>
     </q-layout-drawer>
@@ -69,12 +52,11 @@
 </template>
 
 <script>
-import { openURL } from 'quasar'
-
 import configurationRoutes from 'src/router/configuration'
 import documentationRoutes from 'src/router/documentation'
 
 import UserSession from 'components/UserSession'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'LayoutDefault',
@@ -84,11 +66,21 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      routes: [].concat(configurationRoutes).concat(documentationRoutes)
+      routes: [ configurationRoutes[0], documentationRoutes[0] ]
     }
   },
+  computed: {
+    ...mapGetters('core', {
+      authenticated: 'isAuthenticated'
+    }),
+    ...mapState('core', {
+      session: 'session'
+    })
+  },
   methods: {
-    openURL
+    ...mapGetters('core', {
+      authorized: 'isAuthorized'
+    })
   }
 }
 </script>

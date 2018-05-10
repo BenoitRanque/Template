@@ -9,6 +9,8 @@
       color="white"
       text-color="primary"
       icon="help_outline"
+      v-if="$route.meta.documentation"
+      @click="$router.push($route.meta.documentation)"
     ></q-btn>
 
     <q-btn
@@ -37,7 +39,7 @@
       @click="$refs.modal.show()"
       v-if="!authenticated"
     >
-      <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()">
+      <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()" @hide="reset">
         <span class="q-display-1 q-my-md">
           {{$t('login')}}
         </span>
@@ -73,15 +75,21 @@ export default {
     authenticationRequired () {
       this.$refs.modal.show()
     },
+    reset () {
+      this.username = ''
+      this.password = ''
+    },
     login () {
       this.$q.loading.show()
       this.stateLogin({
         username: this.username,
         password: this.password,
         success: () => {
+          this.reset()
           this.$q.loading.hide()
         },
         failure: () => {
+          this.reset()
           this.$q.loading.hide()
         }
       })

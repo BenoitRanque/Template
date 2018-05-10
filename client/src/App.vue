@@ -9,11 +9,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
-  computed: mapGetters({
-    isAuthenticated: 'core/isAuthenticated'
+  computed: mapGetters('core', {
+    isAuthenticated: 'isAuthenticated'
   }),
-  methods: mapGetters({
-    isAuthorized: 'core/isAuthorized'
+  methods: mapGetters('core', {
+    isAuthorized: 'isAuthorized'
   }),
   mounted () {
     this.$router.beforeEach((to, from, next) => {

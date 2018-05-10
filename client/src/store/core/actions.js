@@ -8,13 +8,11 @@ export const someAction = (state) => {
 export function login ({ commit }, { username, password, success, failure }) {
   $axios.post(CORE_LOGIN, { username, password })
     .then(response => {
-      console.log(response.data)
       if (success !== undefined) success()
       commit('login', { user: response.data.user, privileges: response.data.privileges })
     })
-    .catch(error => {
+    .catch(() => {
       if (failure !== undefined) failure()
-      console.log(error)
     })
 }
 
@@ -24,8 +22,8 @@ export function logout ({ commit }, { success, failure }) {
       commit('logout')
       if (success !== undefined) success()
     })
-    .catch((error) => {
+    .catch(() => {
+      commit('logout')
       if (failure !== undefined) failure()
-      console.log(error)
     })
 }

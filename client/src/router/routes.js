@@ -9,13 +9,11 @@ export default [
       {
         path: '',
         component: () => import('pages/index')
-      }
+      },
+      ...routeModule(configurationRoutes),
+      ...routeModule(documentationRoutes)
     ]
   },
-
-  ...configurationRoutes,
-  ...documentationRoutes,
-
   { // Always leave this as last one
     path: '*',
     component: () => import('layouts/default'),
@@ -27,3 +25,11 @@ export default [
     ]
   }
 ]
+
+function routeModule (routes) {
+  let pages = routes.slice(1)
+  return routes.map(route => {
+    route.meta.pages = pages
+    return route
+  })
+}
