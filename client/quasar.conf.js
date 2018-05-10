@@ -35,12 +35,14 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar)/
         })
+        cfg.module.rules[0].options.loaders['i18n'] = '@kazupon/vue-i18n-loader'
       }
     },
     devServer: {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
-        '/api': {
+        // '/api': 'http://localhost:80'
+        '/api/**': {
           target: 'http://localhost:80',
           changeOrigin: true,
           pathRewrite: {
@@ -63,9 +65,11 @@ module.exports = function (ctx) {
         'QToolbar',
         'QToolbarTitle',
         'QBtn',
+        'QBtnGroup',
         'QIcon',
         'QInput',
         'QModal',
+        'QModalLayout',
         'QList',
         'QListHeader',
         'QItem',
@@ -77,7 +81,9 @@ module.exports = function (ctx) {
         'Ripple'
       ],
       plugins: [
-        'Notify'
+        'Notify',
+        'Loading',
+        'Dialog'
       ]
     },
     // animations: 'all' --- includes all animations

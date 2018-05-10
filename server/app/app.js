@@ -1,31 +1,22 @@
-
+const { ENV } = require('@config').server
 const express = require('express')
-
 const app = express()
 
 app.use((req, res, next) => {
-  console.log('REQUEST')
-  console.log(req.path)
+  if (ENV === 'dev' && req.get('origin')) {
+    console.log('REQUEST')
+    console.log(req.path)
+
+    res.setHeader('Access-Control-Allow-Origin', req.get('origin'))
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
   next()
 })
 
 app
   .use(require('@api'))
-  // .use(require('@api/graphql'))
   .use('/', require('express').static('app/public'))
-
-
-// app.get('/counter', function(req, res, next) {
-//   if (req.session.views) {
-//     req.session.views++
-//     res.setHeader('Content-Type', 'text/html')
-//     res.write('<p>views: ' + req.session.views + '</p>')
-//     res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
-//     res.end()
-//   } else {
-//     req.session.views = 1
-//     res.end('welcome to the session demo. refresh!')
-//   }
-// })
 
 module.exports = app

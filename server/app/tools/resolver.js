@@ -39,8 +39,17 @@ module.exports = class Resolver {
         res.status(200).json(output)
       }
       catch (error) {
-        console.log(error)
-        res.status(500).end(error)
+        switch (error && error.message) {
+          case 401:
+          case '401':
+          case 403:
+          case '403':
+          case 500:
+          case '500':
+            res.status(error.message).end(error.message)
+          default:
+            res.status(500).end(error)
+        }
       }
     }
   }

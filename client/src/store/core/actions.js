@@ -5,27 +5,27 @@ export const someAction = (state) => {
 }
 */
 
-export function login ({ commit }, { username, password }) {
+export function login ({ commit }, { username, password, success, failure }) {
   $axios.post(CORE_LOGIN, { username, password })
     .then(response => {
-      // console.log(response)
       console.log(response.data)
-      commit('login', { user: response.data.user })
+      if (success !== undefined) success()
+      commit('login', { user: response.data.user, privileges: response.data.privileges })
     })
     .catch(error => {
+      if (failure !== undefined) failure()
       console.log(error)
-      // $router.push('/')
     })
 }
 
-export function logout ({ commit }) {
+export function logout ({ commit }, { success, failure }) {
   $axios.delete(CORE_LOGOUT)
     .then(response => {
       commit('logout')
-      // $router.push('/')
+      if (success !== undefined) success()
     })
     .catch((error) => {
+      if (failure !== undefined) failure()
       console.log(error)
-      // $router.push('/')
     })
 }

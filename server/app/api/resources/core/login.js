@@ -2,11 +2,13 @@ module.exports = async function login ({ session, fields }, tools, { username, p
   const bcrypt = require('bcrypt')
   const User = require('@models/core/User')
 
+  if (!username) throw new Error(401)
+
   let user = await User.query().where({ username }).eager('role.privileges.privilege').first()	
-  if (!user) throw new Error(401)	
+  if (!user) throw new Error(401)
 
   let auth = await bcrypt.compare(password, user.password)	
-  if (!auth) throw new Error(401)	
+  if (!auth) throw new Error(401)
 
   delete user.password	
   

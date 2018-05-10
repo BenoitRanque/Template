@@ -1,14 +1,52 @@
 <template>
-  <q-btn outline rounded size="sm" v-if="authenticated" label="logout" @click="logout"></q-btn>
-  <q-btn outline rounded size="sm" v-else label="login" @click="loginModal = !loginModal">
-    <q-modal v-model="loginModal" content-css="min-height: 60vh; min-width: 40vw" content-classes="q-pa-md row items-center justify-center">
-      <div>
-        <q-input align="center" placeholder="username" v-model="username"></q-input>
-        <q-input type="password" align="center" placeholder="password" v-model="password"></q-input>
-        <q-btn flat @click="login({username, password})" label="login"></q-btn>
-      </div>
-    </q-modal>
-  </q-btn>
+  <q-btn-group
+    rounded
+
+  >
+    <q-btn
+      class="q-pa-sm"
+      rounded
+      color="white"
+      text-color="primary"
+      icon="help_outline"
+    ></q-btn>
+
+    <q-btn
+      rounded
+      color="white"
+      text-color="primary"
+      icon="account_circle"
+      class="q-pa-sm"
+      v-if="authenticated"
+    ></q-btn>
+
+    <q-btn
+      v-if="authenticated"
+      class="q-pa-sm"
+      rounded
+      color="negative"
+      icon="power_settings_new"
+      @click="logout"
+    ></q-btn>
+
+    <q-btn
+      class="q-pa-sm"
+      rounded
+      color="positive"
+      icon="fingerprint"
+      @click="$refs.modal.show()"
+      v-if="!authenticated"
+    >
+      <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()">
+        <span class="q-display-1 q-my-md">
+          {{$t('login')}}
+        </span>
+        <q-input ref="username" @keydown.enter="$refs.password.focus" class="q-my-md" type="text" align="center" :placeholder="$t('username')" v-model="username"></q-input>
+        <q-input ref="password" @keydown.enter="login" class="q-my-md" type="password" align="center" :placeholder="$t('password')" v-model="password"></q-input>
+        <q-btn class="q-my-md" dark outline rounded @click="login" :label="$t('login')"></q-btn>
+      </q-modal>
+    </q-btn>
+  </q-btn-group>
 </template>
 
 <script>
@@ -19,30 +57,75 @@ export default {
   data () {
     return {
       username: '',
-      password: '',
-      loginModal: false
+      password: ''
     }
   },
   computed: {
-    ...mapGetters('session', {
+    ...mapGetters('core', {
       authenticated: 'isAuthenticated'
     })
   },
   methods: {
-    ...mapActions('session', {
+    ...mapActions('core', {
       stateLogin: 'login',
       stateLogout: 'logout'
     }),
+    authenticationRequired () {
+      this.$refs.modal.show()
+    },
     login () {
-      this.loginModal = false
-      this.stateLogin({ username: this.username, password: this.password })
+      this.$q.loading.show()
+      this.stateLogin({
+        username: this.username,
+        password: this.password,
+        success: () => {
+          this.$q.loading.hide()
+        },
+        failure: () => {
+          this.$q.loading.hide()
+        }
+      })
     },
     logout () {
-      this.stateLogout()
+      this.$q.dialog({
+        title: this.$t('logout_confirm_title'),
+        message: this.$t('logout_confirm_message'),
+        ok: this.$t('ok'),
+        cancel: this.$t('cancel')
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.stateLogout({
+            success: () => {
+              this.$q.loading.hide()
+            },
+            failure: () => {
+              this.$q.loading.hide()
+            }
+          })
+        })
+        .catch(() => {})
     }
+  },
+  created () {
+    this.$root.$on('AUTHENTICATION_REQUIRED', this.authenticationRequired)
+  },
+  beforeDestroy () {
+    this.$root.$off('AUTHENTICATION_REQUIRED', this.authenticationRequired)
   }
 }
 </script>
 
 <style>
 </style>
+
+<i18n>
+{
+  "es": {
+    "login": "Iniciar Session",
+    "logout": "Cerrar Session",
+    "logout_confirm_title": "Cerrar Session?",
+    "logout_confirm_message": "Cerrar Session?"
+  }
+}
+</i18n>
