@@ -19,6 +19,18 @@ export default {
     }
   },
   methods: {
+    read () {
+
+    },
+    create () {
+
+    },
+    update () {
+
+    },
+    remove () {
+
+    },
     getUsers () {
       this.$axios.get(CORE_USER, {
         params: {

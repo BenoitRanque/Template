@@ -1,5 +1,6 @@
 const AccessControl = require('accesscontrol')
 const Role = require('@models/core/Role')
+const ServerError = require('@tools/serverError')
 
 class AC {
   constructor () {
@@ -7,13 +8,13 @@ class AC {
   }
 
   authenticate (session) {
-    if (!session.user) throw new Error('401 Authentication Required')
+    if (!session.user) throw new ServerError(401)
   }
 
-  authorize (session, resource, action, possession) {
+  authorize (session, resource, action, possession = 'any') {
     
     let permission = this.permission(session, resource, action, possession)  
-    if (!permission.granted) throw new Error(`403 Access Denied: ${action} ${resource}`)
+    if (!permission.granted) throw new ServerError(403, `${action}:${possession} ${resource}`)
     
     return permission
   }

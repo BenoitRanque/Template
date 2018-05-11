@@ -1,4 +1,5 @@
 const recursiveFilter = require('./recursiveFilter')
+const ServerError = require('./serverError')
 const { encode, decode, HTTPmethodToAction } = require('./utils')
 
 module.exports = class Resolver {
@@ -38,13 +39,13 @@ module.exports = class Resolver {
 
         res.status(200).json(output)
       }
-      catch (error) {          
-        switch (error.message) {
-          case '401 Authentication Required': return res.status(401).end(error.message)
-          case '403 Access Denied': return res.status(403).end(error.message)
-          default:
-            console.log(error)
-            res.status(500).end(error.message)
+      catch (error) {
+        if (error instanceof ServerError) {
+          res.status(error.statusCode).end(error.message)
+        }
+        else {
+          console.log(error)
+          res.status(500).end()
         }
       }
     }

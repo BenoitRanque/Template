@@ -8,7 +8,10 @@ export default [
     children: [
       {
         path: '',
-        component: () => import('pages/index')
+        component: () => import('pages/index'),
+        meta: {
+          label: 'index'
+        }
       },
       ...routeModule(configurationRoutes),
       ...routeModule(documentationRoutes)
@@ -20,7 +23,10 @@ export default [
     children: [
       {
         path: '',
-        component: () => import('pages/404')
+        component: () => import('pages/404'),
+        meta: {
+          label: '404'
+        }
       }
     ]
   }

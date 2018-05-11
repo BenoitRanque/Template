@@ -1,3 +1,5 @@
+const ServerError = require('@tools/serverError')
+
 module.exports = function buildEager(model, fields, owner) {
   let FILTER_INDEX = 0
   const EAGERFILTERS = {}
@@ -14,7 +16,7 @@ module.exports = function buildEager(model, fields, owner) {
 
       let fieldName = field[0]
       let relation = relations[fieldName]
-      if (!relation) throw new Error(`could not find relation ${fieldName}`)
+      if (!relation) throw new ServerError(400, `could not find relation ${fieldName}`)
       let model = relation.relatedModelClass
 
       let subFields = []
@@ -34,7 +36,7 @@ module.exports = function buildEager(model, fields, owner) {
           })
         }
         else {
-          throw new Error(`Invalid field value ${item}`)
+          throw new ServerError(400, `Invalid field value ${item}`)
         }
       })
       
@@ -56,7 +58,7 @@ module.exports = function buildEager(model, fields, owner) {
   function buildEagerFilter (filterName, filterValue, model) {
     let filterKey = `f${FILTER_INDEX}_${model.name}_${filterName}_${filterValue}`
     let filterFunction = model.queryFilters[filterName]
-    if (!filterFunction) throw new Error(`could not find filter ${filterName} on model ${model.name}`)
+    if (!filterFunction) throw new ServerError(400, `could not find filter ${filterName} on model ${model.name}`)
     EAGERFILTERS[filterKey] = query => filterFunction(query, filterValue)
     FILTER_INDEX += 1
     return filterKey

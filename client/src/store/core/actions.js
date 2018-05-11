@@ -18,7 +18,7 @@ export function login ({ commit }, { username, password, success, failure }) {
 
 export function logout ({ commit }, { success, failure }) {
   $axios.delete(CORE_LOGOUT)
-    .then(response => {
+    .then(() => {
       commit('logout')
       if (success !== undefined) success()
     })

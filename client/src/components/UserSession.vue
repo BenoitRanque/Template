@@ -69,8 +69,8 @@ export default {
   },
   methods: {
     ...mapActions('core', {
-      stateLogin: 'login',
-      stateLogout: 'logout'
+      loginAction: 'login',
+      logoutAction: 'logout'
     }),
     authenticationRequired () {
       this.$refs.modal.show()
@@ -81,7 +81,7 @@ export default {
     },
     login () {
       this.$q.loading.show()
-      this.stateLogin({
+      this.loginAction({
         username: this.username,
         password: this.password,
         success: () => {
@@ -91,6 +91,7 @@ export default {
         failure: () => {
           this.reset()
           this.$q.loading.hide()
+          this.$q.notify('login failed')
         }
       })
     },
@@ -103,7 +104,7 @@ export default {
       })
         .then(() => {
           this.$q.loading.show()
-          this.stateLogout({
+          this.logoutAction({
             success: () => {
               this.$q.loading.hide()
             },
