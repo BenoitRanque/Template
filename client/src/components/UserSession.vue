@@ -9,7 +9,6 @@
       color="white"
       text-color="primary"
       icon="help_outline"
-      v-if="$route.meta.documentation"
       @click="$router.push($route.meta.documentation)"
     ></q-btn>
 
@@ -20,24 +19,15 @@
       icon="account_circle"
       class="q-pa-sm"
       v-if="authenticated"
-    ></q-btn>
+    >
+    </q-btn>
 
     <q-btn
-      v-if="authenticated"
       class="q-pa-sm"
       rounded
-      color="negative"
+      :color="authenticated ? 'negative' : 'positive'"
       icon="power_settings_new"
-      @click="logout"
-    ></q-btn>
-
-    <q-btn
-      class="q-pa-sm"
-      rounded
-      color="positive"
-      icon="fingerprint"
-      @click="$refs.modal.show()"
-      v-if="!authenticated"
+      @click="authenticated ? logout() : $refs.modal.show()"
     >
       <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()" @hide="reset">
         <span class="q-display-1 q-my-md">
@@ -87,10 +77,12 @@ export default {
         success: () => {
           this.reset()
           this.$q.loading.hide()
+          this.$refs.modal.hide()
         },
         failure: () => {
           this.reset()
           this.$q.loading.hide()
+          this.$refs.username.focus()
           this.$q.notify('login failed')
         }
       })
