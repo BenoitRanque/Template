@@ -20,7 +20,7 @@ export default {
       logoutMutation: 'logout'
     })
   },
-  mounted () {
+  created () {
     this.$router.beforeEach((to, from, next) => {
       let { requireAuthentication, requireAuthorization } = to.meta
 

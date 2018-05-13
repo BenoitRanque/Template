@@ -25,4 +25,16 @@ router.route('/privilege')
   .put(new Resolver(require('@resources/core/privilege/update')))
   .delete(new Resolver(require('@resources/core/privilege/delete')))
 
+router.route('/module')
+  .get(new Resolver(require('@resources/core/module/read')))
+  .post(new Resolver(require('@resources/core/module/create')))
+  .put(new Resolver(require('@resources/core/module/update')))
+  .delete(new Resolver(require('@resources/core/module/delete')))
+
+router.route('/resource')
+  .get(new Resolver(require('@resources/core/resource/read')))
+  .post(new Resolver(require('@resources/core/resource/create')))
+  .put(new Resolver(require('@resources/core/resource/update')))
+  .delete(new Resolver(require('@resources/core/resource/delete')))
+
 module.exports = router

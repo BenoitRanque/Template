@@ -78,13 +78,19 @@ export default {
           this.reset()
           this.$q.loading.hide()
           this.$refs.modal.hide()
-          this.$router.push(this.$route.path)
+          this.$q.notify({
+            message: this.$t('login_success'),
+            type: 'positive'
+          })
         },
         failure: () => {
           this.reset()
           this.$q.loading.hide()
           this.$refs.username.focus()
-          this.$q.notify('login failed')
+          this.$q.notify({
+            message: this.$t('login_failure'),
+            type: 'warning'
+          })
         }
       })
     },
@@ -92,17 +98,25 @@ export default {
       this.$q.dialog({
         title: this.$t('logout_confirm_title'),
         message: this.$t('logout_confirm_message'),
-        ok: this.$t('ok'),
-        cancel: this.$t('cancel')
+        ok: true,
+        cancel: true
       })
         .then(() => {
           this.$q.loading.show()
           this.logoutAction({
             success: () => {
               this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('logout_success'),
+                type: 'positive'
+              })
             },
             failure: () => {
               this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('logout_failure'),
+                type: 'negative'
+              })
             }
           })
         })
@@ -127,7 +141,11 @@ export default {
     "login": "Iniciar Session",
     "logout": "Cerrar Session",
     "logout_confirm_title": "Cerrar Session?",
-    "logout_confirm_message": "Cerrar Session?"
+    "logout_confirm_message": "Cerrar Session?",
+    "login_success": "Login exitoso",
+    "login_failure": "Error al hacer Login",
+    "logout_success": "Logout exitoso",
+    "logout_failure": "Error al hacer Logout"
   }
 }
 </i18n>

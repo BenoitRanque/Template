@@ -57,17 +57,20 @@ module.exports = function (ctx) {
     },
     // framework: 'all' --- includes everything; for dev only!
     framework: {
+      i18n: 'es',
       components: [
         'QLayout',
         'QLayoutHeader',
         'QLayoutDrawer',
         'QPageContainer',
         'QPage',
+        'QPageSticky',
         'QToolbar',
         'QToolbarTitle',
         'QBtn',
         'QBtnGroup',
         'QIcon',
+        'QField',
         'QInput',
         'QChipsInput',
         'QSelect',

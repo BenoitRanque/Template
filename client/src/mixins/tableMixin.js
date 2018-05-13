@@ -1,48 +1,130 @@
+import { mapGetters } from 'vuex'
+
 export default {
-  data () {
-    return {
-      edit: {
-        index: null,
-        open: false
-      },
-      item: this.newItem(),
-      table: {
-        filter: '',
-        data: []
-      }
-    }
-  },
   methods: {
-    showEdit (index) {
-      return (index === undefined ? this.edit.index === null : this.edit.index === index) && this.edit.open
+    createItem () {
+      this.$q.dialog({
+        title: this.$t('confirm.createItem.title'),
+        message: this.$t('confirm.createItem.message'),
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.post(this.apiRoute, this.item)
+            .then(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.create.success'),
+                type: 'positive'
+              })
+              this.reset()
+              this.fetchItems()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.create.failure'),
+                type: 'warning'
+              })
+            })
+        })
     },
-    async toggleEdit (index) {
-      try {
-        if (this.$v.item.$dirty) {
-          await this.$q.dialog({
-            title: 'Confirm Edit',
-            message: 'Changes will be lost',
-            ok: this.$t('ok'),
-            cancel: this.$t('cancel')
+    updateItem () {
+      this.$q.dialog({
+        title: this.$t('confirm.updateItem.title'),
+        message: this.$t('confirm.updateItem.message'),
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.put(this.apiRoute, this.item)
+            .then(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.update.success'),
+                type: 'positive'
+              })
+              this.reset()
+              this.fetchItems()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.update.failure'),
+                type: 'warning'
+              })
+            })
+        })
+    },
+    deleteItem () {
+      this.$q.dialog({
+        title: this.$t('confirm.deleteItem.title'),
+        message: this.$t('confirm.deleteItem.message'),
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.delete(this.apiRoute, { params: this.deleteParams() })
+            .then(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.delete.success'),
+                type: 'positive'
+              })
+              this.reset()
+              this.fetchItems()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.delete.failure'),
+                type: 'positive'
+              })
+            })
+        })
+    },
+    ...mapGetters('core', {
+      isAuthorized: 'isAuthorized'
+    }),
+    validationError (validations) {
+      for (let validationName in validations.$params) {
+        if (validations.hasOwnProperty(validationName)) {
+          if (validations[validationName] === false) return this.$t(`validation.${validationName}`)
+        }
+      }
+      return this.$t('validation.error')
+    },
+    edit (item) {
+      if (item) {
+        this.editMode = true
+        this.item = JSON.parse(JSON.stringify(item))
+        delete this.item.__index
+      } else {
+        this.editMode = false
+      }
+      this.$refs.modal.show()
+    },
+    reset () {
+      this.$refs.modal.hide()
+      this.$v.$reset()
+      this.item = this.newItem()
+    },
+    cancel () {
+      if (Object.keys(this.$v.item).some(propName => this.$v.item[propName].$dirty)) {
+        this.$q.dialog({
+          title: this.$t('confirm.cancelEdit.title'),
+          message: this.$t('confirm.cancelEdit.message'),
+          ok: true,
+          cancel: true
+        })
+          .then(() => {
+            this.reset()
           })
-          this.$v.item.$reset()
-        }
-
-        if (this.showEdit(index)) {
-          this.edit.open = false
-        } else {
-          // create new copy of item to edit
-          if (index === null) {
-            this.item = this.newItem()
-          } else {
-            this.item = JSON.parse(JSON.stringify(this.table.data[index]))
-            delete this.item.__index
-          }
-
-          this.edit.index = index
-          this.edit.open = true
-        }
-      } catch (error) {
+      } else {
+        this.reset()
       }
     }
   }

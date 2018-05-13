@@ -3,108 +3,129 @@
     <!-- content -->
     <!-- <q-btn @click="read">read</q-btn> -->
     <q-table
-      title="Table Title"
-      row-key="privilege_id"
+      :title="table.title"
+      :row-key="table.rowKey"
+      :loading="table.loading"
       :data="table.data"
       :columns="table.columns"
       :filter="table.filter"
     >
       <template slot="top-left" slot-scope="props">
-        <q-search
-          hide-underline
-          color="secondary"
-          v-model="table.filter"
-          class="col-6"
-        />
+        <q-search hide-underline color="secondary"  v-model="table.filter" class="col-6" />
       </template>
 
-      <template slot="header" slot-scope="props">
-        <q-tr :props="props">
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-          <q-th class="text-right">
-            <q-btn class="q-mx-xs generic-transition" size="md" round :class="{ 'rotate-180': showEdit(null) }" :color="showEdit(null) ? 'negative' : 'positive'" dense :icon="showEdit(null) ? 'close' : 'add'" flat @click="toggleEdit(null)"></q-btn>
-          </q-th>
-        </q-tr>
+      <template slot="top-right" slot-scope="props">
+        <q-btn round flat icon="refresh" size="md" @click="fetchItems()" />
+        <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
-      <template slot="top-row" slot-scope="props">
-        <q-tr :props="props" v-if="showEdit()" class="bg-light inset-shadow">
-          <q-th v-for="col in props.cols" :key="col.name" >
-            <q-input v-model="item[col.name]" hide-underline :placeholder="col.label"></q-input>
-          </q-th>
-          <q-th class="text-right">
-            <q-btn class="q-mx-xs" size="md" round outline color="positive" icon="save" dense></q-btn>
-          </q-th>
-        </q-tr>
-      </template>
+      <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
+        <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" class="q-mx-xs generic-transition" size="md" round dense flat icon="edit" @click="edit(props.row)"></q-btn>
+      </q-td>
 
-      <template slot="body" slot-scope="props">
-        <q-tr :props="props">
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-          <q-td class="text-right">
-            <q-btn class="q-mx-xs generic-transition" size="md" :class="{ 'rotate-180': showEdit(props.row.__index) }" round :color="showEdit(props.row.__index) ? 'negative' : 'positive'" dense flat :icon="showEdit(props.row.__index) ? 'close' : 'edit'" @click="toggleEdit(props.row.__index)"></q-btn>
-          </q-td>
-        </q-tr>
-        <q-tr :props="props" v-if="showEdit(props.row.__index)" class="inset-shadow bg-light">
-          <q-td auto-width><q-input v-model="item.privilege_name" hide-underline placeholder="privilege_name" /></q-td>
-          <q-td auto-width><q-input v-model="item.description" hide-underline placeholder="description" /></q-td>
-          <q-td auto-width><q-select hide-underline v-model="item.resource_id" :options="options.resources" placeholder="resource_id" filter></q-select></q-td>
-          <q-td auto-width><q-select hide-underline v-model="item.action" :options="options.actions" placeholder="action"></q-select></q-td>
-          <q-td auto-width><q-select hide-underline v-model="item.possession" :options="options.possessions" placeholder="possession"></q-select></q-td>
-          <q-td auto-width><q-chips-input chips-color="black" chips-bg-color="light" add-icon="add" hide-underline v-model="item.attributes"></q-chips-input></q-td>
-          <q-td auto-width class="text-right">
-            <q-btn class="q-mx-xs" size="md" round outline color="negative" icon="delete" dense @click="$v.item.$touch()"></q-btn>
-            <q-btn class="q-mx-xs" size="md" round outline color="positive" icon="save" dense></q-btn>
-          </q-td>
-        </q-tr>
-      </template>
     </q-table>
 
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
+      <q-modal-layout>
+        <q-toolbar slot="header">
+          <q-toolbar-title>
+            {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
+            <span slot="subtitle">{{$t('modal.subtitle')}}</span>
+          </q-toolbar-title>
+          <q-btn icon="close" color="negative" dense round @click="cancel()"></q-btn>
+        </q-toolbar>
+        <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+          <template v-if="editMode">
+            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem()">{{$t('buttons.deleteItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem()">{{$t('buttons.updateItem')}}</q-btn>
+          </template>
+          <template v-else>
+            <q-btn v-if="isAuthorized(resource, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem()">{{$t('buttons.createItem')}}</q-btn>
+          </template>
+        </q-toolbar>
+        <div class="layout-padding group">
+          <q-field :label="$t('item.privilege_name.label')" :helper="$t('item.privilege_name.helper')" :error="$v.item.privilege_name.$error" :error-label="validationError($v.item.privilege_name)">
+            <q-input v-model="item.privilege_name" @blur="$v.item.privilege_name.$touch()" :placeholder="$t('item.privilege_name.placeholder')"/>
+          </q-field>
+          <q-field :label="$t('item.description.label')" :helper="$t('item.description.helper')" :error="$v.item.description.$error" :error-label="validationError($v.item.description)">
+            <q-input v-model="item.description" @blur="$v.item.description.$touch()" :placeholder="$t('item.description.placeholder')"/>
+          </q-field>
+          <q-field :label="$t('item.resource_id.label')" :helper="$t('item.resource_id.helper')" :error="$v.item.resource_id.$error" :error-label="validationError($v.item.resource_id)">
+            <q-select v-model="item.resource_id" :options="options.resources" filter @blur="$v.item.resource_id.$touch()" :placeholder="$t('item.resource_id.placeholder')"></q-select>
+          </q-field>
+          <q-field :label="$t('item.action.label')" :helper="$t('item.action.helper')" :error="$v.item.action.$error" :error-label="validationError($v.item.action)">
+            <q-select v-model="item.action" :options="options.actions" @blur="$v.item.action.$touch()" :placeholder="$t('item.action.placeholder')"></q-select>
+          </q-field>
+          <q-field :label="$t('item.possession.label')" :helper="$t('item.possession.helper')" :error="$v.item.possession.$error" :error-label="validationError($v.item.possession)">
+            <q-select v-model="item.possession" :options="options.possessions" @blur="$v.item.possession.$touch()" :placeholder="$t('item.possession.placeholder')"></q-select>
+          </q-field>
+          <q-field :label="$t('item.attributes.label')" :helper="$t('item.attributes.helper')" :error="$v.item.attributes.$error" :error-label="validationError($v.item.attributes)">
+            <q-chips-input v-model="item.attributes" @blur="$v.item.attributes.$touch()" :placeholder="$t('item.attributes.placeholder')"></q-chips-input>
+          </q-field>
+        </div>
+      </q-modal-layout>
+    </q-modal>
   </q-page>
 </template>
 
 <script>
 import { CORE_PRIVILEGE, CORE_RESOURCE } from 'assets/apiRoutes'
-import { required } from 'vuelidate/lib/validators'
 import tableMixin from 'src/mixins/tableMixin'
-
-// const newItem = () => ({
-//   'privilege_name': '',
-//   'resource': '',
-//   'action': '',
-//   'posession': '',
-//   'attributes': [],
-//   'module_id': ''
-// })
+import {
+  // requiredIf,
+  // requiredUnless,
+  // minLength,
+  // maxLength,
+  // minValue,
+  // maxValue,
+  // between,
+  // alpha,
+  // alphaNum,
+  // numeric,
+  // email,
+  // ipAddress,
+  // macAddress,
+  // sameAs,
+  // url,
+  // or,
+  // and,
+  // withParams,
+  required
+} from 'vuelidate/lib/validators'
 
 export default {
   name: 'ConfigurePrivileges',
   mixins: [tableMixin],
   data () {
     return {
+      resource: 'CorePrivilege',
+      apiRoute: CORE_PRIVILEGE,
+      editMode: false,
+      item: this.newItem(),
       options: {
         actions: [
-          {value: 'read', label: 'read'},
-          {value: 'create', label: 'create'},
-          {value: 'update', label: 'update'},
-          {value: 'delete', label: 'delete'}
+          {value: 'read', label: this.$t('action.read')},
+          {value: 'create', label: this.$t('action.create')},
+          {value: 'update', label: this.$t('action.update')},
+          {value: 'delete', label: this.$t('action.delete')}
         ],
         possessions: [
-          {value: 'any', label: 'any'},
-          {value: 'own', label: 'own'}
+          {value: 'any', label: this.$t('possession.any')},
+          {value: 'own', label: this.$t('possession.own')}
         ],
         resources: []
       },
       table: {
+        loading: false,
+        rowKey: 'privilege_id',
+        title: '',
+        filter: '',
+        data: [],
         columns: [
           {
             name: 'privilege_name',
             required: true,
-            label: 'privilege_name',
+            label: this.$t('item.privilege_name.label'),
             align: 'left',
             field: 'privilege_name',
             sortable: true
@@ -112,7 +133,7 @@ export default {
           {
             name: 'description',
             required: true,
-            label: 'description',
+            label: this.$t('item.description.label'),
             align: 'left',
             field: 'description',
             sortable: true
@@ -120,7 +141,7 @@ export default {
           {
             name: 'resource_id',
             required: true,
-            label: 'resource_id',
+            label: this.$t('item.resource_id.label'),
             align: 'left',
             field: 'resource_id',
             sortable: true
@@ -128,7 +149,7 @@ export default {
           {
             name: 'action',
             required: true,
-            label: 'action',
+            label: this.$t('item.action.label'),
             align: 'left',
             field: 'action',
             sortable: true
@@ -136,7 +157,7 @@ export default {
           {
             name: 'possession',
             required: true,
-            label: 'possession',
+            label: this.$t('item.possession.label'),
             align: 'left',
             field: 'possession',
             sortable: true
@@ -144,10 +165,15 @@ export default {
           {
             name: 'attributes',
             required: true,
-            label: 'attributes',
+            label: this.$t('item.attributes.label'),
             align: 'left',
             field: row => row.attributes.join(', '),
             sortable: true
+          },
+          {
+            name: 'edit',
+            label: '',
+            required: true
           }
         ]
       }
@@ -155,86 +181,56 @@ export default {
   },
   validations: {
     item: {
-      name: {
+      privilege_name: {
         required
+      },
+      description: {
+
+      },
+      resource_id: {
+        required
+      },
+      action: {
+        required
+      },
+      possession: {
+        required
+      },
+      attributes: {
+        required,
+        globNotationSyntax: globs => globs.every(glob => !!glob.match(/^(!?([^\s.!*[\]]+|\*)((\.([^\s.!*[\]]+|\*))|(\[([0-9]+|\*)\]))*)$/))
       }
     }
   },
   methods: {
     newItem () {
+      // return default item. Important
       return {
         name: '',
         description: '',
         resource_id: '',
-        action: '',
-        possession: '',
-        attributes: []
+        action: 'read',
+        possession: 'any',
+        attributes: ['*']
       }
     },
     fetchItems () {
-      this.$axios.get(CORE_PRIVILEGE)
+      this.table.loading = true
+      Promise.all([
+        this.$axios.get(CORE_PRIVILEGE),
+        this.$axios.get(CORE_RESOURCE)
+      ])
         .then(response => {
-          this.table.data = response.data || []
+          this.table.data = response[0] ? response[0].data : []
+          this.options.resources = (response[1] && response[1].data) ? response.data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) : []
+          this.table.loading = false
         })
-      this.$axios.get(CORE_RESOURCE)
-        .then(response => {
-          this.options.resources = response.data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) || []
-        })
-    },
-    createItem () {
-      this.$q.dialog({
-        title: 'Confirm Edit',
-        message: 'Changes will be lost',
-        ok: this.$t('ok'),
-        cancel: this.$t('cancel')
-      })
-        .then(() => {
-          this.$q.loading.show()
-          this.$axios.post(CORE_PRIVILEGE, this.item)
-            .then(() => {
-              this.$q.loading.hide()
-            })
-            .catch(() => {
-              this.$q.loading.hide()
-            })
+        .catch(() => {
+          this.table.loading = false
         })
     },
-    updateItem () {
-      this.$q.dialog({
-        title: 'Confirm Edit',
-        message: 'Changes will be lost',
-        ok: this.$t('ok'),
-        cancel: this.$t('cancel')
-      })
-        .then(() => {
-          this.$q.loading.show()
-          this.$axios.put(CORE_PRIVILEGE, this.item)
-            .then(() => {
-              this.$q.loading.hide()
-            })
-            .catch(() => {
-              this.$q.loading.hide()
-            })
-        })
-    },
-    deleteItem () {
-      this.$q.dialog({
-        title: 'Confirm Edit',
-        message: 'Changes will be lost',
-        ok: this.$t('ok'),
-        cancel: this.$t('cancel')
-      })
-        .then(() => {
-          this.$q.loading.show()
-          this.$axios.delete(CORE_PRIVILEGE, { params: { id: this.item.privilege_id } })
-            .then(() => {
-              this.$q.loading.hide()
-            })
-            .catch(() => {
-              this.$q.loading.hide()
-            })
-        })
-    }
+
+    deleteParams: () => ({ privilege_id: this.item.privilege_id })
   },
   mounted () {
     this.fetchItems()
@@ -244,3 +240,56 @@ export default {
 
 <style>
 </style>
+
+<i18n>
+{
+  "es": {
+    "modal": {
+      "title": "Privilegio",
+      "subtitle": " "
+    },
+    "action": {
+      "read": "Leer",
+      "create": "Crear",
+      "update": "Modificar",
+      "delete": "Eliminar"
+    },
+    "possession": {
+      "any": "Cualquiera",
+      "own": "Propio"
+    },
+    "item": {
+      "privilege_name": {
+        "label": "Nombre",
+        "placeholder": "Accion Possession Recurso",
+        "helper": "Nombre para este privilegio"
+      },
+      "description": {
+        "label": "Descripcion",
+        "placeholder": "...",
+        "helper": "Descripcion del privilegio"
+      },
+      "resource_id": {
+        "label": "Recurso",
+        "placeholder": "Seleccione...",
+        "helper": "Recurso para este privielgio"
+      },
+      "action": {
+        "label": "Accion",
+        "placeholder": "Seleccione...",
+        "helper": "Accion que puede realizar sobre recurso"
+      },
+      "possession": {
+        "label": "Possession",
+        "placeholder": "Seleccione...",
+        "helper": "Debe ser dueño del recurso para poder aceder ?"
+      },
+      "attributes": {
+        "label": "Atributos",
+        "placeholder": "*",
+        "helper": "Permitir/Prohibir atributos especificos"
+      }
+    }
+  }
+}
+</i18n>
