@@ -30,26 +30,22 @@ exports.seed = async function(knex, Promise) {
 
   let actions = ['read', 'create', 'update', 'delete']
   let possessions = ['any', 'own']
+  let attributes = ['*']
   let privileges = []
 
   require('@app/modules').forEach(module_id => {
     let models = require(`@models/${module_id}`)
     Object.keys(models).forEach(modelName => {
       let model = models[modelName]
-      let attributes = [
-        ...Object.keys(model.jsonSchema.properties),
-        ...Object.keys(model.relationMappings || {})
-      ]
       actions.forEach(action => {
         possessions.forEach(possession => {
           privileges.push({
             privilege_name: `${action} ${possession} ${model.name}`.replace(/\b\w/g, l => l.toUpperCase()),
             description: '',
-            resource: model.resource,
+            resource_id: model.resource,
             action,
             possession,
-            attributes,
-            module_id
+            attributes
           })
         })
       })

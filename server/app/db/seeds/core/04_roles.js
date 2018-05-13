@@ -16,14 +16,12 @@ exports.seed = async function(knex, Promise) {
       case 'own':
         return {
           privilege_id,
-          role_id: userRoleId,
-          attributes: ['*']
+          role_id: userRoleId
         }
       case 'any':
         return {
           privilege_id,
-          role_id: adminRoleId,
-          attributes: ['*']
+          role_id: adminRoleId
         }
     }
   })

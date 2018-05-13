@@ -22,7 +22,7 @@ export default {
   },
   mounted () {
     this.$router.beforeEach((to, from, next) => {
-      const { requireAuthentication, requireAuthorization } = to.meta
+      let { requireAuthentication, requireAuthorization } = to.meta
 
       if ((requireAuthentication || requireAuthorization) && !this.isAuthenticated) {
         this.$root.$emit('AUTHENTICATION_REQUIRED')
@@ -50,9 +50,10 @@ export default {
       return response
     }, error => {
       // Do something with response error
-      if (error.response.status === 401 && this.isAuthenticated) {
+      if (error.response.status === 401) {
         // session expired
-        this.logoutMutation()
+        if (this.isAuthenticated) this.logoutMutation()
+        this.$root.$emit('AUTHENTICATION_REQUIRED')
       } else {
         return Promise.reject(error)
       }

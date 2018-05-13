@@ -32,7 +32,7 @@
       <template slot="top-row" slot-scope="props">
         <q-tr :props="props" v-if="showEdit()" class="bg-light inset-shadow">
           <q-th v-for="col in props.cols" :key="col.name" >
-            <q-input v-model="text" hide-underline :placeholder="col.label"></q-input>
+            <q-input v-model="item[col.name]" hide-underline :placeholder="col.label"></q-input>
           </q-th>
           <q-th class="text-right">
             <q-btn class="q-mx-xs" size="md" round outline color="positive" icon="save" dense></q-btn>
@@ -50,41 +50,27 @@
           </q-td>
         </q-tr>
         <q-tr :props="props" v-if="showEdit(props.row.__index)" class="inset-shadow bg-light">
-          <q-th v-for="col in props.cols" :key="col.name">
-            <q-input v-model="text" hide-underline :placeholder="col.label"></q-input>
-          </q-th>
-          <q-th class="text-right">
+          <q-td auto-width><q-input v-model="item.privilege_name" hide-underline placeholder="privilege_name" /></q-td>
+          <q-td auto-width><q-input v-model="item.description" hide-underline placeholder="description" /></q-td>
+          <q-td auto-width><q-select hide-underline v-model="item.resource_id" :options="options.resources" placeholder="resource_id" filter></q-select></q-td>
+          <q-td auto-width><q-select hide-underline v-model="item.action" :options="options.actions" placeholder="action"></q-select></q-td>
+          <q-td auto-width><q-select hide-underline v-model="item.possession" :options="options.possessions" placeholder="possession"></q-select></q-td>
+          <q-td auto-width><q-chips-input chips-color="black" chips-bg-color="light" add-icon="add" hide-underline v-model="item.attributes"></q-chips-input></q-td>
+          <q-td auto-width class="text-right">
             <q-btn class="q-mx-xs" size="md" round outline color="negative" icon="delete" dense @click="$v.item.$touch()"></q-btn>
             <q-btn class="q-mx-xs" size="md" round outline color="positive" icon="save" dense></q-btn>
-          </q-th>
+          </q-td>
         </q-tr>
       </template>
-
-      <!-- <q-tr slot="header" slot-scope="props" :props="props" @click.native="rowClick(props.row)">
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ col.label }}
-        </q-th>
-      </q-tr> -->
-      <!-- <q-th slot="header-cell-edit" slot-scope="props" :props="props" key="edit">
-        <q-btn size="sm">edit</q-btn>
-      </q-th>
-      <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props.row)" class="cursor-pointer">
-        <q-td v-for="col in props.cols" :key="col.name" :props="props">
-          {{ col.value }}
-        </q-td>
-      </q-tr>
-      <q-td slot="body-cell-edit" slot-scope="props" :props="props">
-        <q-btn size="sm">edit</q-btn>
-      </q-td> -->
     </q-table>
-    <pre>{{$v}}</pre>
-    <!-- <pre>{{table.data}}</pre> -->
+
   </q-page>
 </template>
 
 <script>
-import { CORE_PRIVILEGE } from 'assets/apiRoutes'
+import { CORE_PRIVILEGE, CORE_RESOURCE } from 'assets/apiRoutes'
 import { required } from 'vuelidate/lib/validators'
+import tableMixin from 'src/mixins/tableMixin'
 
 // const newItem = () => ({
 //   'privilege_name': '',
@@ -95,46 +81,48 @@ import { required } from 'vuelidate/lib/validators'
 //   'module_id': ''
 // })
 
-function createItem (item) {
-
-}
-
 export default {
   name: 'ConfigurePrivileges',
+  mixins: [tableMixin],
   data () {
     return {
-      edit: {
-        index: null,
-        open: false
+      options: {
+        actions: [
+          {value: 'read', label: 'read'},
+          {value: 'create', label: 'create'},
+          {value: 'update', label: 'update'},
+          {value: 'delete', label: 'delete'}
+        ],
+        possessions: [
+          {value: 'any', label: 'any'},
+          {value: 'own', label: 'own'}
+        ],
+        resources: []
       },
-      showCreate: false,
-      apiRoute: CORE_PRIVILEGE,
-      newItem: {
-        __showEdit: false
-      },
-      itemSchema: {
-
-      },
-      item: createItem(),
-      text: '',
       table: {
-        filter: '',
-        data: [],
         columns: [
           {
-            name: 'name',
+            name: 'privilege_name',
             required: true,
-            label: 'name',
+            label: 'privilege_name',
             align: 'left',
             field: 'privilege_name',
             sortable: true
           },
           {
-            name: 'resource',
+            name: 'description',
             required: true,
-            label: 'resource',
+            label: 'description',
             align: 'left',
-            field: 'resource',
+            field: 'description',
+            sortable: true
+          },
+          {
+            name: 'resource_id',
+            required: true,
+            label: 'resource_id',
+            align: 'left',
+            field: 'resource_id',
             sortable: true
           },
           {
@@ -160,14 +148,6 @@ export default {
             align: 'left',
             field: row => row.attributes.join(', '),
             sortable: true
-          },
-          {
-            name: 'module_id',
-            required: true,
-            label: 'module',
-            align: 'left',
-            field: 'module_id',
-            sortable: true
           }
         ]
       }
@@ -181,52 +161,83 @@ export default {
     }
   },
   methods: {
-    showEdit (index) {
-      return (index === undefined ? this.edit.index === null : this.edit.index === index) && this.edit.open
-    },
-    async toggleEdit (index) {
-      try {
-        if (this.showEdit(index)) {
-          this.edit.open = false
-        } else if (index === this.edit.index) {
-          this.edit.open = true
-        } else {
-          if (this.$v.item.$dirty) {
-            await this.$q.dialog({
-              title: 'Confirm Edit',
-              message: 'Changes will be lost',
-              ok: this.$t('ok'),
-              cancel: this.$t('cancel')
-            })
-            this.$v.item.$reset()
-          }
-
-          // create new copy of item to edit
-
-          this.edit.index = index
-          this.edit.open = true
-        }
-      } catch (error) {
+    newItem () {
+      return {
+        name: '',
+        description: '',
+        resource_id: '',
+        action: '',
+        possession: '',
+        attributes: []
       }
     },
-    read () {
-      this.$axios.get(this.apiRoute)
+    fetchItems () {
+      this.$axios.get(CORE_PRIVILEGE)
         .then(response => {
-          this.table.data = response.data.map(item => ({ ...item, __showEdit: false })) || []
+          this.table.data = response.data || []
+        })
+      this.$axios.get(CORE_RESOURCE)
+        .then(response => {
+          this.options.resources = response.data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) || []
         })
     },
-    create () {
-
+    createItem () {
+      this.$q.dialog({
+        title: 'Confirm Edit',
+        message: 'Changes will be lost',
+        ok: this.$t('ok'),
+        cancel: this.$t('cancel')
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.post(CORE_PRIVILEGE, this.item)
+            .then(() => {
+              this.$q.loading.hide()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+            })
+        })
     },
-    update () {
-
+    updateItem () {
+      this.$q.dialog({
+        title: 'Confirm Edit',
+        message: 'Changes will be lost',
+        ok: this.$t('ok'),
+        cancel: this.$t('cancel')
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.put(CORE_PRIVILEGE, this.item)
+            .then(() => {
+              this.$q.loading.hide()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+            })
+        })
     },
-    remove () {
-
+    deleteItem () {
+      this.$q.dialog({
+        title: 'Confirm Edit',
+        message: 'Changes will be lost',
+        ok: this.$t('ok'),
+        cancel: this.$t('cancel')
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.delete(CORE_PRIVILEGE, { params: { id: this.item.privilege_id } })
+            .then(() => {
+              this.$q.loading.hide()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+            })
+        })
     }
   },
   mounted () {
-    this.read()
+    this.fetchItems()
   }
 }
 </script>

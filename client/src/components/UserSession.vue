@@ -78,6 +78,7 @@ export default {
           this.reset()
           this.$q.loading.hide()
           this.$refs.modal.hide()
+          this.$router.push(this.$route.path)
         },
         failure: () => {
           this.reset()

@@ -1,8 +1,8 @@
 module.exports = {
   Module: require('./Module'),
+  Resource: require('./Resource'),
   Privilege: require('./Privilege'),
   Role: require('./Role'),
-  RolePrivilege: require('./RolePrivilege'),
   User: require('./User'),
   Group: require('./Group')
 }

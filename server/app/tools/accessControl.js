@@ -19,8 +19,9 @@ class AC {
     return permission
   }
   
-  permission (session, resource, action, possession = 'any') {   
-    
+  permission (session, resource, action, possession = 'any') {
+
+    this.authenticate(session)
     // spoof of real function, for dev
     console.log(`permission to ${action}:${possession} ${resource} spoofed. TURN OFF IN PRODUCTION`)
     return {
@@ -28,7 +29,6 @@ class AC {
       filter: items => items,
       attributes: ['*']
     }
-    this.authenticate(session)
 
     let { role } = session
     let permission = this.ac.permission({ role, resource, action, possession })

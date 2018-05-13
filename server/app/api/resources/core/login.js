@@ -6,7 +6,7 @@ module.exports = async function login ({ session, fields }, tools, { username, p
 
   if (!username) throw new ServerError(401)
 
-  let user = await User.query().where({ username }).eager('role.privileges.privilege').first()	
+  let user = await User.query().where({ username }).eager('role.privileges').first()	
   if (!user) throw new ServerError(401)
 
   let auth = await bcrypt.compare(password, user.password)	
@@ -30,10 +30,10 @@ module.exports = async function login ({ session, fields }, tools, { username, p
   let privileges = {}
   role.forEach(role => {
     role.privileges.forEach(privilege => {
-      let { resource, action, possession } = privilege.privilege
-      if (!privileges[resource]) privileges[resource] = {}
-      if (!privileges[resource][action]) privileges[resource][action] = []
-      if (!privileges[resource][action].includes(possession)) privileges[resource][action].push(possession)
+      let { resource_id, action, possession } = privilege
+      if (!privileges[resource_id]) privileges[resource_id] = {}
+      if (!privileges[resource_id][action]) privileges[resource_id][action] = []
+      if (!privileges[resource_id][action].includes(possession)) privileges[resource_id][action].push(possession)
     })
   })
   return {
