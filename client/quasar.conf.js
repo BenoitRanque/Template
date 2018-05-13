@@ -4,7 +4,8 @@ module.exports = function (ctx) {
   return {
     plugins: [
       'i18n',
-      'axios'
+      'axios',
+      'vuelidate'
     ],
     css: [
       'app.styl'
@@ -70,6 +71,7 @@ module.exports = function (ctx) {
         'QInput',
         'QModal',
         'QModalLayout',
+        'QTooltip',
         'QList',
         'QListHeader',
         'QItem',
@@ -79,7 +81,8 @@ module.exports = function (ctx) {
         'QTr',
         'QTd',
         'QTh',
-        'QSearch'
+        'QSearch',
+        'QSlideTransition'
       ],
       directives: [
         'Ripple'
