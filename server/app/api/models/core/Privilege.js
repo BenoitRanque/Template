@@ -20,10 +20,7 @@ module.exports = new Model({
       description: {
         type: 'string'
       },
-      module_id: {
-        type: 'string'
-      },
-      resource: {
+      resource_id: {
         description: 'Resource to be accessed using this privilege',
         type: 'string'
       },
@@ -48,19 +45,18 @@ module.exports = new Model({
       attributes: {
         type: 'array',
         items: { type: 'string' }
-      },
-      module_id: { type: 'string' }
+      }
     }
   },
   relationss: () => {
-    const Module = require('./Module')
+    const Resource = require('./Resource')
     return {
-      module: {
+      resource: {
         relation: BelongsToOneRelation,
-        modelClass: Module,
+        modelClass: Resource,
         join: {
-          from: 'core_privileges.module_id',
-          to: 'core_modules.module_id'
+          from: 'core_privileges.resource_id',
+          to: 'core_resources.resource_id'
         }
       }
     }

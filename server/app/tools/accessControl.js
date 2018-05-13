@@ -47,18 +47,18 @@ class AC {
 
   async refresh () {
 
-    let roles = await Role.query().eager('[extends, privileges.privilege]')
+    let roles = await Role.query().eager('[extends, privileges]')
 
     const grants = []
 
-    roles.forEach(role => {
-      role.privileges.forEach(privilege => {
+    roles.forEach(({ role_id, privileges }) => {
+      privileges.forEach(({ attributes, resource_id, action, possession }) => {
         grants.push({
-          role: role.role_id,
-          attributes: privilege.attributes,
-          resource: privilege.privilege.resource,
-          action: privilege.privilege.action,
-          possession: privilege.privilege.possession
+          role: role_id,
+          attributes,
+          resource: resource_id,
+          action,
+          possession
         })
       })
     })

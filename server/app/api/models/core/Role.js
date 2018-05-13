@@ -17,14 +17,18 @@ module.exports = new Model({
   },
   relations: () => {
     const Role = require('./Role')
-    const RolePrivilege = require('./RolePrivilege')
+    const Privilege = require('./Privilege')
     return {
       'privileges': {
-        relation: HasManyRelation,
-        modelClass: RolePrivilege,
+        relation: ManyToManyRelation,
+        modelClass: Privilege,
         join: {
           from: 'core_roles.role_id',
-          to: 'core_role_privileges.role_id'
+          through: {
+            from: 'core_role_privileges.role_id',
+            to: 'core_role_privileges.privilege_id'
+          },
+          to: 'core_privileges.privilege_id'
         }
       },
       'extends': {
