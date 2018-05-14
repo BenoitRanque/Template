@@ -50,6 +50,7 @@ class BaseModel extends Model {
 
 module.exports = function (config) {
   const {
+    jsonAttributes,
     tableName,
     idColumn,
     name,
@@ -65,6 +66,7 @@ module.exports = function (config) {
 
   return {
     [name]: class extends BaseModel {
+      static get jsonAttributes() { return jsonAttributes }
       static get tableName() { return tableName }
       static get idColumn() { return idColumn }
       static get description() { return description }

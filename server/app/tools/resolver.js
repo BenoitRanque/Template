@@ -1,41 +1,35 @@
-const recursiveFilter = require('./recursiveFilter')
+// const recursiveFilter = require('./recursiveFilter')
 const ServerError = require('./serverError')
-const { encode, decode, HTTPmethodToAction } = require('./utils')
+const { encode, decode } = require('./utils')
 
 module.exports = class Resolver {
-  constructor (method, params) {
+  constructor (method, model, params) {
+    this.model = model
     this.method = method
-    this.params = params ? params : () => {} 
+    this.params = params ? params : req => req.query
 
     return async (req, res, next) => {
       try {
-        let { accessControl, session, body, query, method } = req
-        let { possession, filters, fields } = query
+        let { accessControl, session, body } = req
 
-        let action = HTTPmethodToAction(method)
+        let input = body || {}
 
-        let info = {
-          action: HTTPmethodToAction(method),
-          possession: possession ? possession : 'any',
+        let params = this.params(req, res, next) || {}
+
+        let context = {
+          model: this.model,
+          ServerError,
           session,
-          fields: fields ? decode(fields) : [],
-          filters: filters ? decode(filters) : {}
-        }
-        let tools = {
           accessControl,
           authenticate: () => accessControl.authenticate(session),
           authorize: (resource, action, possession) => accessControl.authorize(session, resource, action || info.action, possession || info.possession),
-          permission: (resource, action, possession) => accessControl.permission(session, resource, action || info.action, possession || info.possession),
-          recursiveFilter: (model, data, action, possession) => recursiveFilter(model, accessControl.permission, session, data, action || info.action, possession || info.possession),
+          // permission: (resource, action, possession) => accessControl.permission(session, resource, action || info.action, possession || info.possession),
+          // recursiveFilter: (model, data, action, possession) => recursiveFilter(model, accessControl.permission, session, data, action || info.action, possession || info.possession),
           encode,
           decode
         }
 
-        let input = body
-
-        let params = this.params(req, res, next)
-
-        let output = await this.method(info, tools, input, params)
+        let output = await this.method(input, params, context)
 
         res.status(200).json(output)
       }

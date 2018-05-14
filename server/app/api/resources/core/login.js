@@ -1,19 +1,18 @@
-const ServerError = require('@tools/serverError')
+const bcrypt = require('bcrypt')
 
-module.exports = async function login ({ session, fields }, tools, { username, password }, params) {
-  const bcrypt = require('bcrypt')
+module.exports = async function login ({ username, password }, params, { ServerError, model, session }) {
   const User = require('@models/core/User')
 
   if (!username) throw new ServerError(401)
 
-  let user = await User.query().where({ username }).eager('role.privileges').first()	
+  let user = await User.query().where({ username }).eager('role.privileges').first()
   if (!user) throw new ServerError(401)
 
-  let auth = await bcrypt.compare(password, user.password)	
+  let auth = await bcrypt.compare(password, user.password)
   if (!auth) throw new ServerError(401)
 
-  delete user.password	
-  
+  delete user.password
+
   let {
     user_id,
     displayname,

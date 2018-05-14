@@ -1,4 +1,4 @@
-module.exports = async function logout ({ session }, { authenticate }, data, params) {
+module.exports = async function logout (input, params, { session, authenticate }) {
   authenticate()
 
   session.destroy()

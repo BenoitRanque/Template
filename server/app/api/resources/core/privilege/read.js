@@ -1,9 +1,7 @@
-const Privilege = require('@models/core/Privilege')
+module.exports = async (input, params, { authorize, model }) => {
+  let permission = authorize(model.resource, 'read', 'any')
 
-module.exports = async ({ fields, filters }, { authorize }, input, params) => {
-  let permission = authorize(Privilege.resource, 'read', 'any')
-
-  let data = await Privilege.query().applyFilters(filters).eagerFromFields(fields)
+  let data = await model.query()
 
   return permission.filter(data)
 }

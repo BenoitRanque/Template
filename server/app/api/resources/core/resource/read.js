@@ -1,9 +1,7 @@
-const Resource = require('@models/core/Resource')
+module.exports = async (input, params, { authorize, model }) => {
+  let permission = authorize(model.resource, 'read', 'any')
 
-module.exports = async (info, { authorize }, input, params) => {
-  let permission = authorize(Resource.resource, 'read', 'any')
-
-  let data = await Resource.query()
+  let data = await model.query()
 
   return permission.filter(data)
 }

@@ -2,7 +2,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   methods: {
-    createItem () {
+    createItem (item) {
       this.$q.dialog({
         title: this.$t('confirm.createItem.title'),
         message: this.$t('confirm.createItem.message'),
@@ -11,7 +11,7 @@ export default {
       })
         .then(() => {
           this.$q.loading.show()
-          this.$axios.post(this.apiRoute, this.item)
+          this.$axios.post(this.apiRoute, item)
             .then(() => {
               this.$q.loading.hide()
               this.$q.notify({
@@ -30,7 +30,7 @@ export default {
             })
         })
     },
-    updateItem () {
+    updateItem (item) {
       this.$q.dialog({
         title: this.$t('confirm.updateItem.title'),
         message: this.$t('confirm.updateItem.message'),
@@ -39,7 +39,7 @@ export default {
       })
         .then(() => {
           this.$q.loading.show()
-          this.$axios.put(this.apiRoute, this.item)
+          this.$axios.put(this.apiRoute, item, { params: this.updateParams(item) })
             .then(() => {
               this.$q.loading.hide()
               this.$q.notify({
@@ -58,7 +58,7 @@ export default {
             })
         })
     },
-    deleteItem () {
+    deleteItem (item) {
       this.$q.dialog({
         title: this.$t('confirm.deleteItem.title'),
         message: this.$t('confirm.deleteItem.message'),
@@ -67,7 +67,7 @@ export default {
       })
         .then(() => {
           this.$q.loading.show()
-          this.$axios.delete(this.apiRoute, { params: this.deleteParams() })
+          this.$axios.delete(this.apiRoute, { params: this.deleteParams(item) })
             .then(() => {
               this.$q.loading.hide()
               this.$q.notify({

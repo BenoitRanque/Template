@@ -1,3 +1,10 @@
-module.exports = async function createPrivilege (info, tools, input, params) {
+module.exports = async (input, params, { model, authorize }) => {
 
+  let permission = authorize(model.resource, 'create', 'any')
+
+  let data =  model.query().insert(permission.filter(input)).returning('*')
+
+  permission = authorize(model.resource, 'read', 'any')
+
+  return permission.filter(data)
 }

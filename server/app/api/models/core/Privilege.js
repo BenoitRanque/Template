@@ -2,6 +2,7 @@ const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
 
 module.exports = new Model({
+  jsonAttributes: [],
   tableName: 'core_privileges',
   idColumn: 'privilege_id',
   name: 'CorePrivilege',
@@ -9,7 +10,7 @@ module.exports = new Model({
   resource: 'CorePrivilege',
   schema: {
     type: 'object',
-    required: ['privilege_id'],
+    required: ['action', 'possession', 'resource_id'],
     properties: {
       privilege_id: {
         type: 'string'

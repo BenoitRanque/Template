@@ -9,18 +9,20 @@
       :data="table.data"
       :columns="table.columns"
       :filter="table.filter"
+      :pagination.sync="table.pagination"
+      class="no-shadow"
     >
       <template slot="top-left" slot-scope="props">
+        <q-btn class="q-mr-sm" round flat color="primary" icon="refresh" size="md" @click="fetchItems()" />
         <q-search hide-underline color="secondary"  v-model="table.filter" class="col-6" />
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-btn round flat icon="refresh" size="md" @click="fetchItems()" />
         <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
-        <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" class="q-mx-xs generic-transition" size="md" round dense flat icon="edit" @click="edit(props.row)"></q-btn>
+        <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" size="md" round dense flat icon="edit" color="dark" @click="edit(props.row)"></q-btn>
       </q-td>
 
     </q-table>
@@ -36,11 +38,11 @@
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
-            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem()">{{$t('buttons.deleteItem')}}</q-btn>
-            <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem()">{{$t('buttons.updateItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>
           <template v-else>
-            <q-btn v-if="isAuthorized(resource, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem()">{{$t('buttons.createItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
           </template>
         </q-toolbar>
         <div class="layout-padding group">
@@ -62,6 +64,12 @@
           <q-field :label="$t('item.attributes.label')" :helper="$t('item.attributes.helper')" :error="$v.item.attributes.$error" :error-label="validationError($v.item.attributes)">
             <q-chips-input v-model="item.attributes" @blur="$v.item.attributes.$touch()" :placeholder="$t('item.attributes.placeholder')"></q-chips-input>
           </q-field>
+          <pre>
+            {{item}}
+          </pre>
+          <pre>
+            {{$v}}
+          </pre>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -93,6 +101,18 @@ import {
   required
 } from 'vuelidate/lib/validators'
 
+function newItem () {
+  // return default item. Important
+  return {
+    privilege_name: '',
+    description: '',
+    resource_id: '',
+    action: 'read',
+    possession: 'any',
+    attributes: ['*']
+  }
+}
+
 export default {
   name: 'ConfigurePrivileges',
   mixins: [tableMixin],
@@ -101,7 +121,7 @@ export default {
       resource: 'CorePrivilege',
       apiRoute: CORE_PRIVILEGE,
       editMode: false,
-      item: this.newItem(),
+      item: newItem(),
       options: {
         actions: [
           {value: 'read', label: this.$t('action.read')},
@@ -121,6 +141,12 @@ export default {
         title: '',
         filter: '',
         data: [],
+        pagination: {
+          sortBy: null, // String, column "name" property value
+          descending: false,
+          page: 1,
+          rowsPerPage: 10 // current rows per page being displayed
+        },
         columns: [
           {
             name: 'privilege_name',
@@ -205,14 +231,7 @@ export default {
   methods: {
     newItem () {
       // return default item. Important
-      return {
-        name: '',
-        description: '',
-        resource_id: '',
-        action: 'read',
-        possession: 'any',
-        attributes: ['*']
-      }
+      return newItem()
     },
     fetchItems () {
       this.table.loading = true
@@ -221,8 +240,9 @@ export default {
         this.$axios.get(CORE_RESOURCE)
       ])
         .then(response => {
+          console.log(response)
           this.table.data = response[0] ? response[0].data : []
-          this.options.resources = (response[1] && response[1].data) ? response.data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) : []
+          this.options.resources = (response[1] && response[1].data) ? response[1].data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) : []
           this.table.loading = false
         })
         .catch(() => {
@@ -230,7 +250,8 @@ export default {
         })
     },
 
-    deleteParams: () => ({ privilege_id: this.item.privilege_id })
+    updateParams: (item) => ({ privilege_id: item.privilege_id }),
+    deleteParams: (item) => ({ privilege_id: item.privilege_id })
   },
   mounted () {
     this.fetchItems()

@@ -1,9 +1,7 @@
-const Module = require('@models/core/Module')
+module.exports = async (input, params, { authorize, model }) => {
+  let permission = authorize(model.resource, 'read', 'any')
 
-module.exports = async (info, { authorize }, input, params) => {
-  let permission = authorize(Module.resource, 'read', 'any')
-
-  let data = await Module.query()
+  let data = await model.query()
 
   return permission.filter(data)
 }
