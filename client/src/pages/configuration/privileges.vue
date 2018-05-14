@@ -64,12 +64,6 @@
           <q-field :label="$t('item.attributes.label')" :helper="$t('item.attributes.helper')" :error="$v.item.attributes.$error" :error-label="validationError($v.item.attributes)">
             <q-chips-input v-model="item.attributes" @blur="$v.item.attributes.$touch()" :placeholder="$t('item.attributes.placeholder')"></q-chips-input>
           </q-field>
-          <pre>
-            {{item}}
-          </pre>
-          <pre>
-            {{$v}}
-          </pre>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -177,7 +171,7 @@ export default {
             required: true,
             label: this.$t('item.action.label'),
             align: 'left',
-            field: 'action',
+            field: row => this.$t(`action.${row.action}`),
             sortable: true
           },
           {
@@ -185,7 +179,7 @@ export default {
             required: true,
             label: this.$t('item.possession.label'),
             align: 'left',
-            field: 'possession',
+            field: row => this.$t(`possession.${row.possession}`),
             sortable: true
           },
           {
@@ -240,8 +234,7 @@ export default {
         this.$axios.get(CORE_RESOURCE)
       ])
         .then(response => {
-          console.log(response)
-          this.table.data = response[0] ? response[0].data : []
+          this.table.data = (response[0] && response[0].data) ? response[0].data : []
           this.options.resources = (response[1] && response[1].data) ? response[1].data.map(resource => ({ value: resource.resource_id, label: resource.resource_id, sublabel: resource.description })) : []
           this.table.loading = false
         })
