@@ -54,9 +54,8 @@ export default {
         // session expired
         if (this.isAuthenticated) this.logoutMutation()
         this.$root.$emit('AUTHENTICATION_REQUIRED')
-      } else {
-        return Promise.reject(error)
       }
+      return Promise.reject(error)
     })
   }
 }

@@ -46,23 +46,17 @@
           </template>
         </q-toolbar>
         <div class="layout-padding group">
-          <q-field :label="$t('item.privilege_name.label')" :helper="$t('item.privilege_name.helper')" :error="$v.item.privilege_name.$error" :error-label="validationError($v.item.privilege_name)">
-            <q-input v-model="item.privilege_name" @blur="$v.item.privilege_name.$touch()" :placeholder="$t('item.privilege_name.placeholder')"/>
+          <q-field :label="$t('item.username.label')" :helper="$t('item.username.helper')" :error="$v.item.username.$error" :error-label="validationError($v.item.username)">
+            <q-input v-model="item.username" @blur="$v.item.username.$touch()" :placeholder="$t('item.username.placeholder')"/>
+          </q-field>
+          <q-field :label="$t('item.displayname.label')" :helper="$t('item.displayname.helper')" :error="$v.item.displayname.$error" :error-label="validationError($v.item.displayname)">
+            <q-input v-model="item.displayname" @blur="$v.item.displayname.$touch()" :placeholder="$t('item.displayname.placeholder')"/>
           </q-field>
           <q-field :label="$t('item.description.label')" :helper="$t('item.description.helper')" :error="$v.item.description.$error" :error-label="validationError($v.item.description)">
             <q-input v-model="item.description" @blur="$v.item.description.$touch()" :placeholder="$t('item.description.placeholder')"/>
           </q-field>
-          <q-field :label="$t('item.resource_id.label')" :helper="$t('item.resource_id.helper')" :error="$v.item.resource_id.$error" :error-label="validationError($v.item.resource_id)">
-            <q-select v-model="item.resource_id" :options="options.resources" filter @blur="$v.item.resource_id.$touch()" :placeholder="$t('item.resource_id.placeholder')"></q-select>
-          </q-field>
-          <q-field :label="$t('item.action.label')" :helper="$t('item.action.helper')" :error="$v.item.action.$error" :error-label="validationError($v.item.action)">
-            <q-select v-model="item.action" :options="options.actions" @blur="$v.item.action.$touch()" :placeholder="$t('item.action.placeholder')"></q-select>
-          </q-field>
-          <q-field :label="$t('item.possession.label')" :helper="$t('item.possession.helper')" :error="$v.item.possession.$error" :error-label="validationError($v.item.possession)">
-            <q-select v-model="item.possession" :options="options.possessions" @blur="$v.item.possession.$touch()" :placeholder="$t('item.possession.placeholder')"></q-select>
-          </q-field>
-          <q-field :label="$t('item.attributes.label')" :helper="$t('item.attributes.helper')" :error="$v.item.attributes.$error" :error-label="validationError($v.item.attributes)">
-            <q-chips-input v-model="item.attributes" @blur="$v.item.attributes.$touch()" :placeholder="$t('item.attributes.placeholder')"></q-chips-input>
+          <q-field :label="$t('item.role.label')" :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
+            <q-select v-model="item.role" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
           </q-field>
         </div>
       </q-modal-layout>
@@ -111,11 +105,11 @@ export default {
   data () {
     return {
       resource: 'CorePrivilege',
-      apiRoute: CORE_ROLE,
+      apiRoute: CORE_USER,
       editMode: false,
       item: newItem(),
       mapItemOptions: {
-        roles: role => this.options.roles.find(option => option.value.role_id === role.role_id).value
+        role: role => this.options.roles.find(option => option.value.role_id === role.role_id).value
       },
       options: {
         roles: []
@@ -155,6 +149,14 @@ export default {
             label: this.$t('item.description.label'),
             align: 'left',
             field: 'description',
+            sortable: true
+          },
+          {
+            name: 'role',
+            required: true,
+            label: this.$t('item.role.label'),
+            align: 'left',
+            field: row => (row.role && row.role.length) ? (row.role.map(role => role.role_name).slice(0, 3).join(', ') + (row.role.length > 3 ? `, + ${row.role.length - 3}...` : '')) : '',
             sortable: true
           },
           {
@@ -238,7 +240,12 @@ export default {
       "own": "Propio"
     },
     "item": {
-      "privilege_name": {
+      "username": {
+        "label": "Nombre",
+        "placeholder": "Accion Possession Recurso",
+        "helper": "Nombre para este privilegio"
+      },
+      "displayname": {
         "label": "Nombre",
         "placeholder": "Accion Possession Recurso",
         "helper": "Nombre para este privilegio"
@@ -248,25 +255,10 @@ export default {
         "placeholder": "...",
         "helper": "Descripcion del privilegio"
       },
-      "resource_id": {
+      "role": {
         "label": "Recurso",
         "placeholder": "Seleccione...",
         "helper": "Recurso para este privielgio"
-      },
-      "action": {
-        "label": "Accion",
-        "placeholder": "Seleccione...",
-        "helper": "Accion que puede realizar sobre recurso"
-      },
-      "possession": {
-        "label": "Possession",
-        "placeholder": "Seleccione...",
-        "helper": "Debe ser dueño del recurso para poder aceder ?"
-      },
-      "attributes": {
-        "label": "Atributos",
-        "placeholder": "*",
-        "helper": "Permitir/Prohibir atributos especificos"
       }
     }
   }

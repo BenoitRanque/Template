@@ -15,14 +15,14 @@ public class Startup
 }
 
 public class ZKTime {
-    [DllImport("C:\\Users\\BENOIT\\Dev\\template\\server\\zktime\\plcommpro.dll", EntryPoint = "Connect")]
-    public static extern IntPtr Connect(string Parameters);
+    // [DllImport("C:\\Users\\BENOIT\\Dev\\template\\server\\zktime\\plcommpro.dll", EntryPoint = "Connect")]
+    // public static extern IntPtr Connect(string Parameters);
 
     // [DllImport("C:\\Users\\desarrollo\\Dev\\template\\server\\zktime\\dll\\plcommpro.dll", EntryPoint = "PullLastError")]
     // public static extern int PullLastError();
 
-    // [DllImport("C:\\Users\\desarrollo\\Dev\\template\\server\\zktime\\dll\\plcommpro.dll", EntryPoint = "Connect")]
-    // public static extern IntPtr Connect(string Parameters);
+    [DllImport("C:\\Users\\desarrollo\\Dev\\template\\server\\zktime\\plcommpro.dll", EntryPoint = "Connect")]
+    public static extern IntPtr Connect(string Parameters);
 
     // [DllImport("C:\\Users\\desarrollo\\Dev\\template\\server\\zktime\\dll\\plcommpro.dll", EntryPoint = "PullLastError")]
     // public static extern int PullLastError();
