@@ -16,6 +16,9 @@ module.exports = new Model({
         description: 'a unique user identifier',
         type: 'string'
       },
+      'displayname': {
+        type: 'string'
+      },
       'password': { type: 'string' },
       'description': { type: 'string' }
     }

@@ -74,6 +74,7 @@ module.exports = function (ctx) {
         'QInput',
         'QChipsInput',
         'QSelect',
+        'QColor',
         'QModal',
         'QModalLayout',
         'QTooltip',

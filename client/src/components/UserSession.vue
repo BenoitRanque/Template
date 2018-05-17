@@ -22,10 +22,12 @@
     >
     </q-btn>
 
+    <theme-settings></theme-settings>
+
     <q-btn
       class="q-pa-sm"
       rounded
-      :color="authenticated ? 'negative' : 'positive'"
+      :color="authenticated ? 'negative' : 'secondary'"
       icon="power_settings_new"
       @click="authenticated ? logout() : $refs.modal.show()"
     >
@@ -42,10 +44,14 @@
 </template>
 
 <script>
+import ThemeSettings from './ThemeSettings'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'LoginLogout',
+  components: {
+    ThemeSettings
+  },
   data () {
     return {
       username: '',

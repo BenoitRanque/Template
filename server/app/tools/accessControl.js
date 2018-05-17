@@ -23,12 +23,12 @@ class AC {
 
     this.authenticate(session)
     // spoof of real function, for dev
-    console.log(`permission to ${action}:${possession} ${resource} spoofed. TURN OFF IN PRODUCTION`)
-    return {
-      granted: true,
-      filter: items => items,
-      attributes: ['*']
-    }
+    // console.log(`permission to ${action}:${possession} ${resource} spoofed. TURN OFF IN PRODUCTION`)
+    // return {
+    //   granted: true,
+    //   filter: items => items,
+    //   attributes: ['*']
+    // }
 
     let { role } = session
     let permission = this.ac.permission({ role, resource, action, possession })

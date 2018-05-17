@@ -101,6 +101,15 @@ export default {
       if (item) {
         this.editMode = true
         this.item = JSON.parse(JSON.stringify(item))
+        if (this.mapItemOptions) {
+          Object.keys(this.mapItemOptions).forEach(propName => {
+            if (Array.isArray(this.item[propName])) {
+              this.item[propName] = this.item[propName].map(this.mapItemOptions[propName])
+            } else if (this.item[propName]) {
+              this.item[propName] = this.mapItemOptions[propName](this.item[propName])
+            }
+          })
+        }
         delete this.item.__index
       } else {
         this.editMode = false

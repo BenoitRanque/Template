@@ -53,12 +53,11 @@
             <q-input v-model="item.description" @blur="$v.item.description.$touch()" :placeholder="$t('item.description.placeholder')"/>
           </q-field>
           <q-field :label="$t('item.extends.label')" :helper="$t('item.extends.helper')" :error="$v.item.extends.$error" :error-label="validationError($v.item.extends)">
-            <q-select v-model="item.extends" multiple filter :options="options.roles" @blur="$v.item.extends.$touch()" :placeholder="$t('item.extends.placeholder')"></q-select>
+            <q-select v-model="item.extends" multiple filter :options="options.roles.filter(option => option.value.role_id !== item.role_id)" @blur="$v.item.extends.$touch()" :placeholder="$t('item.extends.placeholder')"></q-select>
           </q-field>
           <q-field :label="$t('item.privileges.label')" :helper="$t('item.privileges.helper')" :error="$v.item.privileges.$error" :error-label="validationError($v.item.privileges)">
             <q-select v-model="item.privileges" multiple filter :options="options.privileges" @blur="$v.item.privileges.$touch()" :placeholder="$t('item.privileges.placeholder')"></q-select>
           </q-field>
-          <pre>{{item}}</pre>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -109,6 +108,10 @@ export default {
       apiRoute: CORE_ROLE,
       editMode: false,
       item: newItem(),
+      mapItemOptions: {
+        extends: role => this.options.roles.find(option => option.value.role_id === role.role_id).value,
+        privileges: privilege => this.options.privileges.find(option => option.value.privilege_id === privilege.privilege_id).value
+      },
       options: {
         roles: [],
         privileges: []
@@ -204,7 +207,7 @@ export default {
             sublabel: role.description
           })) : []
           this.options.privileges = (response[1] && response[1].data) ? response[1].data.map(privilege => ({
-            value: privilege.privilege_id,
+            value: privilege,
             label: privilege.privilege_name,
             sublabel: privilege.description
           })) : []

@@ -32,14 +32,14 @@
           <q-list-header>{{$t('pages')}}</q-list-header>
           <q-item inset v-for="(route, index) in $route.meta.pages" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace exact>
             <q-item-main>
-              {{route.meta.label}}
+              {{$t(route.meta.label)}}
             </q-item-main>
           </q-item>
         </template>
         <q-list-header>{{$t('modules')}}</q-list-header>
         <q-item inset v-for="(route, index) in routes" :key="`${index}_${route.path}`" link :to="`/${route.path}`" replace exact>
           <q-item-main>
-            {{route.meta.label}}
+            {{$t(route.meta.label)}}
           </q-item-main>
         </q-item>
       </q-list>
