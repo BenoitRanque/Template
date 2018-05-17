@@ -4,6 +4,7 @@
 
     </div> -->
     <img src="~assets/quasar-logo-full.svg">
+    <q-btn icon="edit" size="100px"/>
   </q-page>
 </template>
 

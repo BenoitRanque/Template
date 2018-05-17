@@ -29,12 +29,12 @@
 
     <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
       <q-modal-layout>
-        <q-toolbar slot="header">
+        <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
             {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
-          <q-btn icon="close" color="negative" dense round @click="cancel()"></q-btn>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">

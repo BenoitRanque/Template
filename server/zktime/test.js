@@ -1,4 +1,4 @@
-var edge = require('edge-js');
+const edge = require('edge-js');
 
 // var test = edge.func({
 //   references: [
@@ -50,7 +50,9 @@ var edge = require('edge-js');
 // });
 
 
-var test = edge.func(require('path').join(__dirname, 'test.cs'))
+var test = edge.func({
+  source: require('path').join(__dirname, 'test.cs')
+})
 
 // test(1, (err, response) => {
 //   console.log(response)
