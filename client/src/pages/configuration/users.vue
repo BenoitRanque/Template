@@ -58,6 +58,13 @@
           <q-field :label="$t('item.role.label')" :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
             <q-select v-model="item.role" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
           </q-field>
+          <hr class="q-my-lg">
+          <q-field label="hello" align="right">
+            <q-toggle v-model="resetPassword" color="negative"></q-toggle>
+          </q-field>
+          <q-field :label="$t('item.role.label')" inverted :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
+            <q-select v-model="item.role" inverted color="negative" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
+          </q-field>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -104,6 +111,7 @@ export default {
   mixins: [tableMixin],
   data () {
     return {
+      resetPassword: false,
       resource: 'CorePrivilege',
       apiRoute: CORE_USER,
       editMode: false,
