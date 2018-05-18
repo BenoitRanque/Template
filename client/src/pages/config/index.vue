@@ -12,7 +12,10 @@
 
 <script>
 export default {
-  // name: 'PageName',
+  name: 'ConfigIndex',
+  mounted () {
+    this.$root.$emit('TOGGLE_DRAWER', true)
+  }
 }
 </script>
 

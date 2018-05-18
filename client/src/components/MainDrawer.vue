@@ -14,7 +14,7 @@
         </q-item>
       </template>
       <q-list-header>{{$t('modules')}}</q-list-header>
-      <q-item inset v-for="(route, index) in routes" :key="`${index}_${route.hash}`" link :to="`/${route.hash}`" replace exact>
+      <q-item inset v-for="(route, index) in routes" :key="`${index}_${route.hash}`" link :to="`/${route.hash}`" replace>
         <q-item-main>
           {{$t(route.meta.label)}}
         </q-item-main>
@@ -48,8 +48,12 @@ export default {
     ...mapGetters('core', {
       authorized: 'isAuthorized'
     }),
-    toggledrawer () {
-      this.drawerOpen = !this.drawerOpen
+    toggledrawer (state) {
+      if (state === undefined) {
+        this.drawerOpen = !this.drawerOpen
+      } else {
+        this.drawerOpen = state
+      }
     }
   },
   created () {
