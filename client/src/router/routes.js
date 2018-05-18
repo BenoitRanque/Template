@@ -1,10 +1,9 @@
-import configurationRoutes from './configuration'
-import documentationRoutes from './documentation'
+import moduleRoutes from './modules'
 
 export default [
   {
     path: '/',
-    component: () => import('layouts/default'),
+    component: () => import('layouts/index'),
     children: [
       {
         path: '',
@@ -12,11 +11,10 @@ export default [
         meta: {
           label: 'index'
         }
-      },
-      ...routeModule(configurationRoutes),
-      ...routeModule(documentationRoutes)
+      }
     ]
   },
+  ...[].concat(...moduleRoutes.map(mapRoutes)),
   { // Always leave this as last one
     path: '*',
     component: () => import('layouts/default'),
@@ -32,10 +30,39 @@ export default [
   }
 ]
 
-function routeModule (routes) {
-  let pages = routes.slice(1)
-  return routes.map(route => {
-    route.meta.pages = pages
-    return route
+function mapRoutes (root) {
+  let output = []
+  let layoutIndexes = {}
+
+  let tabs = root.tabs.map(tab => ({
+    meta: tab.meta,
+    hash: tab.hash,
+    root: root.hash
+  }))
+
+  addRoute(root, tabs)
+  root.tabs.forEach(route => {
+    addRoute(route, tabs)
   })
+
+  return output
+
+  function addRoute (route, tabs) {
+    let { hash, layout, meta } = route
+    if (layoutIndexes[layout] === undefined) {
+      layoutIndexes[layout] = output.length
+      output.push({
+        path: `/${root.hash}`,
+        component: () => import(`layouts/${layout}`),
+        children: []
+      })
+    }
+
+    meta.tabs = tabs
+    output[layoutIndexes[layout]].children.push({
+      path: route === root ? '' : hash,
+      component: () => import(`pages/${root.hash}/${route === root ? 'index' : hash}`),
+      meta
+    })
+  }
 }
