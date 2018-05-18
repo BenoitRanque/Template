@@ -1,57 +1,27 @@
 <template>
-  <q-btn-group
+  <q-btn
+    class="q-pa-sm"
     rounded
-
+    :color="authenticated ? 'negative' : 'secondary'"
+    icon="power_settings_new"
+    @click="authenticated ? logout() : $refs.modal.show()"
   >
-    <q-btn
-      class="q-pa-sm"
-      rounded
-      color="white"
-      text-color="primary"
-      icon="help_outline"
-      @click="$router.push($route.meta.documentation)"
-    ></q-btn>
-
-    <q-btn
-      rounded
-      color="white"
-      text-color="primary"
-      icon="account_circle"
-      class="q-pa-sm"
-      v-if="authenticated"
-    >
-    </q-btn>
-
-    <theme-settings></theme-settings>
-
-    <q-btn
-      class="q-pa-sm"
-      rounded
-      :color="authenticated ? 'negative' : 'secondary'"
-      icon="power_settings_new"
-      @click="authenticated ? logout() : $refs.modal.show()"
-    >
-      <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()" @hide="reset">
-        <span class="q-display-1 q-my-md">
-          {{$t('login')}}
-        </span>
-        <q-input ref="username" @keydown.enter="$refs.password.focus" class="q-my-md" type="text" align="center" :placeholder="$t('username')" v-model="username"></q-input>
-        <q-input ref="password" @keydown.enter="login" class="q-my-md" type="password" align="center" :placeholder="$t('password')" v-model="password"></q-input>
-        <q-btn class="q-my-md" dark outline rounded @click="login" :label="$t('login')"></q-btn>
-      </q-modal>
-    </q-btn>
-  </q-btn-group>
+    <q-modal ref="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()" @hide="reset">
+      <span class="q-display-1 q-my-md">
+        {{$t('login')}}
+      </span>
+      <q-input ref="username" @keydown.enter="$refs.password.focus" class="q-my-md" type="text" align="center" :placeholder="$t('username')" v-model="username"></q-input>
+      <q-input ref="password" @keydown.enter="login" class="q-my-md" type="password" align="center" :placeholder="$t('password')" v-model="password"></q-input>
+      <q-btn class="q-my-md" dark outline rounded @click="login" :label="$t('login')"></q-btn>
+    </q-modal>
+  </q-btn>
 </template>
 
 <script>
-import ThemeSettings from './ThemeSettings'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'LoginLogout',
-  components: {
-    ThemeSettings
-  },
   data () {
     return {
       username: '',

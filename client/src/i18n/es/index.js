@@ -4,10 +4,11 @@ import validation from './validation'
 
 export default {
   validation,
-  'configuration': 'Configuración',
-  'configuration_roles': 'Configuracion de Roles',
-  'configuration_privileges': 'Configuracion de Privilegios',
-  'configuration_users': 'Configuracion de Usuarios',
+  'hr': 'RRHH',
+  'config': 'Configuración',
+  'config_roles': 'Configuracion de Roles',
+  'config_privileges': 'Configuracion de Privilegios',
+  'config_users': 'Configuracion de Usuarios',
   'username': 'Nombre de Usuario',
   'password': 'Contraseña',
   'edit': 'Editar',

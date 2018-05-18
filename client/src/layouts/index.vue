@@ -6,9 +6,6 @@
     <main-drawer></main-drawer>
 
     <q-page-container>
-      <q-page padding class="fixed row justify-center items-center">
-        <img src="statics/logo.png" style="width: 80%; opacity: 0.1" alt="">
-      </q-page>
       <router-view />
     </q-page-container>
   </q-layout>
