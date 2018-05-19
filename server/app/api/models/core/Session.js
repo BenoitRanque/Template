@@ -13,7 +13,7 @@ module.exports = class CoreSession extends Model {
         'session_id': { type: 'string' },
         'user_id': { type: 'string' },
         'data': { type: 'object' },
-        'expired': { type: 'string', format: 'date-time' }
+        'expires': { type: 'string' }
       }
     }
   }
