@@ -5,6 +5,8 @@ exports.up = async function(knex, Promise) {
     table.text('username').unique().notNullable()
     table.text('displayname').notNullable()
     table.text('description')
+
+    table.timestamps()
   })
 }
 

@@ -5,6 +5,8 @@ exports.up = async function(knex, Promise) {
     table.text('password').notNullable()
 
     table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('CASCADE')
+
+    table.timestamps()
   })
 }
 

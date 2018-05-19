@@ -43,9 +43,18 @@ class BaseQueryBuilder extends QueryBuilder {
 }
 
 module.exports = class BaseModel extends Model {
-  // static get QueryBuilder() {
-  //   return BaseQueryBuilder
-  // }
+  static get QueryBuilder() {
+    return BaseQueryBuilder
+  }
+
+  // timestamps on all models
+  $beforeInsert() {
+    this.created_at = new Date().toISOString();
+  }
+
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
+  }
 }
 
 // module.exports = function (config) {
