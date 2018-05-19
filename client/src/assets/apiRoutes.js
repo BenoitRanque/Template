@@ -1,4 +1,5 @@
 export const CORE_LOGIN = '/api/v1/core/login'
+export const CORE_PING = '/api/v1/core/ping'
 export const CORE_LOGOUT = '/api/v1/core/logout'
 export const CORE_USER = '/api/v1/core/user'
 export const CORE_PASSWORD = '/api/v1/core/password'

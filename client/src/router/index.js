@@ -3,8 +3,6 @@ import VueRouter from 'vue-router'
 
 import routes from './routes'
 
-console.log(routes)
-
 Vue.use(VueRouter)
 
 const Router = new VueRouter({

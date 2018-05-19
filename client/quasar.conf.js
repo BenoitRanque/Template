@@ -76,6 +76,7 @@ module.exports = function (ctx) {
         'QSelect',
         'QCheckbox',
         'QToggle',
+        
         'QColor',
         'QProgress',
         'QModal',

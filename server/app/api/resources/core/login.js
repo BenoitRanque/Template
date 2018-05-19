@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const Session = require('@models/core/Session')
 
 module.exports = async function login ({ username, password }, params, { ServerError, model, session }) {
   const User = require('@models/core/User')
@@ -10,6 +11,8 @@ module.exports = async function login ({ username, password }, params, { ServerE
 
   let auth = await bcrypt.compare(password, user.password)
   if (!auth) throw new ServerError(401)
+
+  await Session.query().where({ user_id: user.user_id }).del()
 
   delete user.password
 

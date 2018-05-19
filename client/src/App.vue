@@ -21,6 +21,7 @@ export default {
     })
   },
   created () {
+    // route guards
     this.$router.beforeEach((to, from, next) => {
       let { requireAuthentication, requireAuthorization } = to.meta
 

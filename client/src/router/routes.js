@@ -16,7 +16,8 @@ export default [
         path: 'user',
         component: () => import('pages/user'),
         meta: {
-          label: 'user'
+          label: 'user',
+          requireAuthentication: true
         }
       }
     ]

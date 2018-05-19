@@ -31,7 +31,7 @@
 
     </q-table>
 
-    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="passwordResetModal">
+    <q-modal content-css="width: 80vw; height: 80vh;" ref="passwordResetModal">
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
@@ -76,13 +76,6 @@
           </q-field>
           <q-field :label="$t('item.role.label')" :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
             <q-select v-model="item.role" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
-          </q-field>
-          <hr class="q-my-lg">
-          <q-field label="hello" align="right">
-            <q-toggle v-model="resetPassword" color="negative"></q-toggle>
-          </q-field>
-          <q-field :label="$t('item.role.label')" inverted :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
-            <q-select v-model="item.role" inverted color="negative" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
           </q-field>
         </div>
       </q-modal-layout>
@@ -269,41 +262,31 @@ export default {
 <i18n>
 {
   "es": {
-    "reset_password": "Restablecer Contrasena",
+    "reset_password": "Restablecer Contraseña",
     "modal": {
-      "title": "Privilegio",
+      "title": "Usuario",
       "subtitle": " "
-    },
-    "action": {
-      "read": "Leer",
-      "create": "Crear",
-      "update": "Modificar",
-      "delete": "Eliminar"
-    },
-    "possession": {
-      "any": "Cualquiera",
-      "own": "Propio"
     },
     "item": {
       "username": {
         "label": "Nombre",
-        "placeholder": "Accion Possession Recurso",
-        "helper": "Nombre para este privilegio"
+        "placeholder": "Nombre de usuario",
+        "helper": "Nombre que usara este usuario para login. Debe ser unico"
       },
       "displayname": {
         "label": "Nombre",
-        "placeholder": "Accion Possession Recurso",
-        "helper": "Nombre para este privilegio"
+        "placeholder": "Nombre Completo",
+        "helper": "Nombre propio del usuario"
       },
       "description": {
         "label": "Descripcion",
         "placeholder": "...",
-        "helper": "Descripcion del privilegio"
+        "helper": "Descripcion del usuario"
       },
       "role": {
-        "label": "Recurso",
+        "label": "Rol",
         "placeholder": "Seleccione...",
-        "helper": "Recurso para este privielgio"
+        "helper": "Roles para este usuario"
       }
     }
   }

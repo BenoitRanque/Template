@@ -1,3 +1,9 @@
 export default {
-  session: null
+  pingTimer: null,
+  idleTimer: null,
+  session: {
+    user: null,
+    privileges: null,
+    active: false
+  }
 }

@@ -3,10 +3,10 @@ const express = require('express')
 const app = express()
 
 app.use((req, res, next) => {
-  if (ENV === 'dev' && req.get('origin')) {
-    console.log('REQUEST')
-    console.log(req.path)
+  console.log('REQUEST')
+  console.log(req.path)
 
+  if (ENV === 'dev' && req.get('origin')) {
     res.setHeader('Access-Control-Allow-Origin', req.get('origin'))
   }
   res.setHeader('Access-Control-Allow-Credentials', 'true')

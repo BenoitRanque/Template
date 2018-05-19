@@ -2,6 +2,9 @@ const router = require('express').Router()
 const Resolver = require('@tools/resolver')
 const { User, Password, Role, Privilege, Module, Resource } = require('@models/core')
 
+router.route('/ping')
+  .get(new Resolver(require('@resources/core/ping')))
+
 router.route('/login')
   .post(new Resolver(require('@resources/core/login'), User))
 

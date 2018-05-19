@@ -4,6 +4,7 @@ import validation from './validation'
 
 export default {
   validation,
+  'user': 'Usuario',
   'hr': 'RRHH',
   'config': 'Configuración',
   'config_roles': 'Configuracion de Roles',

@@ -4,7 +4,7 @@ export const someGetter = (state) => {
 */
 
 export function isAuthenticated ({ session }) {
-  return !!session
+  return session.active
 }
 
 export function isAuthorized ({ session }, { isAuthenticated }) {
@@ -20,7 +20,7 @@ export function isAuthorized ({ session }, { isAuthenticated }) {
       return Array.isArray(values) ? values.some(method) : method(values)
     }
 
-    return isAuthenticated() && optionalArrayIteration(resource, resource => {
+    return isAuthenticated && optionalArrayIteration(resource, resource => {
       return session.privileges.hasOwnProperty(resource) && optionalArrayIteration(action, action => {
         return session.privileges[resource].hasOwnProperty(action) && optionalArrayIteration(possession, possession => {
           return session.privileges[resource][action].includes(possession)
@@ -28,4 +28,8 @@ export function isAuthorized ({ session }, { isAuthenticated }) {
       })
     })
   }
+}
+
+export function sessionUser ({ session }, { isAuthenticated }) {
+  return isAuthenticated ? session.user : {}
 }

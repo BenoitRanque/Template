@@ -65,7 +65,7 @@ export default {
   computed: {
     passwordStrength () {
       if (this.password1 === '') return 0
-      return (zxcvbn(this.password1).score + 1)
+      return (zxcvbn(this.password1, ['guembe']).score + 1)
     },
     passwordStrengthColor () {
       switch (this.passwordStrength) {
@@ -126,15 +126,15 @@ export default {
 <i18n>
 {
   "es": {
-    "password": "Contrasena",
-    "password_new": "Contrasena nueva",
-    "password_reset": "Restablecer Contrasena",
-    "password_strength": "Fuerza de la Contrasena",
-    "password_repeat": "Repita la contrasena",
-    "password_missmatch": "Las contrasenas no son iguales",
-    "reset_title": "Restablecer Contrasena",
-    "reset_message": "La contrasena sera restablecida para usuario:",
-    "password_reset_success": "Contrasena Restablecida",
+    "password": "Contraseña",
+    "password_new": "Contraseña nueva",
+    "password_reset": "Restablecer Contraseña",
+    "password_strength": "Fuerza de la Contraseña",
+    "password_repeat": "Repita la contraseña",
+    "password_missmatch": "Las contraseñas no son iguales",
+    "reset_title": "Restablecer Contraseña",
+    "reset_message": "La contraseña sera restablecida para usuario:",
+    "password_reset_success": "Contraseña Restablecida",
     "password_reset_error": "Error"
   }
 }
