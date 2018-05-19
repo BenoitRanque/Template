@@ -1,55 +1,55 @@
 const Model = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = new Model({
-  jsonAttributes: [],
-  tableName: 'core_privileges',
-  idColumn: 'privilege_id',
-  name: 'CorePrivilege',
-  description: 'A privilege of the core module',
-  resource: 'CorePrivilege',
-  schema: {
-    type: 'object',
-    required: ['action', 'possession', 'resource_id'],
-    properties: {
-      privilege_id: {
-        type: 'string'
-      },
-      privilege_name: {
-        type: 'string'
-      },
-      description: {
-        type: 'string'
-      },
-      resource_id: {
-        description: 'Resource to be accessed using this privilege',
-        type: 'string'
-      },
-      action: {
-        type: 'string',
-        description: 'Action to be performed on resource using this privilege',
-        enum: [
-          'read',
-          'create',
-          'update',
-          'delete'
-        ],
-      },
-      possession: {
-        type: 'string',
-        description: 'Posession required for this privilege',
-        enum: [
-          'any',
-          'own'
-        ],
-      },
-      attributes: {
-        type: 'array',
-        items: { type: 'string' }
+module.exports = class CorePrivilege extends Model {
+  static get resourceName () { return 'CorePrivilege' }
+  static get tableName () { return 'core_privileges' }
+  static get idColumn () { return 'privilege_id' }
+  static get jsonSchema () {
+    return  {
+      type: 'object',
+      description: 'A privilege of the core module',
+      required: ['action', 'possession', 'resource_id'],
+      properties: {
+        privilege_id: {
+          type: 'string'
+        },
+        privilege_name: {
+          type: 'string'
+        },
+        description: {
+          type: 'string'
+        },
+        resource_id: {
+          description: 'Resource to be accessed using this privilege',
+          type: 'string'
+        },
+        action: {
+          type: 'string',
+          description: 'Action to be performed on resource using this privilege',
+          enum: [
+            'read',
+            'create',
+            'update',
+            'delete'
+          ],
+        },
+        possession: {
+          type: 'string',
+          description: 'Posession required for this privilege',
+          enum: [
+            'any',
+            'own'
+          ],
+        },
+        attributes: {
+          type: 'array',
+          items: { type: 'string' }
+        }
       }
     }
-  },
-  relationss: () => {
+  }
+  static get relationMappings () {
     const Resource = require('./Resource')
     return {
       resource: {
@@ -61,9 +61,6 @@ module.exports = new Model({
         }
       }
     }
-  },
-  filters: {
-    name: (query, value) => query.where({ 'privilege_name': value }),
-    privilege_id: (query, value) => query.where({ 'privilege_id': value })
   }
-})
+}
+

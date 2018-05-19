@@ -7,7 +7,7 @@ module.exports = function recursiveFilter (model, permission, session, data, act
   }
 
   function filter (model, data) {
-    data = getPermission(model.resource).filter(data)
+    data = getPermission(model.resourceName).filter(data)
   
     if (Array.isArray(data)) {
       return filterArray(model, data)

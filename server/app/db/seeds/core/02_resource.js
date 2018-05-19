@@ -9,7 +9,7 @@ exports.seed = async function(knex, Promise) {
     Object.keys(models).forEach(modelName => {
       let model = models[modelName]
       resources.push({
-        resource_id: model.resource,
+        resource_id: model.resourceName,
         module_id
       })
     })

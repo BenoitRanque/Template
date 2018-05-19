@@ -1,6 +1,6 @@
 
 exports.up = async function(knex, Promise) {
-  await knex.schema.withSchema('public').createTable('core_user_passord', table => {
+  await knex.schema.withSchema('public').createTable('core_user_password', table => {
     table.uuid('user_id').notNullable().primary()
     table.text('password').notNullable()
 
@@ -9,5 +9,5 @@ exports.up = async function(knex, Promise) {
 }
 
 exports.down = async function(knex, Promise) {
-  await knex.schema.withSchema('public').dropTable('core_user_passord')
+  await knex.schema.withSchema('public').dropTable('core_user_password')
 }

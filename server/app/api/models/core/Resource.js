@@ -1,21 +1,22 @@
 const Model = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = new Model({
-  tableName: 'core_resources',
-  idColumn: 'resource_id',
-  name: 'CoreResource',
-  description: 'A Resource',
-  resource: 'CoreResource',
-  schema: {
-    type: 'object',
-    properties: {
-      'resource_id': { type: 'string' },
-      'description': { type: 'string' },
-      'module_id': { type: 'string' }
+module.exports = class CoreResource extends Model {
+  static get resourceName () { return 'CoreResource' }
+  static get tableName () { return 'core_resources' }
+  static get idColumn () { return 'resource_id' }
+  static get jsonSchema () {
+    return  {
+      type: 'object',
+      description: 'A Resource',
+      properties: {
+        'resource_id': { type: 'string' },
+        'description': { type: 'string' },
+        'module_id': { type: 'string' }
+      }
     }
-  },
-  relations: () => {
+  }
+  static get relationMappings () {
     const Module = require('./Module')
     return {
       'module': {
@@ -27,6 +28,5 @@ module.exports = new Model({
         }
       }
     }
-  },
-  filters: {}
-})
+  }
+}

@@ -1,22 +1,23 @@
 const Model = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = new Model({
-  tableName: 'core_groups',
-  idColumn: 'group_id',
-  name: 'CoreGroup',
-  description: 'A Group of users',
-  resource: 'CoreGroup',
-  schema: {
-    type: 'object',
-    properties: {
-      'group_id': { type: 'string' },
-      'group_name': { type: 'string' },
-      'group_owner_id': { type: 'string' },
-      'description': { type: 'string' }
+module.exports = class CoreGroup extends Model {
+  static get resourceName () { return 'CoreGroup' }
+  static get tableName () { return 'core_groups' }
+  static get idColumn () { return 'group_id' }
+  static get jsonSchema () {
+    return  {
+      type: 'object',
+      description: 'A Group of users',
+      properties: {
+        'group_id': { type: 'string' },
+        'group_name': { type: 'string' },
+        'group_owner_id': { type: 'string' },
+        'description': { type: 'string' }
+      }
     }
-  },
-  relations: () => {
+  }
+  static get relationMappings () {
     const User = require('./User')
     return {
       'group_owner': {
@@ -40,8 +41,6 @@ module.exports = new Model({
         }
       }
     }
-  },
-  filters: {
-    own: (query, group_owner_id) => query.where({ group_owner_id })
   }
-})
+}
+

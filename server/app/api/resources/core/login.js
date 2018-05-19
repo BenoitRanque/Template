@@ -5,7 +5,7 @@ module.exports = async function login ({ username, password }, params, { ServerE
 
   if (!username) throw new ServerError(401)
 
-  let user = await User.query().where({ username }).eager('role.privileges').first()
+  let user = await User.query().select('*').joinRelation('password').where({ username }).eager('[role.privileges]').first()
   if (!user) throw new ServerError(401)
 
   let auth = await bcrypt.compare(password, user.password)

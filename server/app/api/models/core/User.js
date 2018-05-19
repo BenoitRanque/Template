@@ -1,30 +1,31 @@
 const Model = require('@tools/model')
-const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = require('objection').Model
+const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = new Model({
-  tableName: 'core_users',
-  idColumn: 'user_id',
-  name: 'CoreUser',
-  description: 'A User of the core module',
-  resource: 'CoreUser',
-  schema: {
-    type: 'object',
-    required: ['username'],
-    properties: {
-      'user_id': { type: 'string' },
-      'username': { 
-        description: 'a unique user identifier',
-        type: 'string'
-      },
-      'displayname': {
-        type: 'string'
-      },
-      'password': { type: 'string' },
-      'description': { type: 'string' }
+module.exports = class CoreUser extends Model {
+  static get resourceName () { return 'CoreUser' }
+  static get tableName () { return 'core_users' }
+  static get idColumn () { return 'user_id' }
+  static get jsonSchema () { 
+    return {
+      type: 'object',
+      required: ['username'],
+      description: 'A User of the core module',
+      properties: {
+        'user_id': { type: 'string' },
+        'username': {
+          description: 'a unique user identifier',
+          type: 'string'
+        },
+        'displayname': {
+          type: 'string'
+        },
+        'description': { type: 'string' }
+      }
     }
-  },
-  relations: () => {
+  }
+  static get relationMappings () {
     const Role = require('./Role')
+    const Password = require('./Password')
     return {
       'role': {
         graph: {
@@ -41,12 +42,15 @@ module.exports = new Model({
           },
           to: 'core_roles.role_id'
         }
+      },
+      'password': {
+        relation: HasOneRelation,
+        modelClass: Password,
+        join: {
+          from: 'core_users.user_id',
+          to: 'core_user_password.user_id'
+        }
       }
     }
-  },
-  filters: {
-    id: (query, user_id) => query.where({ user_id }),
-    username: (query, username) => query.where({ username }),
-    own: (query, user_id) => query.where({ user_id })
   }
-})
+}

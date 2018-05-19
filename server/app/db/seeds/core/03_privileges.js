@@ -42,7 +42,7 @@ exports.seed = async function(knex, Promise) {
           privileges.push({
             privilege_name: `${action} ${possession} ${model.name}`.replace(/\b\w/g, l => l.toUpperCase()),
             description: '',
-            resource_id: model.resource,
+            resource_id: model.resourceName,
             action,
             possession,
             attributes

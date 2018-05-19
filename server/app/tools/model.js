@@ -42,46 +42,46 @@ class BaseQueryBuilder extends QueryBuilder {
   }
 }
 
-class BaseModel extends Model {
-  static get QueryBuilder() {
-    return BaseQueryBuilder
-  }
+module.exports = class BaseModel extends Model {
+  // static get QueryBuilder() {
+  //   return BaseQueryBuilder
+  // }
 }
 
-module.exports = function (config) {
-  const {
-    jsonAttributes,
-    tableName,
-    idColumn,
-    name,
-    resource,
-    description,
-    filters,
-    schema,
-    relations
-  } = config
+// module.exports = function (config) {
+//   const {
+//     jsonAttributes,
+//     tableName,
+//     idColumn,
+//     name,
+//     resource,
+//     description,
+//     filters,
+//     schema,
+//     relations
+//   } = config
 
-  if (!resource) throw new Error(`No resource specified for model ${name}`)
-  // todo: validate model
+//   if (!resource) throw new Error(`No resource specified for model ${name}`)
+//   // todo: validate model
 
-  return {
-    [name]: class extends BaseModel {
-      static get jsonAttributes() { return jsonAttributes }
-      static get tableName() { return tableName }
-      static get idColumn() { return idColumn }
-      static get description() { return description }
-      static get resource() { return resource }
-      static get jsonSchema () {
-        return {
-          name,
-          description,
-          ...schema
-        }
-      }
-      static get relationMappings () {
-        return relations ? relations() : {}
-      }
-      static get queryFilters() { return { ...filters } }
-    }
-  }[name]
-}
+//   return {
+//     [name]: class extends BaseModel {
+//       static get jsonAttributes() { return jsonAttributes }
+//       static get tableName() { return tableName }
+//       static get idColumn() { return idColumn }
+//       static get description() { return description }
+//       static get resource() { return resource }
+//       static get jsonSchema () {
+//         return {
+//           name,
+//           description,
+//           ...schema
+//         }
+//       }
+//       static get relationMappings () {
+//         return relations ? relations() : {}
+//       }
+//       static get queryFilters() { return { ...filters } }
+//     }
+//   }[name]
+// }

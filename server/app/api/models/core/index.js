@@ -4,5 +4,6 @@ module.exports = {
   Privilege: require('./Privilege'),
   Role: require('./Role'),
   User: require('./User'),
+  Password: require('./Password'),
   Group: require('./Group')
 }
