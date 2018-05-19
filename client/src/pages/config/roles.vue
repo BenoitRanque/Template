@@ -67,6 +67,7 @@
 <script>
 import { CORE_PRIVILEGE, CORE_ROLE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
+import validationError from 'src/mixins/validationError'
 import {
   // requiredIf,
   // requiredUnless,
@@ -101,7 +102,7 @@ function newItem () {
 
 export default {
   name: 'ConfigureRoles',
-  mixins: [tableMixin],
+  mixins: [tableMixin, validationError],
   data () {
     return {
       resource: 'CoreRole',

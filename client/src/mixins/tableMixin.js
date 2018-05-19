@@ -89,14 +89,6 @@ export default {
     ...mapGetters('core', {
       isAuthorized: 'isAuthorized'
     }),
-    validationError (validations) {
-      for (let validationName in validations.$params) {
-        if (validations.hasOwnProperty(validationName)) {
-          if (validations[validationName] === false) return this.$t(`validation.${validationName}`)
-        }
-      }
-      return this.$t('validation.error')
-    },
     edit (item) {
       if (item) {
         this.editMode = true

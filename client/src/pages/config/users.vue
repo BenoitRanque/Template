@@ -74,6 +74,7 @@
 <script>
 import { CORE_ROLE, CORE_USER } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
+import validationError from 'src/mixins/validationError'
 import {
   // requiredIf,
   // requiredUnless,
@@ -108,7 +109,7 @@ function newItem () {
 
 export default {
   name: 'ConfigurePrivileges',
-  mixins: [tableMixin],
+  mixins: [tableMixin, validationError],
   data () {
     return {
       resetPassword: false,

@@ -73,6 +73,7 @@
 <script>
 import { CORE_PRIVILEGE, CORE_RESOURCE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
+import validationError from 'src/mixins/validationError'
 import {
   // requiredIf,
   // requiredUnless,
@@ -109,7 +110,7 @@ function newItem () {
 
 export default {
   name: 'ConfigurePrivileges',
-  mixins: [tableMixin],
+  mixins: [tableMixin, validationError],
   data () {
     return {
       resource: 'CorePrivilege',
