@@ -77,6 +77,7 @@ module.exports = function (ctx) {
         'QCheckbox',
         'QToggle',
         'QColor',
+        'QProgress',
         'QModal',
         'QModalLayout',
         'QTooltip',
@@ -93,7 +94,8 @@ module.exports = function (ctx) {
         'QSlideTransition'
       ],
       directives: [
-        'Ripple'
+        'Ripple',
+        'CloseOverlay'
       ],
       plugins: [
         'Notify',

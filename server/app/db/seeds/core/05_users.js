@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { SALT_ROUNDS } = require('../../../config').bcrypt
+const { SALT_ROUNDS } = require('@config').bcrypt
 
 
 exports.seed = async function(knex, Promise) {

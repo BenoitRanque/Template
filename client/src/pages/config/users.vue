@@ -21,17 +21,36 @@
         <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
+      <q-td slot="body-cell-password-reset" slot-scope="props" :props="props" auto-width>
+        <q-btn v-if="isAuthorized('CorePassword', ['update'], 'any')" size="md" round dense flat icon="lock_open" color="negative" @click="resetPassword(props.row)"></q-btn>
+      </q-td>
+
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
         <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" size="md" round dense flat icon="edit" color="dark" @click="edit(props.row)"></q-btn>
       </q-td>
 
     </q-table>
 
-    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="passwordResetModal">
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
             {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
+          </q-toolbar-title>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" v-close-overlay></q-btn>
+        </q-toolbar>
+        <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+        </q-toolbar>
+        <div class="layout-padding">
+          <reset-password :user-id="passwordResetUserId" ></reset-password>
+        </div>
+      </q-modal-layout>
+    </q-modal>
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
+      <q-modal-layout>
+        <q-toolbar slot="header" class="q-py-none q-pr-none">
+          <q-toolbar-title>
+            {{$t('reset_password')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
@@ -75,6 +94,7 @@
 import { CORE_ROLE, CORE_USER } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
+import ResetPassword from 'components/ResetPassword'
 import {
   // requiredIf,
   // requiredUnless,
@@ -110,9 +130,12 @@ function newItem () {
 export default {
   name: 'ConfigurePrivileges',
   mixins: [tableMixin, validationError],
+  components: {
+    ResetPassword
+  },
   data () {
     return {
-      resetPassword: false,
+      passwordResetUserId: null,
       resource: 'CorePrivilege',
       apiRoute: CORE_USER,
       editMode: false,
@@ -169,6 +192,11 @@ export default {
             sortable: true
           },
           {
+            name: 'password-reset',
+            label: '',
+            required: true
+          },
+          {
             name: 'edit',
             label: '',
             required: true
@@ -195,6 +223,13 @@ export default {
     }
   },
   methods: {
+    resetPassword (user) {
+      if (!user || !user.user_id) return
+
+      this.passwordResetUserId = user.user_id
+
+      this.$refs.passwordResetModal.show()
+    },
     newItem () {
       // return default item. Important
       return newItem()
@@ -234,6 +269,7 @@ export default {
 <i18n>
 {
   "es": {
+    "reset_password": "Restablecer Contrasena",
     "modal": {
       "title": "Privilegio",
       "subtitle": " "

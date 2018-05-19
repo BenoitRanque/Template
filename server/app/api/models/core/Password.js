@@ -29,4 +29,18 @@ module.exports = class CorePassword extends Model {
       }
     }
   }
+  async $beforeUpdate(opt, queryContext) {
+    const bcrypt = require('bcrypt')
+    const { SALT_ROUNDS } = require('@config').bcrypt
+
+    await super.$beforeUpdate(opt, queryContext)
+    this.password = await bcrypt.hash(this.password ? this.password : '', SALT_ROUNDS)
+  }
+  async $beforeInsert(queryContext) {
+    const bcrypt = require('bcrypt')
+    const { SALT_ROUNDS } = require('@config').bcrypt
+
+    await super.$beforeInsert(queryContext)
+    this.password = await bcrypt.hash(this.password ? this.password : '', SALT_ROUNDS)
+  }
 }

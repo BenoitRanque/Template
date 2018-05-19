@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const Resolver = require('@tools/resolver')
-const { User, Role, Privilege, Module, Resource } = require('@models/core')
+const { User, Password, Role, Privilege, Module, Resource } = require('@models/core')
 
 router.route('/login')
   .post(new Resolver(require('@resources/core/login'), User))
@@ -13,6 +13,9 @@ router.route('/user')
   .post(new Resolver(require('@resources/core/user/create'), User))
   .put(new Resolver(require('@resources/core/user/update'), User))
   .delete(new Resolver(require('@resources/core/user/delete'), User))
+
+router.route('/password')
+  .put(new Resolver(require('@resources/core/password/update'), Password))
 
 router.route('/role')
   .get(new Resolver(require('@resources/core/role/read'), Role))

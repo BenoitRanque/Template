@@ -45,6 +45,7 @@
             icon="account_circle"
             class="q-pa-sm"
             :disable="!authenticated"
+            @click="$router.push('/user')"
           >
           </q-btn>
 
