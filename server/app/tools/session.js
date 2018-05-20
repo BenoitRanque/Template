@@ -3,7 +3,7 @@ const session = require('express-session')
 // const KnexSessionStore = require('connect-session-knex')(session)
 // const knex = require('@db/knex')
 
-const { SECRET, MAXAGE } = require('@config').cookie
+const { SECRET, MAXAGE, PURGE } = require('@config').session
 
 // const store = new KnexSessionStore({
 //     knex: knex,
@@ -63,6 +63,7 @@ class SessionStore extends Store {
     try {
       let session = await Session.query()
         .where({ session_id })
+        .andWhere('expires', '>', new Date().toISOString())
         .patch({ data, expires: data.cookie.expires.toISOString() })
         .catch(() => {})
       || await Session.query()
@@ -77,23 +78,31 @@ class SessionStore extends Store {
   async destroy (session_id, callback) {
     try {
       await Session.query().where({ session_id }).del()
-      callback()
+      callback && callback()
     } catch (error) {
-      callback(error)
+      callback && callback(error)
     }
   }
 
   async touch (session_id, data, callback) {
     try {
-     await Session.query().where({ session_id }).patch({ expires: data.cookie.expires.toISOString()  })
+      await Session.query().where({ session_id }).andWhere('expires', '>', new Date().toISOString()).patch({ expires: data.cookie.expires.toISOString() })
       callback()
     } catch (error) {
       callback(error)
     }
   }
+
+  async purge () {
+    await Session.query().where('expires', '<', new Date().toISOString()).del()
+  }
 }
 
 const store = new SessionStore()
+
+setInterval(() => {
+  store.purge()
+}, PURGE)
 
 module.exports = session({
   secret: SECRET,

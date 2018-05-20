@@ -1,7 +1,7 @@
 import { $axios } from 'src/plugins/axios'
 import { CORE_LOGIN, CORE_LOGOUT, CORE_PING } from 'assets/apiRoutes'
 
-const IDLE_TIMEOUT = 5 * 60 * 1000
+const IDLE_TIMEOUT = 2 * 60 * 1000
 const PING_TIMEOUT = 5 * 60 * 1000
 
 class IdleTimer {
@@ -39,11 +39,9 @@ class PingTimer {
   }
 
   timerOn (context) {
-    $axios.get(CORE_PING).then(() => {
-      console.log('ping')
-      console.log(context.timerOn)
-      context.timer = setTimeout(() => context.timerOn(context), context.timeout)
-    })
+    context.timer = setTimeout(() => {
+      $axios.get(CORE_PING).then(() => context.timerOn(context)).catch(() => {})
+    }, context.timeout)
   }
 
   timerOff () {
@@ -56,7 +54,7 @@ export function login ({ commit, dispatch }, { username, password, success, fail
     .then(response => {
       if (success !== undefined) success()
       commit('login', { user: response.data.user, privileges: response.data.privileges })
-      commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => dispatch('logout', {})))
+      commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => dispatch('sessionTimeout')))
       commit('pingTimerOn', new PingTimer(PING_TIMEOUT))
     })
     .catch(() => {
@@ -76,4 +74,8 @@ export function logout ({ commit }, { success, failure }) {
       commit('logout')
       if (failure !== undefined) failure()
     })
+}
+
+export function sessionTimeout ({ dispatch }) {
+  dispatch('logout', {})
 }

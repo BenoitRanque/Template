@@ -38,7 +38,7 @@ export default {
       loginAction: 'login',
       logoutAction: 'logout'
     }),
-    authenticationRequired () {
+    loginRequested () {
       this.$refs.modal.show()
     },
     reset () {
@@ -89,10 +89,10 @@ export default {
             },
             failure: () => {
               this.$q.loading.hide()
-              this.$q.notify({
-                message: this.$t('logout_failure'),
-                type: 'negative'
-              })
+              // this.$q.notify({
+              //   message: this.$t('logout_failure'),
+              //   type: 'warning'
+              // })
             }
           })
         })
@@ -100,10 +100,12 @@ export default {
     }
   },
   created () {
-    this.$root.$on('AUTHENTICATION_REQUIRED', this.authenticationRequired)
+    this.$root.$on('AUTHENTICATION_REQUIRED', this.loginRequested)
+    this.$root.$on('SESSION_TIMEOUT', this.loginRequested)
   },
   beforeDestroy () {
-    this.$root.$off('AUTHENTICATION_REQUIRED', this.authenticationRequired)
+    this.$root.$off('AUTHENTICATION_REQUIRED', this.loginRequested)
+    this.$root.$off('SESSION_TIMEOUT', this.loginRequested)
   }
 }
 </script>

@@ -12,6 +12,7 @@ module.exports = async function login ({ username, password }, params, { ServerE
   let auth = await bcrypt.compare(password, user.password)
   if (!auth) throw new ServerError(401)
 
+  // remove duplicate sessions
   await Session.query().where({ user_id: user.user_id }).del()
 
   delete user.password

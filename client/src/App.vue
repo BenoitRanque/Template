@@ -58,6 +58,12 @@ export default {
       }
       return Promise.reject(error)
     })
+
+    this.$store.subscribeAction((action, state) => {
+      switch (action.type) {
+        case 'core/sessionTimeout': return this.$root.$emit('SESSION_TIMEOUT')
+      }
+    })
   }
 }
 </script>
