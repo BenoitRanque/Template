@@ -17,4 +17,17 @@ module.exports = class CoreSession extends Model {
       }
     }
   }
+  static get relationMappings () {
+    const User = require('./User')
+    return {
+      'password': {
+        relation: BelongsToOneRelation,
+        modelClass: User,
+        join: {
+          from: 'core_user_session.user_id',
+          to: 'core_users.user_id'
+        }
+      }
+    }
+  }
 }

@@ -7,5 +7,6 @@ router.use(Session)
 router.use(AccessControl.middleware())
 
 router.use('/core', require('./routes/core'))
+router.use('/hr', require('./routes/hr'))
 
 module.exports = router
