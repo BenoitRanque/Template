@@ -5,41 +5,41 @@ Model.knex(require('@db/knex'))
 
 class BaseQueryBuilder extends QueryBuilder {
 
-  belongsTo(user_id) {
-    if (!user_id) throw new Error(`user_id is a required paramter of the belongsTo function`)
-    let own = this.modelClass.queryFilters.own
-    if (!own) throw new Error(`model ${this._modelClass.name} does not have a own filter`)
-    own(this, user_id)
-    return this
-  }
+//   belongsTo(user_id) {
+//     if (!user_id) throw new Error(`user_id is a required paramter of the belongsTo function`)
+//     let own = this.modelClass.queryFilters.own
+//     if (!own) throw new Error(`model ${this._modelClass.name} does not have a own filter`)
+//     own(this, user_id)
+//     return this
+//   }
 
-  applyFilters(filters) {
-    /*
-     * example filters
-     * 
-     * first: (query, value) => query.limit(value),
-     * after: (query, value) => query.offset(value)
-     * user_id: (query, user_id) => query.where({ user_id })
-     * 
-     */
-    if (!filters) return this
-    Object.keys(filters).forEach(filterName => {
-      let filterFunction = this._modelClass.queryFilters[filterName]
-      if (!filterFunction) throw new Error(`Unknown filter ${filterName} in model ${this.modelClass.name}`)
-      filterFunction(this, filters[filterName])
-    })
-    return this
-  }
+//   applyFilters(filters) {
+//     /*
+//      * example filters
+//      * 
+//      * first: (query, value) => query.limit(value),
+//      * after: (query, value) => query.offset(value)
+//      * user_id: (query, user_id) => query.where({ user_id })
+//      * 
+//      */
+//     if (!filters) return this
+//     Object.keys(filters).forEach(filterName => {
+//       let filterFunction = this._modelClass.queryFilters[filterName]
+//       if (!filterFunction) throw new Error(`Unknown filter ${filterName} in model ${this.modelClass.name}`)
+//       filterFunction(this, filters[filterName])
+//     })
+//     return this
+//   }
 
-  eagerFromFields(fields, owner) {
+//   eagerFromFields(fields, owner) {
     
-    if (!fields) return this
-    let model = this._modelClass
+//     if (!fields) return this
+//     let model = this._modelClass
 
-    const [expression, filters] = buildEager(model, fields, owner)
+//     const [expression, filters] = buildEager(model, fields, owner)
 
-    return this.eager(expression, filters)
-  }
+//     return this.eager(expression, filters)
+//   }
 }
 
 module.exports = class BaseModel extends Model {

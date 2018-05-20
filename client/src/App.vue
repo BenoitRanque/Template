@@ -10,12 +10,10 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'App',
   computed: mapGetters('core', {
-    isAuthenticated: 'isAuthenticated'
+    isAuthenticated: 'isAuthenticated',
+    isAuthorized: 'isAuthorized'
   }),
   methods: {
-    ...mapGetters('core', {
-      isAuthorized: 'isAuthorized'
-    }),
     ...mapMutations('core', {
       logoutMutation: 'logout'
     })
@@ -55,11 +53,13 @@ export default {
         // session expired
         if (this.isAuthenticated) this.logoutMutation()
         this.$root.$emit('AUTHENTICATION_REQUIRED')
+        console.log('auth required')
       }
       return Promise.reject(error)
     })
 
     this.$store.subscribeAction((action, state) => {
+      if (action.type === 'core/sessionTimeout') console.log('session tiemout')
       switch (action.type) {
         case 'core/sessionTimeout': return this.$root.$emit('SESSION_TIMEOUT')
       }

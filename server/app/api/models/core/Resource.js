@@ -23,7 +23,7 @@ module.exports = class CoreResource extends Model {
         relation: BelongsToOneRelation,
         modelClass: Module,
         join: {
-          from: 'core_resource.module_id',
+          from: 'core_resources.module_id',
           to: 'core_modules.module_id'
         }
       }

@@ -1,8 +1,8 @@
 const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = class HrEmployee extends Model {
-  static get resourceName () { return 'HrEmployee' }
+module.exports = class HREmployee extends Model {
+  static get resourceName () { return 'HREmployee' }
   static get tableName () { return 'hr_employees' }
   static get idColumn () { return 'employee_id' }
   static get jsonSchema () { 
@@ -37,7 +37,20 @@ module.exports = class HrEmployee extends Model {
             }
           }
         },
-        'user_id': { type: 'string' }
+        'user_id': { type: ['string', 'null'] }
+      }
+    }
+  }
+  static get relationMappings () {
+    const User = require('../core/User')
+    return {
+      'user': {
+        relation: HasOneRelation,
+        modelClass: User,
+        join: {
+          from: 'hr_employees.user_id',
+          to: 'core_users.user_id'
+        }
       }
     }
   }

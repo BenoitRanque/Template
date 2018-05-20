@@ -38,6 +38,7 @@
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
+            {{isAuthorized(resource, 'delete', 'any')}}
             <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>
@@ -197,7 +198,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(CORE_ROLE),
+        this.$axios.get(CORE_ROLE, { params: { eager: '[privileges]' } }),
         this.$axios.get(CORE_PRIVILEGE)
       ])
         .then(response => {
@@ -218,8 +219,6 @@ export default {
           this.table.loading = false
         })
     },
-
-    updateParams: (item) => ({ role_id: item.role_id }),
     deleteParams: (item) => ({ role_id: item.role_id })
   },
   mounted () {

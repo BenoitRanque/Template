@@ -1,10 +1,11 @@
-module.exports = async (input, { privilege_id }, { model, authorize }) => {
+module.exports = async (input, params, { model, authorize }) => {
 
   let permission = authorize(model.resourceName, 'update', 'any')
 
   let data = await model.query().allowUpsert('[privileges, extends]').upsertGraph(permission.filter(input), {
     relate: true,
-    unrelate: true
+    unrelate: true,
+    noInsert: true
   }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')

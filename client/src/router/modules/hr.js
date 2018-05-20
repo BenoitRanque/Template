@@ -6,17 +6,17 @@ export default {
     requireAuthentication: true
   },
   tabs: [
-    // {
-    //   hash: 'users',
-    //   layout: 'workspace',
-    //   meta: {
-    //     label: 'config_users',
-    //     requireAuthentication: true,
-    //     requireAuthorization: {
-    //       resource: 'CoreUser',
-    //       posession: 'any'
-    //     }
-    //   }
-    // },
+    {
+      hash: 'employees',
+      layout: 'workspace',
+      meta: {
+        label: 'employee_list',
+        requireAuthentication: true,
+        requireAuthorization: {
+          resource: 'HREmployee',
+          posession: 'any'
+        }
+      }
+    }
   ]
 }

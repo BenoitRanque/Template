@@ -76,6 +76,7 @@ class SessionStore extends Store {
   }
 
   async destroy (session_id, callback) {
+    console.log('destroyting session')
     try {
       await Session.query().where({ session_id }).del()
       callback && callback()
@@ -95,6 +96,7 @@ class SessionStore extends Store {
 
   async purge () {
     await Session.query().where('expires', '<', new Date().toISOString()).del()
+    console.log('PURGING SESSIONS')
   }
 }
 

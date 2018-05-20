@@ -12,7 +12,7 @@
       <q-btn @click="$refs.passwordResetModal.show()" icon="lock_open" color="negative">{{$t('reset_password')}}</q-btn>
     </div>
 
-    <q-modal content-css="width: 80vw; height: 80vh;" ref="passwordResetModal">
+    <q-modal content-css="width: 80vw; height: 80vh;" ref="passwordResetModal" @hide="$refs.passwordreset.reset()">
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
@@ -23,7 +23,7 @@
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
         </q-toolbar>
         <div class="layout-padding">
-          <reset-password own></reset-password>
+          <reset-password own ref="passwordreset"></reset-password>
         </div>
       </q-modal-layout>
     </q-modal>

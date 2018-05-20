@@ -82,6 +82,11 @@ export default {
     })
   },
   methods: {
+    reset () {
+      this.$v.$reset()
+      this.password1 = ''
+      this.password2 = ''
+    },
     confirm () {
       this.$q.dialog({
         title: this.$t('reset_title'),
@@ -110,6 +115,7 @@ export default {
           })
         })
         .catch(() => {
+          this.reset()
           this.$q.notify({
             message: this.$t('password_reset_error'),
             type: 'negative'

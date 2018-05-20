@@ -19,7 +19,7 @@ module.exports = class CoreUser extends Model {
         'displayname': {
           type: 'string'
         },
-        'description': { type: 'string' }
+        'description': { type: ['string', 'null'] }
       }
     }
   }

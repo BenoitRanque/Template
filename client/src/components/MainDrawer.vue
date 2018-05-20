@@ -38,16 +38,14 @@ export default {
   },
   computed: {
     ...mapGetters('core', {
-      authenticated: 'isAuthenticated'
+      authenticated: 'isAuthenticated',
+      authorized: 'isAuthorized'
     }),
     ...mapState('core', {
       session: 'session'
     })
   },
   methods: {
-    ...mapGetters('core', {
-      authorized: 'isAuthorized'
-    }),
     toggledrawer (state) {
       if (state === undefined) {
         this.drawerOpen = !this.drawerOpen

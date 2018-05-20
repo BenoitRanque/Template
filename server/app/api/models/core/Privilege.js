@@ -49,6 +49,10 @@ module.exports = class CorePrivilege extends Model {
       }
     }
   }
+  static get jsonAttributes() {
+    // disable automatic JSON formating for attributes array, store as POSTGRESQL array instead
+    return []
+  }
   static get relationMappings () {
     const Resource = require('./Resource')
     return {

@@ -31,18 +31,18 @@
 
     </q-table>
 
-    <q-modal content-css="width: 80vw; height: 80vh;" ref="passwordResetModal">
+    <q-modal content-css="width: 80vw; height: 80vh;" ref="passwordResetModal" @hide="$refs.passwordreset.reset()">
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
-            {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
+            {{$t('reset_password')}}
           </q-toolbar-title>
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" v-close-overlay></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
         </q-toolbar>
         <div class="layout-padding">
-          <reset-password :user-id="passwordResetUserId" ></reset-password>
+          <reset-password :user-id="passwordResetUserId" ref="passwordreset"></reset-password>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -50,7 +50,7 @@
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
-            {{$t('reset_password')}}
+            {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
@@ -230,7 +230,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(CORE_USER),
+        this.$axios.get(CORE_USER, { params: { eager: '[role]' } }),
         this.$axios.get(CORE_ROLE)
       ])
         .then(response => {
@@ -246,8 +246,6 @@ export default {
           this.table.loading = false
         })
     },
-
-    updateParams: (item) => ({ user_id: item.user_id }),
     deleteParams: (item) => ({ user_id: item.user_id })
   },
   mounted () {

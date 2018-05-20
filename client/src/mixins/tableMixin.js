@@ -1,6 +1,11 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  computed: {
+    ...mapGetters('core', {
+      isAuthorized: 'isAuthorized'
+    })
+  },
   methods: {
     createItem (item) {
       this.$q.dialog({
@@ -39,7 +44,7 @@ export default {
       })
         .then(() => {
           this.$q.loading.show()
-          this.$axios.put(this.apiRoute, item, { params: this.updateParams(item) })
+          this.$axios.put(this.apiRoute, item)
             .then(() => {
               this.$q.loading.hide()
               this.$q.notify({
@@ -86,9 +91,7 @@ export default {
             })
         })
     },
-    ...mapGetters('core', {
-      isAuthorized: 'isAuthorized'
-    }),
+
     edit (item) {
       if (item) {
         this.editMode = true
