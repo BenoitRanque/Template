@@ -1,3 +1,6 @@
+// register module aliases
+require('module-alias/register')
+
 const { HOST, PORT, NAME, USER, PASS } = require('@config').db
 
 module.exports = {
@@ -11,6 +14,16 @@ module.exports = {
       database: NAME,
       user: USER,
       password: PASS
+    },
+      // paths relative to server folder, location of npm scripts
+    migrations: {
+      loadExtensions: ['.js'],
+      directory: './app/db/migrations',
+      tableName: 'knex_migrations' // storage of knex migrations state
+    },
+    seeds: {
+      loadExtensions: ['.js'],
+      directory: './app/db/seeds'
     }
   },
   prod: {
@@ -21,20 +34,23 @@ module.exports = {
       database: NAME,
       user: USER,
       password: PASS
-    }
-  },
-  // paths relative to server folder, location of npm scripts
-  migrations (m) {
-    return {
+    },
+    // paths relative to server folder, location of npm scripts
+    migrations: {
       loadExtensions: ['.js'],
-      directory: './app/db/migrations/' + m,
+      directory: './app/db/migrations',
       tableName: 'knex_migrations' // storage of knex migrations state
+    },
+    seeds: {
+      loadExtensions: ['.js'],
+      directory: './app/db/seeds'
     }
   },
-  seeds (m) {
-    return {
-      loadExtensions: ['.js'],
-      directory: './app/db/seeds/' + m
-    }
-  }
+  // aliases
+  get production () {
+    return this.prod
+  },
+  get development () {
+    return this.dev
+  },
 }
