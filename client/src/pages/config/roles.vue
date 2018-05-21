@@ -198,7 +198,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(CORE_ROLE, { params: { eager: '[privileges]' } }),
+        this.$axios.get(CORE_ROLE, { params: { eager: '[privileges, extends]' } }),
         this.$axios.get(CORE_PRIVILEGE)
       ])
         .then(response => {

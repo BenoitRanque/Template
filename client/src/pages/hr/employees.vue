@@ -46,22 +46,45 @@
           </template>
         </q-toolbar>
         <div class="layout-padding group">
-          <q-field :label="$t('item.username.label')" :helper="$t('item.username.helper')" :error="$v.item.username.$error" :error-label="validationError($v.item.username)">
-            <q-input v-model="item.username" @blur="$v.item.username.$touch()" :placeholder="$t('item.username.placeholder')"/>
+          <q-field :label="$t('item.internal_id.label')" :helper="$t('item.internal_id.helper')" :error="$v.item.internal_id.$error" :error-label="validationError($v.item.internal_id)">
+            <q-input v-model="item.internal_id" @blur="$v.item.internal_id.$touch()" :placeholder="$t('item.internal_id.placeholder')"/>
           </q-field>
-          <q-field :label="$t('item.displayname.label')" :helper="$t('item.displayname.helper')" :error="$v.item.displayname.$error" :error-label="validationError($v.item.displayname)">
-            <q-input v-model="item.displayname" @blur="$v.item.displayname.$touch()" :placeholder="$t('item.displayname.placeholder')"/>
+          <q-field :label="$t('item.firstname.label')" :helper="$t('item.firstname.helper')" :error="$v.item.firstname.$error" :error-label="validationError($v.item.firstname)">
+            <q-input v-model="item.firstname" @blur="$v.item.firstname.$touch()" :placeholder="$t('item.firstname.placeholder')"/>
           </q-field>
-          <q-field :label="$t('item.description.label')" :helper="$t('item.description.helper')" :error="$v.item.description.$error" :error-label="validationError($v.item.description)">
-            <q-input v-model="item.description" @blur="$v.item.description.$touch()" :placeholder="$t('item.description.placeholder')"/>
+          <q-field :label="$t('item.lastname.label')" :helper="$t('item.lastname.helper')" :error="$v.item.lastname.$error" :error-label="validationError($v.item.lastname)">
+            <q-input v-model="item.lastname" @blur="$v.item.lastname.$touch()" :placeholder="$t('item.lastname.placeholder')"/>
           </q-field>
-          <q-field :label="$t('item.role.label')" :helper="$t('item.role.helper')" :error="$v.item.role.$error" :error-label="validationError($v.item.role)">
-            <q-select v-model="item.role" multiple :options="options.roles" @blur="$v.item.role.$touch()" :placeholder="$t('item.role.placeholder')"></q-select>
+          <q-field :label="$t('item.date_of_birth.label')" :helper="$t('item.date_of_birth.helper')" :error="$v.item.date_of_birth.$error" :error-label="validationError($v.item.date_of_birth)">
+            <q-datetime v-model="item.date_of_birth" @blur="$v.item.date_of_birth.$touch()" :placeholder="$t('item.date_of_birth.placeholder')"></q-datetime>
+          </q-field>
+          <q-field :label="$t('item.sex.label')" :helper="$t('item.sex.helper')" :error="$v.item.sex.$error" :error-label="validationError($v.item.sex)">
+            <q-select v-model="item.sex" @blur="$v.item.sex.$touch()" :placeholder="$t('item.sex.placeholder')" :options="options.sex"></q-select>
+          </q-field>
+          <q-field :label="$t('item.identification_document.label')" :helper="$t('item.identification_document.helper')" :error="$v.item.identification_document.$error" :error-label="validationError($v.item.identification_document)">
+            <div class="row " v-for="(key, index) in item.identification_document" :key="index">
+              <q-input class="col-4 q-my-xs" v-model="key.name" :before="[{icon: 'add', handler: () => addJsonArrayElement(item.identification_document, index)}]" :placeholder="$t('item.identification_document.nameplaceholder')"/>
+              <q-input class="col-8 q-my-xs" v-model="key.value" :after="[{icon: 'remove', handler: () => removeJsonArrayElement(item.identification_document, index)}]" :placeholder="$t('item.identification_document.valueplaceholder')"/>
+            </div>
+          </q-field>
+          <q-field :label="$t('item.contact.label')" :helper="$t('item.contact.helper')" :error="$v.item.contact.$error" :error-label="validationError($v.item.contact)">
+            <div class="row " v-for="(key, index) in item.contact" :key="index">
+              <q-input class="col-4 q-my-xs" v-model="key.name" :before="[{icon: 'add', handler: () => addJsonArrayElement(item.contact, index)}]" :placeholder="$t('item.contact.nameplaceholder')"/>
+              <q-input class="col-8 q-my-xs" v-model="key.value" :after="[{icon: 'remove', handler: () => removeJsonArrayElement(item.contact, index)}]" :placeholder="$t('item.contact.valueplaceholder')"/>
+            </div>
+          </q-field>
+          <q-field :label="$t('item.address.label')" :helper="$t('item.address.helper')" :error="$v.item.address.$error" :error-label="validationError($v.item.address)">
+            <div class="row " v-for="(key, index) in item.address" :key="index">
+              <q-input class="col-4 q-my-xs" v-model="key.name" :before="[{icon: 'add', handler: () => addJsonArrayElement(item.address, index)}]" :placeholder="$t('item.address.nameplaceholder')"/>
+              <q-input class="col-8 q-my-xs" v-model="key.value" :after="[{icon: 'remove', handler: () => removeJsonArrayElement(item.address, index)}]" :placeholder="$t('item.address.valueplaceholder')"/>
+            </div>
+          </q-field>
+          <q-field :label="$t('item.user_id.label')" :helper="$t('item.user_id.helper')" :error="$v.item.user_id.$error" :error-label="validationError($v.item.user_id)">
+            <q-select v-model="item.user_id" clearable :options="options.users" @blur="$v.item.user_id.$touch()" :placeholder="$t('item.user_id.placeholder')"></q-select>
           </q-field>
         </div>
       </q-modal-layout>
     </q-modal>
-    <pre>{{table.data}}</pre>
   </q-page>
 </template>
 
@@ -99,10 +122,10 @@ function newItem () {
     lastname: '',
     date_of_birth: null,
     sex: '',
-    identifcation_document: '',
-    contact: [],
-    address: [],
-    user_id: null
+    identification_document: [{ name: '', value: '' }],
+    contact: [{ name: '', value: '' }],
+    address: [{ name: '', value: '' }],
+    user_id: ''
   }
 }
 
@@ -117,7 +140,17 @@ export default {
       editMode: false,
       item: newItem(),
       options: {
-        users: []
+        users: [],
+        sex: [
+          {
+            label: this.$t('options.sex.female'),
+            value: 'F'
+          },
+          {
+            label: this.$t('options.sex.male'),
+            value: 'M'
+          }
+        ]
       },
       table: {
         loading: false,
@@ -135,47 +168,74 @@ export default {
           {
             name: 'internal_id',
             required: true,
-            label: this.$t('item.username.label'),
+            label: this.$t('item.internal_id.label'),
             align: 'left',
-            field: 'username',
+            field: 'internal_id',
             sortable: true
           },
           {
             name: 'firstname',
             required: true,
-            label: this.$t('item.username.label'),
+            label: this.$t('item.firstname.label'),
             align: 'left',
-            field: 'username',
+            field: 'firstname',
             sortable: true
           },
           {
             name: 'lastname',
             required: true,
-            label: this.$t('item.displayname.label'),
+            label: this.$t('item.lastname.label'),
             align: 'left',
-            field: 'displayname',
+            field: 'lastname',
             sortable: true
           },
           {
             name: 'date_of_birth',
             required: true,
-            label: this.$t('item.description.label'),
+            label: this.$t('item.date_of_birth.label'),
             align: 'left',
-            field: 'description',
+            field: 'date_of_birth',
             sortable: true
           },
           {
-            name: 'role',
+            name: 'sex',
             required: true,
-            label: this.$t('item.role.label'),
+            label: this.$t('item.sex.label'),
             align: 'left',
-            field: row => (row.role && row.role.length) ? (row.role.map(role => role.role_name).slice(0, 3).join(', ') + (row.role.length > 3 ? `, + ${row.role.length - 3}...` : '')) : '',
+            field: 'sex',
             sortable: true
           },
           {
-            name: 'password-reset',
-            label: '',
-            required: true
+            name: 'identification_document',
+            required: true,
+            label: this.$t('item.identification_document.label'),
+            align: 'left',
+            field: row => row.identification_document ? row.identification_document.map(item => item.value).join(', ') : '',
+            sortable: true
+          },
+          {
+            name: 'contact',
+            required: true,
+            label: this.$t('item.contact.label'),
+            align: 'left',
+            field: row => row.contact ? row.contact.map(item => item.value).join(', ') : '',
+            sortable: false
+          },
+          {
+            name: 'address',
+            required: true,
+            label: this.$t('item.address.label'),
+            align: 'left',
+            field: row => row.address ? row.address.map(item => item.value).join(', ') : '',
+            sortable: false
+          },
+          {
+            name: 'user_id',
+            required: true,
+            label: this.$t('item.user_id.label'),
+            align: 'left',
+            field: row => row.user_id ? this.options.users.find(option => option.value === row.user_id).label : '',
+            sortable: true
           },
           {
             name: 'edit',
@@ -188,28 +248,26 @@ export default {
   },
   validations: {
     item: {
-      username: {
+      internal_id: {},
+      firstname: {
         required
-        // todo: async backend validation of unique
       },
-      displayname: {
-
-      },
-      description: {
-
-      },
-      role: {
-
-      }
+      lastname: {},
+      date_of_birth: {},
+      sex: {},
+      identification_document: {},
+      contact: {},
+      address: {},
+      user_id: {}
     }
   },
   methods: {
-    resetPassword (user) {
-      if (!user || !user.user_id) return
-
-      this.passwordResetUserId = user.user_id
-
-      this.$refs.passwordResetModal.show()
+    removeJsonArrayElement (array, index) {
+      array.splice(index, 1)
+      if (array.length === 0) this.addJsonArrayElement(array, 0)
+    },
+    addJsonArrayElement (array, index) {
+      array.splice(index + 1, 0, { name: '', value: '' })
     },
     newItem () {
       // return default item. Important
@@ -218,13 +276,13 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_EMPLOYEE, { params: { eager: '[user]' } }),
+        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
         this.$axios.get(CORE_USER)
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
           this.options.users = (response[1] && response[1].data) ? response[1].data.map(user => ({
-            value: user,
+            value: user.user_id,
             label: user.username,
             sublabel: user.description
           })) : []
@@ -253,26 +311,60 @@ export default {
       "title": "Usuario",
       "subtitle": " "
     },
+    "options": {
+      "sex": {
+        "female": "Femenino",
+        "male": "Masculino"
+      }
+    },
     "item": {
-      "username": {
+      "internal_id": {
+        "label": "ID interna",
+        "placeholder": "ID",
+        "helper": "ID de uso interno"
+      },
+      "firstname": {
         "label": "Nombre",
-        "placeholder": "Nombre de usuario",
-        "helper": "Nombre que usara este usuario para login. Debe ser unico"
+        "placeholder": "nombre",
+        "helper": "nombre"
       },
-      "displayname": {
-        "label": "Nombre",
-        "placeholder": "Nombre Completo",
-        "helper": "Nombre propio del usuario"
+      "lastname": {
+        "label": "Apellido",
+        "placeholder": "apellido",
+        "helper": "apellido"
       },
-      "description": {
-        "label": "Descripcion",
-        "placeholder": "...",
-        "helper": "Descripcion del usuario"
+      "date_of_birth": {
+        "label": "Fecha de nacimiento",
+        "placeholder": "Fecha",
+        "helper": "fecha de nacimiento"
       },
-      "role": {
-        "label": "Rol",
-        "placeholder": "Seleccione...",
-        "helper": "Roles para este usuario"
+      "sex": {
+        "label": "Genero",
+        "placeholder": "genero",
+        "helper": "genero"
+      },
+      "identification_document": {
+        "label": "Documento de Identificación",
+        "nameplaceholder": "Tipo",
+        "valueplaceholder": "Codigo",
+        "helper": "Documentos de identifcacion"
+      },
+      "contact": {
+        "label": "Contacto",
+        "nameplaceholder": "Metodo",
+        "valueplaceholder": "Dato",
+        "helper": "Metodod de contacto"
+      },
+      "address": {
+        "label": "Dirreción",
+        "nameplaceholder": "Nombre",
+        "valueplaceholder": "Dirreción",
+        "helper": "Dirreción"
+      },
+      "user_id": {
+        "label": "Usuario",
+        "placeholder": "No tiene usuario",
+        "helper": "Usuario en caso lo tenga"
       }
     }
   }

@@ -54,6 +54,8 @@ export default {
         if (this.isAuthenticated) this.logoutMutation()
         this.$root.$emit('AUTHENTICATION_REQUIRED')
         console.log('auth required')
+      } else {
+        this.$q.notify({ type: 'negative', message: error.response.data })
       }
       return Promise.reject(error)
     })

@@ -11,33 +11,41 @@ module.exports = class HREmployee extends Model {
       description: 'An employee',
       properties: {
         'employee_id': { type: 'string' },
-        'internal_id': { type: 'string' },
-        'firstname': { type: 'string' },
-        'lastname': { type: 'string' },
-        'date_of_birth': { type: 'string' },
-        'sex': { type: 'string', enum: ['F', 'M'] },
-        'identifcation_document': { type: 'string' },
-        'contact': {
-          type: 'array',
+        'internal_id': { type: ['string', 'null'] },
+        'firstname': { type: ['string', 'null'] },
+        'lastname': { type: ['string', 'null'] },
+        'date_of_birth': { type: ['string', 'null'] },
+        'sex': { type: ['string', 'null'] },
+        'identification_document': {
+          type: ['array', 'null'],
           items: { 
             type: 'object',
             properties: {
               'name': { type: 'string' },
-              'data': { type: 'string' }
+              'value': { type: 'string' }
+            }
+          }
+        },
+        'contact': {
+          type: ['array', 'null'],
+          items: { 
+            type: 'object',
+            properties: {
+              'name': { type: 'string' },
+              'value': { type: 'string' }
             }
           }
         },
         'address': {
-          type: 'array',
+          type: ['array', 'null'],
           items: { 
             type: 'object',
             properties: {
               'name': { type: 'string' },
-              'data': { type: 'string' }
+              'value': { type: 'string' }
             }
           }
-        },
-        'user_id': { type: ['string', 'null'] }
+        }
       }
     }
   }

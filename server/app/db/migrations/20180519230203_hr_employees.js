@@ -6,7 +6,7 @@ exports.up = async function(knex, Promise) {
     table.text('firstname')
     table.text('lastname')
     table.timestamp('date_of_birth')
-    table.text('sex')
+    table.enu('sex', ['M', 'F', null])
     table.json('identification_document')
     table.json('contact')
     table.json('address')
@@ -14,7 +14,7 @@ exports.up = async function(knex, Promise) {
 
     table.timestamps()
 
-    table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE')
+    table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('SET NULL')
   })
 }
 

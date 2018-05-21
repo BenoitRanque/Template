@@ -1,6 +1,7 @@
 // Configuration for your app
 
 module.exports = function (ctx) {
+  console.log(ctx.theme)
   return {
     plugins: [
       'i18n',
@@ -18,13 +19,10 @@ module.exports = function (ctx) {
       // 'fontawesome'
     ],
     supportIE: false,
-    vendor: {
-      add: [],
-      remove: []
-    },
     build: {
       scopeHoisting: true,
       vueRouterMode: 'history',
+      // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
@@ -36,7 +34,10 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar)/
         })
-        cfg.module.rules[0].options.loaders['i18n'] = '@kazupon/vue-i18n-loader'
+        cfg.module.rules.push({
+          resourceQuery: /blockType=i18n/,
+          loader: '@kazupon/vue-i18n-loader'
+        })
       }
     },
     devServer: {
@@ -76,7 +77,7 @@ module.exports = function (ctx) {
         'QSelect',
         'QCheckbox',
         'QToggle',
-        
+        'QDatetime',
         'QColor',
         'QProgress',
         'QModal',
@@ -152,10 +153,13 @@ module.exports = function (ctx) {
       // id: 'org.cordova.quasar.app'
     },
     electron: {
+      // bundler: 'builder', // or 'packager'
       extendWebpack (cfg) {
-        // do something with cfg
+        // do something with Electron process Webpack cfg
       },
       packager: {
+        // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
+
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
@@ -164,6 +168,11 @@ module.exports = function (ctx) {
 
         // Window only
         // win32metadata: { ... }
+      },
+      builder: {
+        // https://www.electron.build/configuration/configuration
+
+        // appId: 'quasar-app'
       }
     },
 

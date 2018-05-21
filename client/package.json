@@ -24,16 +24,16 @@
     "electron-debug": "1.5.0",
     "electron-devtools-installer": "2.2.1",
     "electron-packager": "11.1.0",
-    "eslint": "4.15.0",
+    "eslint": "4.19.1",
     "eslint-config-standard": "10.2.1",
     "eslint-friendly-formatter": "3.0.0",
-    "eslint-loader": "1.7.1",
+    "eslint-loader": "2.0.0",
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-node": "5.2.0",
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-standard": "3.0.1",
     "eslint-plugin-vue": "4.0.0",
-    "quasar-cli": "^0.15.20"
+    "quasar-cli": "^0.16.0"
   },
   "engines": {
     "node": ">= 8.9.0",

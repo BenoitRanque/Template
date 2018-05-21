@@ -2,6 +2,8 @@ module.exports = async (input, params, { model, authorize }) => {
 
   let permission = authorize(model.resourceName, 'create', 'any')
 
+  console.log(input)
+
   let data = await model.query().allowInsert('[user]').insertGraph(permission.filter(input), {
     relate: true
   }).returning('*')
