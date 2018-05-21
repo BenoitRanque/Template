@@ -6,6 +6,7 @@ export default {
   validation,
   'user': 'Usuario',
   'hr': 'RRHH',
+  'employees': 'Empleados',
   'config': 'Configuración',
   'config_roles': 'Configuracion de Roles',
   'config_privileges': 'Configuracion de Privilegios',

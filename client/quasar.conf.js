@@ -1,7 +1,6 @@
 // Configuration for your app
 
 module.exports = function (ctx) {
-  console.log(ctx.theme)
   return {
     plugins: [
       'i18n',

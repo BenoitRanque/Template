@@ -10,7 +10,7 @@ export default {
       hash: 'employees',
       layout: 'workspace',
       meta: {
-        label: 'employee_list',
+        label: 'employees',
         requireAuthentication: true,
         requireAuthorization: {
           resource: 'HREmployee',
