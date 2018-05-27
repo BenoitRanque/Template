@@ -87,6 +87,7 @@ class SessionStore extends Store {
 
   async touch (session_id, data, callback) {
     try {
+      console.log('Touching session')
       await Session.query().where({ session_id }).andWhere('expires', '>', new Date().toISOString()).patch({ expires: data.cookie.expires.toISOString() })
       callback()
     } catch (error) {

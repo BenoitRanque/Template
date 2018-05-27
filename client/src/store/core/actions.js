@@ -55,7 +55,7 @@ export function login ({ commit, dispatch }, { username, password, success, fail
       if (success !== undefined) success()
       commit('login', { user: response.data.user, privileges: response.data.privileges })
       commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => {}))
-      // commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => dispatch('sessionTimeout')))
+      commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => dispatch('sessionTimeout')))
       commit('pingTimerOn', new PingTimer(PING_TIMEOUT))
     })
     .catch(() => {
