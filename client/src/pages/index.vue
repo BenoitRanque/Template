@@ -12,6 +12,7 @@
     <div class="col-6">
       <q-btn size="xl" color="primary" class="full-width" @click="$router.push('/config')" :label="$t('config')" icon="settings" />
     </div>
+    <q-btn @click="print">print</q-btn>
   </q-page>
 </template>
 
@@ -19,8 +20,14 @@
 </style>
 
 <script>
+import { remote } from 'electron'
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  methods: {
+    print () {
+      remote.getCurrentWebContents().print()
+    }
+  }
   // inject: {
   //   layout: {}
   // },

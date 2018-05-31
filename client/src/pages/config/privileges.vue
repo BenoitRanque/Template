@@ -18,6 +18,7 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
+        <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="info" icon="print" size="md" @click="print"  />
         <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
@@ -34,6 +35,7 @@
             {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
+          <q-btn @click="print" class="no-shadow" style="border-radius: 0" color="info" size="lg" icon="print"></q-btn>
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
@@ -71,6 +73,7 @@
 </template>
 
 <script>
+import { remote } from 'electron'
 import { CORE_PRIVILEGE, CORE_RESOURCE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
@@ -224,6 +227,9 @@ export default {
     }
   },
   methods: {
+    print () {
+      remote.getCurrentWebContents().print()
+    },
     newItem () {
       // return default item. Important
       return newItem()

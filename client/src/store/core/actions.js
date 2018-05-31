@@ -2,7 +2,7 @@ import { $axios } from 'src/plugins/axios'
 import { CORE_LOGIN, CORE_LOGOUT, CORE_PING } from 'assets/apiRoutes'
 
 const IDLE_TIMEOUT = 1000 * 60 * 5
-const PING_TIMEOUT = 1000 * 60 * 5
+const PING_TIMEOUT = 1000 * 60 * 2
 
 class IdleTimer {
   constructor (timeout, timerExpired) {
@@ -27,6 +27,7 @@ class IdleTimer {
   }
 
   resetTimer () {
+    console.log('reset idle')
     clearTimeout(this.timer)
     this.timer = setTimeout(this.timerExpired, this.timeout)
   }
@@ -35,13 +36,14 @@ class IdleTimer {
 class PingTimer {
   constructor (timeout) {
     this.timeout = timeout
-    this.timerOn(this)
+    this.timerOn()
   }
 
-  timerOn (context) {
-    context.timer = setTimeout(() => {
-      $axios.get(CORE_PING).then(() => context.timerOn(context)).catch(() => {})
-    }, context.timeout)
+  timerOn () {
+    this.timer = setTimeout(() => {
+      console.log('ping')
+      $axios.get(CORE_PING).then(this.timerOn.bind(this)).catch(() => {})
+    }, this.timeout)
   }
 
   timerOff () {
@@ -54,7 +56,7 @@ export function login ({ commit, dispatch }, { username, password, success, fail
     .then(response => {
       if (success !== undefined) success()
       commit('login', { user: response.data.user, privileges: response.data.privileges })
-      commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => {}))
+      // commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => {}))
       commit('idleTimerOn', new IdleTimer(IDLE_TIMEOUT, () => dispatch('sessionTimeout')))
       commit('pingTimerOn', new PingTimer(PING_TIMEOUT))
     })
@@ -78,5 +80,6 @@ export function logout ({ commit }, { success, failure }) {
 }
 
 export function sessionTimeout ({ dispatch }) {
+  console.log('session timeout idle')
   dispatch('logout', {})
 }
