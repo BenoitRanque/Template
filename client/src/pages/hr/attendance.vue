@@ -34,6 +34,30 @@ export default {
             name: 'day off'
           }
         ]
+      },
+      block: {
+        name: 'horario continuo',
+        begin: 0,
+        end: 0,
+        break: lunch,
+        events: [
+
+        ],
+        breaks: [
+
+        ],
+        expect: [
+          {
+            type: signin,
+            time: 0,
+            begin: 0 - 2,
+            end: 0 + 2,
+            tolerate: 0.1
+          },
+          {
+            type: lunch
+          }
+        ]
       }
     }
   }

@@ -67,6 +67,7 @@
         </div>
       </q-modal-layout>
     </q-modal>
+    <pre>{{table.data}}</pre>
   </q-page>
 </template>
 
