@@ -76,7 +76,7 @@ class SessionStore extends Store {
   }
 
   async destroy (session_id, callback) {
-    console.log('destroyting session')
+    console.log('destroying session')
     try {
       await Session.query().where({ session_id }).del()
       callback && callback()
