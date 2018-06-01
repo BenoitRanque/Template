@@ -153,24 +153,27 @@ hr_employee
 			pk
 	employee_external_id
 		text
+	user_id
+
+			fk
 	created_at
 		timestamp
 	updated_at
 		timestamp
 
 hr_employee_identification_document
-	identification_document_id
+	document_id
 		uuid
 			pk
 	employee_id
 		uuid
 			
 				fk
-	identification_document_type
+	document_type
 		text
-	identification_document_number
+	document_number
 		text
-	identification_document_extension
+	document_extension
 		text
 	created_at
 		timestamp
@@ -182,13 +185,15 @@ hr_employee_information
 		uuid
 			pk
 				fk
-	first_name
+	name_first
 		text
-	middle_name
+	name_middle
 		text
-	last_name_paternal
+	name_married
 		text
-	last_name_maternal
+	name_paternal
+		text
+	name_maternal
 		text
 	nationality
 		text
@@ -241,86 +246,178 @@ hr_employee_contract
 		timestamp
 
 hr_employee_contact
+	contact_id
+		uuid
+			pk
+	desciption
+		text
+	type
+		text
+	value
+		text
+	emergency_contact
+		boolean
+	employee_id
+		uuid
+			
+				fk
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+hr_employee_additional_info
 	employee_id
 		uuid
 			pk
 				fk
-	mobile_1
+	jubilado
+		boolean
+	aporta_afp
+		boolean
+	persona_con_descapacidad
+		boolean
+	tutor_persona_con_descapacidad
+		boolean
+	caja_de_salud
+		int
+	afp_aporta
+		int
+	nua_cua
 		text
-	mobile_2
+	sucursal
+		int
+	classificacion_laboral
 		text
-	phone_1
+
+
+hr_employee_shift_assign
+	id
+		uuid
+			pk
+	employee_id
+		uuid
+
+				fk
+	shift_id
+		uuid
+
+				fk
+	start_date
+		timestamp
+	end_date
+		timestamp
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+
+hr_att_shift
+	shift_id
+		uuid
+			pk
+	shift_name
 		text
-	phone_2
-		text
-	email_1
-		text
-	email_2
+	created_at
+		timestamp
+	updated_at
+		timestamp
+	
+hr_att_shift_days
+	shift_id
+		uuid
+			pk
+				fk
+	day_id
+		uuid
+			pk
+				fk
+	index
+		int
+			pk
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+hr_att_day
+	day_id
+		uuid
+			pk
+	day_name
 		text
 	created_at
 		timestamp
 	updated_at
 		timestamp
 
-hr_employee_emergency_contact
-	contact_id
+hr_att_day_timetables
+	day_id
 		uuid
 			pk
-	employee_id
-		uuid
-
 				fk
-	name
+	timetable_id
+		uuid
+			pk
+				fk
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+hr_att_timetable
+	timetable_id
+		uuid
+			pk
+	timetable_name
 		text
-	relationship
+	description
 		text
-	mobile
+	in_time
+		timestamp
+	in_start
+		timestamp
+	in_end
+		timestamp
+	out_time
+		timestamp
+	out_start
+		timestamp
+	out_end
+		timestamp
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+hr_att_timetable_breaks
+	timetable_id
+		uuid
+			pk
+				fk
+	break_id
+		uuid
+			pk
+				fk
+	created_at
+		timestamp
+	updated_at
+		timestamp
+
+hr_att_break
+	break_id
+		uuid
+			pk
+	break_name
 		text
-	phone
-		text
-	email
-		text
-
-
-
-
-
-hr_employee_
-
-## identifcation
-employee_id
-internal_id
-zktime_id
-
-## identifcation_document
-identification_document_type
-identification_document_number
-identification_document_extension
-
-## names
-last_name_paternal
-last_name_maternal
-first_name
-middle_name
-
-## personal info
-nationality
-place_of_birth
-date_of_birth
-sex
-marital status
-
-## contact
-phone
-mobile
-email
-address
-
-## emergency contact
-phone
-mobile
-email
-address
-relationship_with_employee
-
-##
+	start
+		timestamp
+	end
+		timestamp
+	duration
+		timestamp
+	created_at
+		timestamp
+	updated_at
+		timestamp
