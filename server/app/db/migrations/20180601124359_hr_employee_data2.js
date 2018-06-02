@@ -1,6 +1,6 @@
 
 exports.up = async function(knex, Promise) {
-  await knex.schema.withSchema('public').createTable('hr_employee_additional_information', table => {
+  await knex.schema.withSchema('public').createTable('hr_employee_data2', table => {
     table.uuid('employee_id').primary()
     table.text('jubilado')
     table.text('aporta_afp')
@@ -20,6 +20,6 @@ exports.up = async function(knex, Promise) {
 };
 
 exports.down = async function(knex, Promise) {
-  await knex.schema.withSchema('public').dropTable('hr_employee_additional_information')
+  await knex.schema.withSchema('public').dropTable('hr_employee_data2')
 };
 

@@ -17,13 +17,6 @@ export default {
           posession: 'any'
         }
       }
-    },
-    {
-      hash: 'attendance',
-      layout: 'workspace',
-      meta: {
-        label: 'attendance'
-      }
     }
   ]
 }

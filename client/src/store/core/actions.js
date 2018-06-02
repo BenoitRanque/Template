@@ -1,8 +1,8 @@
 import { $axios } from 'src/plugins/axios'
 import { CORE_LOGIN, CORE_LOGOUT, CORE_PING } from 'assets/apiRoutes'
 
-const IDLE_TIMEOUT = 1000 * 60 * 5
-const PING_TIMEOUT = 1000 * 60 * 2
+const IDLE_TIMEOUT = 1000 * 60 * 10
+const PING_TIMEOUT = 1000 * 60 * 5
 
 class IdleTimer {
   constructor (timeout, timerExpired) {

@@ -19,17 +19,11 @@
 // console.log(permission.filter(data))
 
 
-function test1 (param) {
-  test2(param)
+class AClass {
+  static get resourceName() {
+    return this.name
+  } 
 }
 
-function test2 ({ message } = {}) {
-  console.log(message)
-}
-
-test1({ message: 'hi'})
-test1({ })
-test1()
-test1(null)
-test1(false)
-test1({ message: 'hello'})
+console.log(AClass.name)
+console.log(AClass.resourceName)

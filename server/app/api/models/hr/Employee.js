@@ -2,62 +2,54 @@ const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
 module.exports = class HREmployee extends Model {
-  static get resourceName () { return 'HREmployee' }
-  static get tableName () { return 'hr_employees' }
+  static get tableName () { return 'hr_employee' }
   static get idColumn () { return 'employee_id' }
-  static get jsonSchema () { 
-    return {
-      type: 'object',
-      description: 'An employee',
-      properties: {
-        'employee_id': { type: 'string' },
-        'internal_id': { type: ['string', 'null'] },
-        'firstname': { type: ['string', 'null'] },
-        'lastname': { type: ['string', 'null'] },
-        'date_of_birth': { type: ['string', 'null'] },
-        'sex': { type: ['string', 'null'] },
-        'identification_document': {
-          type: ['array', 'null'],
-          items: { 
-            type: 'object',
-            properties: {
-              'name': { type: 'string' },
-              'value': { type: 'string' }
-            }
-          }
-        },
-        'contact': {
-          type: ['array', 'null'],
-          items: { 
-            type: 'object',
-            properties: {
-              'name': { type: 'string' },
-              'value': { type: 'string' }
-            }
-          }
-        },
-        'address': {
-          type: ['array', 'null'],
-          items: { 
-            type: 'object',
-            properties: {
-              'name': { type: 'string' },
-              'value': { type: 'string' }
-            }
-          }
-        }
-      }
-    }
-  }
   static get relationMappings () {
-    const User = require('../core/User')
+    const EmployeeData = require('./EmployeeData')
+    const EmployeeData2 = require('./EmployeeData2')
+    const IdentificationDocument = require('./IdentificationDocument')
+    const Contact = require('./Contact')
+    const Contract = require('./Contract')
+
     return {
-      'user': {
+      'data': {        
         relation: HasOneRelation,
-        modelClass: User,
+        modelClass: EmployeeData,
         join: {
-          from: 'hr_employees.user_id',
-          to: 'core_users.user_id'
+          from: 'hr_employee.employee_id',
+          to: 'hr_employee_data.employee_id'
+        }
+      },
+      'data2': {        
+        relation: HasOneRelation,
+        modelClass: EmployeeData2,
+        join: {
+          from: 'hr_employee.employee_id',
+          to: 'hr_employee_data2.employee_id'
+        }
+      },
+      'identification_document': {        
+        relation: HasManyRelation,
+        modelClass: IdentificationDocument,
+        join: {
+          from: 'hr_employee.employee_id',
+          to: 'hr_identification_document.employee_id'
+        }
+      },
+      'contact': {        
+        relation: HasManyRelation,
+        modelClass: Contact,
+        join: {
+          from: 'hr_employee.employee_id',
+          to: 'hr_contact.employee_id'
+        }
+      },
+      'contract': {        
+        relation: HasManyRelation,
+        modelClass: Contract,
+        join: {
+          from: 'hr_employee.employee_id',
+          to: 'hr_contract.employee_id'
         }
       }
     }

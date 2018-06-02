@@ -61,7 +61,6 @@ export default {
     })
 
     this.$store.subscribeAction((action, state) => {
-      if (action.type === 'core/sessionTimeout') console.log('session tiemout')
       switch (action.type) {
         case 'core/sessionTimeout': return this.$root.$emit('SESSION_TIMEOUT')
       }

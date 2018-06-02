@@ -8,7 +8,7 @@
     <q-page-container>
       <div class="fixed full-height full-width row justify-center items-center">
         <div class="col-auto">
-          <img src="statics/logo.png" class="" style="max-height: 80%; max-height: 80%; opacity: 0.05" alt="">
+          <img src="statics/logo.png" class="" style="max-width: 80%; max-height: 80%; opacity: 0.05" alt="">
         </div>
       </div>
       <router-view />

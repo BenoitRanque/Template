@@ -47,6 +47,10 @@ module.exports = class BaseModel extends Model {
     return BaseQueryBuilder
   }
 
+  static get resourceName() {
+    return this.name
+  }
+
   // timestamps on all models
   $beforeInsert() {
     this.created_at = new Date().toISOString();
