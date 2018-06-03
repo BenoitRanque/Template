@@ -11,8 +11,8 @@ module.exports = class HREmployeeData extends Model {
         relation: BelongsToOneRelation,
         modelClass: Employee,
         join: {
-          from: 'hr_employees_data.employee_id',
-          to: 'hr_employee.employee_id'
+          from: this.tableName + '.employee_id',
+          to: Employee.tableName + '.employee_id'
         }
       }
     }

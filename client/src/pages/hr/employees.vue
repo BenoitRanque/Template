@@ -29,14 +29,15 @@
 
     <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
       <q-modal-layout>
-        <q-toolbar slot="header" class="q-py-none q-pr-none">
+        <q-toolbar slot="header" class="print-hide q-py-none q-pr-none">
           <q-toolbar-title>
             {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
+          <q-btn icon="print" class="no-shadow" style="border-radius: 0" color="info" size="lg" @click="print()"></q-btn>
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
         </q-toolbar>
-        <!-- <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+        <q-toolbar slot="footer" class="print-hide justify-around q-py-sm" align="around">
           <template v-if="editMode">
             <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
@@ -44,8 +45,8 @@
           <template v-else>
             <q-btn v-if="isAuthorized(resource, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
           </template>
-        </q-toolbar> -->
-        <q-tabs inverted>
+        </q-toolbar>
+        <q-tabs inverted no-pane-border align="justify">
           <!-- Tabs -->
           <q-tab default slot="title" name="tab-1" label="data"/>
           <q-tab slot="title" name="tab-2" label="data2" />
@@ -53,7 +54,89 @@
           <q-tab slot="title" name="tab-4" label="identification_document" />
 
           <!-- Targets -->
-          <q-tab-pane name="tab-1">Tab One</q-tab-pane>
+          <q-tab-pane name="tab-1" class="group">
+            <q-field
+              :label="$t('item.name_first.label')"
+            >
+              <q-input
+                v-model="item.data.name_first"
+                :placeholder="$t('item.name_first.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.name_middle.label')"
+            >
+              <q-input
+                v-model="item.data.name_middle"
+                :placeholder="$t('item.name_middle.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.name_paternal.label')"
+            >
+              <q-input
+                v-model="item.data.name_paternal"
+                :placeholder="$t('item.name_paternal.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.name_maternal.label')"
+            >
+              <q-input
+                v-model="item.data.name_maternal"
+                :placeholder="$t('item.name_maternal.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.name_married.label')"
+            >
+              <q-input
+                v-model="item.data.name_married"
+                :placeholder="$t('item.name_married.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.sex.label')"
+            >
+              <q-select
+                v-model="item.data.sex"
+                :placeholder="$t('item.sex.placeholder')"
+                :options="options.sex"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.date_of_birth.label')"
+            >
+              <q-datetime type="date"
+                v-model="item.data.date_of_birth"
+                :placeholder="$t('item.date_of_birth.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.place_of_birth.label')"
+            >
+              <q-input
+                v-model="item.data.place_of_birth"
+                :placeholder="$t('item.place_of_birth.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.nationality.label')"
+            >
+              <q-input
+                v-model="item.data.nationality"
+                :placeholder="$t('item.nationality.placeholder')"
+              />
+            </q-field>
+            <q-field
+              :label="$t('item.marital_status.label')"
+            >
+              <q-input
+                v-model="item.data.marital_status"
+                :placeholder="$t('item.marital_status.placeholder')"
+              />
+            </q-field>
+          </q-tab-pane>
           <q-tab-pane name="tab-2">Tab Two</q-tab-pane>
           <q-tab-pane name="tab-3">Tab Three</q-tab-pane>
           <q-tab-pane name="tab-4">Tab Four</q-tab-pane>
@@ -91,23 +174,22 @@ import {
 // or,
 // and,
 // withParams,
-// required
+  required
 } from 'vuelidate/lib/validators'
 
 function newItem () {
   // return default item. Important
   return {
     data: {
-      employee_id: '',
       name_first: '',
       name_middle: '',
-      name_married: '',
       name_paternal: '',
       name_maternal: '',
-      nationality: '',
+      name_married: '',
+      sex: null,
+      date_of_birth: null,
       place_of_birth: '',
-      date_of_birth: '',
-      sex: '',
+      nationality: '',
       marital_status: ''
     }
   }
@@ -166,10 +248,20 @@ export default {
   },
   validations: {
     item: {
-      employee_id: {}
+      employee_id: {},
+      data: {
+        date_of_birth: {
+          required
+        }
+      }
     }
   },
   methods: {
+    print () {
+      if (!this.$q.platform.is.electron) return
+      const { remote } = require('electron')
+      remote.getCurrentWebContents().print()
+    },
     newItem () {
       // return default item. Important
       return newItem()
@@ -213,53 +305,55 @@ export default {
       }
     },
     "item": {
-      "internal_id": {
-        "label": "ID interna",
-        "placeholder": "ID",
-        "helper": "ID de uso interno"
+      "name_first": {
+        "label": "Primer Nombre",
+        "placeholder": " ",
+        "helper": " "
       },
-      "firstname": {
-        "label": "Nombre",
-        "placeholder": "nombre",
-        "helper": "nombre"
+      "name_middle": {
+        "label": "Segundo Nombre",
+        "placeholder": " ",
+        "helper": " "
       },
-      "lastname": {
-        "label": "Apellido",
-        "placeholder": "apellido",
-        "helper": "apellido"
+      "name_paternal": {
+        "label": "Apellido Paterno",
+        "placeholder": " ",
+        "helper": " "
       },
-      "date_of_birth": {
-        "label": "Fecha de nacimiento",
-        "placeholder": "Fecha",
-        "helper": "fecha de nacimiento"
+      "name_maternal": {
+        "label": "Apellido Materno",
+        "placeholder": " ",
+        "helper": " "
+      },
+      "name_married": {
+        "label": "Apellido Casado",
+        "placeholder": " ",
+        "helper": " "
       },
       "sex": {
-        "label": "Genero",
-        "placeholder": "genero",
-        "helper": "genero"
+        "label": "Sexo",
+        "placeholder": " ",
+        "helper": " "
       },
-      "identification_document": {
-        "label": "Documento de Identificación",
-        "nameplaceholder": "Tipo",
-        "valueplaceholder": "Codigo",
-        "helper": "Documentos de identifcacion"
+      "date_of_birth": {
+        "label": "Fecha de Nacimiento",
+        "placeholder": " ",
+        "helper": " "
       },
-      "contact": {
-        "label": "Contacto",
-        "nameplaceholder": "Metodo",
-        "valueplaceholder": "Dato",
-        "helper": "Metodod de contacto"
+      "place_of_birth": {
+        "label": "Lugar de Nacimiento",
+        "placeholder": " ",
+        "helper": " "
       },
-      "address": {
-        "label": "Dirreción",
-        "nameplaceholder": "Nombre",
-        "valueplaceholder": "Dirreción",
-        "helper": "Dirreción"
+      "nationality": {
+        "label": "Nacionalidad",
+        "placeholder": " ",
+        "helper": " "
       },
-      "user_id": {
-        "label": "Usuario",
-        "placeholder": "No tiene usuario",
-        "helper": "Usuario en caso lo tenga"
+      "marital_status": {
+        "label": "Estado Civil",
+        "placeholder": " ",
+        "helper": " "
       }
     }
   }

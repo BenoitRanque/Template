@@ -16,5 +16,5 @@ exports.up = async function(knex, Promise) {
 };
 
 exports.down = async function(knex, Promise) {
-  await knex.schema.withSchema('public').dropTable('hr_ontact')
+  await knex.schema.withSchema('public').dropTable('hr_contact')
 };

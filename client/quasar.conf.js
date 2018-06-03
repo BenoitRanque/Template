@@ -20,12 +20,24 @@ module.exports = function (ctx) {
     supportIE: false,
     build: {
       scopeHoisting: true,
-      vueRouterMode: 'history'
+      vueRouterMode: 'history',
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
       // useNotifier: false,
+      extendWebpack (cfg) {
+        cfg.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules|quasar)/
+        })
+        cfg.module.rules.push({
+          resourceQuery: /blockType=i18n/,
+          loader: '@kazupon/vue-i18n-loader'
+        })
+      }
     },
     devServer: {
       proxy: {
