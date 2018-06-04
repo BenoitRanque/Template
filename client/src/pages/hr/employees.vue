@@ -55,7 +55,17 @@
 
           <!-- Targets -->
           <q-tab-pane name="tab-1" class="group">
-            <q-field
+            <form-element type="text" v-model="item.data.name_first" :validation="$v.item.data.name_first" field-name="name_first"></form-element>
+            <form-element type="text" v-model="item.data.name_middle" :validation="$v.item.data.name_middle" field-name="name_middle"></form-element>
+            <form-element type="text" v-model="item.data.name_paternal" :validation="$v.item.data.name_paternal" field-name="name_paternal"></form-element>
+            <form-element type="text" v-model="item.data.name_maternal" :validation="$v.item.data.name_maternal" field-name="name_maternal"></form-element>
+            <form-element type="text" v-model="item.data.name_married" :validation="$v.item.data.name_married" field-name="name_married"></form-element>
+            <form-element type="select" :options="options.sex" v-model="item.data.sex" :validation="$v.item.data.sex" field-name="sex"></form-element>
+            <form-element type="date" v-model="item.data.date_of_birth" :validation="$v.item.data.date_of_birth" field-name="date_of_birth"></form-element>
+            <form-element type="text" v-model="item.data.place_of_birth" :validation="$v.item.data.place_of_birth" field-name="place_of_birth"></form-element>
+            <form-element type="text" v-model="item.data.nationality" :validation="$v.item.data.nationality" field-name="nationality"></form-element>
+            <form-element type="select" :options="marital_status" v-model="item.data.marital_status" :validation="$v.item.data.marital_status" field-name="marital_status"></form-element>
+            <!-- <q-field
               :label="$t('item.name_first.label')"
             >
               <q-input
@@ -135,12 +145,13 @@
                 v-model="item.data.marital_status"
                 :placeholder="$t('item.marital_status.placeholder')"
               />
-            </q-field>
+            </q-field> -->
           </q-tab-pane>
           <q-tab-pane name="tab-2">Tab Two</q-tab-pane>
           <q-tab-pane name="tab-3">Tab Three</q-tab-pane>
           <q-tab-pane name="tab-4">Tab Four</q-tab-pane>
         </q-tabs>
+        <pre>{{$v}}</pre>
         <!-- <div class="layout-padding group">
           <q-field :label="$t('item.employee_external_id.label')">
             <q-input v-model="item.employee_external_id" :placeholder="$t('item.employee_external_id.placeholder')"/>
@@ -155,6 +166,7 @@
 import { HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
+import FormElement from 'components/FormElement'
 import {
 // requiredIf,
 // requiredUnless,
@@ -177,86 +189,88 @@ import {
   required
 } from 'vuelidate/lib/validators'
 
-const schema = [
-  {
-    name: 'data.name_first',
-    type: 'text',
-    validations: {
-      required
+const schema = {
+  data: [
+    {
+      name: 'data.name_first',
+      type: 'text',
+      validations: {
+        required
+      }
+    },
+    {
+      name: 'data.name_middle',
+      type: 'text',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.name_paternal',
+      type: 'text',
+      validations: {
+        required
+      }
+    },
+    {
+      name: 'data.name_maternal',
+      type: 'text',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.name_married',
+      type: 'text',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.sex',
+      type: 'select',
+      multiple: false,
+      options: 'sex',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.date_of_birth',
+      type: 'date',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.place_of_birth',
+      type: 'text',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.nationality',
+      type: 'text',
+      validations: {
+        // required
+      }
+    },
+    {
+      name: 'data.marital_status',
+      type: 'select',
+      validations: {
+        // required
+      }
     }
-  },
-  {
-    name: 'data.name_middle',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.name_paternal',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.name_maternal',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.name_married',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.sex',
-    type: 'select',
-    multiple: false,
-    options: 'sex',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.date_of_birth',
-    type: 'date',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.place_of_birth',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.nationality',
-    type: 'text',
-    validations: {
-      required
-    }
-  },
-  {
-    name: 'data.marital_status',
-    type: 'text',
-    validations: {
-      required
-    }
-  }
-]
+  ]
+}
 
 function newItem () {
   // return default item. Important
   let item = {}
 
-  schema.forEach(field => {
+  schema.data.forEach(field => {
     let defaultValue
     switch (field.type) {
       case 'select':
@@ -302,8 +316,12 @@ function newItem () {
   //   }
   // }
 }
+
 export default {
-  name: 'ConfigurePrivileges',
+  name: 'Employees',
+  components: {
+    FormElement
+  },
   mixins: [tableMixin, validationError],
   data () {
     return {
@@ -345,14 +363,8 @@ export default {
           //   field: 'internal_id',
           //   sortable: true
           // },
-          ...schema.map(column => {
-            return {
-              label: this.$t(`item.${column.name}.label`),
-              field: column.name.indexOf('.') < 0 ? column.name : row => column.name.split('.').reduce((obj, prop) => obj[prop], row),
-              sortable: true,
-              ...column
-            }
-          }),
+          // ...schema.data.map(field => field.column),
+          ...this.schemaToColumns(schema.data, 'data'),
           {
             name: 'edit',
             label: '',
@@ -363,10 +375,12 @@ export default {
     }
   },
   validations: {
-    item: schema.reduce((validations, field) => {
-      validations[field.name] = field.validations
-      return validations
-    }, {})
+    item: {
+      data: schema.data.reduce((validations, field) => {
+        validations[field.name.match(/[^.]*$/)] = field.validations
+        return validations
+      }, {})
+    }
     // item: {
     //   employee_id: {},
     //   data: {
@@ -377,6 +391,14 @@ export default {
     // }
   },
   methods: {
+    schemaToColumns (schema, prefix) {
+      return schema.map(field => ({
+        name: prefix ? prefix + '.' + field.name : field.name,
+        label: this.$t(`item.${field.name.match(/[^.]*$/)}.label`),
+        field: !prefix ? field.name : row => row[prefix][field.name],
+        ...field.column
+      }))
+    },
     print () {
       if (!this.$q.platform.is.electron) return
       const { remote } = require('electron')
