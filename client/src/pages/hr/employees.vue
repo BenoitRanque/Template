@@ -177,22 +177,130 @@ import {
   required
 } from 'vuelidate/lib/validators'
 
-function newItem () {
-  // return default item. Important
-  return {
-    data: {
-      name_first: '',
-      name_middle: '',
-      name_paternal: '',
-      name_maternal: '',
-      name_married: '',
-      sex: null,
-      date_of_birth: null,
-      place_of_birth: '',
-      nationality: '',
-      marital_status: ''
+const schema = [
+  {
+    name: 'data.name_first',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.name_middle',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.name_paternal',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.name_maternal',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.name_married',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.sex',
+    type: 'select',
+    multiple: false,
+    options: 'sex',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.date_of_birth',
+    type: 'date',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.place_of_birth',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.nationality',
+    type: 'text',
+    validations: {
+      required
+    }
+  },
+  {
+    name: 'data.marital_status',
+    type: 'text',
+    validations: {
+      required
     }
   }
+]
+
+function newItem () {
+  // return default item. Important
+  let item = {}
+
+  schema.forEach(field => {
+    let defaultValue
+    switch (field.type) {
+      case 'select':
+      case 'date':
+      case 'time':
+      case 'datetime':
+        defaultValue = null
+        break
+      default:
+        defaultValue = ''
+        break
+    }
+
+    if (field.name.indexOf('.') < 0) {
+      item[field.name] = defaultValue
+    } else {
+      field.name.split('.').reduce((item, prop, index, props) => {
+        if (item[prop] === undefined) {
+          if (index === props.length - 1) {
+            item[prop] = defaultValue
+          } else {
+            item[prop] = {}
+          }
+        }
+        return item[prop]
+      }, item)
+    }
+  })
+
+  return item
+  // return {
+  //   data: {
+  //     name_first: '',
+  //     name_middle: '',
+  //     name_paternal: '',
+  //     name_maternal: '',
+  //     name_married: '',
+  //     sex: null,
+  //     date_of_birth: null,
+  //     place_of_birth: '',
+  //     nationality: '',
+  //     marital_status: ''
+  //   }
+  // }
 }
 export default {
   name: 'ConfigurePrivileges',
@@ -229,14 +337,22 @@ export default {
           rowsPerPage: 10 // current rows per page being displayed
         },
         columns: [
-          {
-            name: 'employee_external_id',
-            required: true,
-            label: this.$t('item.employee_external_id.label'),
-            align: 'left',
-            field: 'internal_id',
-            sortable: true
-          },
+          // {
+          //   name: 'employee_external_id',
+          //   required: true,
+          //   label: this.$t('item.employee_external_id.label'),
+          //   align: 'left',
+          //   field: 'internal_id',
+          //   sortable: true
+          // },
+          ...schema.map(column => {
+            return {
+              label: this.$t(`item.${column.name}.label`),
+              field: column.name.indexOf('.') < 0 ? column.name : row => column.name.split('.').reduce((obj, prop) => obj[prop], row),
+              sortable: true,
+              ...column
+            }
+          }),
           {
             name: 'edit',
             label: '',
@@ -247,14 +363,18 @@ export default {
     }
   },
   validations: {
-    item: {
-      employee_id: {},
-      data: {
-        date_of_birth: {
-          required
-        }
-      }
-    }
+    item: schema.reduce((validations, field) => {
+      validations[field.name] = field.validations
+      return validations
+    }, {})
+    // item: {
+    //   employee_id: {},
+    //   data: {
+    //     date_of_birth: {
+    //       required
+    //     }
+    //   }
+    // }
   },
   methods: {
     print () {

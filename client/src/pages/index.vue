@@ -20,13 +20,13 @@
 </style>
 
 <script>
-import { remote } from 'electron'
+// import { remote } from 'electron'
 export default {
   name: 'PageIndex',
   methods: {
-    print () {
-      remote.getCurrentWebContents().print()
-    }
+    // print () {
+    //   remote.getCurrentWebContents().print()
+    // }
   }
   // inject: {
   //   layout: {}

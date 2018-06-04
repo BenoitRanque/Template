@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { remote } from 'electron'
+// import { remote } from 'electron'
 import { CORE_PRIVILEGE, CORE_RESOURCE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
@@ -228,9 +228,9 @@ export default {
     }
   },
   methods: {
-    print () {
-      remote.getCurrentWebContents().print()
-    },
+    // print () {
+    //   remote.getCurrentWebContents().print()
+    // },
     newItem () {
       // return default item. Important
       return newItem()

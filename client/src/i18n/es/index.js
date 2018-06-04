@@ -1,9 +1,13 @@
 // This is just an example,
 // so you can safely delete all default props below
 import validation from './validation'
+import field from './field'
+import options from './options'
 
 export default {
   validation,
+  field,
+  options,
   'user': 'Usuario',
   'hr': 'RRHH',
   'employees': 'Empleados',
