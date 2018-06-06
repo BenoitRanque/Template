@@ -8,5 +8,14 @@ export default {
     'married': 'Casado',
     'divorced': 'Divorciado',
     'civil_union': 'Union Civil'
+  },
+  'boolean': {
+    'false': 'No',
+    'true': 'Si'
+  },
+  'contact': {
+    'mobile': 'Telefono Celular',
+    'phone': 'Telefono Movil',
+    'email': 'Correo Electronico'
   }
 }

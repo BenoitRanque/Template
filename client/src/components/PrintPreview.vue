@@ -1,63 +1,66 @@
 <template>
-  <q-modal v-model="modal" maximized>
-    <q-modal-layout content-class="">
-      <q-toolbar slot="header" class="print-hide">
-          <q-toolbar-title>
-            Print Preview
-          </q-toolbar-title>
-          <q-btn icon="print" class="no-shadow" style="border-radius: 0" color="info" size="lg" @click="print()"></q-btn>
-          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" v-close-overlay></q-btn>
-      </q-toolbar>
-      <div class="print-area">
-        <h1 v-for="n in 50" :key="n">test</h1>
-        <!-- <div v-html="printData"></div> -->
-      </div>
-    </q-modal-layout>
+  <q-modal v-model="modal" @show="preview ? null : print()" @hide="preview = false" maximized :class="{ 'print-only': !preview }" class="print-area">
+    <q-toolbar class="q-py-none q-pr-none print-hide">
+        <q-toolbar-title>
+          Print Preview
+        </q-toolbar-title>
+        <q-btn icon="print" class="no-shadow" style="border-radius: 0" color="info" size="lg" @click="print()"></q-btn>
+        <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" v-close-overlay></q-btn>
+    </q-toolbar>
+    <portal-target name="print" multiple></portal-target>
   </q-modal>
 </template>
 
 <script>
-import { remote } from 'electron'
 export default {
   name: 'PrintPreview',
   data () {
     return {
-      modal: false,
-      printData: null,
-      template: 'raw'
+      preview: false,
+      modal: false
     }
   },
   methods: {
-    showPreview ({ template, data }) {
-      this.template = template
-      this.printData = data
-      this.modal = true
-      console.log('showing')
+    requestPrint (preview = false) {
+      this.preview = preview
+      if (this.modal) {
+        this.modal = false
+      }
+      this.$nextTick(() => {
+        this.modal = true
+      })
     },
     print () {
-      remote.getCurrentWebContents().print()
-      // window.print()
+      if (this.$q.platform.is.electron) {
+        const { remote } = require('electron')
+
+        remote.getCurrentWebContents().print({ silent: false, printBackground: true, deviceName: '' }, (success) => {
+          this.modal = false
+          if (!success) {
+            this.$q.notify({ type: 'negative', message: 'Something went wrong' })
+          }
+        })
+      } else {
+        window.print()
+      }
     }
   },
   created () {
-    this.$root.$on('PRINT', this.showPreview)
+    this.$root.$on('PRINT', this.requestPrint)
   },
   beforeDestroy () {
-    this.$root.$off('PRINT', this.showPreview)
+    this.$root.$off('PRINT', this.requestPrint)
   }
 }
 </script>
 
-<style scoped lang="stylus">
-// @media print
+<style lang="stylus">
+@media print
+  .q-maximized-modal
+    overflow auto
+
   .print-area
-    position fixed
-    top 0
-    left 0
-    bottom 0
-    right 0
-    overflow visible
-    width 100%
-    height 100%
-    display block
+    position absolute
+    bottom inherit
+    max-height none
 </style>

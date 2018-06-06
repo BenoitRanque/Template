@@ -12,7 +12,7 @@
       :placeholder="$t(`field.${fieldName}.placeholder`)"
       @blur="validation.$touch()"
       :options="options"
-      :multiple="value && Array.isArray(value)"
+      :multiple="!!value && Array.isArray(value)"
       :filter="options.length > 6"
     />
     <q-datetime
@@ -66,5 +66,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="stylus">
+// @media print
+//   .q-field
+//     width 50%
 </style>

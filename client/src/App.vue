@@ -1,6 +1,6 @@
 <template>
   <div id="q-app">
-    <router-view/>
+    <router-view class="print-hide"/>
     <print-preview></print-preview>
   </div>
 </template>

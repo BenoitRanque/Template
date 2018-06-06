@@ -68,5 +68,30 @@ export default {
     'label': 'Estado Civil',
     'placeholder': ' ',
     'helper': ' '
+  },
+  'contact': {
+    'label': ' ',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  'contact_type': {
+    'label': ' ',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  'contact_value': {
+    'label': ' ',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  'contact_description': {
+    'label': ' ',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  'contact_emergency_contact': {
+    'label': 'Contacto de Emergencia?',
+    'placeholder': ' ',
+    'helper': ' '
   }
 }
