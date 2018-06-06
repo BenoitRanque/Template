@@ -12,6 +12,10 @@ exports.up = async function(knex, Promise) {
     table.boolean('contract_active')
     table.timestamp('contract_cancel_date')
     table.integer('contract_cancel_motive')
+    table.integer('tipo_contrato')
+    table.integer('modalidad_contrato')
+    table.integer('sucursal')
+    table.integer('clasificacion_laboral')
 
     table.uuid('employee_id')
 
