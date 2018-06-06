@@ -3,7 +3,7 @@
     :label="$t(`field.${fieldName}.label`)"
     :helper="$t(`field.${fieldName}.helper`)"
     :error="validation.$error"
-    :error-mesage="validationError(validation)"
+    :error-label="validationError(validation)"
   >
     <q-select
       v-if="type === 'select'"

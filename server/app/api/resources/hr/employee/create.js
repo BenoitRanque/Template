@@ -2,9 +2,9 @@ module.exports = async (input, params, { model, authorize }) => {
 
   let permission = authorize(model.resourceName, 'create', 'any')
 
-  let data = await model.query().allowInsert('[data, data2, contact, contract, identification_document]')
+  let data = await model.query().allowInsert('[contact, contract]')
     .insertGraph(permission.filter(input), {
-      noDelete: '[contract, identification_document]'
+      noDelete: '[contract]'
     }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')

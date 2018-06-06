@@ -1,18 +1,28 @@
 <template>
   <div id="q-app">
-    <router-view />
+    <router-view/>
+    <print-preview></print-preview>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import PrintPreview from 'components/PrintPreview'
 
 export default {
   name: 'App',
+  components: {
+    PrintPreview
+  },
   computed: mapGetters('core', {
     isAuthenticated: 'isAuthenticated',
     isAuthorized: 'isAuthorized'
   }),
+  data () {
+    return {
+      printData: null
+    }
+  },
   methods: {
     ...mapMutations('core', {
       logoutMutation: 'logout'
@@ -69,5 +79,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="stylus">
+
 </style>
