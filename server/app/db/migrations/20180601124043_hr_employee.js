@@ -22,10 +22,10 @@ exports.up = async function(knex, Promise) {
     table.text('afp')
     table.text('nua_cua')
 
-
     table.text('document_type')
     table.text('document_number')
     table.text('document_extension')
+    table.text('document_emitted')
 
     table.timestamps()
 

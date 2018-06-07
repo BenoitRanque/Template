@@ -55,10 +55,10 @@
         </q-toolbar>
         <q-tabs inverted no-pane-border align="justify">
           <!-- Tabs -->
-          <q-tab default slot="title" name="tab-1" label="data"/>
-          <q-tab slot="title" name="tab-2" label="data2" />
-          <q-tab slot="title" name="tab-3" label="contact" />
-          <q-tab slot="title" name="tab-4" label="identification_document" />
+          <q-tab default slot="title" name="tab-1" label="Datos 1"/>
+          <q-tab slot="title" name="tab-2" label="Datos 2" />
+          <q-tab slot="title" name="tab-3" label="Contacto" />
+          <q-tab slot="title" name="tab-4" label="Contrato" />
 
           <!-- Targets -->
           <q-tab-pane name="tab-1">
@@ -73,40 +73,79 @@
               <form-element type="text" v-model="item.place_of_birth" :validation="$v.item.place_of_birth" field-name="place_of_birth"></form-element>
               <form-element type="text" v-model="item.nationality" :validation="$v.item.nationality" field-name="nationality"></form-element>
               <form-element type="select" :options="options.marital_status" v-model="item.marital_status" :validation="$v.item.marital_status" field-name="marital_status"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.jubilado" :validation="$v.item.jubilado" field-name="jubilado"></form-element>
-              <pre>{{$v}}</pre>
+              <form-element type="select" :options="options.document_type" v-model="item.document_type" :validation="$v.item.document_type" field-name="document_type"></form-element>
+              <form-element type="text" v-model="item.document_number" :validation="$v.item.document_number" field-name="document_number"></form-element>
+              <form-element type="text" v-model="item.document_extension" :validation="$v.item.document_extension" field-name="document_extension"></form-element>
+              <form-element type="text" v-model="item.document_emitted" :validation="$v.item.document_emitted" field-name="document_emitted"></form-element>
+
             </div>
-            <portal to="print">
-              <div class="row gutter-sm">
-                <form-element class="col-6" type="text" v-model="item.name_first" :validation="$v.item.name_first" field-name="name_first"></form-element>
-                <form-element class="col-6" type="text" v-model="item.name_middle" :validation="$v.item.name_middle" field-name="name_middle"></form-element>
-                <form-element class="col-6" type="text" v-model="item.name_paternal" :validation="$v.item.name_paternal" field-name="name_paternal"></form-element>
-                <form-element class="col-6" type="text" v-model="item.name_maternal" :validation="$v.item.name_maternal" field-name="name_maternal"></form-element>
-                <form-element class="col-6" type="text" v-model="item.name_married" :validation="$v.item.name_married" field-name="name_married"></form-element>
-                <form-element class="col-6" type="select" :options="options.sex" v-model="item.sex" :validation="$v.item.sex" field-name="sex"></form-element>
-                <form-element class="col-6" type="date" v-model="item.date_of_birth" :validation="$v.item.date_of_birth" field-name="date_of_birth"></form-element>
-                <form-element class="col-6" type="text" v-model="item.place_of_birth" :validation="$v.item.place_of_birth" field-name="place_of_birth"></form-element>
-                <form-element class="col-6" type="text" v-model="item.nationality" :validation="$v.item.nationality" field-name="nationality"></form-element>
-                <form-element class="col-6" type="select" :options="options.marital_status" v-model="item.marital_status" :validation="$v.item.marital_status" field-name="marital_status"></form-element>
-              </div>
-            </portal>
+
           </q-tab-pane>
           <q-tab-pane name="tab-2">
+            <div class="group">
+              <form-element type="select" :options="options.boolean" v-model="item.jubilado" :validation="$v.item.jubilado" field-name="jubilado"></form-element>
+              <form-element type="select" :options="options.boolean" v-model="item.aporta_afp" :validation="$v.item.aporta_afp" field-name="aporta_afp"></form-element>
+              <form-element type="select" :options="options.boolean" v-model="item.persona_con_descapacidad" :validation="$v.item.persona_con_descapacidad" field-name="persona_con_descapacidad"></form-element>
+              <form-element type="select" :options="options.boolean" v-model="item.tutor_persona_con_descapacidad" :validation="$v.item.tutor_persona_con_descapacidad" field-name="tutor_persona_con_descapacidad"></form-element>
+              <form-element type="select" :options="options.caja_de_salud" v-model="item.caja_de_salud" :validation="$v.item.afp" field-name="caja_de_salud"></form-element>
+              <form-element type="select" :options="options.afp" v-model="item.afp" :validation="$v.item.afp" field-name="afp"></form-element>
+              <form-element type="text" v-model="item.nua_cua" :validation="$v.item.nua_cua" field-name="nua_cua"></form-element>
 
-            <pre>{{item.contacts}}</pre>
-          </q-tab-pane>
-          <q-tab-pane name="tab-3">
-            <div v-for="(contact, index) in item.contacts" :key="index" class="group">
-              <p class="text-center q-my-md q-display-1">Contact {{index + 1}}</p>
-              <form-element type="text" v-model="item.contacts[index].description" :validation="$v.item.contacts.$each[index].description" field-name="contact_description"></form-element>
-              <form-element type="select" :options="options.contact_type" v-model="item.contacts[index].type" :validation="$v.item.contacts.$each[index].type" field-name="contact_type"></form-element>
-              <form-element type="text" v-model="item.contacts[index].value" :validation="$v.item.contacts.$each[index].value" field-name="contact_value"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.contacts[index].emergency_contact" :validation="$v.item.contacts.$each[index].emergency_contact" field-name="contact_emergency_contact"></form-element>
-              <hr>
             </div>
           </q-tab-pane>
-          <q-tab-pane name="tab-4">Tab Four</q-tab-pane>
+          <q-tab-pane name="tab-3">
+            <div v-for="(v, key) in $v.item.contacts.$each.$iter" :key="key" class="group">
+              <div class="row items-center">
+                <div class="col q-headline">{{$t('field.contact.label')}} {{Number(key) + 1}}</div>
+                <div class="col-auto">
+                  <q-btn size="lg" color="negative" dense flat round icon="cancel" @click="item.contacts.splice(Number(key), 1)"></q-btn>
+                </div>
+              </div>
+              <form-element type="text" :validation="v.description" field-name="contact_description"></form-element>
+              <form-element type="select" :options="options.contact_type" :validation="v.type" field-name="contact_type"></form-element>
+              <form-element type="text" :validation="v.value" field-name="contact_value"></form-element>
+              <form-element type="select" :options="options.boolean" :validation="v.emergency_contact" field-name="contact_emergency_contact"></form-element>
+              <hr>
+            </div>
+            <div class="text-center q-ma-md">
+              <q-btn @click="item.contacts.push({ type: 'mobile', description: '', value: '', emergency_contact: false })" icon="add" ouline color="positive" size="lg" round></q-btn>
+            </div>
+          </q-tab-pane>
+          <q-tab-pane name="tab-4">
+            <div class="q-headline">Contrato</div>
+            <div v-for="(contract, index) in item.contracts" :key="index" class="group">
+              <form-element type="text" v-model="item.contracts[index].external_contract_id" :validation="$v.item.contracts.$each[index].external_contract_id" field-name="external_contract_id"></form-element>
+              <form-element type="date" v-model="item.contracts[index].contract_sign_date" :validation="$v.item.contracts.$each[index].contract_sign_date" field-name="contract_sign_date"></form-element>
+              <form-element type="date" v-model="item.contracts[index].contract_start_date" :validation="$v.item.contracts.$each[index].contract_start_date" field-name="contract_start_date"></form-element>
+              <form-element type="date" v-model="item.contracts[index].contract_end_date" :validation="$v.item.contracts.$each[index].contract_end_date" field-name="contract_end_date"></form-element>
+              <form-element type="select" :options="options.boolean" v-model="item.contracts[index].contract_active" :validation="$v.item.contracts.$each[index].contract_active" field-name="contract_active"></form-element>
+              <form-element type="date" v-model="item.contracts[index].contract_cancel_date" :validation="$v.item.contracts.$each[index].contract_cancel_date" field-name="contract_cancel_date"></form-element>
+              <form-element type="text" v-model="item.contracts[index].contract_cancel_motive" :validation="$v.item.contracts.$each[index].contract_cancel_motive" field-name="contract_cancel_motive"></form-element>
+
+              <form-element type="select" :options="options.tipo_contrato" v-model="item.contracts[index].tipo_contrato" :validation="$v.item.contracts.$each[index].tipo_contrato" field-name="tipo_contrato"></form-element>
+              <form-element type="select" :options="options.modalidad_contrato" v-model="item.contracts[index].modalidad_contrato" :validation="$v.item.contracts.$each[index].modalidad_contrato" field-name="modalidad_contrato"></form-element>
+
+              <form-element type="number" v-model="item.contracts[index].sucursal" :validation="$v.item.contracts.$each[index].sucursal" field-name="sucursal"></form-element>
+              <form-element type="select" :options="options.clasificacion_laboral" v-model="item.contracts[index].clasificacion_laboral" :validation="$v.item.contracts.$each[index].clasificacion_laboral" field-name="clasificacion_laboral"></form-element>
+            </div>
+          </q-tab-pane>
         </q-tabs>
+        <pre>{{item}}</pre>
+        <pre>{{$v}}</pre>
+        <portal to="print">
+          <div class="row gutter-sm">
+            <form-element class="col-6" type="text" v-model="item.name_first" :validation="$v.item.name_first" field-name="name_first"></form-element>
+            <form-element class="col-6" type="text" v-model="item.name_middle" :validation="$v.item.name_middle" field-name="name_middle"></form-element>
+            <form-element class="col-6" type="text" v-model="item.name_paternal" :validation="$v.item.name_paternal" field-name="name_paternal"></form-element>
+            <form-element class="col-6" type="text" v-model="item.name_maternal" :validation="$v.item.name_maternal" field-name="name_maternal"></form-element>
+            <form-element class="col-6" type="text" v-model="item.name_married" :validation="$v.item.name_married" field-name="name_married"></form-element>
+            <form-element class="col-6" type="select" :options="options.sex" v-model="item.sex" :validation="$v.item.sex" field-name="sex"></form-element>
+            <form-element class="col-6" type="date" v-model="item.date_of_birth" :validation="$v.item.date_of_birth" field-name="date_of_birth"></form-element>
+            <form-element class="col-6" type="text" v-model="item.place_of_birth" :validation="$v.item.place_of_birth" field-name="place_of_birth"></form-element>
+            <form-element class="col-6" type="text" v-model="item.nationality" :validation="$v.item.nationality" field-name="nationality"></form-element>
+            <form-element class="col-6" type="select" :options="options.marital_status" v-model="item.marital_status" :validation="$v.item.marital_status" field-name="marital_status"></form-element>
+          </div>
+        </portal>
         <!-- <div class="layout-padding group">
           <q-field :label="$t('item.employee_external_id.label')">
             <q-input v-model="item.employee_external_id" :placeholder="$t('item.employee_external_id.placeholder')"/>
@@ -118,6 +157,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 import { HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
@@ -125,7 +165,7 @@ import FormElement from 'components/FormElement'
 import {
 // requiredIf,
 // requiredUnless,
-  minLength,
+  // minLength,
   // maxLength,
   // minValue,
   // maxValue,
@@ -155,20 +195,36 @@ function newItem () {
     sex: null,
     date_of_birth: null,
     place_of_birth: '',
-    nationality: '',
+    nationality: 'Bolivia',
     marital_status: null,
+
+    document_type: 'CI',
+    document_number: '',
+    document_extension: '',
+    document_emitted: 'SCZ',
 
     jubilado: false,
     aporta_afp: false,
     persona_con_descapacidad: false,
     tutor_persona_con_descapacidad: false,
     caja_de_salud: null,
-    afp_aporte: null,
+    afp: null,
     nua_cua: '',
-    sucursal: null,
-    clasificacion_laboral: null,
 
-    contract: [
+    contracts: [
+      {
+        external_contract_id: null,
+        contract_sign_date: date.startOfDate(new Date(), 'day'),
+        contract_start_date: null,
+        contract_end_date: null,
+        contract_active: true,
+        contract_cancel_date: null,
+        contract_cancel_motive: null,
+        tipo_contrato: 1,
+        modalidad_contrato: 1,
+        sucursal: null,
+        clasificacion_laboral: null
+      }
 
     ],
 
@@ -179,30 +235,30 @@ function newItem () {
         value: '',
         emergency_contact: false
       },
-      {
-        description: 'Telefono Celular 2',
-        type: 'mobile',
-        value: '',
-        emergency_contact: false
-      },
-      {
-        description: 'Telefono Fijo',
-        type: 'phone',
-        value: '',
-        emergency_contact: false
-      },
-      {
-        description: 'Correo Electronico',
-        type: 'email',
-        value: '',
-        emergency_contact: false
-      },
-      {
-        description: 'Telefono Celular Conyuge',
-        type: 'mobile',
-        value: '',
-        emergency_contact: true
-      },
+      // {
+      //   description: 'Telefono Celular 2',
+      //   type: 'mobile',
+      //   value: '',
+      //   emergency_contact: false
+      // },
+      // {
+      //   description: 'Telefono Fijo',
+      //   type: 'phone',
+      //   value: '',
+      //   emergency_contact: false
+      // },
+      // {
+      //   description: 'Correo Electronico',
+      //   type: 'email',
+      //   value: '',
+      //   emergency_contact: false
+      // },
+      // {
+      //   description: 'Telefono Celular Conyuge',
+      //   type: 'mobile',
+      //   value: '',
+      //   emergency_contact: true
+      // },
       {
         description: 'Correo Electronico Conyuge',
         type: 'email',
@@ -469,44 +525,114 @@ export default {
   },
   validations: {
     item: {
-      'name_first': {
+      name_first: {
         required
       },
-      'name_middle': {
+      name_middle: {
         // required
       },
-      'name_paternal': {
+      name_paternal: {
         required
       },
-      'name_maternal': {
+      name_maternal: {
         // required
       },
-      'name_married': {
+      name_married: {
         // required
       },
-      'sex': {
+      sex: {
         required
       },
-      'date_of_birth': {
+      date_of_birth: {
         required
       },
-      'place_of_birth': {
+      place_of_birth: {
         // required
       },
-      'nationality': {
+      nationality: {
         // required
       },
-      'marital_status': {
+      marital_status: {
+        // required
+      },
+      document_type: {
+        // required
+      },
+      document_number: {
+        // required
+      },
+      document_extension: {
+        // required
+      },
+      document_emitted: {
+        // required
+      },
+      jubilado: {
+        // required
+      },
+      aporta_afp: {
+        // required
+      },
+      persona_con_descapacidad: {
+        // required
+      },
+      tutor_persona_con_descapacidad: {
+        // required
+      },
+      caja_de_salud: {
+        // required
+      },
+      afp: {
+        // required
+      },
+      nua_cua: {
         // required
       },
       contacts: {
-        required,
-        minLength: minLength(2),
+        // required,
+        // minLength: minLength(2),
         $each: {
-          type: { required },
+          type: { },
           value: { required },
           description: { required },
           emergency_contact: { }
+        }
+      },
+      contracts: {
+        $each: {
+          external_contract_id: {
+            // required
+          },
+          contract_sign_date: {
+
+          },
+          contract_start_date: {
+            // required
+          },
+          contract_end_date: {
+            // required
+          },
+          contract_active: {
+            // required
+          },
+          contract_cancel_date: {
+            // required
+          },
+          contract_cancel_motive: {
+            // required
+          },
+          tipo_contrato: {
+            // required
+          },
+          modalidad_contrato: {
+            // required
+          },
+          sucursal: {
+            // required
+          },
+          clasificacion_laboral: {
+            // required
+          }
         }
       }
     }
@@ -519,47 +645,6 @@ export default {
         field: !prefix ? field.name : row => row[prefix][field.name],
         ...field.column
       }))
-    },
-    print () {
-      this.$root.$emit('PRINT', { template: 'raw', data: this.$refs.printArea.cloneNode(true) })
-      // if (!this.$q.platform.is.electron) return
-      // const { remote } = require('electron')
-      // remote.getCurrentWebContents().print()
-      // const { remote } = require('electron')
-      // let printWindow = new remote.BrowserWindow({
-      //   width: 1000,
-      //   height: 600,
-      //   useContentSize: true
-      // })
-      // console.log(process.env.APP_URL)
-      // // window.getElementByTagName('script')
-      // // window.getElementByTagName('')
-      // let template = `
-      //     <!DOCTYPE html>
-      //     <html lang="en">
-      //     <head>
-      //       <meta charset="UTF-8">
-      //       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      //       <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      //       <title>Document</title>
-      //     </head>
-      //     <body>
-      //       <div id="q-app">
-      //         <button onclick="print" tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable fixed-top-right z-top print-hide q-btn-rectangle q-focusable q-hoverable bg-info text-white"><div class="q-focus-helper"></div><div class="q-btn-inner row col items-center justify-center"><i aria-hidden="true" class="q-icon material-icons">print</i></div></button>
-      //         ${this.$el.innerHTML}
-      //       </div>
-      //       <script type="text/javascript" src="app.js"><\/script>
-      //     </body>
-      //     </html>
-      //   `
-      // printWindow.loadURL('data:text/html;charset=UTF-8,' + encodeURIComponent(template), {
-      //   baseURLForDataURL: 'http://localhost:8080'
-      // })
-
-      // printWindow.on('closed', () => {
-      //   printWindow = null
-      // })
-      // remote.getCurrentWebContents().print()
     },
     newItem () {
       // return default item. Important
@@ -585,76 +670,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
-
-<i18n>
-{
-  "es": {
-    "reset_password": "Restablecer Contraseña",
-    "modal": {
-      "title": "Usuario",
-      "subtitle": " "
-    },
-    "options": {
-      "sex": {
-        "female": "Femenino",
-        "male": "Masculino"
-      }
-    },
-    "item": {
-      "name_first": {
-        "label": "Primer Nombre",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "name_middle": {
-        "label": "Segundo Nombre",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "name_paternal": {
-        "label": "Apellido Paterno",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "name_maternal": {
-        "label": "Apellido Materno",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "name_married": {
-        "label": "Apellido Casado",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "sex": {
-        "label": "Sexo",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "date_of_birth": {
-        "label": "Fecha de Nacimiento",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "place_of_birth": {
-        "label": "Lugar de Nacimiento",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "nationality": {
-        "label": "Nacionalidad",
-        "placeholder": " ",
-        "helper": " "
-      },
-      "marital_status": {
-        "label": "Estado Civil",
-        "placeholder": " ",
-        "helper": " "
-      }
-    }
-  }
-}
-</i18n>

@@ -15,7 +15,11 @@ export default {
   },
   'contact': {
     'mobile': 'Telefono Celular',
-    'phone': 'Telefono Movil',
+    'phone': 'Telefono Fijo',
     'email': 'Correo Electronico'
+  },
+  'document_type': {
+    'carnet': 'Carnet de Identidad',
+    'passport': 'Passaporte'
   }
 }
