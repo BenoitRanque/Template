@@ -97,7 +97,7 @@
           </q-tab-pane>
           <q-tab-pane name="tab-3">
             <div v-for="(contact, index) in item.contacts" :key="index" class="group">
-              <p class="text-center q-my-md q-display-1">Contact {{index + 1}}</p>
+              <div class="q-headline q-my-md">{{$t('field.contact.label')}} {{index + 1}}</div>
               <form-element type="text" v-model="item.contacts[index].description" :validation="$v.item.contacts.$each[index].description" field-name="contact_description"></form-element>
               <form-element type="select" :options="options.contact_type" v-model="item.contacts[index].type" :validation="$v.item.contacts.$each[index].type" field-name="contact_type"></form-element>
               <form-element type="text" v-model="item.contacts[index].value" :validation="$v.item.contacts.$each[index].value" field-name="contact_value"></form-element>

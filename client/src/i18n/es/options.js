@@ -15,7 +15,7 @@ export default {
   },
   'contact': {
     'mobile': 'Telefono Celular',
-    'phone': 'Telefono Movil',
+    'phone': 'Telefono Fijo',
     'email': 'Correo Electronico'
   }
 }

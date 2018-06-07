@@ -70,22 +70,22 @@ export default {
     'helper': ' '
   },
   'contact': {
-    'label': ' ',
+    'label': 'Contacto',
     'placeholder': ' ',
     'helper': ' '
   },
   'contact_type': {
-    'label': ' ',
+    'label': 'Tipo de contacto',
     'placeholder': ' ',
     'helper': ' '
   },
   'contact_value': {
-    'label': ' ',
+    'label': 'Dato',
     'placeholder': ' ',
     'helper': ' '
   },
   'contact_description': {
-    'label': ' ',
+    'label': 'Descripción',
     'placeholder': ' ',
     'helper': ' '
   },
