@@ -75,11 +75,7 @@ export default {
     'helper': ' '
   },
   'contact_type': {
-<<<<<<< HEAD
-    'label': 'Tipo de contacto',
-=======
     'label': 'Tipo de Contacto',
->>>>>>> ab979588f0c06daa3463018680b9609d67db3861
     'placeholder': ' ',
     'helper': ' '
   },
