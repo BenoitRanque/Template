@@ -55,78 +55,151 @@
         </q-toolbar>
         <q-tabs inverted no-pane-border align="justify">
           <!-- Tabs -->
-          <q-tab default slot="title" name="tab-1" label="Datos 1"/>
-          <q-tab slot="title" name="tab-2" label="Datos 2" />
-          <q-tab slot="title" name="tab-3" label="Contacto" />
-          <q-tab slot="title" name="tab-4" label="Contrato" />
+          <q-tab default slot="title" name="tab-1" label="Datos"/>
+          <q-tab slot="title" name="tab-2" label="Contacto" />
+          <q-tab slot="title" name="tab-3" label="Contrato" />
 
           <!-- Targets -->
           <q-tab-pane name="tab-1">
             <div class="group">
-              <form-element type="text" v-model="item.name_first" :validation="$v.item.name_first" field-name="name_first"></form-element>
-              <form-element type="text" v-model="item.name_middle" :validation="$v.item.name_middle" field-name="name_middle"></form-element>
-              <form-element type="text" v-model="item.name_paternal" :validation="$v.item.name_paternal" field-name="name_paternal"></form-element>
-              <form-element type="text" v-model="item.name_maternal" :validation="$v.item.name_maternal" field-name="name_maternal"></form-element>
-              <form-element type="text" v-model="item.name_married" :validation="$v.item.name_married" field-name="name_married"></form-element>
-              <form-element type="select" :options="options.sex" v-model="item.sex" :validation="$v.item.sex" field-name="sex"></form-element>
-              <form-element type="date" v-model="item.date_of_birth" :validation="$v.item.date_of_birth" field-name="date_of_birth"></form-element>
-              <form-element type="text" v-model="item.place_of_birth" :validation="$v.item.place_of_birth" field-name="place_of_birth"></form-element>
-              <form-element type="text" v-model="item.nationality" :validation="$v.item.nationality" field-name="nationality"></form-element>
-              <form-element type="select" :options="options.marital_status" v-model="item.marital_status" :validation="$v.item.marital_status" field-name="marital_status"></form-element>
-              <form-element type="select" :options="options.document_type" v-model="item.document_type" :validation="$v.item.document_type" field-name="document_type"></form-element>
-              <form-element type="text" v-model="item.document_number" :validation="$v.item.document_number" field-name="document_number"></form-element>
-              <form-element type="text" v-model="item.document_extension" :validation="$v.item.document_extension" field-name="document_extension"></form-element>
-              <form-element type="text" v-model="item.document_emitted" :validation="$v.item.document_emitted" field-name="document_emitted"></form-element>
 
+              <q-field
+                v-for="(type, field) in {
+                  name_first: 'text',
+                  name_middle: 'text',
+                  name_paternal: 'text',
+                  name_maternal: 'text',
+                  name_married: 'text',
+                  sex: 'select',
+                  date_of_birth: 'date',
+                  place_of_birth: 'text',
+                  nationality: 'text',
+                  marital_status: 'select',
+                  document_type: 'select',
+                  document_number: 'text',
+                  document_extension: 'text',
+                  document_emitted: 'text',
+                  jubilado: 'select',
+                  aporta_afp: 'select',
+                  persona_con_descapacidad: 'select',
+                  tutor_persona_con_descapacidad: 'select',
+                  caja_de_salud: 'select',
+                  afp: 'select',
+                  nua_cua: 'text',
+                }"
+                :key="field"
+                :label="$t(`field.${field}.label`)"
+                :helper="$t(`field.${field}.helper`)"
+                :error="$v.item[field].$error"
+                :error-label="validationError($v.item[field])"
+              >
+                <q-select v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="options[field] || options.boolean"></q-select>
+                <q-datetime v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
+                <q-input v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
+              </q-field>
             </div>
 
           </q-tab-pane>
           <q-tab-pane name="tab-2">
-            <div class="group">
-              <form-element type="select" :options="options.boolean" v-model="item.jubilado" :validation="$v.item.jubilado" field-name="jubilado"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.aporta_afp" :validation="$v.item.aporta_afp" field-name="aporta_afp"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.persona_con_descapacidad" :validation="$v.item.persona_con_descapacidad" field-name="persona_con_descapacidad"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.tutor_persona_con_descapacidad" :validation="$v.item.tutor_persona_con_descapacidad" field-name="tutor_persona_con_descapacidad"></form-element>
-              <form-element type="select" :options="options.caja_de_salud" v-model="item.caja_de_salud" :validation="$v.item.afp" field-name="caja_de_salud"></form-element>
-              <form-element type="select" :options="options.afp" v-model="item.afp" :validation="$v.item.afp" field-name="afp"></form-element>
-              <form-element type="text" v-model="item.nua_cua" :validation="$v.item.nua_cua" field-name="nua_cua"></form-element>
-
-            </div>
-          </q-tab-pane>
-          <q-tab-pane name="tab-3">
-            <div v-for="(v, key) in $v.item.contacts.$each.$iter" :key="key" class="group">
+            <div v-for="(contact, index) in $v.item.contact.$each.$iter" :key="`contact_${index}`" class="group">
               <div class="row items-center">
-                <div class="col q-headline">{{$t('field.contact.label')}} {{Number(key) + 1}}</div>
+                <div class="col q-headline">{{$t('field.contact.label')}} {{Number(index) + 1}}</div>
                 <div class="col-auto">
-                  <q-btn size="lg" color="negative" dense flat round icon="cancel" @click="item.contacts.splice(Number(key), 1)"></q-btn>
+                  <q-btn size="lg" color="negative" dense flat round icon="cancel" @click="item.contact.splice(Number(index), 1)"></q-btn>
                 </div>
               </div>
-              <form-element type="text" :validation="v.description" field-name="contact_description"></form-element>
-              <form-element type="select" :options="options.contact_type" :validation="v.type" field-name="contact_type"></form-element>
-              <form-element type="text" :validation="v.value" field-name="contact_value"></form-element>
-              <form-element type="select" :options="options.boolean" :validation="v.emergency_contact" field-name="contact_emergency_contact"></form-element>
+              <q-field
+                :label="$t(`field.contact_description.label`)"
+                :helper="$t(`field.contact_description.helper`)"
+                :error="contact.description.$error"
+                :error-label="validationError(contact.description)"
+              >
+                <q-input v-model="contact.description.$model" :placeholder="$t(`field.contact_description.placeholder`)"></q-input>
+              </q-field>
+              <q-field
+                :label="$t(`field.contact_type.label`)"
+                :helper="$t(`field.contact_type.helper`)"
+                :error="contact.type.$error"
+                :error-label="validationError(contact.type)"
+              >
+                <q-select v-model="contact.type.$model" :placeholder="$t(`field.contact_type.placeholder`)" :options="options.contact_type"></q-select>
+              </q-field>
+              <q-field
+                :label="$t(`field.contact_value.label`)"
+                :helper="$t(`field.contact_value.helper`)"
+                :error="contact.value.$error"
+                :error-label="validationError(contact.value)"
+              >
+                <q-input v-model="contact.value.$model" :placeholder="$t(`field.contact_value.placeholder`)"></q-input>
+              </q-field>
+              <q-field
+                :label="$t(`field.contact_emergency_contact.label`)"
+                :helper="$t(`field.contact_emergency_contact.helper`)"
+                :error="contact.emergency_contact.$error"
+                :error-label="validationError(contact.emergency_contact)"
+              >
+                <q-select v-model="contact.emergency_contact.$model" :placeholder="$t(`field.contact_emergency_contact.placeholder`)" :options="options.boolean"></q-select>
+              </q-field>
               <hr>
             </div>
             <div class="text-center q-ma-md">
-              <q-btn @click="item.contacts.push({ type: 'mobile', description: '', value: '', emergency_contact: false })" icon="add" ouline color="positive" size="lg" round></q-btn>
+              <q-btn @click="item.contact.push({ type: 'mobile', description: '', value: '', emergency_contact: false })" icon="add" ouline color="positive" size="lg" round></q-btn>
             </div>
           </q-tab-pane>
-          <q-tab-pane name="tab-4">
-            <div class="q-headline">Contrato</div>
-            <div v-for="(contract, index) in item.contracts" :key="index" class="group">
-              <form-element type="text" v-model="item.contracts[index].external_contract_id" :validation="$v.item.contracts.$each[index].external_contract_id" field-name="external_contract_id"></form-element>
-              <form-element type="date" v-model="item.contracts[index].contract_sign_date" :validation="$v.item.contracts.$each[index].contract_sign_date" field-name="contract_sign_date"></form-element>
-              <form-element type="date" v-model="item.contracts[index].contract_start_date" :validation="$v.item.contracts.$each[index].contract_start_date" field-name="contract_start_date"></form-element>
-              <form-element type="date" v-model="item.contracts[index].contract_end_date" :validation="$v.item.contracts.$each[index].contract_end_date" field-name="contract_end_date"></form-element>
-              <form-element type="select" :options="options.boolean" v-model="item.contracts[index].contract_active" :validation="$v.item.contracts.$each[index].contract_active" field-name="contract_active"></form-element>
-              <form-element type="date" v-model="item.contracts[index].contract_cancel_date" :validation="$v.item.contracts.$each[index].contract_cancel_date" field-name="contract_cancel_date"></form-element>
-              <form-element type="text" v-model="item.contracts[index].contract_cancel_motive" :validation="$v.item.contracts.$each[index].contract_cancel_motive" field-name="contract_cancel_motive"></form-element>
-
-              <form-element type="select" :options="options.tipo_contrato" v-model="item.contracts[index].tipo_contrato" :validation="$v.item.contracts.$each[index].tipo_contrato" field-name="tipo_contrato"></form-element>
-              <form-element type="select" :options="options.modalidad_contrato" v-model="item.contracts[index].modalidad_contrato" :validation="$v.item.contracts.$each[index].modalidad_contrato" field-name="modalidad_contrato"></form-element>
-
-              <form-element type="number" v-model="item.contracts[index].sucursal" :validation="$v.item.contracts.$each[index].sucursal" field-name="sucursal"></form-element>
-              <form-element type="select" :options="options.clasificacion_laboral" v-model="item.contracts[index].clasificacion_laboral" :validation="$v.item.contracts.$each[index].clasificacion_laboral" field-name="clasificacion_laboral"></form-element>
+          <q-tab-pane name="tab-3">
+            <div v-for="(contract, index) in $v.item.contract.$each.$iter" :key="`contract_${index}`" class="group">
+              <div class="row items-center">
+                <div class="col q-headline">{{$t('field.contract.label')}} {{Number(index) + 1}}</div>
+                <div class="col-auto">
+                  <q-btn size="lg" color="negative" dense flat round icon="cancel" :disable="!!item.contract[Number(index)].contract_id" @click="item.contract.splice(Number(index), 1)"></q-btn>
+                </div>
+              </div>
+              <q-field
+                v-for="(type, field) in {
+                  external_contract_id: 'text',
+                  contract_sign_date: 'date',
+                  contract_start_date: 'date',
+                  contract_end_date: 'date',
+                  contract_active: 'select',
+                  contract_cancel_date: 'date',
+                  contract_cancel_motive: 'text',
+                  tipo_contrato: 'select',
+                  modalidad_contrato: 'select',
+                  sucursal: 'number',
+                  clasificacion_laboral: 'select'
+                }"
+                :key="field"
+                :label="$t(`field.${field}.label`)"
+                :helper="$t(`field.${field}.helper`)"
+                :error="contract[field].$error"
+                :error-label="validationError(contract[field])"
+              >
+                <q-select v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="options[field] || options.boolean"></q-select>
+                <q-datetime v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
+                <q-input v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
+              </q-field>
+            </div>
+            <div class="text-center q-ma-md">
+              <q-btn
+                @click="item.contract.push({
+                  external_contract_id: null,
+                  contract_sign_date: date.startOfDate(new Date(), 'day'),
+                  contract_start_date: null,
+                  contract_end_date: null,
+                  contract_active: true,
+                  contract_cancel_date: null,
+                  contract_cancel_motive: null,
+                  tipo_contrato: 1,
+                  modalidad_contrato: 1,
+                  sucursal: null,
+                  clasificacion_laboral: null
+                })"
+                icon="add"
+                ouline
+                color="positive"
+                size="lg"
+                round
+              ></q-btn>
             </div>
           </q-tab-pane>
         </q-tabs>
@@ -134,23 +207,110 @@
         <pre>{{$v}}</pre>
         <portal to="print">
           <div class="row gutter-sm">
-            <form-element class="col-6" type="text" v-model="item.name_first" :validation="$v.item.name_first" field-name="name_first"></form-element>
-            <form-element class="col-6" type="text" v-model="item.name_middle" :validation="$v.item.name_middle" field-name="name_middle"></form-element>
-            <form-element class="col-6" type="text" v-model="item.name_paternal" :validation="$v.item.name_paternal" field-name="name_paternal"></form-element>
-            <form-element class="col-6" type="text" v-model="item.name_maternal" :validation="$v.item.name_maternal" field-name="name_maternal"></form-element>
-            <form-element class="col-6" type="text" v-model="item.name_married" :validation="$v.item.name_married" field-name="name_married"></form-element>
-            <form-element class="col-6" type="select" :options="options.sex" v-model="item.sex" :validation="$v.item.sex" field-name="sex"></form-element>
-            <form-element class="col-6" type="date" v-model="item.date_of_birth" :validation="$v.item.date_of_birth" field-name="date_of_birth"></form-element>
-            <form-element class="col-6" type="text" v-model="item.place_of_birth" :validation="$v.item.place_of_birth" field-name="place_of_birth"></form-element>
-            <form-element class="col-6" type="text" v-model="item.nationality" :validation="$v.item.nationality" field-name="nationality"></form-element>
-            <form-element class="col-6" type="select" :options="options.marital_status" v-model="item.marital_status" :validation="$v.item.marital_status" field-name="marital_status"></form-element>
+            <q-field
+              class="col-6"
+              v-for="(type, field) in {
+                name_first: 'text',
+                name_middle: 'text',
+                name_paternal: 'text',
+                name_maternal: 'text',
+                name_married: 'text',
+                sex: 'select',
+                date_of_birth: 'date',
+                place_of_birth: 'text',
+                nationality: 'text',
+                marital_status: 'select',
+                document_type: 'select',
+                document_number: 'text',
+                document_extension: 'text',
+                document_emitted: 'text',
+                jubilado: 'select',
+                aporta_afp: 'select',
+                persona_con_descapacidad: 'select',
+                tutor_persona_con_descapacidad: 'select',
+                caja_de_salud: 'select',
+                afp: 'select',
+                nua_cua: 'text',
+              }"
+              :key="field"
+              :label="$t(`field.${field}.label`)"
+              :helper="$t(`field.${field}.helper`)"
+              :error="$v.item[field].$error"
+              :error-label="validationError($v.item[field])"
+            >
+              <q-select readonly v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="options[field] || options.boolean"></q-select>
+              <q-datetime readonly v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
+              <q-input readonly v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
+            </q-field>
+            <div v-for="(contact, index) in $v.item.contact.$each.$iter" :key="index" class="col-12 gutter-md row">
+              <div class="col-12 q-headline">{{$t('field.contact.label')}} {{Number(index) + 1}}</div>
+              <q-field
+                class="col-6"
+                :label="$t(`field.contact_description.label`)"
+                :helper="$t(`field.contact_description.helper`)"
+                :error="contact.description.$error"
+                :error-label="validationError(contact.description)"
+              >
+                <q-input readonly v-model="contact.description.$model" :placeholder="$t(`field.contact_description.placeholder`)"></q-input>
+              </q-field>
+              <q-field
+                class="col-6"
+                :label="$t(`field.contact_type.label`)"
+                :helper="$t(`field.contact_type.helper`)"
+                :error="contact.type.$error"
+                :error-label="validationError(contact.type)"
+              >
+                <q-select readonly v-model="contact.type.$model" :placeholder="$t(`field.contact_type.placeholder`)" :options="options.contact_type"></q-select>
+              </q-field>
+              <q-field
+                class="col-6"
+                :label="$t(`field.contact_value.label`)"
+                :helper="$t(`field.contact_value.helper`)"
+                :error="contact.value.$error"
+                :error-label="validationError(contact.value)"
+              >
+                <q-input readonly v-model="contact.value.$model" :placeholder="$t(`field.contact_value.placeholder`)"></q-input>
+              </q-field>
+              <q-field
+                class="col-6"
+                :label="$t(`field.contact_emergency_contact.label`)"
+                :helper="$t(`field.contact_emergency_contact.helper`)"
+                :error="contact.emergency_contact.$error"
+                :error-label="validationError(contact.emergency_contact)"
+              >
+                <q-select readonly v-model="contact.emergency_contact.$model" :placeholder="$t(`field.contact_emergency_contact.placeholder`)" :options="options.boolean"></q-select>
+              </q-field>
+              <hr>
+            </div>
+            <div v-for="(contract, index) in $v.item.contract.$each.$iter" :key="index" class="col-12 row gutter-md">
+              <q-field
+                class="col-6"
+                v-for="(type, field) in {
+                  external_contract_id: 'text',
+                  contract_sign_date: 'date',
+                  contract_start_date: 'date',
+                  contract_end_date: 'date',
+                  contract_active: 'select',
+                  contract_cancel_date: 'date',
+                  contract_cancel_motive: 'text',
+                  tipo_contrato: 'select',
+                  modalidad_contrato: 'select',
+                  sucursal: 'number',
+                  clasificacion_laboral: 'select'
+                }"
+                :key="field"
+                :label="$t(`field.${field}.label`)"
+                :helper="$t(`field.${field}.helper`)"
+                :error="contract[field].$error"
+                :error-label="validationError(contract[field])"
+              >
+                <q-select readonly v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="options[field] || options.boolean"></q-select>
+                <q-datetime readonly v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
+                <q-input readonly v-model="contract[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
+              </q-field>
+            </div>
           </div>
         </portal>
-        <!-- <div class="layout-padding group">
-          <q-field :label="$t('item.employee_external_id.label')">
-            <q-input v-model="item.employee_external_id" :placeholder="$t('item.employee_external_id.placeholder')"/>
-          </q-field>
-        </div> -->
       </q-modal-layout>
     </q-modal>
   </q-page>
@@ -161,7 +321,6 @@ import { date } from 'quasar'
 import { HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
-import FormElement from 'components/FormElement'
 import {
 // requiredIf,
 // requiredUnless,
@@ -211,7 +370,7 @@ function newItem () {
     afp: null,
     nua_cua: '',
 
-    contracts: [
+    contract: [
       {
         external_contract_id: null,
         contract_sign_date: date.startOfDate(new Date(), 'day'),
@@ -228,37 +387,37 @@ function newItem () {
 
     ],
 
-    contacts: [
+    contact: [
       {
         description: 'Telefono Celular',
         type: 'mobile',
         value: '',
         emergency_contact: false
       },
-      // {
-      //   description: 'Telefono Celular 2',
-      //   type: 'mobile',
-      //   value: '',
-      //   emergency_contact: false
-      // },
-      // {
-      //   description: 'Telefono Fijo',
-      //   type: 'phone',
-      //   value: '',
-      //   emergency_contact: false
-      // },
-      // {
-      //   description: 'Correo Electronico',
-      //   type: 'email',
-      //   value: '',
-      //   emergency_contact: false
-      // },
-      // {
-      //   description: 'Telefono Celular Conyuge',
-      //   type: 'mobile',
-      //   value: '',
-      //   emergency_contact: true
-      // },
+      {
+        description: 'Telefono Celular 2',
+        type: 'mobile',
+        value: '',
+        emergency_contact: false
+      },
+      {
+        description: 'Telefono Fijo',
+        type: 'phone',
+        value: '',
+        emergency_contact: false
+      },
+      {
+        description: 'Correo Electronico',
+        type: 'email',
+        value: '',
+        emergency_contact: false
+      },
+      {
+        description: 'Telefono Celular Conyuge',
+        type: 'mobile',
+        value: '',
+        emergency_contact: true
+      },
       {
         description: 'Correo Electronico Conyuge',
         type: 'email',
@@ -271,12 +430,10 @@ function newItem () {
 
 export default {
   name: 'Employees',
-  components: {
-    FormElement
-  },
   mixins: [tableMixin, validationError],
   data () {
     return {
+      date,
       passwordResetUserId: null,
       resource: 'HREmployee',
       apiRoute: HR_EMPLOYEE,
@@ -500,18 +657,21 @@ export default {
             name,
             label: this.$t(`field.${name.match(/[^.]*$/)}.label`),
             field: name.indexOf('.') < 0 ? name : row => name.split('.').reduce((obj, prop) => obj[prop], row),
+            align: 'left',
             sortable: true
           })),
           {
             name: 'date_of_birth',
             label: this.$t('field.date_of_birth.label'),
             field: row => row.date_of_birth ? new Date(row.date_of_birth).toDateString() : '',
+            align: 'left',
             sortable: true
           },
           {
             name: 'age',
             label: this.$t('field.age.label'),
             field: row => !row.date_of_birth ? '' : Math.floor((new Date() - new Date(row.date_of_birth)) / (1000 * 60 * 60 * 24 * 365.25)),
+            align: 'left',
             sortable: true
           },
           {
@@ -526,13 +686,13 @@ export default {
   validations: {
     item: {
       name_first: {
-        required
+        // required
       },
       name_middle: {
         // required
       },
       name_paternal: {
-        required
+        // required
       },
       name_maternal: {
         // required
@@ -541,10 +701,10 @@ export default {
         // required
       },
       sex: {
-        required
+        // required
       },
       date_of_birth: {
-        required
+        // required
       },
       place_of_birth: {
         // required
@@ -588,17 +748,17 @@ export default {
       nua_cua: {
         // required
       },
-      contacts: {
+      contact: {
         // required,
         // minLength: minLength(2),
         $each: {
           type: { },
-          value: { required },
-          description: { required },
+          value: { },
+          description: { },
           emergency_contact: { }
         }
       },
-      contracts: {
+      contract: {
         $each: {
           external_contract_id: {
             // required
@@ -670,3 +830,14 @@ export default {
   }
 }
 </script>
+
+<i18n>
+{
+  "es": {
+    "modal": {
+      "title": "Empleado",
+      "subtitle": " "
+    }
+  }
+}
+</i18n>

@@ -204,5 +204,10 @@ export default {
     'label': 'Clasificacion Laboral',
     'placeholder': ' ',
     'helper': ' '
+  },
+  contract: {
+    'label': 'Contrato',
+    'placeholder': ' ',
+    'helper': ' '
   }
 }

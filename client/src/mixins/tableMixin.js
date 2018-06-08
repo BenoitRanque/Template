@@ -117,7 +117,7 @@ export default {
       this.item = this.newItem()
     },
     cancel () {
-      if (Object.keys(this.$v.item).some(propName => this.$v.item[propName].$dirty)) {
+      if (this.$v.$anyDirty) {
         this.$q.dialog({
           title: this.$t('confirm.cancelEdit.title'),
           message: this.$t('confirm.cancelEdit.message'),

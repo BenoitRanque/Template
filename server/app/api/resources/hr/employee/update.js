@@ -4,7 +4,7 @@ module.exports = async (input, params, { model, authorize }) => {
 
   let data = await model.query().allowUpsert('[contact, contract]')
     .upsertGraph(permission.filter(input), {
-      noDelete: '[contract]'
+      noDelete: ['contract']
     }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')
