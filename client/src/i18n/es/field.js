@@ -75,7 +75,11 @@ export default {
     'helper': ' '
   },
   'contact_type': {
+<<<<<<< HEAD
     'label': 'Tipo de contacto',
+=======
+    'label': 'Tipo de Contacto',
+>>>>>>> ab979588f0c06daa3463018680b9609d67db3861
     'placeholder': ' ',
     'helper': ' '
   },
@@ -91,6 +95,117 @@ export default {
   },
   'contact_emergency_contact': {
     'label': 'Contacto de Emergencia?',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  document_type: {
+    'label': 'Tipo de Documento',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  document_number: {
+    'label': 'Numero de Documento',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  document_extension: {
+    'label': 'Extension de Documento',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  document_emitted: {
+    'label': 'Lugar de emision',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+
+  jubilado: {
+    'label': 'Jubilado',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  aporta_afp: {
+    'label': 'Aporta AFP',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  persona_con_descapacidad: {
+    'label': 'Persona con descapacidad',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  tutor_persona_con_descapacidad: {
+    'label': 'Tutor de persona con descapacidad',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  caja_de_salud: {
+    'label': 'Caja de Salud',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  afp: {
+    'label': 'AFP',
+    'placeholder': 'AFP Prevision/Futuro',
+    'helper': 'Afp a la que aporta'
+  },
+  nua_cua: {
+    'label': 'NUA/CUA',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  external_contract_id: {
+    'label': 'ID interna',
+    'placeholder': ' ',
+    'helper': 'ID de contrato de uso interna'
+  },
+  contract_sign_date: {
+    'label': 'Firma del contrato',
+    'placeholder': ' ',
+    'helper': 'Fecha de firma del contrato'
+  },
+  contract_start_date: {
+    'label': 'Inicio de contrato',
+    'placeholder': ' ',
+    'helper': 'Fecha de inicio del contrato'
+  },
+  contract_end_date: {
+    'label': 'Fin de contrato',
+    'placeholder': ' ',
+    'helper': 'Fecha final del contrato'
+  },
+  contract_active: {
+    'label': 'Contracto activo',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  contract_cancel_date: {
+    'label': 'Fecha anulacion de contrato',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  contract_cancel_motive: {
+    'label': 'Motivo anulacion de contrato',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  tipo_contrato: {
+    'label': 'Tipo de contrato',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  modalidad_contrato: {
+    'label': 'Modalidad de contrato',
+    'placeholder': ' ',
+    'helper': ' '
+  },
+  sucursal: {
+    'label': 'Sucursal',
+    'placeholder': ' ',
+    'helper': 'Asignado por el Ministerio del Trabajo'
+  },
+  clasificacion_laboral: {
+    'label': 'Clasificacion Laboral',
     'placeholder': ' ',
     'helper': ' '
   }

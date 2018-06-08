@@ -17,5 +17,9 @@ export default {
     'mobile': 'Telefono Celular',
     'phone': 'Telefono Fijo',
     'email': 'Correo Electronico'
+  },
+  'document_type': {
+    'carnet': 'Carnet de Identidad',
+    'passport': 'Passaporte'
   }
 }

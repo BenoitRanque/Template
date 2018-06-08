@@ -2,13 +2,12 @@
   <q-field
     :label="$t(`field.${fieldName}.label`)"
     :helper="$t(`field.${fieldName}.helper`)"
-    :error="validation.$error"
+    :error="validation.$invalid"
     :error-label="validationError(validation)"
   >
     <q-select
       v-if="type === 'select'"
-      :value="value"
-      @input="$event => $emit('input', $event)"
+      v-model="validation.$model"
       :placeholder="$t(`field.${fieldName}.placeholder`)"
       @blur="validation.$touch()"
       :options="options"
@@ -17,19 +16,17 @@
     />
     <q-datetime
       v-else-if="type === 'date' || type === 'time' || type === 'datetime'"
+      v-model="validation.$model"
       :type="type"
       :placeholder="$t(`field.${fieldName}.placeholder`)"
       @blur="validation.$touch()"
-      :value="value"
-      @input="$event => $emit('input', $event)"
     />
     <q-input
       v-else
+      v-model="validation.$model"
       :type="type"
       :placeholder="$t(`field.${fieldName}.placeholder`)"
       @blur="validation.$touch()"
-      :value="value"
-      @input="$event => $emit('input', $event)"
     />
   </q-field>
 </template>
@@ -40,9 +37,6 @@ import validationError from '../mixins/validationError'
 export default {
   name: 'FormElement',
   props: {
-    value: {
-      required: true
-    },
     validation: {
       type: Object,
       required: true
