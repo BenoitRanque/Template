@@ -1,7 +1,7 @@
 module.exports = {
   AttBreak: require('./AttBreak'),
   AttDay: require('./AttDay'),
-  AttEmployeeShift: require('./AttEmployeeShift'),
+  AttShiftAssign: require('./AttShiftAssign'),
   AttShift: require('./AttShift'),
   AttTimetable: require('./AttTimetable'),
   Contact: require('./Contact'),

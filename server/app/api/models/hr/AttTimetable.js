@@ -8,7 +8,7 @@ module.exports = class HRAttTimetable extends Model {
     const AttBreak = require('./AttBreak')
     return {
       'break': {
-        relation: HasManyRelation,
+        relation: ManyToManyRelation,
         modelClass: AttBreak,
         join: {
           from: this.tableName + '.timetable_id',

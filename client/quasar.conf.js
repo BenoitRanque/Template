@@ -6,7 +6,8 @@ module.exports = function (ctx) {
       'i18n',
       'axios',
       'vuelidate',
-      'portal'
+      'portal',
+      'date'
     ],
     css: [
       'app.styl'

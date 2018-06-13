@@ -686,7 +686,7 @@ export default {
   validations: {
     item: {
       name_first: {
-        // required
+        required
       },
       name_middle: {
         // required

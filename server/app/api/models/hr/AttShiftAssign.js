@@ -2,7 +2,7 @@ const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
 module.exports = class HRAtt extends Model {
-  static get tableName () { return 'hr_att_day' }
+  static get tableName () { return 'hr_att_shift_assign' }
   static get idColumn () { return 'day_id' }
   static get relationMappings () {
     const Employee = require('./Employee')
