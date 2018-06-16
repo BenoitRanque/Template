@@ -314,7 +314,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: 'break' } }),
+        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } }),
         this.$axios.get(HR_ATT_BREAK, { params: { eager: '' } })
       ])
         .then(response => {

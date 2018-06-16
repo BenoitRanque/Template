@@ -8,7 +8,7 @@ module.exports = class HRAttDay extends Model {
     const AttTimetable = require('./AttTimetable')
     return {
       'timetable': {
-        relation: HasManyRelation,
+        relation: ManyToManyRelation,
         modelClass: AttTimetable,
         join: {
           from: this.tableName + '.day_id',
