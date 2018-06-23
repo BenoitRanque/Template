@@ -5,18 +5,14 @@ module.exports = class HRAttShift extends Model {
   static get tableName () { return 'hr_att_shift' }
   static get idColumn () { return 'shift_id' }
   static get relationMappings () {
-    const AttDay = require('./AttDay')
+    const AttShiftSlot = require('./AttShiftSlot')
     return {
-      'day': {
+      'slots': {
         relation: HasManyRelation,
-        modelClass: AttDay,
+        modelClass: AttShiftSlot,
         join: {
           from: this.tableName + '.shift_id',
-          through: {
-            from: 'hr_att_shift_days.shift_id',
-            to: 'hr_att_shift_days.day_id'
-          },
-          to: AttDay.tableName + '.day_id'
+          to: AttShiftSlot.tableName + '.shift_id'
         }
       }
     }

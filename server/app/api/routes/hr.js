@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const Resolver = require('@tools/resolver')
-const { AttBreak, AttDay, AttShiftAssign, AttShift, AttTimetable, Employee } = require('@models/hr')
+const {
+  AttBreak, AttException, AttExceptionRequest, AttExceptionAuthorization, AttShift, AttShiftAssign, AttTimetable, Employee } = require('@models/hr')
 
 router.route('/attbreak')
   .get(new Resolver(require('@resources/hr/attbreak/read'), AttBreak))
@@ -8,11 +9,23 @@ router.route('/attbreak')
   .put(new Resolver(require('@resources/hr/attbreak/update'), AttBreak))
   .delete(new Resolver(require('@resources/hr/attbreak/delete'), AttBreak))
 
-router.route('/attday')
-  .get(new Resolver(require('@resources/hr/attday/read'), AttDay))
-  .post(new Resolver(require('@resources/hr/attday/create'), AttDay))
-  .put(new Resolver(require('@resources/hr/attday/update'), AttDay))
-  .delete(new Resolver(require('@resources/hr/attday/delete'), AttDay))
+router.route('/attexception')
+  .get(new Resolver(require('@resources/hr/attexception/read'), AttException))
+  .post(new Resolver(require('@resources/hr/attexception/create'), AttException))
+  .put(new Resolver(require('@resources/hr/attexception/update'), AttException))
+  .delete(new Resolver(require('@resources/hr/attexception/delete'), AttException))
+
+router.route('/attexceptionrequest')
+  .get(new Resolver(require('@resources/hr/attexceptionrequest/read'), AttExceptionRequest))
+  .post(new Resolver(require('@resources/hr/attexceptionrequest/create'), AttExceptionRequest))
+  .put(new Resolver(require('@resources/hr/attexceptionrequest/update'), AttExceptionRequest))
+  .delete(new Resolver(require('@resources/hr/attexceptionrequest/delete'), AttExceptionRequest))
+
+router.route('/attexceptionauthorization')
+  .get(new Resolver(require('@resources/hr/attexceptionauthorization/read'), AttExceptionAuthorization))
+  .post(new Resolver(require('@resources/hr/attexceptionauthorization/create'), AttExceptionAuthorization))
+  .put(new Resolver(require('@resources/hr/attexceptionauthorization/update'), AttExceptionAuthorization))
+  .delete(new Resolver(require('@resources/hr/attexceptionauthorization/delete'), AttExceptionAuthorization))
 
 router.route('/attshiftassign')
   .get(new Resolver(require('@resources/hr/attshiftassign/read'), AttShiftAssign))

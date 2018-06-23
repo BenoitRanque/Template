@@ -14,7 +14,7 @@
       <q-input v-model="timetable.description"></q-input>
       <q-datetime type="time" class="col" v-model="shift.timetable[index].in_time"></q-datetime>
       <q-datetime type="time" class="col" v-model="shift.timetable[index].out_time"></q-datetime>
-      <q-color v-model="timetable.color"></q-color>
+      <q-color v-model="timetable.timetable.paycode.color"></q-color>
       <q-btn dense size="xs" @click="timetable.slot -= 1" :disable="timetable.slot <= 0" icon="keyboard_arrow_up"></q-btn>
       <q-btn dense size="xs" @click="timetable.slot += 1" icon="keyboard_arrow_down"></q-btn>
     </div>
@@ -45,11 +45,16 @@
     </div>
     <q-btn
       @click="shift.timetable.push({
-        in_time: null,
-        out_time: null,
-        color: null,
-        description: '',
-        name: '',
+        timetable: {
+          in_time: null,
+          out_time: null,
+          description: '',
+          name: '',
+          paycode: {
+            name: 'work',
+            color: '#F00'
+          }
+        },
         slot: 1
       })"
       icon="add"
@@ -71,10 +76,17 @@ export default {
       shift: {
         name: '',
         description: '',
-        timetable: [
+        slots: 7,
+        assignment: [
+          {
+            slot: 1,
+            timetable: {
+
+            }
+          }
         ]
       }
-    }
+    }w
   },
   methods: {
     timetableHead (timetable) {

@@ -1,6 +1,7 @@
 // const recursiveFilter = require('./recursiveFilter')
 const ServerError = require('./serverError')
 const { encode, decode } = require('./utils')
+const { transaction } = require('objection')
 
 module.exports = class Resolver {
   constructor (method, model, params) {
@@ -18,6 +19,7 @@ module.exports = class Resolver {
 
         let context = {
           model: this.model,
+          transaction,
           ServerError,
           session,
           accessControl,
