@@ -1,7 +1,7 @@
 const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = class HRAttShift extends Model {
+module.exports = class HRAttException extends Model {
   static get tableName () { return 'hr_att_exception' }
   static get idColumn () { return 'exception_id' }
   static get relationMappings () {

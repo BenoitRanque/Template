@@ -38,6 +38,7 @@ export default {
         next(false)
       } else if (requireAuthorization && !this.isAuthorized(requireAuthorization.resource, requireAuthorization.action, requireAuthorization.possession)) {
         this.$root.$emit('ACCESS_DENIED')
+        this.$q.notify({ type: 'negative', message: 'Access Denied' })
         next(false)
       } else {
         next()

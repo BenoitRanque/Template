@@ -1,144 +1,252 @@
 <template>
-  <div>
-    <!-- <div class="bg-green" v-for="(slot, index) in shift.slots" :key="index" style="height: 50px; border: 1px solid black">
-      <div class="row">
-        <div class="col">
-        </div>
-        <div class="col-auto">
-          <q-btn size="lg" color="negative" dense flat round icon="cancel" :disable="shift.slots <= 1" @click="shift.slots -= 1"></q-btn>
-        </div>
-      </div>
-    </div> -->
-    <div v-for="(timetable, index) in shift.timetable" :key="index">
-      <q-input v-model="timetable.name"></q-input>
-      <q-input v-model="timetable.description"></q-input>
-      <q-datetime type="time" class="col" v-model="shift.timetable[index].in_time"></q-datetime>
-      <q-datetime type="time" class="col" v-model="shift.timetable[index].out_time"></q-datetime>
-      <q-color v-model="timetable.timetable.paycode.color"></q-color>
-      <q-btn dense size="xs" @click="timetable.slot -= 1" :disable="timetable.slot <= 0" icon="keyboard_arrow_up"></q-btn>
-      <q-btn dense size="xs" @click="timetable.slot += 1" icon="keyboard_arrow_down"></q-btn>
-    </div>
-    <div class="grid-container">
-      <span class="grid-col-label" v-for="n in 23" :key="n" :style="{ 'grid-column-start': n * 12, 'grid-column-end': (n * 12) + 1}">{{String(n).padStart(2, '0')}}:00</span>
-      <span class="grid-row-label" v-for="n in shift.timetable.reduce((v, t) => v > t.slot ? v : t.slot, 0)" :key="n" :style="{ 'grid-row-start': n + 1 }">{{n}}</span>
-      <template v-for="(timetable, index) in shift.timetable">
-        <div class="grid-item q-pa-xs row items-center" :style="timetableHead(timetable)" :key="index">
-          <div class="col">
-            {{timetable.name}}
-            <br/>
-            <small>{{timetable.description}}</small>
-          </div>
-          <div class="col-auto">
-            <q-btn-group push>
-              <q-btn dense push color="primary" size="sm" @click="timetable.slot -= 1" :disable="timetable.slot <= 1" icon="keyboard_arrow_up"></q-btn>
-              <q-btn dense push color="primary" size="sm" @click="timetable.slot += 1" icon="keyboard_arrow_down"></q-btn>
-            </q-btn-group>
-          </div>
-          <!-- <pre>
-            {{timetableHead(shift.timetable[index])}}
-          </pre> -->
-          <!-- <q-btn dense size="xs" @click="timetable.slot -= 1" :disable="timetable.slot <= 0" icon="keyboard_arrow_up"></q-btn>
-          <q-btn dense size="xs" @click="timetable.slot += 1" icon="keyboard_arrow_down"></q-btn> -->
-        </div>
-        <div class="grid-item q-pa-xs" :style="timetableTail(shift.timetable[index])" v-if="timetable.out_time < timetable.in_time" :key="index"></div>
+  <q-page>
+    <!-- content -->
+    <!-- <q-btn @click="read">read</q-btn> -->
+    <q-table
+      :title="table.title"
+      :row-key="table.rowKey"
+      :loading="table.loading"
+      :data="table.data"
+      :columns="table.columns"
+      :filter="table.filter"
+      :pagination.sync="table.pagination"
+      class="no-shadow"
+    >
+      <template slot="top-left" slot-scope="props">
+        <q-btn class="q-mr-sm" round flat color="primary" icon="refresh" size="md" @click="fetchItems()" />
+        <q-search hide-underline color="secondary"  v-model="table.filter" class="col-6" />
       </template>
-    </div>
-    <q-btn
-      @click="shift.timetable.push({
-        timetable: {
-          in_time: null,
-          out_time: null,
-          description: '',
-          name: '',
-          paycode: {
-            name: 'work',
-            color: '#F00'
-          }
-        },
-        slot: 1
-      })"
-      icon="add"
-      ouline
-      color="positive"
-      size="lg"
-      round
-    ></q-btn>
-    <pre>{{shift.timetable[0] && timetableHead(shift.timetable[0])}}</pre>
-    <pre>{{$data}}</pre>
-  </div>
+
+      <template slot="top-right" slot-scope="props">
+        <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
+      </template>
+
+      <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
+        <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" size="md" round dense flat icon="edit" color="dark" @click="edit(props.row)"></q-btn>
+      </q-td>
+
+    </q-table>
+
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
+      <q-modal-layout>
+        <q-toolbar slot="header" class="q-py-none q-pr-none">
+          <q-toolbar-title>
+            {{ editMode ? $t('edit') : $t('create')}} {{$t('modal.title')}}
+            <span slot="subtitle">{{$t('modal.subtitle')}}</span>
+          </q-toolbar-title>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel()"></q-btn>
+        </q-toolbar>
+        <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+          <template v-if="editMode">
+            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
+          </template>
+          <template v-else>
+            <q-btn v-if="isAuthorized(resource, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
+          </template>
+        </q-toolbar>
+        <div class="layout-padding group">
+          <q-field
+            :label="$t(`field.shift_name.label`)"
+            :helper="$t(`field.shift_name.helper`)"
+            :error="$v.item.shift_name.$error"
+            :error-label="validationError($v.item.shift_name)"
+          >
+            <q-input v-model="$v.item.shift_name.$model" :placeholder="$t(`field.shift_name.placeholder`)"></q-input>
+          </q-field>
+          <q-field
+            :label="$t(`field.description.label`)"
+            :helper="$t(`field.description.helper`)"
+            :error="$v.item.description.$error"
+            :error-label="validationError($v.item.description)"
+          >
+            <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
+          </q-field>
+          <q-field
+            v-for="(slot, index) in $v.item.slots.$each.$iter"
+            :key="index"
+            :label="`${$t('field.shift_slot.label')} ${Number(index) + 1}`"
+            :helper="$t(`field.shift_slot.helper`)"
+            :error="slot.$error"
+            :error-label="validationError(slot.timetable)"
+          >
+            <q-select v-model="slot.timetable.$model" :options="options.timetable" multiple :placeholder="$t('field.shift_slot.placeholder')"></q-select>
+          </q-field>
+          <div class="row justify-around q-pa-md">
+            <q-btn round icon="remove" color="negative"
+              @click="item.slots.pop()"
+            ></q-btn>
+            <q-btn round icon="add" color="positive"
+              @click="item.slots.push({ timetable: [], index: item.slots.length })"
+            ></q-btn>
+          </div>
+        </div>
+      </q-modal-layout>
+    </q-modal>
+  </q-page>
 </template>
 
 <script>
+import { HR_ATT_SHIFT, HR_ATT_TIMETABLE } from 'assets/apiRoutes'
+import tableMixin from 'src/mixins/tableMixin'
+import validationError from 'src/mixins/validationError'
+import {
+  // requiredIf,
+  // requiredUnless,
+  // minLength,
+  // maxLength,
+  // minValue,
+  // maxValue,
+  // between,
+  // alpha,
+  // alphaNum,
+  // numeric,
+  // email,
+  // ipAddress,
+  // macAddress,
+  // sameAs,
+  // url,
+  // or,
+  // and,
+  // withParams,
+  required
+} from 'vuelidate/lib/validators'
+
+function newItem () {
+  // return default item. Important
+  return {
+    shift_name: '',
+    description: '',
+    slots: []
+  }
+}
+
 export default {
-  name: 'AttShift',
+  name: 'HRAttShift',
+  mixins: [tableMixin, validationError],
   data () {
     return {
-      shift: {
-        name: '',
-        description: '',
-        slots: 7,
-        assignment: [
+      resource: 'HRAttShift',
+      apiRoute: HR_ATT_SHIFT,
+      editMode: false,
+      item: newItem(),
+      mapItemOptions: {
+        slots: slot => {
+          slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
+          return slot
+        }
+      },
+      options: {
+        timetable: []
+      },
+      table: {
+        loading: false,
+        rowKey: 'shift_id',
+        title: '',
+        filter: '',
+        data: [],
+        pagination: {
+          sortBy: null, // String, column "name" property value
+          descending: false,
+          page: 1,
+          rowsPerPage: 10 // current rows per page being displayed
+        },
+        columns: [
           {
-            slot: 1,
-            timetable: {
-
-            }
+            name: 'shift_name',
+            required: true,
+            label: this.$t('field.shift_name.label'),
+            align: 'left',
+            field: 'shift_name',
+            sortable: true
+          },
+          {
+            name: 'description',
+            required: true,
+            label: this.$t('field.description.label'),
+            align: 'left',
+            field: 'description',
+            sortable: true
+          },
+          {
+            name: 'slots',
+            required: true,
+            label: this.$t('field.shift_slots.label'),
+            align: 'left',
+            field: row => row.slots.length,
+            sortable: true
+          },
+          {
+            name: 'edit',
+            label: '',
+            required: true
           }
         ]
       }
-    }w
+    }
   },
-  methods: {
-    timetableHead (timetable) {
-      // console.log(timetable)
-      if (!timetable.in_time || !timetable.out_time) return {}
-      let inTime = new Date(timetable.in_time)
-      let outTime = new Date(timetable.out_time)
-      return {
-        'background-color': timetable.color,
-        'grid-column-start': ((inTime.getHours() * 60) + inTime.getMinutes()) / 5,
-        // 'grid-column-start': new Date(timetable.in_time).getTime() / (1000 * 60),
-        'grid-column-end': outTime < inTime ? 289 : ((outTime.getHours() * 60) + outTime.getMinutes()) / 5,
-        // 'grid-column-end': new Date(timetable.out_time).getTime() < new Date(timetable.in_time).getTime() ? 1440 : new Date(timetable.out_time).getTime() / (1000 * 60),
-        'grid-row-start': timetable.slot + 1
-        // 'grid-row-end': this.item.itemRow
-      }
-    },
-    timetableTail (timetable) {
-      let outTime = new Date(timetable.out_time)
-      return {
-        'background-color': timetable.color,
-        'grid-column-start': 1,
-        'grid-column-end': ((outTime.getHours() * 60) + outTime.getMinutes()) / 5,
-        'grid-row-start': timetable.slot + 2
-        // 'grid-row-end': this.item.itemRow
+  validations: {
+    item: {
+      shift_name: {
+        required
+      },
+      description: {
+
+      },
+      slots: {
+        $each: {
+          timetable: {
+
+          },
+          index: {
+            required
+          }
+        }
       }
     }
+  },
+  methods: {
+    newItem () {
+      // return default item. Important
+      return newItem()
+    },
+    fetchItems () {
+      this.table.loading = true
+      Promise.all([
+        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[slots.[timetable]]' } }),
+        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } })
+      ])
+        .then(response => {
+          this.table.data = (response[0] && response[0].data) ? response[0].data : []
+          this.options.timetable = (response[1] && response[1].data) ? response[1].data.map(timetable => ({
+            value: timetable,
+            label: timetable.timetable_name,
+            sublabel: timetable.description
+          })) : []
+          this.table.loading = false
+        })
+        .catch(() => {
+          this.table.loading = false
+        })
+    },
+    deleteParams: (item) => ({ shift_id: item.shift_id })
+  },
+  mounted () {
+    this.fetchItems()
   }
 }
 </script>
 
-<style scoped lang="stylus">
-  .grid-container
-    display grid
-    grid-template-columns repeat(288, 1fr)
-    grid-auto-rows 1fr
-    grid-template-rows 20px
-    grid-gap 0 0
-
-  .grid-col-label
-    text-align center
-    font-size 10px
-    justify-self center
-
-  .grid-row-label
-    font-size 10px
-    grid-col-start 1
-    align-self center
-
-  .grid-item
-    // height 30px
-    font-size 12px
-    // color white
-
+<style>
 </style>
+
+<i18n>
+{
+  "es": {
+    "modal": {
+      "title": "Turno",
+      "subtitle": " "
+    }
+  }
+}
+</i18n>

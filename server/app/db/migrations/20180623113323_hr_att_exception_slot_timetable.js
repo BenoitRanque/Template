@@ -4,8 +4,6 @@ exports.up = async function(knex, Promise) {
     table.uuid('exception_slot_id')
     table.uuid('timetable_id')
     
-    table.timestamps()
-
     table.primary(['exception_slot_id', 'timetable_id'])
     table.foreign('timetable_id').references('timetable_id').inTable('hr_att_timetable').onUpdate('CASCADE').onDelete('CASCADE')
     table.foreign('exception_slot_id').references('exception_slot_id').inTable('hr_att_exception_slot').onUpdate('CASCADE').onDelete('CASCADE')

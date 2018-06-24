@@ -31,13 +31,13 @@ export default {
       }
     },
     {
-      hash: 'day',
+      hash: 'exception',
       layout: 'workspace',
       meta: {
-        label: 'attday',
+        label: 'attexception',
         requireAuthentication: true,
         requireAuthorization: {
-          resource: 'HRAttDay',
+          resource: 'HRAttException',
           posession: 'any'
         }
       }

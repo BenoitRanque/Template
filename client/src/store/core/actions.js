@@ -16,12 +16,14 @@ class IdleTimer {
 
   timerOn () {
     window.addEventListener('scroll', this.resetTimer, true)
+    window.addEventListener('mousemove', this.resetTimer, true)
     window.addEventListener('mousedown', this.resetTimer, true)
     window.addEventListener('keypress', this.resetTimer, true)
   }
 
   timerOff () {
     window.removeEventListener('scroll', this.resetTimer, true)
+    window.removeEventListener('mousemove', this.resetTimer, true)
     window.removeEventListener('mousedown', this.resetTimer, true)
     window.removeEventListener('keypress', this.resetTimer, true)
   }

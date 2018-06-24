@@ -3,8 +3,7 @@ const express = require('express')
 const app = express()
 
 app.use((req, res, next) => {
-  console.log('REQUEST')
-  console.log(req.path)
+  console.log(req.method.toUpperCase(), req.path)
 
   if (ENV === 'dev' && req.get('origin')) {
     res.setHeader('Access-Control-Allow-Origin', req.get('origin'))

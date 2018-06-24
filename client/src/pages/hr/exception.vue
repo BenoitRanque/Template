@@ -38,7 +38,6 @@
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
-            {{isAuthorized(resource, 'delete', 'any')}}
             <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>
@@ -48,12 +47,12 @@
         </q-toolbar>
         <div class="layout-padding group">
           <q-field
-            :label="$t(`field.day_name.label`)"
-            :helper="$t(`field.day_name.helper`)"
-            :error="$v.item.day_name.$error"
-            :error-label="validationError($v.item.day_name)"
+            :label="$t(`field.exception_name.label`)"
+            :helper="$t(`field.exception_name.helper`)"
+            :error="$v.item.exception_name.$error"
+            :error-label="validationError($v.item.exception_name)"
           >
-            <q-input v-model="$v.item.day_name.$model" :placeholder="$t(`field.day_name.placeholder`)"></q-input>
+            <q-input v-model="$v.item.exception_name.$model" :placeholder="$t(`field.exception_name.placeholder`)"></q-input>
           </q-field>
           <q-field
             :label="$t(`field.description.label`)"
@@ -64,13 +63,41 @@
             <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
           </q-field>
           <q-field
-            :label="$t(`field.timetable.label`)"
-            :helper="$t(`field.timetable.helper`)"
-            :error="$v.item.timetable.$error"
-            :error-label="validationError($v.item.timetable)"
+            :label="$t(`field.employee_id.label`)"
+            :helper="$t(`field.employee_id.helper`)"
+            :error="$v.item.employee_id.$error"
+            :error-label="validationError($v.item.employee_id)"
           >
-            <q-select multiple :options="options.timetable" v-model="$v.item.timetable.$model" :placeholder="$t(`field.break.placeholder`)"></q-select>
+            <q-select v-model="$v.item.employee_id.$model" :options="options.employee_id" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
           </q-field>
+          <template v-for="(slot, index) in $v.item.slots.$each.$iter">
+            <q-field
+              :key="index"
+              :label="`${$t('field.exception_slot_date.label')} ${Number(index) + 1}`"
+              :helper="$t(`field.exception_slot_date.helper`)"
+              :error="slot.date.$error"
+              :error-label="validationError(slot.date)"
+            >
+              <q-datetime type="date" v-model="slot.date.$model" :placeholder="$t(`field.exception_slot_date.placeholder`)"></q-datetime>
+            </q-field>
+            <q-field
+              :key="index"
+              :label="`${$t('field.exception_slot_timetable.label')} ${Number(index) + 1}`"
+              :helper="$t(`field.exception_slot_timetable.helper`)"
+              :error="slot.timetable.$error"
+              :error-label="validationError(slot.timetable)"
+            >
+              <q-select v-model="slot.timetable.$model" :options="options.timetable" multiple :placeholder="$t('field.exception_slot_timetable.placeholder')"></q-select>
+            </q-field>
+          </template>
+          <div class="row justify-around q-pa-md">
+            <q-btn round icon="remove" color="negative"
+              @click="item.slots.pop()"
+            ></q-btn>
+            <q-btn round icon="add" color="positive"
+              @click="item.slots.push({ timetable: [], date: null })"
+            ></q-btn>
+          </div>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -78,7 +105,7 @@
 </template>
 
 <script>
-import { HR_ATT_DAY, HR_ATT_TIMETABLE } from 'assets/apiRoutes'
+import { HR_ATT_EXCEPTION, HR_ATT_TIMETABLE, HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -106,30 +133,36 @@ import {
 function newItem () {
   // return default item. Important
   return {
-    day_name: '',
+    exception_name: '',
     description: '',
-    timetable: []
+    employee_id: null,
+    slots: []
+
   }
 }
 
 export default {
-  name: 'HRAttDay',
+  name: 'HRAttException',
   mixins: [tableMixin, validationError],
   data () {
     return {
-      resource: 'HRAttDay',
-      apiRoute: HR_ATT_DAY,
+      resource: 'HRAttException',
+      apiRoute: HR_ATT_EXCEPTION,
       editMode: false,
       item: newItem(),
       mapItemOptions: {
-        timetable: b => this.options.timetable.find(option => option.value.timetable_id === b.timetable_name).value
+        slots: slot => {
+          slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
+          return slot
+        }
       },
       options: {
-        timetable: []
+        timetable: [],
+        employee_id: []
       },
       table: {
         loading: false,
-        rowKey: 'day_id',
+        rowKey: 'exception_id',
         title: '',
         filter: '',
         data: [],
@@ -141,11 +174,11 @@ export default {
         },
         columns: [
           {
-            name: 'day_name',
+            name: 'exception_name',
             required: true,
-            label: this.$t('field.day_name.label'),
+            label: this.$t('field.exception_name.label'),
             align: 'left',
-            field: 'day_name',
+            field: 'exception_name',
             sortable: true
           },
           {
@@ -157,11 +190,11 @@ export default {
             sortable: true
           },
           {
-            name: 'timetable',
+            name: 'slots',
             required: true,
-            label: this.$t('field.timetable.label'),
+            label: this.$t('field.shift_slots.label'),
             align: 'left',
-            field: row => row.timetable.map(t => t.timetable_name).join(', '),
+            field: row => row.slots.map(slot => slot.date).join(', '),
             sortable: true
           },
           {
@@ -175,14 +208,24 @@ export default {
   },
   validations: {
     item: {
-      day_name: {
+      exception_name: {
         required
       },
       description: {
 
       },
-      timetable: {
+      employee_id: {
+        required
+      },
+      slots: {
+        $each: {
+          timetable: {
 
+          },
+          date: {
+            required
+          }
+        }
       }
     }
   },
@@ -194,15 +237,20 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_DAY, { params: { eager: '[timetable]' } }),
-        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[slots.timetable.break, request, authorization, employee]' } }),
+        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } }),
+        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.timetable = (response[1] && response[1].data) ? response[1].data.map(t => ({
-            value: t,
-            label: t.timetable_name,
-            sublabel: t.description
+          this.options.timetable = (response[1] && response[1].data) ? response[1].data.map(timetable => ({
+            value: timetable,
+            label: timetable.timetable_name,
+            sublabel: timetable.description
+          })) : []
+          this.options.employee_id = (response[2] && response[2].data) ? response[2].data.map(employee => ({
+            value: employee.employee_id,
+            label: employee.name_first + ' ' + employee.name_paternal
           })) : []
           this.table.loading = false
         })
@@ -210,7 +258,7 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ day_id: item.day_id })
+    deleteParams: (item) => ({ exception_id: item.exception_id })
   },
   mounted () {
     this.fetchItems()
@@ -225,7 +273,7 @@ export default {
 {
   "es": {
     "modal": {
-      "title": "Dia",
+      "title": "Turno",
       "subtitle": " "
     }
   }
