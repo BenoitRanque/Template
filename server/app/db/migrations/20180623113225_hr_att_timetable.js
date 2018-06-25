@@ -4,6 +4,8 @@ exports.up = async function(knex, Promise) {
     table.uuid('timetable_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.text('timetable_name')
     table.text('description')
+    table.uuid('type_id').notNullable()
+    table.timestamp('duration')
     table.timestamp('in_time')
     table.timestamp('in_start')
     table.timestamp('in_end')
@@ -12,6 +14,8 @@ exports.up = async function(knex, Promise) {
     table.timestamp('out_end')
     
     table.timestamps()
+
+    table.foreign('type_id').references('type_id').inTable('hr_att_type').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };
 

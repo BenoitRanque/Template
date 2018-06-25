@@ -8,6 +8,7 @@ module.exports = {
   AttShiftSlot: require('./AttShiftSlot'),
   AttShiftAssign: require('./AttShiftAssign'),
   AttTimetable: require('./AttTimetable'),
+  AttType: require('./AttType'),
   Contact: require('./Contact'),
   Contract: require('./Contract'),
   EmployeeData: require('./EmployeeData'),

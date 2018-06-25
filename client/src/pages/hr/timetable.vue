@@ -21,6 +21,10 @@
         <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
+      <q-td slot="body-cell-type" slot-scope="props" :props="props" auto-width>
+        <q-chip :style="{ 'background': props.row.type.color }">{{props.row.type.code}}</q-chip>
+      </q-td>
+
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
         <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" size="md" round dense flat icon="edit" color="dark" @click="edit(props.row)"></q-btn>
       </q-td>
@@ -62,6 +66,22 @@
             :error-label="validationError($v.item.description)"
           >
             <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
+          </q-field>
+          <q-field
+            :label="$t(`field.type.label`)"
+            :helper="$t(`field.type.helper`)"
+            :error="$v.item.type_id.$error"
+            :error-label="validationError($v.item.type_id)"
+          >
+            <q-select :options="options.type_id" v-model="$v.item.type_id.$model" :placeholder="$t(`field.type.placeholder`)"></q-select>
+          </q-field>
+          <q-field
+            :label="$t(`field.duration.label`)"
+            :helper="$t(`field.duration.helper`)"
+            :error="$v.item.duration.$error"
+            :error-label="validationError($v.item.duration)"
+          >
+            <q-datetime type="time" v-model="$v.item.duration.$model" :placeholder="$t(`field.description.placeholder`)"></q-datetime>
           </q-field>
           <q-field
             :label="$t(`field.in_time.label`)"
@@ -126,7 +146,7 @@
 </template>
 
 <script>
-import { HR_ATT_TIMETABLE, HR_ATT_BREAK } from 'assets/apiRoutes'
+import { HR_ATT_TIMETABLE, HR_ATT_BREAK, HR_ATT_TYPE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -156,6 +176,8 @@ function newItem () {
   return {
     timetable_name: '',
     description: '',
+    type_id: null,
+    duration: null,
     in_time: null,
     in_start: null,
     in_end: null,
@@ -176,10 +198,12 @@ export default {
       editMode: false,
       item: newItem(),
       mapItemOptions: {
-        break: b => this.options.break.find(option => option.value.break_id === b.break_id).value
+        break: b => this.options.break.find(option => option.value.break_id === b.break_id).value,
+        type: t => this.options.type.find(option => option.value.type_id === t.type_id).value
       },
       options: {
-        break: []
+        break: [],
+        type_id: []
       },
       table: {
         loading: false,
@@ -208,6 +232,22 @@ export default {
             label: this.$t('field.description.label'),
             align: 'left',
             field: 'description',
+            sortable: true
+          },
+          {
+            name: 'type',
+            required: true,
+            label: this.$t('field.type.label'),
+            align: 'left',
+            field: row => row.type.code,
+            sortable: true
+          },
+          {
+            name: 'duration',
+            required: true,
+            label: this.$t('field.duration.label'),
+            align: 'left',
+            field: row => row.duration ? this.$date.formatDate(new Date(row.duration).getTime(), 'HH:mm') : '',
             sortable: true
           },
           {
@@ -283,6 +323,12 @@ export default {
       description: {
 
       },
+      type_id: {
+        required
+      },
+      duration: {
+        required
+      },
       in_time: {
         required
       },
@@ -314,8 +360,9 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } }),
-        this.$axios.get(HR_ATT_BREAK, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break, type]' } }),
+        this.$axios.get(HR_ATT_BREAK, { params: { eager: '' } }),
+        this.$axios.get(HR_ATT_TYPE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
@@ -323,6 +370,11 @@ export default {
             value: b,
             label: b.break_name,
             sublabel: b.description
+          })) : []
+          this.options.type_id = (response[2] && response[2].data) ? response[2].data.map(type => ({
+            value: type.type_id,
+            label: type.type_name,
+            sublabel: type.description
           })) : []
           this.table.loading = false
         })

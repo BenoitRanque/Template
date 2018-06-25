@@ -6,6 +6,7 @@ module.exports = class HRAttTimetable extends Model {
   static get idColumn () { return 'timetable_id' }
   static get relationMappings () {
     const AttBreak = require('./AttBreak')
+    const AttType = require('./AttType')
     return {
       'break': {
         relation: ManyToManyRelation,
@@ -17,6 +18,14 @@ module.exports = class HRAttTimetable extends Model {
             to: 'hr_att_timetable_breaks.break_id'
           },
           to: AttBreak.tableName + '.break_id'
+        }
+      },
+      'type': {
+        relation: HasOneRelation,
+        modelClass: AttType,
+        join: {
+          from: this.tableName + '.type_id',
+          to: AttType.tableName + '.type_id'
         }
       }
     }

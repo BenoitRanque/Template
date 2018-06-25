@@ -5,7 +5,7 @@ exports.up = async function(knex, Promise) {
     table.text('description')
     table.text('module_id')
 
-    table.foreign('module_id').references('module_id').inTable('core_modules').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('module_id').references('module_id').inTable('core_modules').onUpdate('CASCADE').onDelete('RESTRICT')
 
     table.timestamps()
   })

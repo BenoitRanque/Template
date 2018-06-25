@@ -11,9 +11,9 @@ exports.up = async function(knex, Promise) {
     
     table.timestamps()
 
-    table.foreign('shift_id').references('shift_id').inTable('hr_att_shift').onUpdate('CASCADE').onDelete('CASCADE')
-    table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('CASCADE')
-    table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('SET NULL')
+    table.foreign('shift_id').references('shift_id').inTable('hr_att_shift').onUpdate('CASCADE').onDelete('RESTRICT')
+    table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')
+    table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };
 

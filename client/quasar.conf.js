@@ -73,6 +73,7 @@ module.exports = function (ctx) {
         'QTab',
         'QTabPane',
         'QRouteTab',
+        'QChip',
         'QBtn',
         'QBtnGroup',
         'QIcon',

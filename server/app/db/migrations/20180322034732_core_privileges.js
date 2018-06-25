@@ -9,7 +9,7 @@ exports.up = async function(knex, Promise) {
     table.text('privilege_name').notNullable()
     table.text('description')
 
-    table.foreign('resource_id').references('resource_id').inTable('core_resources').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('resource_id').references('resource_id').inTable('core_resources').onUpdate('CASCADE').onDelete('RESTRICT')
 
     table.timestamps()
   })

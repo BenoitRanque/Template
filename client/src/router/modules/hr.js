@@ -31,6 +31,18 @@ export default {
       }
     },
     {
+      hash: 'type',
+      layout: 'workspace',
+      meta: {
+        label: 'atttype',
+        requireAuthentication: true,
+        requireAuthorization: {
+          resource: 'HRAttType',
+          posession: 'any'
+        }
+      }
+    },
+    {
       hash: 'exception',
       layout: 'workspace',
       meta: {

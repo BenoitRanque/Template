@@ -8,7 +8,7 @@ exports.up = async function(knex, Promise) {
 
     table.primary(['timetable_id', 'break_id'])
     table.foreign('timetable_id').references('timetable_id').inTable('hr_att_timetable').onUpdate('CASCADE').onDelete('CASCADE')
-    table.foreign('break_id').references('break_id').inTable('hr_att_break').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('break_id').references('break_id').inTable('hr_att_break').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };
 

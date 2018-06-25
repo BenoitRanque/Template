@@ -4,7 +4,7 @@ exports.up = async function(knex, Promise) {
     table.uuid('role_id')
     table.uuid('privilege_id')
 
-    table.foreign('privilege_id').references('privilege_id').inTable('core_privileges').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('privilege_id').references('privilege_id').inTable('core_privileges').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('role_id').references('role_id').inTable('core_roles').onUpdate('CASCADE').onDelete('CASCADE')
     table.primary(['role_id', 'privilege_id'])
   })

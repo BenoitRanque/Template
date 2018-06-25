@@ -18,7 +18,7 @@ exports.up = async function(knex, Promise) {
 
     table.timestamps()
 
-    table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('CASCADE')
+    table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };
 
