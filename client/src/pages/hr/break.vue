@@ -155,7 +155,7 @@ export default {
           {
             name: 'break_name',
             required: true,
-            label: this.$t('field.role_name.label'),
+            label: this.$t('field.break_name.label'),
             align: 'left',
             field: 'break_name',
             sortable: true

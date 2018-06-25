@@ -52,6 +52,14 @@
         </q-toolbar>
         <div class="layout-padding group">
           <q-field
+            :label="$t(`field.type_id.label`)"
+            :helper="$t(`field.type_id.helper`)"
+            :error="$v.item.type_id.$error"
+            :error-label="validationError($v.item.type_id)"
+          >
+            <q-input type="number" v-model="$v.item.type_id.$model" :placeholder="$t(`field.type_id.placeholder`)"></q-input>
+          </q-field>
+          <q-field
             :label="$t(`field.type_name.label`)"
             :helper="$t(`field.type_name.helper`)"
             :error="$v.item.type_name.$error"
@@ -118,6 +126,7 @@ import {
 function newItem () {
   // return default item. Important
   return {
+    type_id: null,
     type_name: '',
     description: '',
     code: '',
@@ -148,9 +157,17 @@ export default {
         },
         columns: [
           {
+            name: 'type_id',
+            required: true,
+            label: this.$t('field.type_id.label'),
+            align: 'left',
+            field: 'type_id',
+            sortable: true
+          },
+          {
             name: 'type_name',
             required: true,
-            label: this.$t('field.role_name.label'),
+            label: this.$t('field.type_name.label'),
             align: 'left',
             field: 'type_name',
             sortable: true
@@ -182,6 +199,9 @@ export default {
   },
   validations: {
     item: {
+      type_id: {
+        required
+      },
       type_name: {
         required
       },
