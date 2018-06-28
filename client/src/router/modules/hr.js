@@ -79,13 +79,13 @@ export default {
       }
     },
     {
-      hash: 'timetable',
+      hash: 'schedule',
       layout: 'workspace',
       meta: {
-        label: 'atttimetable',
+        label: 'attschedule',
         requireAuthentication: true,
         requireAuthorization: {
-          resource: 'HRAttTimetable',
+          resource: 'HRAttSchedule',
           posession: 'any'
         }
       }
