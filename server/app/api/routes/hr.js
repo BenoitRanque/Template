@@ -40,10 +40,10 @@ router.route('/attshift')
   .delete(new Resolver(require('@resources/hr/attshift/delete'), AttShift))
 
 router.route('/attschedule')
-  .get(new Resolver(require('@resources/hr/atttimetable/read'), AttSchedule))
-  .post(new Resolver(require('@resources/hr/atttimetable/create'), AttSchedule))
-  .put(new Resolver(require('@resources/hr/atttimetable/update'), AttSchedule))
-  .delete(new Resolver(require('@resources/hr/atttimetable/delete'), AttSchedule))
+  .get(new Resolver(require('@resources/hr/attschedule/read'), AttSchedule))
+  .post(new Resolver(require('@resources/hr/attschedule/create'), AttSchedule))
+  .put(new Resolver(require('@resources/hr/attschedule/update'), AttSchedule))
+  .delete(new Resolver(require('@resources/hr/attschedule/delete'), AttSchedule))
 
 router.route('/atttype')
   .get(new Resolver(require('@resources/hr/atttype/read'), AttType))
@@ -56,5 +56,8 @@ router.route('/employee')
   .post(new Resolver(require('@resources/hr/employee/create'), Employee))
   .put(new Resolver(require('@resources/hr/employee/update'), Employee))
   .delete(new Resolver(require('@resources/hr/employee/delete'), Employee))
+
+router.route('/attreport')
+  .get(new Resolver(require('@resources/hr/attreport/read')))
 
 module.exports = router

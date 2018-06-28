@@ -89,6 +89,14 @@ export default {
           posession: 'any'
         }
       }
+    },
+    {
+      hash: 'report',
+      layout: 'workspace',
+      meta: {
+        label: 'attreport',
+        requireAuthentication: true
+      }
     }
   ]
 }

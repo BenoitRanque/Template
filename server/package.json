@@ -38,7 +38,8 @@
     "knex": "^0.14.6",
     "module-alias": "^2.0.6",
     "objection": "^1.1.9",
-    "pg": "^7.4.3"
+    "pg": "^7.4.3",
+    "sqlite3": "^4.0.1"
   },
   "devDependencies": {
     "eslint-config-standard": "^11.0.0",
