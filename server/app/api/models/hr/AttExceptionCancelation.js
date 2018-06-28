@@ -1,12 +1,12 @@
 const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
-module.exports = class HRAttExceptionSlot extends Model {
-  static get tableName () { return 'hr_att_exception_slot' }
-  static get idColumn () { return 'exception_slot_id' }
+module.exports = class HRAttExceptionCancelation extends Model {
+  static get tableName () { return 'hr_att_exception_cancelation' }
+  static get idColumn () { return 'exception_id' }
   static get relationMappings () {
     const AttException = require('./AttException')
-    const AttSchedule = require('./AttSchedule')
+    const User = require('@models/core/User')
     return {
       'exception': {
         relation: BelongsToOneRelation,
@@ -16,12 +16,12 @@ module.exports = class HRAttExceptionSlot extends Model {
           to: AttException.tableName + '.exception_id'
         }
       },
-      'schedule': {
+      'user': {
         relation: HasOneRelation,
-        modelClass: AttSchedule,
+        modelClass: User,
         join: {
-          from: this.tableName + '.schedule_id',
-          to: AttSchedule.tableName + '.schedule_id'
+          from: this.tableName + '.user_id',
+          to: User.tableName + '.user_id'
         }
       }
     }

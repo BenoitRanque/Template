@@ -6,7 +6,7 @@ module.exports = class HRAttShiftSlot extends Model {
   static get idColumn () { return 'shift_slot_id' }
   static get relationMappings () {
     const AttShift = require('./AttShift')
-    const AttTimetable = require('./AttTimetable')
+    const AttSchedule = require('./AttSchedule')
     return {
       'shift': {
         relation: BelongsToOneRelation,
@@ -16,16 +16,12 @@ module.exports = class HRAttShiftSlot extends Model {
           to: AttShift.tableName + '.shift_id'
         }
       },
-      'timetable': {
-        relation: ManyToManyRelation,
-        modelClass: AttTimetable,
+      'schedule': {
+        relation: HasOneRelation,
+        modelClass: AttSchedule,
         join: {
-          from: this.tableName + '.shift_slot_id',
-          through: {
-            from: 'hr_att_shift_slot_timetable.shift_slot_id',
-            to: 'hr_att_shift_slot_timetable.timetable_id'
-          },
-          to: AttTimetable.tableName + '.timetable_id'
+          from: this.tableName + '.schedule_id',
+          to: AttSchedule.tableName + '.schedule_id'
         }
       }
     }
