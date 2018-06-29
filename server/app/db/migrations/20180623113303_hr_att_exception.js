@@ -7,6 +7,16 @@ exports.up = async function(knex, Promise) {
     table.text('description')
     table.uuid('employee_id')
 
+    table.boolean('request')
+    table.uuid('request_user')
+    table.timestamp('request_date')
+    table.boolean('authorize')
+    table.uuid('authorize_user')
+    table.timestamp('authorize_date')
+    table.boolean('cancel')
+    table.uuid('cancel_user')
+    table.timestamp('cancel_date')
+
     table.timestamps()
 
     table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')

@@ -65,6 +65,7 @@
 
               <q-field
                 v-for="(type, field) in {
+                  zktime_pin: 'number',
                   name_first: 'text',
                   name_middle: 'text',
                   name_paternal: 'text',
@@ -85,7 +86,7 @@
                   tutor_persona_con_descapacidad: 'select',
                   caja_de_salud: 'select',
                   afp: 'select',
-                  nua_cua: 'text',
+                  nua_cua: 'text'
                 }"
                 :key="field"
                 :label="$t(`field.${field}.label`)"
@@ -203,8 +204,6 @@
             </div>
           </q-tab-pane>
         </q-tabs>
-        <pre>{{item}}</pre>
-        <pre>{{$v}}</pre>
         <portal to="print">
           <div class="row gutter-sm">
             <q-field
@@ -231,6 +230,7 @@
                 caja_de_salud: 'select',
                 afp: 'select',
                 nua_cua: 'text',
+                zktime_pin: 'number'
               }"
               :key="field"
               :label="$t(`field.${field}.label`)"
@@ -242,7 +242,7 @@
               <q-datetime readonly v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
               <q-input readonly v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
             </q-field>
-            <div v-for="(contact, index) in $v.item.contact.$each.$iter" :key="index" class="col-12 gutter-md row">
+            <div v-for="(contact, index) in $v.item.contact.$each.$iter" :key="'contact_' + index" class="col-12 gutter-md row">
               <div class="col-12 q-headline">{{$t('field.contact.label')}} {{Number(index) + 1}}</div>
               <q-field
                 class="col-6"
@@ -282,7 +282,7 @@
               </q-field>
               <hr>
             </div>
-            <div v-for="(contract, index) in $v.item.contract.$each.$iter" :key="index" class="col-12 row gutter-md">
+            <div v-for="(contract, index) in $v.item.contract.$each.$iter" :key="'contract_' + index" class="col-12 row gutter-md">
               <q-field
                 class="col-6"
                 v-for="(type, field) in {
@@ -369,6 +369,7 @@ function newItem () {
     caja_de_salud: null,
     afp: null,
     nua_cua: '',
+    zktime_pin: null,
 
     contract: [
       {
@@ -652,11 +653,12 @@ export default {
             'sex',
             'place_of_birth',
             'nationality',
-            'marital_status'
+            'marital_status',
+            'zktime_pin'
           ].map(name => ({
             name,
-            label: this.$t(`field.${name.match(/[^.]*$/)}.label`),
-            field: name.indexOf('.') < 0 ? name : row => name.split('.').reduce((obj, prop) => obj[prop], row),
+            label: this.$t(`field.${name}.label`),
+            field: name,
             align: 'left',
             sortable: true
           })),
@@ -746,6 +748,9 @@ export default {
         // required
       },
       nua_cua: {
+        // required
+      },
+      zktime_pin: {
         // required
       },
       contact: {

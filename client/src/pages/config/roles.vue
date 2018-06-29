@@ -38,7 +38,7 @@
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
-            {{isAuthorized(resource, 'delete', 'any')}}
+
             <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>

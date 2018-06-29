@@ -82,12 +82,12 @@
             </q-field>
             <q-field
               :key="index"
-              :label="`${$t('field.exception_slot_timetable.label')} ${Number(index) + 1}`"
-              :helper="$t(`field.exception_slot_timetable.helper`)"
-              :error="slot.timetable.$error"
-              :error-label="validationError(slot.timetable)"
+              :label="`${$t('field.exception_slot_schedule.label')} ${Number(index) + 1}`"
+              :helper="$t(`field.exception_slot_schedule.helper`)"
+              :error="slot.schedule.$error"
+              :error-label="validationError(slot.schedule)"
             >
-              <q-select v-model="slot.timetable.$model" :options="options.timetable" multiple :placeholder="$t('field.exception_slot_timetable.placeholder')"></q-select>
+              <q-select v-model="slot.schedule.$model" :options="options.schedule" multiple :placeholder="$t('field.exception_slot_schedule.placeholder')"></q-select>
             </q-field>
           </template>
           <div class="row justify-around q-pa-md">
@@ -95,7 +95,7 @@
               @click="item.slots.pop()"
             ></q-btn>
             <q-btn round icon="add" color="positive"
-              @click="item.slots.push({ timetable: [], date: null })"
+              @click="item.slots.push({ schedule: [], date: null })"
             ></q-btn>
           </div>
         </div>
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { HR_ATT_EXCEPTION, HR_ATT_TIMETABLE, HR_EMPLOYEE } from 'assets/apiRoutes'
+import { HR_ATT_SCHEDULE, HR_ATT_EXCEPTION, HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -152,12 +152,12 @@ export default {
       item: newItem(),
       mapItemOptions: {
         slots: slot => {
-          slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
+          slot.schedule = slot.schedule.map(schedule => this.options.schedule.find(option => option.value.schedule_id === schedule.schedule_id).value)
           return slot
         }
       },
       options: {
-        timetable: [],
+        schedule: [],
         employee_id: []
       },
       table: {
@@ -219,7 +219,7 @@ export default {
       },
       slots: {
         $each: {
-          timetable: {
+          schedule: {
 
           },
           date: {
@@ -237,16 +237,16 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[slots.timetable.break, request, authorization, employee]' } }),
-        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } }),
+        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[slots.schedule.break, request, authorization, employee]' } }),
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[break]' } }),
         this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.timetable = (response[1] && response[1].data) ? response[1].data.map(timetable => ({
-            value: timetable,
-            label: timetable.timetable_name,
-            sublabel: timetable.description
+          this.options.schedule = (response[1] && response[1].data) ? response[1].data.map(schedule => ({
+            value: schedule,
+            label: schedule.schedule_name,
+            sublabel: schedule.description
           })) : []
           this.options.employee_id = (response[2] && response[2].data) ? response[2].data.map(employee => ({
             value: employee.employee_id,

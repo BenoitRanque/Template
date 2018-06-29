@@ -6,8 +6,8 @@ exports.up = async function(knex, Promise) {
     table.uuid('employee_id')
     table.uuid('user_id')
     table.integer('shift_start_index')
-    table.timestamp('start_date')
-    table.timestamp('end_date')
+    table.date('start_date')
+    table.date('end_date')
     
     table.timestamps()
 

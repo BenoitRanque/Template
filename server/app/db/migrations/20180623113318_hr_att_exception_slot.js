@@ -4,7 +4,7 @@ exports.up = async function(knex, Promise) {
     table.uuid('exception_slot_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('exception_id')
     table.uuid('schedule_id')
-    table.timestamp('date')
+    table.date('date')
     
     table.timestamps()
 

@@ -21,11 +21,13 @@ exports.up = async function(knex, Promise) {
     table.text('caja_de_salud')
     table.text('afp')
     table.text('nua_cua')
-
+    
     table.text('document_type')
     table.text('document_number')
     table.text('document_extension')
     table.text('document_emitted')
+    
+    table.integer('zktime_pin')
 
     table.timestamps()
 

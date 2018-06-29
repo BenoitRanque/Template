@@ -4,12 +4,13 @@ exports.up = async function(knex, Promise) {
     table.uuid('timetable_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
     table.integer('type_id').notNullable()
-    table.timestamp('start_time')
+    table.specificType('duration', 'INTERVAL')
+    table.time('start_time')
+    // table.specificType('start_time', 'TIME(6) WITH TIME ZONE')
     table.boolean('start_register')
-    table.timestamp('end_time')
+    table.time('end_time')
+    // table.specificType('end_time', 'TIME(6) WITH TIME ZONE')
     table.boolean('end_register')
-    table.integer('duration')
-    table.boolean('flexible')
 
     table.timestamps()
 

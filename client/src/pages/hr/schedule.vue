@@ -42,7 +42,7 @@
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
-            {{isAuthorized(resource, 'delete', 'any')}}
+
             <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>
@@ -75,74 +75,56 @@
           >
             <q-select :options="options.boolean" v-model="$v.item.standard.$model" :placeholder="$t(`field.standard.placeholder`)"></q-select>
           </q-field>
-          <template v-for="(timetable, index) in $v.item.timetable.$each.$iter">
-            <q-field
-              :key="index"
-              :label="$t(`field.att_type.label`)"
-              :helper="$t(`field.att_type.helper`)"
-              :error="timetable.type.$error"
-              :error-label="validationError(timetable.type)"
-            >
-              <q-select :options="options.att_type" v-model="timetable.type.$model" :placeholder="$t(`field.att_type.placeholder`)"></q-select>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.start_time.label`)"
-              :helper="$t(`field.start_time.helper`)"
-              :error="timetable.start_time.$error"
-              :error-label="validationError(timetable.start_time)"
-            >
-              <q-datetime type="time" v-model="timetable.start_time.$model" :placeholder="$t(`field.start_time.placeholder`)"></q-datetime>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.start_register.label`)"
-              :helper="$t(`field.start_register.helper`)"
-              :error="timetable.start_register.$error"
-              :error-label="validationError(timetable.start_register)"
-            >
-              <q-select :options="options.boolean" v-model="timetable.type.$model" :placeholder="$t(`field.start_register.placeholder`)"></q-select>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.end_time.label`)"
-              :helper="$t(`field.end_time.helper`)"
-              :error="timetable.end_time.$error"
-              :error-label="validationError(timetable.end_time)"
-            >
-              <q-datetime type="time" v-model="timetable.end_time.$model" :placeholder="$t(`field.end_time.placeholder`)"></q-datetime>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.end_register.label`)"
-              :helper="$t(`field.end_register.helper`)"
-              :error="timetable.end_register.$error"
-              :error-label="validationError(timetable.end_register)"
-            >
-              <q-select :options="options.boolean" v-model="timetable.type.$model" :placeholder="$t(`field.end_register.placeholder`)"></q-select>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.duration.label`)"
-              :helper="$t(`field.duration.helper`)"
-              :error="timetable.duration.$error"
-              :error-label="validationError(timetable.duration)"
-            >
-              <q-datetime type="time" v-model="timetable.duration.$model" :placeholder="$t(`field.description.placeholder`)"></q-datetime>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="$t(`field.flexible.label`)"
-              :helper="$t(`field.flexible.helper`)"
-              :error="timetable.flexible.$error"
-              :error-label="validationError(timetable.flexible)"
-            >
-              <q-select :options="options.boolean" v-model="timetable.type.$model" :placeholder="$t(`field.flexible.placeholder`)"></q-select>
-            </q-field>
-          </template>
+          <div class="shadow-6 q-my-sm q-pb-sm" :style="{'background-color': timetable.type_id.$model === null ? null : type_color[timetable.type_id.$model]}" v-for="(timetable, index) in $v.item.timetable.$each.$iter" :key="index">
+            <div class="row">
+              <div class="col q-pa-sm">
+                Turno {{Number(index) + 1}}
+              </div>
+              <div class="col-auto">
+                <q-btn icon="close" @click="$v.item.timetable.$model.splice(Number(index), 1)" size="md" dense color="negative"></q-btn>
+              </div>
+            </div>
+            <div class="row q-px-sm">
+              <q-select class="col-6" :options="options.type_id" v-model="timetable.type_id.$model"></q-select>
+              <q-field class="col-6">
+                <div class="row">
+                  <q-input type="number" v-model="timetable.duration.days.$model" class="col col-sm-4" align="center" suffix="days" :min="0"></q-input>
+                  <q-input type="number" v-model="timetable.duration.hours.$model" class="col col-sm-4" align="center" suffix="hours" :min="0" :max="23"></q-input>
+                  <q-input type="number" v-model="timetable.duration.minutes.$model" class="col col-sm-4" align="center" suffix="minutes" :min="0" :max="59"></q-input>
+                </div>
+              </q-field>
+              <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.start_time.$model"></q-datetime>
+              <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.end_time.$model"></q-datetime>
+              <div class="col-6 q-pt-sm">
+                <q-checkbox v-model="timetable.start_register.$model" label="debe marcar inicio"></q-checkbox>
+              </div>
+              <div class="col-6 q-pt-sm">
+                <q-checkbox v-model="timetable.end_register.$model" label="debe marcar fin"></q-checkbox>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-around q-pa-md">
+            <q-btn round icon="add" color="positive"
+              @click="$v.item.timetable.$model.push({
+                type_id: null,
+                start_time: null,
+                start_register: true,
+                end_time: null,
+                end_register: true,
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0
+                }
+              })"
+            ></q-btn>
+          </div>
         </div>
       </q-modal-layout>
     </q-modal>
+    <pre>
+      {{table.data}}
+    </pre>
   </q-page>
 </template>
 
@@ -177,19 +159,27 @@ function newItem () {
   return {
     schedule_name: '',
     description: '',
+    standard: true,
     timetable: []
   }
 }
-
+let d = new Date()
+d.setHours(5, 0, 0, 0)
 export default {
   name: 'HRAttSchedule',
   mixins: [tableMixin, validationError],
   data () {
     return {
+      test: {
+        days: 0,
+        hours: 0,
+        minutes: 0
+      },
       resource: 'HRAttSchedule',
       apiRoute: HR_ATT_SCHEDULE,
       editMode: false,
       item: newItem(),
+      type_color: {},
       options: {
         boolean: [{value: true, label: this.$t('options.boolean.true')}, {value: false, label: this.$t('options.boolean.false')}],
         type_id: []
@@ -252,14 +242,22 @@ export default {
 
       },
       timetable: {
+        required,
         $each: {
-          type_id: {},
+          type_id: { required },
           start_time: {},
           start_register: {},
           end_time: {},
           end_register: {},
-          duration: {},
-          flexible: {}
+          duration: {
+            days: {},
+            hours: {
+
+            },
+            minutes: {
+
+            }
+          }
         }
       }
     }
@@ -277,11 +275,15 @@ export default {
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.att_type = (response[1] && response[1].data) ? response[1].data.map(t => ({
+          this.options.type_id = (response[1] && response[1].data) ? response[1].data.map(t => ({
             value: t.type_id,
             label: t.type_name,
             sublabel: t.description
           })) : []
+          this.type_color = (response[1] && response[1].data) ? response[1].data.reduce((acc, val) => {
+            acc[val.type_id] = val.color
+            return acc
+          }, {}) : {}
           this.table.loading = false
         })
         .catch(() => {
