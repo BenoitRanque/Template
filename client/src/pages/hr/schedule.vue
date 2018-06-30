@@ -86,13 +86,7 @@
             </div>
             <div class="row q-px-sm">
               <q-select class="col-6" :options="options.type_id" v-model="timetable.type_id.$model"></q-select>
-              <q-field class="col-6">
-                <div class="row">
-                  <q-input type="number" v-model="timetable.duration.days.$model" class="col col-sm-4" align="center" suffix="days" :min="0"></q-input>
-                  <q-input type="number" v-model="timetable.duration.hours.$model" class="col col-sm-4" align="center" suffix="hours" :min="0" :max="23"></q-input>
-                  <q-input type="number" v-model="timetable.duration.minutes.$model" class="col col-sm-4" align="center" suffix="minutes" :min="0" :max="59"></q-input>
-                </div>
-              </q-field>
+              <q-datetime :format24h="true" class="col-6" type="time" v-model="timetable.duration.$model"></q-datetime>
               <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.start_time.$model"></q-datetime>
               <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.end_time.$model"></q-datetime>
               <div class="col-6 q-pt-sm">
@@ -111,11 +105,7 @@
                 start_register: true,
                 end_time: null,
                 end_register: true,
-                duration: {
-                  days: 0,
-                  hours: 0,
-                  minutes: 0
-                }
+                duration: null
               })"
             ></q-btn>
           </div>
@@ -249,15 +239,7 @@ export default {
           start_register: {},
           end_time: {},
           end_register: {},
-          duration: {
-            days: {},
-            hours: {
-
-            },
-            minutes: {
-
-            }
-          }
+          duration: {}
         }
       }
     }

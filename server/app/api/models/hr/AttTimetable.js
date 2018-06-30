@@ -1,6 +1,6 @@
 const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
-const parse = require('date-fns/parse')
+const { formatDate, formatTime, parseDate, parseTime, parseInterval } = require('@tools/dateUtils')
 
 module.exports = class HRAttTimetable extends Model {
   static get tableName () { return 'hr_att_timetable' }
@@ -19,23 +19,28 @@ module.exports = class HRAttTimetable extends Model {
     }
   }
   async $beforeInsert (ctx) {
+    console.log(this)
     this.created_at = new Date().toISOString();
-    this.start_time ? this.start_time = this.start_time.match(/T[^.]*/) : null
-    this.end_time ? this.end_time = this.end_time.match(/T[^.]*/) : null
-    this.duration = `${this.duration.hours}:${this.duration.minutes}:${this.duration.seconds}`.replace(/(?<![0-9])[0-9]/, '0$1')
+    this.start_time ? this.start_time = formatTime(this.start_time) : null
+    this.end_time ? this.end_time = formatTime(this.end_time) : null
+    this.duration ? this.duration = formatTime(this.duration) : null
+    console.log(this)
   }
 
   async $beforeUpdate (ctx) {
-    this.created_at = new Date().toISOString();
-    this.start_time ? this.start_time = this.start_time.match(/T[^.]*/) : null
-    this.end_time ? this.end_time = this.end_time.match(/T[^.]*/) : null
+    console.log(this)
+    this.updated_at = new Date().toISOString();
+    this.start_time ? this.start_time = formatTime(this.start_time) : null
+    this.end_time ? this.end_time = formatTime(this.end_time) : null
+    this.duration ? this.duration = formatTime(this.duration) : null
+    console.log(this)
   }
   
   async $afterGet (ctx) {
     console.log(this)
-  this.start_time ? this.start_time = parse('2000-00-00T'+this.start_time.match(/[^-]*/)) : null
-  this.end_time ? this.end_time = parse('2000-00-00T'+this.end_time.match(/[^-]*/)) : null
-    // this.duration ? this.duration = parse(`${this.duration.hours ? this.duration.hours : 0}:${this.duration.minutes ? this.duration.minutes : 0}`) : null
+    this.start_time ? this.start_time = parseTime(this.start_time) : null
+    this.end_time ? this.end_time = parseTime(this.end_time) : null
+    this.duration ? this.duration = parseInterval(this.duration) : null
     console.log(this)
     return this
   }
