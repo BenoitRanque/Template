@@ -3,7 +3,6 @@ module.exports = {
   AttExceptionSlot: require('./AttExceptionSlot'),
   AttShift: require('./AttShift'),
   AttShiftSlot: require('./AttShiftSlot'),
-  AttShiftAssign: require('./AttShiftAssign'),
   AttSchedule: require('./AttSchedule'),
   AttTimetable: require('./AttTimetable'),
   AttType: require('./AttType'),

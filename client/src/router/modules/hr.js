@@ -67,18 +67,6 @@ export default {
       }
     },
     {
-      hash: 'shiftassign',
-      layout: 'workspace',
-      meta: {
-        label: 'attshiftassign',
-        requireAuthentication: true,
-        requireAuthorization: {
-          resource: 'HRAttShiftAssign',
-          posession: 'any'
-        }
-      }
-    },
-    {
       hash: 'schedule',
       layout: 'workspace',
       meta: {

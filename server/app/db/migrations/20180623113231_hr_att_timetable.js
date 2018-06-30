@@ -4,6 +4,7 @@ exports.up = async function(knex, Promise) {
     table.uuid('timetable_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
     table.integer('type_id').notNullable()
+    table.text('timetable_name')
     table.specificType('duration', 'INTERVAL')
     table.time('start_time')
     // table.specificType('start_time', 'TIME(6) WITH TIME ZONE')

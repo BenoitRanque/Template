@@ -16,5 +16,16 @@ module.exports.parseInterval = date => {
   let d = new Date()
   d.setHours(date.hours ? date.hours : 0, date.minutes ? date.minutes : 0, date.seconds ? date.seconds : 0, 0)
   return d.toISOString()
+  
+  // return {
+  //   miliseconds: 0,
+  //   seconds: 0,
+  //   minutes: 0,
+  //   hours: 0,
+  //   days: 0,
+  //   months: 0,
+  //   years: 0,
+  //   ...date
+  // }
 }
 

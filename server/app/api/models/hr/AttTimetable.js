@@ -19,29 +19,23 @@ module.exports = class HRAttTimetable extends Model {
     }
   }
   async $beforeInsert (ctx) {
-    console.log(this)
     this.created_at = new Date().toISOString();
     this.start_time ? this.start_time = formatTime(this.start_time) : null
     this.end_time ? this.end_time = formatTime(this.end_time) : null
     this.duration ? this.duration = formatTime(this.duration) : null
-    console.log(this)
   }
 
   async $beforeUpdate (ctx) {
-    console.log(this)
     this.updated_at = new Date().toISOString();
     this.start_time ? this.start_time = formatTime(this.start_time) : null
     this.end_time ? this.end_time = formatTime(this.end_time) : null
     this.duration ? this.duration = formatTime(this.duration) : null
-    console.log(this)
   }
   
   async $afterGet (ctx) {
-    console.log(this)
     this.start_time ? this.start_time = parseTime(this.start_time) : null
     this.end_time ? this.end_time = parseTime(this.end_time) : null
     this.duration ? this.duration = parseInterval(this.duration) : null
-    console.log(this)
     return this
   }
 }

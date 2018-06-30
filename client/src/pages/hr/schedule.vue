@@ -67,24 +67,19 @@
           >
             <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
           </q-field>
-          <q-field
-            :label="$t(`field.standard.label`)"
-            :helper="$t(`field.standard.helper`)"
-            :error="$v.item.standard.$error"
-            :error-label="validationError($v.item.standard)"
-          >
-            <q-select :options="options.boolean" v-model="$v.item.standard.$model" :placeholder="$t(`field.standard.placeholder`)"></q-select>
-          </q-field>
-          <div class="shadow-6 q-my-sm q-pb-sm" :style="{'background-color': timetable.type_id.$model === null ? null : type_color[timetable.type_id.$model]}" v-for="(timetable, index) in $v.item.timetable.$each.$iter" :key="index">
-            <div class="row">
-              <div class="col q-pa-sm">
-                Turno {{Number(index) + 1}}
-              </div>
+          <q-toggle v-model="advancedTimetable" label="modo avanzado"></q-toggle>
+          <div
+            class="shadow-6 q-my-sm q-pb-sm"
+            :style="{'background-color': timetable.type_id.$model === null ? null : timetableTypes && timetableTypes[timetable.type_id.$model] ? timetableTypes[timetable.type_id.$model].color : null}"
+            v-for="(timetable, index) in $v.item.timetable.$each.$iter" :key="index">
+            <div class="row items-center">
+              <q-input class="col" v-model="timetable.timetable_name.$model" hide-underline></q-input>
+              <div class="col">{{timetableSummary(timetable.$model)}}</div>
               <div class="col-auto">
                 <q-btn icon="close" @click="$v.item.timetable.$model.splice(Number(index), 1)" size="md" dense color="negative"></q-btn>
               </div>
             </div>
-            <div class="row q-px-sm">
+            <div class="row q-px-sm" v-if="advancedTimetable">
               <q-select class="col-6" :options="options.type_id" v-model="timetable.type_id.$model"></q-select>
               <q-datetime :format24h="true" class="col-6" type="time" v-model="timetable.duration.$model"></q-datetime>
               <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.start_time.$model"></q-datetime>
@@ -98,32 +93,34 @@
             </div>
           </div>
           <div class="row justify-around q-pa-md">
-            <q-btn round icon="add" color="positive"
-              @click="$v.item.timetable.$model.push({
-                type_id: null,
-                start_time: null,
-                start_register: true,
-                end_time: null,
-                end_register: true,
-                duration: null
-              })"
-            ></q-btn>
+            <q-btn icon="add" color="positive">
+              <q-popover self="top middle" anchor="bottom middle">
+                <q-list link>
+                  <q-item v-for="(preset, index) in timetablePresets" :key="index" v-close-overlay @click.native="$v.item.timetable.$model.push(clonePreset(preset))">
+                    <q-item-main :label="preset.timetable_name" :sublabel="timetableSummary(preset)"></q-item-main>
+                    <q-item-side>
+                      <q-chip :style="{ 'background': timetableTypes && timetableTypes[preset.type_id] ? timetableTypes[preset.type_id].color : null}">{{timetableTypes && timetableTypes[preset.type_id] ? timetableTypes[preset.type_id].code : null}}</q-chip>
+                    </q-item-side>
+                  </q-item>
+                </q-list>
+              </q-popover>
+            </q-btn>
           </div>
         </div>
+        <pre>{{$v}}</pre>
       </q-modal-layout>
     </q-modal>
-    <pre>
-      {{table.data}}
-    </pre>
   </q-page>
 </template>
 
 <script>
 import { HR_ATT_SCHEDULE, HR_ATT_TYPE } from 'assets/apiRoutes'
+import ATT from 'assets/attType'
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
-  // requiredIf,
+  requiredIf,
   // requiredUnless,
   // minLength,
   // maxLength,
@@ -153,23 +150,127 @@ function newItem () {
     timetable: []
   }
 }
-let d = new Date()
-d.setHours(5, 0, 0, 0)
 export default {
   name: 'HRAttSchedule',
   mixins: [tableMixin, validationError],
   data () {
     return {
-      test: {
-        days: 0,
-        hours: 0,
-        minutes: 0
-      },
       resource: 'HRAttSchedule',
       apiRoute: HR_ATT_SCHEDULE,
       editMode: false,
       item: newItem(),
-      type_color: {},
+      advancedTimetable: false,
+      timetablePresets: [
+        {
+          type_id: ATT_TIMEOFF,
+          timetable_name: 'Dia Libre',
+          start_time: null,
+          start_register: false,
+          end_time: null,
+          end_register: false,
+          duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_TIMEOFF,
+          timetable_name: 'Medio Dia Libre',
+          start_time: null,
+          start_register: false,
+          end_time: null,
+          end_register: false,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_BREAK,
+          timetable_name: 'Almuerzo',
+          start_time: this.$date.buildDate({hours: 11, minutes: 0, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 0, minutes: 30, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Dia Laboral Continuo',
+          start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Dia Laboral Continuo',
+          start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Dia Laboral Continuo',
+          start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        },
+        {
+          type_id: ATT_WORK,
+          timetable_name: 'Medio Dia Laboral',
+          start_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+          start_register: true,
+          end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
+          end_register: true,
+          duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+        }
+      ],
+      timetableTypes: null,
       options: {
         boolean: [{value: true, label: this.$t('options.boolean.true')}, {value: false, label: this.$t('options.boolean.false')}],
         type_id: []
@@ -233,13 +334,21 @@ export default {
       },
       timetable: {
         required,
+        dailyHours: value => value.reduce((acc, val) => [ATT_WORK, ATT_TIMEOFF].includes(val.type_id) ? acc + (new Date(val.duration).getHours() + (new Date(val.duration).getMinutes() / 60)) : acc, 0) === 8, // 8 hours daily
         $each: {
           type_id: { required },
-          start_time: {},
+          timetable_name: { },
+          start_time: {
+            requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK].includes(timetable.type_id))
+          },
           start_register: {},
-          end_time: {},
+          end_time: {
+            requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK].includes(timetable.type_id))
+          },
           end_register: {},
-          duration: {}
+          duration: {
+            requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK, ATT_TIMEOFF].includes(timetable.type_id))
+          }
         }
       }
     }
@@ -253,7 +362,7 @@ export default {
       this.table.loading = true
       Promise.all([
         this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[timetable]' } }),
-        this.$axios.get(HR_ATT_TYPE, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_TYPE, { params: { eager: '', type_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
@@ -262,8 +371,8 @@ export default {
             label: t.type_name,
             sublabel: t.description
           })) : []
-          this.type_color = (response[1] && response[1].data) ? response[1].data.reduce((acc, val) => {
-            acc[val.type_id] = val.color
+          this.timetableTypes = (response[1] && response[1].data) ? response[1].data.reduce((acc, val) => {
+            acc[val.type_id] = val
             return acc
           }, {}) : {}
           this.table.loading = false
@@ -272,7 +381,26 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ schedule_id: item.schedule_id })
+    deleteParams: (item) => ({ schedule_id: item.schedule_id }),
+    clonePreset (preset) {
+      let clone = {
+        ...preset
+      }
+      Object.keys(clone).forEach(propName => {
+        if (clone[propName] instanceof Date) clone[propName] = this.$date.clone(clone[propName])
+      })
+      return clone
+    },
+    timetableSummary (timetable) {
+      switch (timetable.type_id) {
+        case ATT_TIMEOFF:
+          return `Duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
+        case ATT_BREAK:
+          return `${this.$date.formatDate(timetable.duration, 'HH:mm')} entre ${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')}`
+        case ATT_WORK:
+          return `${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')} duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
+      }
+    }
   },
   mounted () {
     this.fetchItems()

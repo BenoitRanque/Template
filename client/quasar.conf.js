@@ -88,6 +88,7 @@ module.exports = function (ctx) {
         'QProgress',
         'QModal',
         'QModalLayout',
+        'QPopover',
         'QTooltip',
         'QList',
         'QListHeader',

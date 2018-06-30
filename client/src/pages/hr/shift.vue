@@ -63,6 +63,39 @@
             <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
           </q-field>
           <q-field
+            :label="$t(`field.employee_id.label`)"
+            :helper="$t(`field.employee_id.helper`)"
+            :error="$v.item.employee_id.$error"
+            :error-label="validationError($v.item.employee_id)"
+          >
+            <q-select filter :options="options.employee_id" v-model="$v.item.employee_id.$model" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
+          </q-field>
+          <q-field
+            :label="$t(`field.start_date.label`)"
+            :helper="$t(`field.start_date.helper`)"
+            :error="$v.item.start_date.$error"
+            :error-label="validationError($v.item.start_date)"
+          >
+            <q-datetime type="date" v-model="$v.item.start_date.$model" :placeholder="$t(`field.start_date.placeholder`)"></q-datetime>
+          </q-field>
+          <q-field
+            :label="$t(`field.end_date.label`)"
+            :helper="$t(`field.end_date.helper`)"
+            :error="$v.item.end_date.$error"
+            :error-label="validationError($v.item.end_date)"
+          >
+            <q-datetime type="date" v-model="$v.item.end_date.$model" :placeholder="$t(`field.end_date.placeholder`)"></q-datetime>
+          </q-field>
+          <div class="shadow-3 q-pa-md">
+              shift
+            <div class="shadow-6 q-pa-md">
+              slot/schedule (add toggle here for advanced mode)
+              <div class="shadow-12 q-pa-md">
+                timetable (optional) (other toggle for mor advanced options)
+              </div>
+            </div>
+          </div>
+          <!-- <q-field
             v-for="(slot, index) in $v.item.slots.$each.$iter"
             :key="index"
             :label="`${$t('field.shift_slot.label')} ${Number(index) + 1}`"
@@ -71,15 +104,15 @@
             :error-label="validationError(slot.timetable)"
           >
             <q-select v-model="slot.timetable.$model" :options="options.timetable" multiple :placeholder="$t('field.shift_slot.placeholder')"></q-select>
-          </q-field>
-          <div class="row justify-around q-pa-md">
+          </q-field> -->
+          <!-- <div class="row justify-around q-pa-md">
             <q-btn round icon="remove" color="negative"
               @click="item.slots.pop()"
             ></q-btn>
             <q-btn round icon="add" color="positive"
               @click="item.slots.push({ timetable: [], index: item.slots.length })"
             ></q-btn>
-          </div>
+          </div> -->
         </div>
       </q-modal-layout>
     </q-modal>
@@ -87,7 +120,7 @@
 </template>
 
 <script>
-import { HR_ATT_SHIFT, HR_ATT_TIMETABLE } from 'assets/apiRoutes'
+import { HR_ATT_SHIFT, HR_EMPLOYEE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -117,6 +150,9 @@ function newItem () {
   return {
     shift_name: '',
     description: '',
+    employee_id: null,
+    start_date: null,
+    end_date: null,
     slots: []
   }
 }
@@ -131,13 +167,14 @@ export default {
       editMode: false,
       item: newItem(),
       mapItemOptions: {
-        slots: slot => {
-          slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
-          return slot
-        }
+        // slots: slot => {
+        //   slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
+        //   return slot
+        // }
       },
       options: {
-        timetable: []
+        // timetable: []
+        employee_id: []
       },
       table: {
         loading: false,
@@ -193,10 +230,19 @@ export default {
       description: {
 
       },
+      employee_id: {
+        required
+      },
+      start_date: {
+        required
+      },
+      end_date: {
+
+      },
       slots: {
         $each: {
-          timetable: {
-
+          schedule: {
+            required
           },
           index: {
             required
@@ -213,15 +259,15 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[slots.[timetable]]' } }),
-        this.$axios.get(HR_ATT_TIMETABLE, { params: { eager: '[break]' } })
+        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.timetable]' } }),
+        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.timetable = (response[1] && response[1].data) ? response[1].data.map(timetable => ({
-            value: timetable,
-            label: timetable.timetable_name,
-            sublabel: timetable.description
+          this.options.employee_id = (response[1] && response[1].data) ? response[1].data.map(employee => ({
+            value: employee.employee_id,
+            label: employee.name_first + ' ' + employee.name_paternal,
+            stamp: employee.zktime_pin
           })) : []
           this.table.loading = false
         })
