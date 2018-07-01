@@ -8,6 +8,7 @@ exports.up = async function(knex, Promise) {
     
     table.timestamps()
 
+    table.unique(['shift_id', 'index'])
     table.foreign('shift_id').references('shift_id').inTable('hr_att_shift').onUpdate('CASCADE').onDelete('CASCADE')
     table.foreign('schedule_id').references('schedule_id').inTable('hr_att_schedule').onUpdate('RESTRICT').onDelete('RESTRICT')
   })

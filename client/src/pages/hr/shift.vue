@@ -76,7 +76,7 @@
             :error="$v.item.start_date.$error"
             :error-label="validationError($v.item.start_date)"
           >
-            <q-datetime type="date" v-model="$v.item.start_date.$model" :placeholder="$t(`field.start_date.placeholder`)"></q-datetime>
+            <q-datetime type="date" :readonly="item.start_date && item.slots.length" v-model="$v.item.start_date.$model" :placeholder="$t(`field.start_date.placeholder`)"></q-datetime>
           </q-field>
           <q-field
             :label="$t(`field.end_date.label`)"
@@ -84,17 +84,46 @@
             :error="$v.item.end_date.$error"
             :error-label="validationError($v.item.end_date)"
           >
-            <q-datetime type="date" v-model="$v.item.end_date.$model" :placeholder="$t(`field.end_date.placeholder`)"></q-datetime>
+            <q-datetime type="date" clearable v-model="$v.item.end_date.$model" :placeholder="$t(`field.end_date.placeholder`)"></q-datetime>
           </q-field>
           <div class="shadow-3 q-pa-md">
               shift
-            <div class="shadow-6 q-pa-md">
+            <toggle-area class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
+              <div slot="header" slot-scope="props">
+                <div class="row items-center" >
+                  <div class="col q-pl-sm">
+                    <q-select ></q-select>
+                    <q-input hide-underline></q-input>
+                  </div>
+                  <div class="col-auto q-px-sm q-caption">
+                    <div class="text-right">
+
+                      {{slotLabel(index)}}
+                    </div>
+                    <q-toggle left-label label="Avanzado" v-model="props.state.show"></q-toggle>
+                  </div>
+                </div>
+              </div>
+              <div>
+                hello
+              </div>
+            </toggle-area>
+            <!-- <div class="shadow-6 q-pa-md">
               slot/schedule (add toggle here for advanced mode)
               <div class="shadow-12 q-pa-md">
                 timetable (optional) (other toggle for mor advanced options)
               </div>
+            </div> -->
+            <div class="row justify-around items-center q-mt-lg">
+                <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()"></q-btn>
+                <q-btn color="positive" icon="add" @click="$v.item.slots.$model.push({
+                  index: $v.item.slots.$model.length,
+                  schedule: null
+                })"></q-btn>
             </div>
           </div>
+          <pre>{{item}}</pre>
+          <pre>{{$v}}</pre>
           <!-- <q-field
             v-for="(slot, index) in $v.item.slots.$each.$iter"
             :key="index"
@@ -120,9 +149,10 @@
 </template>
 
 <script>
-import { HR_ATT_SHIFT, HR_EMPLOYEE } from 'assets/apiRoutes'
+import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
+import ToggleArea from 'components/ToggleArea'
 import {
   // requiredIf,
   // requiredUnless,
@@ -160,6 +190,9 @@ function newItem () {
 export default {
   name: 'HRAttShift',
   mixins: [tableMixin, validationError],
+  components: {
+    ToggleArea
+  },
   data () {
     return {
       resource: 'HRAttShift',
@@ -260,14 +293,20 @@ export default {
       this.table.loading = true
       Promise.all([
         this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.timetable]' } }),
-        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } })
+        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: 'timetable', standard: true } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
           this.options.employee_id = (response[1] && response[1].data) ? response[1].data.map(employee => ({
             value: employee.employee_id,
             label: employee.name_first + ' ' + employee.name_paternal,
-            stamp: employee.zktime_pin
+            stamp: String(employee.zktime_pin)
+          })) : []
+          this.options.schedule = (response[2] && response[2].data) ? response[2].data.map(schedule => ({
+            value: schedule,
+            label: schedule.schedule_name,
+            sublabel: schedule.description
           })) : []
           this.table.loading = false
         })
@@ -275,7 +314,15 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ shift_id: item.shift_id })
+    deleteParams: (item) => ({ shift_id: item.shift_id }),
+    slotLabel (index) {
+      return this.item.start_date ? this.$date.formatDate(this.$date.addToDate(new Date(this.item.start_date), { days: Number(index) }), 'dddd D') : Number(index) + 1
+    }
+  },
+  watch: {
+    'item.slots.index': function () {
+      console.log('there was a change')
+    }
   },
   mounted () {
     this.fetchItems()

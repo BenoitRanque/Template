@@ -41,17 +41,20 @@ module.exports = class HRAttShift extends Model {
     this.created_at = new Date().toISOString();
     this.start_date ? this.start_date = formatDate(this.start_date) : null
     this.end_date ? this.end_date = formatDate(this.end_date) : null
+    this.slots ? this.slots = this.slots.map(({ schedule }, index) => ({ index, schedule})) : null
   }
   
   async $beforeUpdate (ctx) {
     this.updated_at = new Date().toISOString();
     this.start_date ? this.start_date = formatDate(this.start_date) : null
     this.end_date ? this.end_date = formatDate(this.end_date) : null
+    // this.slots ? this.slots = this.slots.map(({ schedule }, index) => ({ index, schedule})) : null
   }
   
   async $afterGet (ctx) {
     this.start_date ? this.start_date = parseDate(this.start_date) : null
     this.end_date ? this.end_date = parseDate(this.end_date) : null
+    this.slots ? this.slots = this.slots.sort((a, b) => b.index - a.index) : null
     return this
   }
 }

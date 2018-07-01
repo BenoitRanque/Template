@@ -1,7 +1,9 @@
 <template>
   <div>
     <slot name="header" :state="state"></slot>
-    <slot v-show="state.show"></slot>
+    <q-slide-transition>
+      <slot v-if="state.show"></slot>
+    </q-slide-transition>
   </div>
 </template>
 
