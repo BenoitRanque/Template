@@ -1,13 +1,7 @@
 <template>
   <div>
-    <div class="row">
-      <slot class="col" name="header"></slot>
-      <div class="col-auto q-pa-sm">
-        <q-toggle v-model="state" left-label="Avanzado"></q-toggle>
-      </div>
-      <slot class="col-auto" name="header-after"></slot>
-    </div>
-    <slot v-show="state"></slot>
+    <slot name="header" :state="state"></slot>
+    <slot v-show="state.show"></slot>
   </div>
 </template>
 
@@ -16,7 +10,9 @@ export default {
   name: 'ToggleArea',
   data () {
     return {
-      state: false
+      state: {
+        show: false
+      }
     }
   }
 }
