@@ -88,26 +88,18 @@
           </q-field>
           <div class="shadow-3 q-pa-md">
               shift
-            <toggle-area class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
-              <div slot="header" slot-scope="props">
-                <div class="row items-center" >
-                  <div class="col q-pl-sm">
-                    <q-select ></q-select>
-                    <q-input hide-underline></q-input>
-                  </div>
-                  <div class="col-auto q-px-sm q-caption">
-                    <div class="text-right">
-
-                      {{slotLabel(index)}}
-                    </div>
-                    <q-toggle left-label label="Avanzado" v-model="props.state.show"></q-toggle>
+            <div class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
+              <div class="row items-center" >
+                <div class="col q-pl-sm">
+                  <q-select v-model="slot.schedule.$model" :options="options.schedule"></q-select>
+                </div>
+                <div class="col-auto q-px-sm q-caption">
+                  <div class="text-right">
+                    {{slotLabel(index)}}
                   </div>
                 </div>
               </div>
-              <div>
-                hello
-              </div>
-            </toggle-area>
+            </div>
             <!-- <div class="shadow-6 q-pa-md">
               slot/schedule (add toggle here for advanced mode)
               <div class="shadow-12 q-pa-md">
@@ -152,7 +144,6 @@
 import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
-import ToggleArea from 'components/ToggleArea'
 import {
   // requiredIf,
   // requiredUnless,
@@ -190,9 +181,6 @@ function newItem () {
 export default {
   name: 'HRAttShift',
   mixins: [tableMixin, validationError],
-  components: {
-    ToggleArea
-  },
   data () {
     return {
       resource: 'HRAttShift',

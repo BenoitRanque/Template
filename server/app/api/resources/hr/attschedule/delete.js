@@ -1,8 +1,8 @@
-module.exports = async (input, { break_id }, { model, authorize }) => {
+module.exports = async (input, { schedule_id }, { model, authorize }) => {
 
   let permission = authorize(model.resourceName, 'delete', 'any')
 
-  let data = await model.query().delete().where({ break_id }).returning('*')
+  let data = await model.query().delete().where({ schedule_id }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')
 
