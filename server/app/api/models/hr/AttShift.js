@@ -54,7 +54,7 @@ module.exports = class HRAttShift extends Model {
   async $afterGet (ctx) {
     this.start_date ? this.start_date = parseDate(this.start_date) : null
     this.end_date ? this.end_date = parseDate(this.end_date) : null
-    this.slots ? this.slots = this.slots.sort((a, b) => b.index - a.index) : null
+    this.slots ? this.slots = this.slots.sort((a, b) => a.index - b.index) : null
     return this
   }
 }

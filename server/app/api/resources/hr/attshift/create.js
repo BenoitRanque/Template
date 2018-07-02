@@ -5,8 +5,9 @@ console.log(input.slots)
 
   let data = await model.query().allowUpsert('slots.schedule.timetable')
     .upsertGraph(permission.filter(input), {
-      relate: ['slots.schedule'],
-      insertMissing: ['slots']
+      relate: ['slots.schedule', 'slots.schedule.timetable'],
+      insertMissing: ['slots'],
+      noUpdate: true
     }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')

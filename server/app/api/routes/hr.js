@@ -34,6 +34,6 @@ router.route('/employee')
   .delete(new Resolver(require('@resources/hr/employee/delete'), Employee))
 
 router.route('/attreport')
-  .get(new Resolver(require('@resources/hr/attreport/read')))
+  .get(new Resolver(require('@resources/hr/attreport/read'), Employee))
 
 module.exports = router

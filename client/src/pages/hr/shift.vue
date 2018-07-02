@@ -76,7 +76,7 @@
             :error="$v.item.start_date.$error"
             :error-label="validationError($v.item.start_date)"
           >
-            <q-datetime type="date" :readonly="item.start_date && item.slots.length" v-model="$v.item.start_date.$model" :placeholder="$t(`field.start_date.placeholder`)"></q-datetime>
+            <q-datetime type="date" v-model="$v.item.start_date.$model" :placeholder="$t(`field.start_date.placeholder`)"></q-datetime>
           </q-field>
           <q-field
             :label="$t(`field.end_date.label`)"
@@ -91,7 +91,7 @@
             <div class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
               <div class="row items-center" >
                 <div class="col q-pl-sm">
-                  <q-select v-model="slot.schedule.$model" :options="options.schedule"></q-select>
+                  <schedule-select v-model="slot.schedule.$model" @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }" :presets="schedulePresets"></schedule-select>
                 </div>
                 <div class="col-auto q-px-sm q-caption">
                   <div class="text-right">
@@ -110,7 +110,8 @@
                 <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()"></q-btn>
                 <q-btn color="positive" icon="add" @click="$v.item.slots.$model.push({
                   index: $v.item.slots.$model.length,
-                  schedule: null
+                  schedule: null,
+                  schedule_id: null
                 })"></q-btn>
             </div>
           </div>
@@ -144,8 +145,9 @@
 import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
+import ScheduleSelect from 'components/ScheduleSelect'
 import {
-  // requiredIf,
+  requiredIf,
   // requiredUnless,
   // minLength,
   // maxLength,
@@ -181,12 +183,14 @@ function newItem () {
 export default {
   name: 'HRAttShift',
   mixins: [tableMixin, validationError],
+  components: { ScheduleSelect },
   data () {
     return {
       resource: 'HRAttShift',
       apiRoute: HR_ATT_SHIFT,
       editMode: false,
       item: newItem(),
+      schedulePresets: [],
       mapItemOptions: {
         // slots: slot => {
         //   slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
@@ -265,6 +269,9 @@ export default {
           schedule: {
             required
           },
+          schedule_id: {
+            requiredIf: requiredIf(model => model.schedule && model.schedule.schedule_id)
+          },
           index: {
             required
           }
@@ -291,11 +298,7 @@ export default {
             label: employee.name_first + ' ' + employee.name_paternal,
             stamp: String(employee.zktime_pin)
           })) : []
-          this.options.schedule = (response[2] && response[2].data) ? response[2].data.map(schedule => ({
-            value: schedule,
-            label: schedule.schedule_name,
-            sublabel: schedule.description
-          })) : []
+          this.schedulePresets = response[2] ? response[2].data : []
           this.table.loading = false
         })
         .catch(() => {

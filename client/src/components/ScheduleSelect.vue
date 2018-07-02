@@ -16,11 +16,20 @@ export default {
   props: {
     value: {
       type: Object,
-      required: true
+      default: null
     },
     presets: {
       type: Array,
       default: () => ([])
+    }
+  },
+  computed: {
+    presetOptions () {
+      return this.presets.map(p => ({
+        label: p.schedule_name,
+        sublabel: p.description,
+        value: p.schedule_id
+      }))
     }
   }
 }

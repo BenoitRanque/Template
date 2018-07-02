@@ -7,7 +7,16 @@ module.exports = class HRAttTimetable extends Model {
   static get idColumn () { return 'timetable_id' }
   static get relationMappings () {
     const AttType = require('./AttType')
+    const AttSchedule = require('./AttSchedule')
     return {
+      'schedule': {
+        relation: BelongsToOneRelation,
+        modelClass: AttSchedule,
+        join: {
+          from: this.tableName + '.schedule_id',
+          to: AttSchedule.tableName + '.schedule_id'
+        }
+      },
       'type': {
         relation: HasOneRelation,
         modelClass: AttType,

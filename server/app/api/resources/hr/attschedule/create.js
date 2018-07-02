@@ -3,7 +3,7 @@ module.exports = async (input, params, { model, authorize }) => {
   let permission = authorize(model.resourceName, 'create', 'any')
 
   let data = await model.query().allowUpsert('timetable')
-    .upsertGraph(permission.filter(input), {}).returning('*')
+    .upsertGraph(permission.filter(input), { relate: ['timetable'] }).returning('*')
 
   permission = authorize(model.resourceName, 'read', 'any')
 

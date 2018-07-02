@@ -10,6 +10,8 @@ module.exports = class HREmployee extends Model {
     // const IdentificationDocument = require('./IdentificationDocument')
     const Contact = require('./Contact')
     const Contract = require('./Contract')
+    const AttShift = require('./AttShift')
+    const AttException = require('./AttException')
 
     return {
       // 'data': {        
@@ -36,6 +38,22 @@ module.exports = class HREmployee extends Model {
       //     to: 'hr_identification_document.employee_id'
       //   }
       // },
+      'shifts': {
+        relation: HasManyRelation,
+        modelClass: AttShift,
+        join: {
+          from: this.tableName + '.employee_id',
+          to: AttShift.tableName + '.employee_id'
+        }
+      },
+      'exceptions': {
+        relation: HasManyRelation,
+        modelClass: AttException,
+        join: {
+          from: this.tableName + '.employee_id',
+          to: AttException.tableName + '.employee_id'
+        }
+      },
       'contact': {        
         relation: HasManyRelation,
         modelClass: Contact,
