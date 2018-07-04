@@ -18,6 +18,28 @@
       <q-btn @click="fetch" icon="refresh">report</q-btn>
     </div>
     <hr>
+    <q-table
+      :data="data"
+      :columns="columns"
+    >
+      <att-report-cell slot="body-cell-timetable" slot-scope="props" :attendance="props.row" :att-types="[]"></att-report-cell>
+      <!-- <div slot="body-cell-timetable" slot-scope="props" class="row full-height items-center">
+        <template v-for="(timetable, index) in props.row.timetable.filter(t => t.type_id !== attType.ATT_BREAK)">
+          <div class="col-auto q-caption" :key="'A'+index">
+            {{$date.formatDate(timetable.start_time, 'HH:mm')}}
+            <br/>
+            {{$date.formatDate(timetable.start_event, 'HH:mm')}}
+          </div>
+          <div class="col" :key="'B'+index"></div>
+          <div class="col-auto q-caption" :key="'C'+index">
+            {{$date.formatDate(timetable.end_time, 'HH:mm')}}
+            <br/>
+            {{$date.formatDate(timetable.end_event, 'HH:mm')}}
+
+          </div>
+        </template>
+      </div> -->
+    </q-table>
     <div class="q-pa-lg bg-blue-3">
       <pre>
         {{report}}
@@ -27,7 +49,9 @@
 </template>
 
 <script>
+import AttReportCell from 'components/AttReportCell'
 import { HR_ATT_REPORT, HR_EMPLOYEE } from 'assets/apiRoutes'
+import { ATT_BREAK, ATT_WORK, ATT_TIMEOFF } from 'assets/attType'
 import {
   // requiredIf,
   // requiredUnless,
@@ -50,8 +74,17 @@ import {
   required
 } from 'vuelidate/lib/validators'
 export default {
+  name: 'HRReport',
+  components: {
+    AttReportCell
+  },
   data () {
     return {
+      attType: {
+        ATT_BREAK,
+        ATT_WORK,
+        ATT_TIMEOFF
+      },
       report: null,
       reportParams: {
         from: null,
@@ -70,7 +103,27 @@ export default {
       employee_id: { required }
     }
   },
+  computed: {
+    data () {
+      return this.report && this.report.attendance ? this.report.attendance : []
+    },
+    columns () {
+      return [
+        {
+          name: 'date',
+          field: row => this.$date.formatDate(row.date, 'DD/MM/YYYY'),
+          sort: true
+        },
+        {
+          name: 'timetable'
+        }
+      ]
+    }
+  },
   methods: {
+    filterTimetables (timetable) {
+      return timetable.filter(t => t.type_id !== ATT_BREAK)
+    },
     refresh () {
       Promise.all([
         this.$axios.get(HR_EMPLOYEE)

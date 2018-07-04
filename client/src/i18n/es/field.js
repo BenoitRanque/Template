@@ -126,7 +126,7 @@ export default {
     'helper': ' '
   },
   persona_con_descapacidad: {
-    'label': 'Persona con descapacidad',
+    'label': 'Persona con discapacidad',
     'placeholder': ' ',
     'helper': ' '
   },
@@ -176,12 +176,12 @@ export default {
     'helper': ' '
   },
   contract_cancel_date: {
-    'label': 'Fecha anulacion de contrato',
+    'label': 'Fecha retiro',
     'placeholder': ' ',
     'helper': ' '
   },
   contract_cancel_motive: {
-    'label': 'Motivo anulacion de contrato',
+    'label': 'Motivo retiro',
     'placeholder': ' ',
     'helper': ' '
   },
