@@ -355,9 +355,7 @@ function getScheduleForDate(date, shifts, exceptions) {
   }
 
   const scheduleForDate = exceptionScheduleForDate ? exceptionScheduleForDate : shiftScheduleForDate 
-
-  scheduleForDate && scheduleForDate.timetable = scheduleForDate.timetable = scheduleForDate.timetable.map(t => mapTimetableToExpectedDate(date, t)) 
-  
+ 
   return {
     date,
     schedule: scheduleForDate,
