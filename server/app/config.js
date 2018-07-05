@@ -18,5 +18,8 @@ module.exports = {
   },
   bcrypt: {
     SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS === undefined ? Number(process.env.BCRYPT_SALT_ROUNDS) : 12
+  },
+  dblite: {
+    PATH: process.env.SQL_LITE_PATH || "./app/db/ZKTimeNet.db"
   }
 }
