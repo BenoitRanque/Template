@@ -40,6 +40,33 @@
         </template>
       </div> -->
     </q-table>
+    <div v-for="(day, index) in report.attendance" :key="index" class="q-ma-sm shadow-3">
+      {{$date.formatDate(day.date, 'YYYY/MM/DD')}}
+    <div class="row">
+      <div class="col">
+        <div v-for="(timetable, index) in day.timetable" :key="index">
+            <div>
+              duration: {{$date.formatDate(timetable.duration, 'HH:mm')}}
+            </div>
+            <div>
+              start:
+              {{$date.formatDate(timetable.start_event, 'HH:mm')}}
+              {{$date.formatDate(timetable.start_time, 'HH:mm')}}
+            </div>
+            <div>
+              end:
+              {{$date.formatDate(timetable.end_event, 'HH:mm')}}
+              {{$date.formatDate(timetable.end_time, 'HH:mm')}}
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <pre>
+            {{day.balance}}
+          </pre>
+        </div>
+      </div>
+    </div>
     <div class="q-pa-lg bg-blue-3">
       <pre>
         {{report}}
@@ -138,6 +165,7 @@ export default {
       })
     },
     fetch () {
+      this.report = null
       this.$axios.get(HR_ATT_REPORT, {
         params: this.reportParams
       })
