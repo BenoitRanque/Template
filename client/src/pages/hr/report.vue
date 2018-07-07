@@ -8,7 +8,7 @@
         <q-datetime v-model="reportParams.to"></q-datetime>
       </div>
       <div class="col-4">
-        <q-select v-model="reportParams.employee_id" :options="options.employee_id"></q-select>
+        <q-select multiple v-model="reportParams.employee_id" :options="options.employee_id"></q-select>
       </div>
     </div>
     <div class="q-pa-sm row justify-center">
@@ -22,63 +22,16 @@
       :data="data"
       :columns="columns"
     >
-      <att-report-cell slot="body-cell-timetable" slot-scope="props" :attendance="props.row" :att-types="[]"></att-report-cell>
-      <!-- <div slot="body-cell-timetable" slot-scope="props" class="row full-height items-center">
-        <template v-for="(timetable, index) in props.row.timetable.filter(t => t.type_id !== attType.ATT_BREAK)">
-          <div class="col-auto q-caption" :key="'A'+index">
-            {{$date.formatDate(timetable.start_time, 'HH:mm')}}
-            <br/>
-            {{$date.formatDate(timetable.start_event, 'HH:mm')}}
-          </div>
-          <div class="col" :key="'B'+index"></div>
-          <div class="col-auto q-caption" :key="'C'+index">
-            {{$date.formatDate(timetable.end_time, 'HH:mm')}}
-            <br/>
-            {{$date.formatDate(timetable.end_event, 'HH:mm')}}
-
-          </div>
-        </template>
-      </div> -->
+      <att-report-cell v-for="(date, index) in dates" :key="index" :slot="`body-cell-${date}`" slot-scope="props" :attendance="props.row.attendance.find(att => att.date === date)"></att-report-cell>
     </q-table>
-    <div v-for="(day, index) in report.attendance" :key="index" class="q-ma-sm shadow-3">
-      {{$date.formatDate(day.date, 'YYYY/MM/DD')}}
-    <div class="row">
-      <div class="col">
-        <div v-for="(timetable, index) in day.timetable" :key="index">
-            <div>
-              duration: {{$date.formatDate(timetable.duration, 'HH:mm')}}
-            </div>
-            <div>
-              start:
-              {{$date.formatDate(timetable.start_event, 'HH:mm')}}
-              {{$date.formatDate(timetable.start_time, 'HH:mm')}}
-            </div>
-            <div>
-              end:
-              {{$date.formatDate(timetable.end_event, 'HH:mm')}}
-              {{$date.formatDate(timetable.end_time, 'HH:mm')}}
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <pre>
-            {{day.balance}}
-          </pre>
-        </div>
-      </div>
-    </div>
-    <div class="q-pa-lg bg-blue-3">
-      <pre>
-        {{report}}
-      </pre>
-    </div>
   </q-page>
 </template>
 
 <script>
 import AttReportCell from 'components/AttReportCell'
 import { HR_ATT_REPORT, HR_EMPLOYEE } from 'assets/apiRoutes'
-import { ATT_BREAK, ATT_WORK, ATT_TIMEOFF } from 'assets/attType'
+import attTypes from 'assets/attType'
+const { ATT_BREAK, ATT_WORK, ATT_TIMEOFF } = attTypes
 import {
   // requiredIf,
   // requiredUnless,
@@ -116,7 +69,7 @@ export default {
       reportParams: {
         from: null,
         to: null,
-        employee_id: null
+        employee_id: []
       },
       options: {
         employee_id: []
@@ -131,19 +84,27 @@ export default {
     }
   },
   computed: {
+    dates () {
+      if (!this.report || !this.report[0] || !this.report[0].attendance) return []
+
+      return this.report[0].attendance.map(att => att.date)
+    },
     data () {
-      return this.report && this.report.attendance ? this.report.attendance : []
+      return this.report ? this.report : []
     },
     columns () {
       return [
         {
-          name: 'date',
-          field: row => this.$date.formatDate(row.date, 'DD/MM/YYYY'),
+          name: 'employee',
+          field: row => row.employee.name_first + ' ' + row.employee.name_paternal,
+          label: 'Nombre del Empleado',
           sort: true
         },
-        {
-          name: 'timetable'
-        }
+        ...this.dates.map(date => ({
+          name: date,
+          label: this.$date.formatDate(date, 'DD/MM/YYYY'),
+          field: row => row.attendance.find(att => att.date === date)
+        }))
       ]
     }
   },
