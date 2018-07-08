@@ -2,8 +2,6 @@
 exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_contract', table => {
     table.uuid('contract_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
-    table.text('external_contract_id')
-    table.timestamp('contract_sign_date') 
     table.timestamp('contract_start_date')
     table.timestamp('contract_end_date')
     table.boolean('contract_active')

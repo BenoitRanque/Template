@@ -157,13 +157,11 @@
               </div>
               <q-field
                 v-for="(type, field) in {
-                  external_contract_id: 'text',
-                  contract_sign_date: 'date',
                   contract_start_date: 'date',
                   contract_end_date: 'date',
                   contract_active: 'select',
                   contract_cancel_date: 'date',
-                  contract_cancel_motive: 'text',
+                  contract_cancel_motive: 'select',
                   tipo_contrato: 'select',
                   modalidad_contrato: 'select',
                   sucursal: 'number',
@@ -286,13 +284,11 @@
               <q-field
                 class="col-6"
                 v-for="(type, field) in {
-                  external_contract_id: 'text',
-                  contract_sign_date: 'date',
                   contract_start_date: 'date',
                   contract_end_date: 'date',
                   contract_active: 'select',
                   contract_cancel_date: 'date',
-                  contract_cancel_motive: 'text',
+                  contract_cancel_motive: 'select',
                   tipo_contrato: 'select',
                   modalidad_contrato: 'select',
                   sucursal: 'number',
@@ -595,6 +591,48 @@ export default {
           {
             label: 'Verbal',
             value: 2
+          }
+        ],
+        contract_cancel_motive: [
+          {
+            value: 1,
+            label: 'Retiro voluntario del trabajador'
+          },
+          {
+            value: 2,
+            label: 'Vencimiento de contrato'
+          },
+          {
+            value: 3,
+            label: 'Conclusión de obra'
+          },
+          {
+            value: 4,
+            label: 'Perjuicio material causado con intención en los instrumentos de trabajo'
+          },
+          {
+            value: 5,
+            label: 'Revelación de secretos industriales'
+          },
+          {
+            value: 6,
+            label: 'Omisiones o imprudencias que afecten a la seguridad o higiene industrial'
+          },
+          {
+            value: 7,
+            label: 'Inasistencia injustificada de más de seis días continuos'
+          },
+          {
+            value: 8,
+            label: 'Incumplimiento total o parcial del convenio'
+          },
+          {
+            value: 9,
+            label: 'Robo o hurto por el trabajador'
+          },
+          {
+            value: 10,
+            label: 'Retiro forzoso'
           }
         ],
         sex: [

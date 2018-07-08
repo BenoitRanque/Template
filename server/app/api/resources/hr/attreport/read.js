@@ -12,6 +12,8 @@ const differenceInCalendarDays = require('date-fns/difference_in_calendar_days')
 const differenceInMinutes = require('date-fns/difference_in_minutes')
 const compareAsc = require('date-fns/compare_asc')
 const compareDesc = require('date-fns/compare_desc')
+const max = require('date-fns/max')
+const min = require('date-fns/min')
 const eachDay = require('date-fns/each_day')
 const startOfDay = require('date-fns/start_of_day')
 const endOfDay = require('date-fns/end_of_day')
@@ -248,16 +250,16 @@ function getAttendanceTimetable(timetable, references, events) {
     case ATT_WORK:
       let startRange = getRangeForEvent(timetable.start_time, references)
       let endRange = getRangeForEvent(timetable.end_time, references)
-      // console.log('start', timetable.start_time, startReference)
-      // console.log('end', timetable.end_time, endReference)
+      console.log('start', format(timetable.start_time, 'HH:mm'), format(startRange.start, 'HH:mm'), format(startRange.end, 'HH:mm'))
+      console.log('end', format(timetable.end_time, 'HH:mm'), format(endRange.start, 'HH:mm'), format(endRange.end, 'HH:mm'))
 
-      let candidateStartEvents = events.filter(event => isWithinRange(event, startRange.start, startRange.end)).sort(compareAsc)
-      let candidateEndEvents = events.filter(event => isWithinRange(event, endRange.start, endRange.end)).sort(compareDesc)
+      let candidateStartEvents = events.filter(event => isWithinRange(event, startRange.start, startRange.end))
+      let candidateEndEvents = events.filter(event => isWithinRange(event, endRange.start, endRange.end))
 
       return {
         ...timetable,
-        start_event: candidateStartEvents.length > 0 ? candidateStartEvents[0] : null,
-        end_event: candidateEndEvents.length > 0 ? candidateEndEvents[0] : null
+        start_event: candidateStartEvents && candidateStartEvents.length > 0 ? min(...candidateStartEvents) : null,
+        end_event: candidateEndEvents && candidateEndEvents.length > 0 ? max(...candidateEndEvents) : null
       }
     case ATT_TIMEOFF:
       return {
@@ -274,7 +276,7 @@ function getRangeForEvent (event, references) {
 
   let eventRef = references.find(ref => differenceInCalendarDays(ref.date, event) === 0)
 
-  if (eventRef && eventRef.schedule && eventRef.timetable) {
+  if (eventRef && eventRef.schedule && eventRef.schedule.timetable) {
     eventRef.schedule.timetable.forEach(timetable => {
       switch (timetable.type_id) {
         case ATT_BREAK:
@@ -298,9 +300,10 @@ function getRangeForEvent (event, references) {
     })
   }
 
+  console.log('Candidates for event', format(event, 'HH:mm'), ...candidateReferences.map(e => format(e, 'HH:mm')))
   return {
-    start: candidateReferences.filter(ref => isBefore(ref, event)).sort(compareDesc)[0],
-    end: candidateReferences.filter(ref => isAfter(ref, event)).sort(compareAsc)[0]
+    start: max(...candidateReferences.filter(ref => isBefore(ref, event))),
+    end: min(...candidateReferences.filter(ref => isAfter(ref, event)))
   }
 }
 
@@ -332,8 +335,8 @@ function getRangeForDate(date, references) {
   }
 
   return {
-    start: startCandidates.sort(compareDesc)[0],
-    end: endCandidates.sort(compareDesc)[0]
+    start: max(...startCandidates),
+    end: max(...endCandidates)
   }
 }
 
