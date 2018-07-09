@@ -89,16 +89,9 @@
           <div class="shadow-3 q-pa-md">
               shift
             <div class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
-              <div class="row items-center" >
-                <div class="col q-pl-sm">
-                  <schedule-select v-model="slot.schedule.$model" @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }" :presets="schedulePresets"></schedule-select>
-                </div>
-                <div class="col-auto q-px-sm q-caption">
-                  <div class="text-right">
-                    {{slotLabel(index)}}
-                  </div>
-                </div>
-              </div>
+              <schedule-select v-model="slot.schedule.$model" @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }" :schedule-presets="schedulePresets">
+                <div class="col" slot="header">{{slotLabel(index)}}</div>
+              </schedule-select>
             </div>
             <!-- <div class="shadow-6 q-pa-md">
               slot/schedule (add toggle here for advanced mode)

@@ -108,7 +108,7 @@ function getAttendanceBalance(timetables, events) {
       case ATT_WORK:
         balance.time[ATT_WORK].standard += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
 
-        if (!timetable.start_register) {
+        if (!timetable.start_require_event) {
           // registry not required
         } else if (!timetable.start_event) {
           // registry required but not provided
@@ -128,7 +128,7 @@ function getAttendanceBalance(timetables, events) {
           }
         }
         
-        if (!timetable.end_register) {
+        if (!timetable.end_require_event) {
           // registry not required
         } else if (!timetable.end_event) {
           // registry required but not provided
@@ -151,7 +151,7 @@ function getAttendanceBalance(timetables, events) {
       case ATT_BREAK:
         balance.time[ATT_BREAK].standard += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
         
-        if (!timetable.start_register) {
+        if (!timetable.start_require_event) {
           // registry not required
         } else if (!timetable.start_event) {
           // registry required but not provided
@@ -161,7 +161,7 @@ function getAttendanceBalance(timetables, events) {
           // registry provided, calculate diference
         }
         
-        if (!timetable.end_register) {
+        if (!timetable.end_require_event) {
           // registry not required
         } else if (!timetable.end_event) {
           // registry required but not provided
@@ -244,8 +244,8 @@ function getAttendanceTimetable(timetable, references, events) {
       
       return {
         ...timetable,
-        start_event: timetable.start_register && candidateEvents.length > 0 ? candidateEvents[0] : null,
-        end_event: timetable.end_register && (candidateEvents.length > 1 || (candidateEvents.length > 0 && !timetable.start_register)) ? candidateEvents[candidateEvents.length - 1] : null    
+        start_event: timetable.start_require_event && candidateEvents.length > 0 ? candidateEvents[0] : null,
+        end_event: timetable.end_require_event && (candidateEvents.length > 1 || (candidateEvents.length > 0 && !timetable.start_require_event)) ? candidateEvents[candidateEvents.length - 1] : null    
       }
     case ATT_WORK:
       let startRange = getRangeForEvent(timetable.start_time, references)
@@ -280,14 +280,14 @@ function getRangeForEvent (event, references) {
     eventRef.schedule.timetable.forEach(timetable => {
       switch (timetable.type_id) {
         case ATT_BREAK:
-          if (timetable.start_register && timetable.start_time !== null) candidateReferences.push(timetable.start_time)
-          if (timetable.end_register && timetable.end_time !== null) candidateReferences.push(timetable.end_time)
+          if (timetable.start_require_event && timetable.start_time !== null) candidateReferences.push(timetable.start_time)
+          if (timetable.end_require_event && timetable.end_time !== null) candidateReferences.push(timetable.end_time)
           break
         case ATT_WORK:
-          if (timetable.start_register && timetable.start_time !== null && !isSameMinute(event, timetable.start_time)) {
+          if (timetable.start_require_event && timetable.start_time !== null && !isSameMinute(event, timetable.start_time)) {
             candidateReferences.push(getHalfpointBetweenDates(event, timetable.start_time))
           }
-          if (timetable.end_register && timetable.end_time !== null && !isSameMinute(event, timetable.end_time)) {
+          if (timetable.end_require_event && timetable.end_time !== null && !isSameMinute(event, timetable.end_time)) {
             candidateReferences.push(getHalfpointBetweenDates(event, timetable.end_time))
           }
           break
@@ -312,10 +312,10 @@ function getRangeForDate(date, references) {
   const startCandidates = [startOfDay(date)]
   if (startRef && startRef.schedule && startRef.schedule.timetable) {
     startRef.schedule.timetable.forEach(timetable => {
-      if (timetable.start_register && timetable.start_time) {
+      if (timetable.start_require_event && timetable.start_time) {
         startCandidates.push(timetable.start_time)
       }
-      if (timetable.end_register && timetable.end_time) {
+      if (timetable.end_require_event && timetable.end_time) {
         startCandidates.push(timetable.end_time)
       }
     })
@@ -325,10 +325,10 @@ function getRangeForDate(date, references) {
   const endCandidates = [endOfDay(date)]
   if (endRef && endRef.schedule && endRef.schedule.timetable) {
     endRef.schedule.timetable.forEach(timetable => {
-      if (timetable.start_register && timetable.start_time) {
+      if (timetable.start_require_event && timetable.start_time) {
         endCandidates.push(timetable.start_time)
       }
-      if (timetable.end_register && timetable.end_time) {
+      if (timetable.end_require_event && timetable.end_time) {
         endCandidates.push(timetable.end_time)
       }
     })
@@ -366,7 +366,7 @@ function getScheduleForDate(date, shifts, exceptions) {
   }
 }
 
-function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, start_time, start_register, end_time, end_register }) {
+function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, start_time, start_require_event, end_time, end_require_event }) {
   switch (type_id) {
     case ATT_WORK:
       return {
@@ -375,9 +375,9 @@ function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, s
         timetable_name,
         duration: combineDateAndTime(date, duration),
         start_time: combineDateAndTime(date, start_time),
-        start_register,
+        start_require_event,
         end_time: isBefore(end_time, start_time) ? combineDateAndTime(addDays(date, 1), end_time) : combineDateAndTime(date, end_time),
-        end_register
+        end_require_event
       }
       case ATT_BREAK:
       return {
@@ -386,9 +386,9 @@ function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, s
         timetable_name,
         duration: combineDateAndTime(date, duration),
         start_time: combineDateAndTime(date, start_time),
-        start_register,
+        start_require_event,
         end_time: isBefore(end_time, start_time) ? combineDateAndTime(addDays(date, 1), end_time) : combineDateAndTime(date, end_time),
-        end_register
+        end_require_event
       }
       case ATT_TIMEOFF:
       return {
@@ -397,9 +397,9 @@ function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, s
         timetable_name,
         duration: combineDateAndTime(date, duration),
         start_time,
-        start_register,
+        start_require_event,
         end_time,
-        end_register
+        end_require_event
       }
     default:
       throw new Error(`Unsuported attendance type: ${timetable.type_id}`)

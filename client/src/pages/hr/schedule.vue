@@ -85,10 +85,10 @@
               <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.start_time.$model"></q-datetime>
               <q-datetime :format24h="false" class="col-6" type="time" v-model="timetable.end_time.$model"></q-datetime>
               <div class="col-6 q-pt-sm">
-                <q-checkbox v-model="timetable.start_register.$model" label="debe marcar inicio"></q-checkbox>
+                <q-checkbox v-model="timetable.start_require_event.$model" label="debe marcar inicio"></q-checkbox>
               </div>
               <div class="col-6 q-pt-sm">
-                <q-checkbox v-model="timetable.end_register.$model" label="debe marcar fin"></q-checkbox>
+                <q-checkbox v-model="timetable.end_require_event.$model" label="debe marcar fin"></q-checkbox>
               </div>
             </div>
           </div>
@@ -165,108 +165,108 @@ export default {
           type_id: ATT_TIMEOFF,
           timetable_name: 'Dia Libre',
           start_time: null,
-          start_register: false,
+          start_require_event: false,
           end_time: null,
-          end_register: false,
+          end_require_event: false,
           duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_TIMEOFF,
           timetable_name: 'Medio Dia Libre',
           start_time: null,
-          start_register: false,
+          start_require_event: false,
           end_time: null,
-          end_register: false,
+          end_require_event: false,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_BREAK,
           timetable_name: 'Almuerzo',
           start_time: this.$date.buildDate({hours: 11, minutes: 0, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 0, minutes: 30, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Dia Laboral Continuo',
           start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Dia Laboral Continuo',
           start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Dia Laboral Continuo',
           start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         },
         {
           type_id: ATT_WORK,
           timetable_name: 'Medio Dia Laboral',
           start_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
-          start_register: true,
+          start_require_event: true,
           end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
-          end_register: true,
+          end_require_event: true,
           duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
         }
       ],
@@ -341,11 +341,11 @@ export default {
           start_time: {
             requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK].includes(timetable.type_id))
           },
-          start_register: {},
+          start_require_event: {},
           end_time: {
             requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK].includes(timetable.type_id))
           },
-          end_register: {},
+          end_require_event: {},
           duration: {
             requiredIf: requiredIf(timetable => [ATT_WORK, ATT_BREAK, ATT_TIMEOFF].includes(timetable.type_id))
           }

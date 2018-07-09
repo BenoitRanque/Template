@@ -8,10 +8,10 @@ exports.up = async function(knex, Promise) {
     table.specificType('duration', 'INTERVAL')
     table.time('start_time')
     // table.specificType('start_time', 'TIME(6) WITH TIME ZONE')
-    table.boolean('start_register')
+    table.boolean('start_require_event')
     table.time('end_time')
     // table.specificType('end_time', 'TIME(6) WITH TIME ZONE')
-    table.boolean('end_register')
+    table.boolean('end_require_event')
 
     table.timestamps()
 
