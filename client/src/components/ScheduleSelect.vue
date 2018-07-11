@@ -3,10 +3,11 @@
     <div class="row">
       <slot name="header"></slot>
       <div class="col-auto">
-        <q-toggle v-model="advanced" left-label label="avanzado"></q-toggle>
+        <q-toggle v-if="select" v-model="advanced" left-label label="avanzado"></q-toggle>
       </div>
     </div>
-    <q-field v-if="!advanced" :label="$t('field.schedule.label')">
+    <slot></slot>
+    <q-field v-if="select && !advanced" :label="$t('field.schedule.label')">
       <q-select
         :options="presetScheduleOptions"
         :value="value ? value.schedule_id : null"
@@ -18,39 +19,69 @@
         <q-input v-model="model.schedule_name"></q-input>
       </q-field>
       <q-field :label="$t('field.description.label')">
-        <q-input v-mdoel="model.description"></q-input>
+        <q-input v-model="model.description"></q-input>
       </q-field>
+      <timetable-wrapper v-for="(timetable, index) in model.timetable" :key="index" @remove="model.timetable.splice(index, 1)">
+        <template slot="header">
+          <q-input class="col" v-model="model.timetable[index].timetable_name"></q-input>
+        </template>
+        <template>
+
+        </template>
+        <template slot="advanced">
+          <div class="row q-px-sm">
+            <q-select class="col-6" :options="timetableTypesOptions" v-model="model.timetable[index].type_id"></q-select>
+            <q-datetime :format24h="true" class="col-6" type="time" v-model="model.timetable[index].duration"></q-datetime>
+            <q-datetime :format24h="false" class="col-6" type="time" v-model="model.timetable[index].start_time"></q-datetime>
+            <q-datetime :format24h="false" class="col-6" type="time" v-model="model.timetable[index].end_time"></q-datetime>
+            <div class="col-6 q-pt-sm">
+              <q-checkbox v-model="model.timetable[index].start_require_event" label="debe marcar inicio"></q-checkbox>
+            </div>
+            <div class="col-6 q-pt-sm">
+              <q-checkbox v-model="model.timetable[index].end_require_event" label="debe marcar fin"></q-checkbox>
+            </div>
+          </div>
+        </template>
+      </timetable-wrapper>
+      <div class="row justify-around q-pa-md">
+        <q-btn icon="add" color="positive">
+          <q-popover self="top middle" anchor="bottom middle">
+            <q-list link>
+              <q-item v-for="(preset, index) in timetablePresets" :key="index" v-close-overlay @click.native="model.timetable.push(preset.timetable())">
+                <q-item-main :label="preset.label" :sublabel="preset.sublabel"></q-item-main>
+                <q-item-side>
+                  <q-chip :style="{ 'background': typeColor(preset.type_id) }">{{typeCode(preset.type_id)}}</q-chip>
+                </q-item-side>
+              </q-item>
+            </q-list>
+          </q-popover>
+        </q-btn>
+      </div>
     </template>
-    <timetable-select v-for="(t, index) in model.timetable" :key="index" v-model="model.timetable[index]" @remove="model.timetable.splice(index, 1)"></timetable-select>
-    <div class="row justify-around q-pa-md">
-      <q-btn icon="add" color="positive">
-        <q-popover self="top middle" anchor="bottom middle">
-          <q-list link>
-            <q-item v-for="(preset, index) in timetablePresets" :key="index" v-close-overlay @click.native="$v.item.timetable.$model.push(clonePreset(preset))">
-              <q-item-main :label="preset.timetable_name" :sublabel="timetableSummary(preset)"></q-item-main>
-              <q-item-side>
-                <q-chip :style="{ 'background': timetableTypes && timetableTypes[preset.type_id] ? timetableTypes[preset.type_id].color : null}">{{timetableTypes && timetableTypes[preset.type_id] ? timetableTypes[preset.type_id].code : null}}</q-chip>
-              </q-item-side>
-            </q-item>
-          </q-list>
-        </q-popover>
-      </q-btn>
-    </div>
     <pre>{{$data}}</pre>
     <pre>{{value}}</pre>
   </div>
 </template>
 
 <script>
-import TimetableSelect from './TimetableSelect'
+import { ATT_BREAK, ATT_TIMEOFF, ATT_WORK } from 'assets/attType'
+import TimetableWrapper from 'components/TimetableWrapper'
 
 export default {
   name: 'ScheduleSelect',
-  components: { TimetableSelect },
+  components: { TimetableWrapper },
   props: {
     value: {
       type: Object,
       default: null
+    },
+    standard: {
+      type: Boolean,
+      default: false
+    },
+    select: {
+      type: Boolean,
+      default: false
     },
     schedulePresets: {
       type: Array,
@@ -58,7 +89,182 @@ export default {
     },
     timetablePresets: {
       type: Array,
-      default: () => ([])
+      default: function () {
+        return [
+          {
+            label: 'Dia libre',
+            sublabel: '',
+            type_id: ATT_TIMEOFF,
+            timetable: () => ({
+              type_id: ATT_TIMEOFF,
+              timetable_name: 'Dia Libre',
+              start_time: null,
+              start_require_event: false,
+              end_time: null,
+              end_require_event: false,
+              duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Libre',
+            sublabel: '',
+            type_id: ATT_TIMEOFF,
+            timetable: () => ({
+              type_id: ATT_TIMEOFF,
+              timetable_name: 'Medio Dia Libre',
+              start_time: null,
+              start_require_event: false,
+              end_time: null,
+              end_require_event: false,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Almuerzo',
+            sublabel: '',
+            type_id: ATT_BREAK,
+            timetable: () => ({
+              type_id: ATT_BREAK,
+              timetable_name: 'Almuerzo',
+              start_time: this.$date.buildDate({hours: 11, minutes: 0, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 0, minutes: 30, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Dia Laboral Continuo',
+            sublabel: '08:30 - 16:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Dia Laboral Continuo 08:30 - 16:30',
+              start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Dia Laboral Continuo',
+            sublabel: '09:30 - 17:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Dia Laboral Continuo 09:30 - 17:30',
+              start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Dia Laboral Continuo',
+            sublabel: '10:30 - 18:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Dia Laboral Continuo 10:30 - 18:30',
+              start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 8, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '08:30 - 12:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 08:30 - 12:30',
+              start_time: this.$date.buildDate({hours: 8, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '09:30 - 13:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 09:30 - 13:30',
+              start_time: this.$date.buildDate({hours: 9, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '10:30 - 14:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 10:30 - 14:30',
+              start_time: this.$date.buildDate({hours: 10, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '12:30 - 16:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 12:30 - 16:30',
+              start_time: this.$date.buildDate({hours: 12, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 16, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '13:30 - 17:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 13:30 - 17:30',
+              start_time: this.$date.buildDate({hours: 13, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 17, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          },
+          {
+            label: 'Medio Dia Laboral',
+            sublabel: '14:30 - 18:30',
+            type_id: ATT_WORK,
+            timetable: () => ({
+              type_id: ATT_WORK,
+              timetable_name: 'Medio Dia Laboral 14:30 - 18:30',
+              start_time: this.$date.buildDate({hours: 14, minutes: 30, seconds: 0, milliseconds: 0}),
+              start_require_event: true,
+              end_time: this.$date.buildDate({hours: 18, minutes: 30, seconds: 0, milliseconds: 0}),
+              end_require_event: true,
+              duration: this.$date.buildDate({hours: 4, minutes: 0, seconds: 0, milliseconds: 0})
+            })
+          }
+        ]
+      }
+    },
+    timetableTypes: {
+      type: Object,
+      default: () => ({})
     }
   },
   data () {
@@ -67,7 +273,7 @@ export default {
       model: {
         schedule_id: '',
         description: '',
-        standard: false,
+        standard: this.standard,
         timetable: []
       }
     }
@@ -114,6 +320,30 @@ export default {
     },
     presetTimetableOptions () {
       return this.timetablePresets ? this.timetablePresets : []
+    },
+    timetableTypesOptions () {
+      return this.timetableTypes.map(type => ({
+        value: type.type_id,
+        label: type.type_name,
+        sublabel: type.description,
+        stamp: type.code
+      }))
+    }
+  },
+  methods: {
+    typeCode (typeId) {
+      if (!this.timetableTypes || !this.timetableTypes.length) return
+      let type = this.timetableTypes.find(item => item.type_id === typeId)
+      if (!type) return
+
+      return type.code
+    },
+    typeColor (typeId) {
+      if (!this.timetableTypes || !this.timetableTypes.length) return
+      let type = this.timetableTypes.find(item => item.type_id === typeId)
+      if (!type) return
+
+      return type.color
     }
   }
 }
