@@ -3,11 +3,11 @@
     <div class="row">
       <slot name="header"></slot>
       <div class="col-auto">
-        <q-toggle v-if="select" v-model="advanced" left-label label="avanzado"></q-toggle>
+        <q-toggle v-if="withSchedulePresets" v-model="advanced" left-label label="avanzado"></q-toggle>
       </div>
     </div>
     <slot></slot>
-    <q-field v-if="select && !advanced" :label="$t('field.schedule.label')">
+    <q-field v-if="withSchedulePresets && !advanced" :label="$t('field.schedule.label')">
       <q-select
         :options="presetScheduleOptions"
         :value="value ? value.schedule_id : null"
@@ -21,19 +21,19 @@
       <q-field :label="$t('field.description.label')">
         <q-input v-model="model.description"></q-input>
       </q-field>
-      <timetable-wrapper v-for="(timetable, index) in model.timetable" :key="index" @remove="model.timetable.splice(index, 1)">
+      <timetable-wrapper :style="{ 'background': typeColor(model.timetable[index].type_id) }" v-for="(timetable, index) in model.timetable" :key="index" @remove="model.timetable.splice(index, 1)">
         <template slot="header">
-          <q-input class="col" v-model="model.timetable[index].timetable_name"></q-input>
+          <q-input class="col" hide-underline v-model="model.timetable[index].timetable_name"></q-input>
         </template>
         <template>
 
         </template>
         <template slot="advanced">
           <div class="row q-px-sm">
-            <q-select class="col-6" :options="timetableTypesOptions" v-model="model.timetable[index].type_id"></q-select>
-            <q-datetime :format24h="true" class="col-6" type="time" v-model="model.timetable[index].duration"></q-datetime>
-            <q-datetime :format24h="false" class="col-6" type="time" v-model="model.timetable[index].start_time"></q-datetime>
-            <q-datetime :format24h="false" class="col-6" type="time" v-model="model.timetable[index].end_time"></q-datetime>
+            <q-select class="col-6" float-label="Tipo de tiempo" :options="timetableTypesOptions" v-model="model.timetable[index].type_id"></q-select>
+            <q-datetime :format24h="true" float-label="Duracion" class="col-6" type="time" v-model="model.timetable[index].duration"></q-datetime>
+            <q-datetime :format24h="false" float-label="Inicio" class="col-6" type="time" v-model="model.timetable[index].start_time"></q-datetime>
+            <q-datetime :format24h="false" float-label="Fin" class="col-6" type="time" v-model="model.timetable[index].end_time"></q-datetime>
             <div class="col-6 q-pt-sm">
               <q-checkbox v-model="model.timetable[index].start_require_event" label="debe marcar inicio"></q-checkbox>
             </div>
@@ -47,7 +47,7 @@
         <q-btn icon="add" color="positive">
           <q-popover self="top middle" anchor="bottom middle">
             <q-list link>
-              <q-item v-for="(preset, index) in timetablePresets" :key="index" v-close-overlay @click.native="model.timetable.push(preset.timetable())">
+              <q-item v-for="(preset, index) in timetablePresets" :key="index" v-close-overlay @click.native="addPreset(preset)">
                 <q-item-main :label="preset.label" :sublabel="preset.sublabel"></q-item-main>
                 <q-item-side>
                   <q-chip :style="{ 'background': typeColor(preset.type_id) }">{{typeCode(preset.type_id)}}</q-chip>
@@ -58,13 +58,16 @@
         </q-btn>
       </div>
     </template>
+    <pre>{{withSchedulePresets}}</pre>
+    <pre>{{schedulePresets.length}}</pre>
     <pre>{{$data}}</pre>
     <pre>{{value}}</pre>
   </div>
 </template>
 
 <script>
-import { ATT_BREAK, ATT_TIMEOFF, ATT_WORK } from 'assets/attType'
+import ATT from 'assets/attType'
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK } = ATT
 import TimetableWrapper from 'components/TimetableWrapper'
 
 export default {
@@ -76,10 +79,6 @@ export default {
       default: null
     },
     standard: {
-      type: Boolean,
-      default: false
-    },
-    select: {
       type: Boolean,
       default: false
     },
@@ -263,15 +262,15 @@ export default {
       }
     },
     timetableTypes: {
-      type: Object,
-      default: () => ({})
+      type: Array,
+      default: () => ([])
     }
   },
   data () {
     return {
       advanced: false,
       model: {
-        schedule_id: '',
+        // schedule_id: null,
         description: '',
         standard: this.standard,
         timetable: []
@@ -311,8 +310,11 @@ export default {
     }
   },
   computed: {
+    withSchedulePresets () {
+      return !!(this.schedulePresets && this.schedulePresets.length > 0)
+    },
     presetScheduleOptions () {
-      return this.schedulePresets ? this.schedulePresets.map(p => ({
+      return this.withSchedulePresets() ? this.schedulePresets.map(p => ({
         label: p.schedule_name,
         sublabel: p.description,
         value: p.schedule_id
@@ -344,6 +346,11 @@ export default {
       if (!type) return
 
       return type.color
+    },
+    addPreset (preset) {
+      let t = preset.timetable()
+      console.log(t)
+      this.model.timetable.push(t)
     }
   }
 }

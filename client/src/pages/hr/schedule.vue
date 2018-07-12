@@ -51,7 +51,7 @@
           </template>
         </q-toolbar>
         <div class="layout-padding group">
-          <schedule-select v-model="$v.item.$model" />
+          <schedule-select v-model="$v.item.$model" standard :timetable-types="timetableTypes"/>
           <!-- <q-field
             :label="$t(`field.schedule_name.label`)"
             :helper="$t(`field.schedule_name.helper`)"
@@ -374,10 +374,7 @@ export default {
             label: t.type_name,
             sublabel: t.description
           })) : []
-          this.timetableTypes = (response[1] && response[1].data) ? response[1].data.reduce((acc, val) => {
-            acc[val.type_id] = val
-            return acc
-          }, {}) : {}
+          this.timetableTypes = (response[1] && response[1].data) ? response[1].data : []
           this.table.loading = false
         })
         .catch(() => {

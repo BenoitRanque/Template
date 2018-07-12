@@ -89,7 +89,11 @@
           <div class="shadow-3 q-pa-md">
               shift
             <div class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
-              <schedule-select v-model="slot.schedule.$model" select standard @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }" :schedule-presets="schedulePresets">
+              <schedule-select
+                v-model="slot.schedule.$model"
+                @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }"
+                :timetable-types="timetableTypes"
+                :schedule-presets="schedulePresets">
                 <div class="col" slot="header">{{slotLabel(index)}}</div>
               </schedule-select>
             </div>
@@ -108,6 +112,8 @@
                 })"></q-btn>
             </div>
           </div>
+          <pre>{{schedulePresets}}</pre>
+          <pre>{{item}}</pre>
           <pre>{{item}}</pre>
           <pre>{{$v}}</pre>
           <!-- <q-field
@@ -135,7 +141,9 @@
 </template>
 
 <script>
-import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE } from 'assets/apiRoutes'
+import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TYPE } from 'assets/apiRoutes'
+import ATT from 'assets/attType'
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import ScheduleSelect from 'components/ScheduleSelect'
@@ -184,6 +192,7 @@ export default {
       editMode: false,
       item: newItem(),
       schedulePresets: [],
+      timetableTypes: [],
       mapItemOptions: {
         // slots: slot => {
         //   slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
@@ -282,7 +291,8 @@ export default {
       Promise.all([
         this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.timetable]' } }),
         this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: 'timetable', standard: true } })
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: 'timetable', standard: true } }),
+        this.$axios.get(HR_ATT_TYPE, { params: { eager: '', type_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
@@ -292,6 +302,7 @@ export default {
             stamp: String(employee.zktime_pin)
           })) : []
           this.schedulePresets = response[2] ? response[2].data : []
+          this.timetableTypes = response[3] ? response[3].data : []
           this.table.loading = false
         })
         .catch(() => {
