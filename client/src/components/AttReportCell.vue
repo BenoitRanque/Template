@@ -15,11 +15,11 @@
             </pre>
           </q-popover>
         </q-btn>
-        <template v-if="attendance.balance.event.extra > 0">
+        <template v-if="attendance.balance.event.unused > 0">
           <br>
           <q-btn icon="warning" size="sm" color="warning" flat round dense>
             <q-tooltip>
-              {{attendance.balance.event.extra}} marcaciones por demas
+              {{attendance.balance.event.unused}} marcaciones por demas
             </q-tooltip>
           </q-btn>
         </template>
