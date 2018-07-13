@@ -68,35 +68,41 @@
             :error="$v.item.employee_id.$error"
             :error-label="validationError($v.item.employee_id)"
           >
-            <q-select v-model="$v.item.employee_id.$model" :options="options.employee_id" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
+            <q-select filter :options="options.employee_id" v-model="$v.item.employee_id.$model" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
           </q-field>
-          <template v-for="(slot, index) in $v.item.slots.$each.$iter">
-            <q-field
-              :key="index"
-              :label="`${$t('field.exception_slot_date.label')} ${Number(index) + 1}`"
-              :helper="$t(`field.exception_slot_date.helper`)"
-              :error="slot.date.$error"
-              :error-label="validationError(slot.date)"
-            >
-              <q-datetime type="date" v-model="slot.date.$model" :placeholder="$t(`field.exception_slot_date.placeholder`)"></q-datetime>
-            </q-field>
-            <q-field
-              :key="index"
-              :label="`${$t('field.exception_slot_schedule.label')} ${Number(index) + 1}`"
-              :helper="$t(`field.exception_slot_schedule.helper`)"
-              :error="slot.schedule.$error"
-              :error-label="validationError(slot.schedule)"
-            >
-              <q-select v-model="slot.schedule.$model" :options="options.schedule" multiple :placeholder="$t('field.exception_slot_schedule.placeholder')"></q-select>
-            </q-field>
-          </template>
-          <div class="row justify-around q-pa-md">
-            <q-btn round icon="remove" color="negative"
-              @click="item.slots.pop()"
-            ></q-btn>
-            <q-btn round icon="add" color="positive"
-              @click="item.slots.push({ schedule: [], date: null })"
-            ></q-btn>
+          <div class="q-headline">Jornadas</div>
+          <div class="q-py-md">
+
+            <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
+              <schedule-select
+                v-model="slot.schedule.$model"
+                @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }"
+                :timetable-types="timetableTypes"
+                :schedule-presets="schedulePresets">
+                <div class="col" slot="header">
+                  <q-datetime type="date" v-model="slot.date.$model" :placeholder="$t(`field.slot_date.placeholder`)"></q-datetime>
+                </div>
+              </schedule-select>
+              <hr>
+            </div>
+            <!-- <div class="shadow-6 q-pa-md">
+              slot/schedule (add toggle here for advanced mode)
+              <div class="shadow-12 q-pa-md">
+                timetable (optional) (other toggle for mor advanced options)
+              </div>
+            </div> -->
+            <div class="row justify-around items-center q-mt-lg">
+                <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()">
+                  <q-tooltip>Remover Jornada</q-tooltip>
+                </q-btn>
+                <q-btn color="positive" icon="add" @click="$v.item.slots.$model.push({
+                  date: null,
+                  schedule: null,
+                  schedule_id: null
+                })">
+                  <q-tooltip>Aggregar Jornada</q-tooltip>
+                </q-btn>
+            </div>
           </div>
         </div>
       </q-modal-layout>
@@ -105,11 +111,14 @@
 </template>
 
 <script>
-import { HR_ATT_SCHEDULE, HR_ATT_EXCEPTION, HR_EMPLOYEE } from 'assets/apiRoutes'
+import { HR_ATT_EXCEPTION, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TYPE } from 'assets/apiRoutes'
+import ATT from 'assets/attType'
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
+import ScheduleSelect from 'components/ScheduleSelect'
 import {
-  // requiredIf,
+  requiredIf,
   // requiredUnless,
   // minLength,
   // maxLength,
@@ -137,27 +146,29 @@ function newItem () {
     description: '',
     employee_id: null,
     slots: []
-
   }
 }
 
 export default {
   name: 'HRAttException',
   mixins: [tableMixin, validationError],
+  components: { ScheduleSelect },
   data () {
     return {
       resource: 'HRAttException',
       apiRoute: HR_ATT_EXCEPTION,
       editMode: false,
       item: newItem(),
+      schedulePresets: [],
+      timetableTypes: [],
       mapItemOptions: {
-        slots: slot => {
-          slot.schedule = slot.schedule.map(schedule => this.options.schedule.find(option => option.value.schedule_id === schedule.schedule_id).value)
-          return slot
-        }
+        // slots: slot => {
+        //   slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
+        //   return slot
+        // }
       },
       options: {
-        schedule: [],
+        // timetable: []
         employee_id: []
       },
       table: {
@@ -192,9 +203,9 @@ export default {
           {
             name: 'slots',
             required: true,
-            label: this.$t('field.shift_slots.label'),
+            label: this.$t('field.exception_slots.label'),
             align: 'left',
-            field: row => row.slots.map(slot => slot.date).join(', '),
+            field: row => row.slots.length,
             sortable: true
           },
           {
@@ -209,7 +220,7 @@ export default {
   validations: {
     item: {
       exception_name: {
-        required
+
       },
       description: {
 
@@ -220,7 +231,10 @@ export default {
       slots: {
         $each: {
           schedule: {
-
+            required
+          },
+          schedule_id: {
+            requiredIf: requiredIf(model => model.schedule && model.schedule.schedule_id)
           },
           date: {
             required
@@ -237,21 +251,20 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[slots.schedule.break, request, authorization, employee]' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[break]' } }),
-        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[employee, slots.schedule.timetable]' } }),
+        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: 'timetable', standard: true } }),
+        this.$axios.get(HR_ATT_TYPE, { params: { eager: '', type_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.schedule = (response[1] && response[1].data) ? response[1].data.map(schedule => ({
-            value: schedule,
-            label: schedule.schedule_name,
-            sublabel: schedule.description
-          })) : []
-          this.options.employee_id = (response[2] && response[2].data) ? response[2].data.map(employee => ({
+          this.options.employee_id = (response[1] && response[1].data) ? response[1].data.map(employee => ({
             value: employee.employee_id,
-            label: employee.name_first + ' ' + employee.name_paternal
+            label: employee.name_first + ' ' + employee.name_paternal,
+            stamp: String(employee.zktime_pin)
           })) : []
+          this.schedulePresets = response[2] ? response[2].data : []
+          this.timetableTypes = response[3] ? response[3].data : []
           this.table.loading = false
         })
         .catch(() => {
@@ -273,7 +286,7 @@ export default {
 {
   "es": {
     "modal": {
-      "title": "Turno",
+      "title": "Excepcion",
       "subtitle": " "
     }
   }

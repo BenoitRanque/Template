@@ -209,5 +209,10 @@ export default {
     'label': 'Contrato',
     'placeholder': ' ',
     'helper': ' '
+  },
+  schedule: {
+    'label': 'Jornada',
+    'placeholder': 'Selleccione Una Jornada',
+    'helper': ' '
   }
 }

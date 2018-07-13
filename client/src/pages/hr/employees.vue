@@ -369,8 +369,6 @@ function newItem () {
 
     contract: [
       {
-        external_contract_id: null,
-        contract_sign_date: date.startOfDate(new Date(), 'day'),
         contract_start_date: null,
         contract_end_date: null,
         contract_active: true,
@@ -803,12 +801,6 @@ export default {
       },
       contract: {
         $each: {
-          external_contract_id: {
-            // required
-          },
-          contract_sign_date: {
-
-          },
           contract_start_date: {
             // required
           },

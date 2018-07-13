@@ -57,7 +57,7 @@ function getAttendanceForDate(date, references, events) {
   let { schedule, exception, shift } = references.find(ref => isSameDay(ref.date, date))
   let rangeForDate = getRangeForDate(date, references)
   let eventsForDate = events.filter(e => isWithinRange(e, rangeForDate.start, rangeForDate.end))
-  let timetable = schedule.timetable.map(t => getAttendanceTimetable(t, references, eventsForDate))
+  let timetable = schedule ? schedule.timetable.map(t => getAttendanceTimetable(t, references, eventsForDate)) : []
   let balance = getAttendanceBalance(timetable, eventsForDate)
 
   if (shift && shift.slots) delete shift.slots
@@ -76,29 +76,37 @@ function getAttendanceForDate(date, references, events) {
 
 function getAttendanceBalance(timetables, events) {
 
-  // TODO: change balance to be for whole day, not individual timetables
   const balance = {
     event: {
       total: events.length,
-      standard: 0,
-      missing: 0,
-      extra: 0
+      normal: 0,
+      unused: 0,
+      missing: 0
     },
     time: {
       [ATT_BREAK]: {
-        standard: 0,
-        missing: 0,
-        extra: 0
+        present: 0,
+        absent: 0,
+        start_late: 0,
+        start_early: 0,
+        end_early: 0,
+        end_late: 0
       },
       [ATT_TIMEOFF]: {
-        standard: 0,
-        missing: 0,
-        extra: 0
+        present: 0,
+        absent: 0,
+        start_late: 0,
+        start_early: 0,
+        end_early: 0,
+        end_late: 0
       },
       [ATT_WORK]: {
-        standard: 0,
-        missing: 0,
-        extra: 0
+        present: 0,
+        absent: 0,
+        start_late: 0,
+        start_early: 0,
+        end_early: 0,
+        end_late: 0
       }
     }
   }
@@ -106,7 +114,11 @@ function getAttendanceBalance(timetables, events) {
   timetables.forEach(timetable => {  
     switch (timetable.type_id) {
       case ATT_WORK:
-        balance.time[ATT_WORK].standard += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        if ((timetable.start_require_event && !timetable.start_event) && (timetable.end_require_event && !timetable.end_event)) {
+          balance.time[ATT_WORK].absent += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        } else {
+          balance.time[ATT_WORK].present += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        }
 
         if (!timetable.start_require_event) {
           // registry not required
@@ -114,7 +126,7 @@ function getAttendanceBalance(timetables, events) {
           // registry required but not provided
           balance.event.missing += 1
         } else {
-          balance.event.standard += 1
+          balance.event.normal += 1
           // registry provided, calculate diference
           // placeholder for different time thresholds. Needs to be replaced
           let THRESHOLD_MISSING = 10
@@ -122,9 +134,9 @@ function getAttendanceBalance(timetables, events) {
           let startDifference = differenceInMinutes(timetable.start_event, timetable.start_time)
 
           if (startDifference > 0) {
-            if (startDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].missing += startDifference
+            if (startDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].start_late += startDifference
           } else {
-            if (Math.abs(startDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].extra += Math.abs(startDifference)
+            if (Math.abs(startDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].start_early += Math.abs(startDifference)
           }
         }
         
@@ -134,30 +146,34 @@ function getAttendanceBalance(timetables, events) {
           // registry required but not provided
           balance.event.missing += 1
         } else {
-          balance.event.standard += 1
+          balance.event.normal += 1
           // placeholder for different time thresholds. Needs to be replaced
           let THRESHOLD_MISSING = 10
           let THRESHOLD_EXTRA = 0
           let endDifference = differenceInMinutes(timetable.end_event, timetable.end_event)
 
           if (endDifference > 0) {
-            if (endDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].missing += endDifference
+            if (endDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].end_early += endDifference
           } else {
-            if (Math.abs(endDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].extra+= Math.abs(endDifference)
+            if (Math.abs(endDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].end_late += Math.abs(endDifference)
           }
         }
 
         break
       case ATT_BREAK:
-        balance.time[ATT_BREAK].standard += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
-        
+        if ((timetable.start_require_event && !timetable.start_event) && (timetable.end_require_event && !timetable.end_event)) {
+          balance.time[ATT_BREAK].absent += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        } else {
+          balance.time[ATT_BREAK].present += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        }
+
         if (!timetable.start_require_event) {
           // registry not required
         } else if (!timetable.start_event) {
           // registry required but not provided
           balance.event.missing += 1
         } else {
-          balance.event.standard += 1
+          balance.event.normal += 1
           // registry provided, calculate diference
         }
         
@@ -167,15 +183,15 @@ function getAttendanceBalance(timetables, events) {
           // registry required but not provided
           balance.event.missing += 1
         } else if (timetable.start_event) {
-          balance.event.standard += 1
+          balance.event.normal += 1
           // placeholder for different time thresholds. Needs to be replaced
           let THRESHOLD = 0
           let endDifference = differenceInMinutes(timetable.end_event, addMinutes(timetable.start_event, differenceInMinutes(timetable.duration, startOfDay(timetable.duration))))
           
           if (endDifference > 0) {
-            if (endDifference > THRESHOLD) balance.time[ATT_BREAK].missing += endDifference
+            if (endDifference > THRESHOLD) balance.time[ATT_BREAK].end_late += endDifference
           } else {
-            if (Math.abs(endDifference) > THRESHOLD) balance.time[ATT_BREAK].extra += Math.abs(endDifference)
+            if (Math.abs(endDifference) > THRESHOLD) balance.time[ATT_BREAK].end_early += Math.abs(endDifference)
           }
         } else {
           throw new Error('Break type timetable requires a start event if there is an end event')
@@ -183,7 +199,7 @@ function getAttendanceBalance(timetables, events) {
 
         break
       case ATT_TIMEOFF:
-        balance.time[ATT_TIMEOFF].standard += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+        balance.time[ATT_TIMEOFF].present += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
 
         break
       default:
@@ -191,7 +207,7 @@ function getAttendanceBalance(timetables, events) {
     }
   })
 
-  balance.event.extra = balance.event.total - balance.event.standard 
+  balance.event.unused = balance.event.total - balance.event.normal
 
   return balance
 }
@@ -250,8 +266,6 @@ function getAttendanceTimetable(timetable, references, events) {
     case ATT_WORK:
       let startRange = getRangeForEvent(timetable.start_time, references)
       let endRange = getRangeForEvent(timetable.end_time, references)
-      console.log('start', format(timetable.start_time, 'HH:mm'), format(startRange.start, 'HH:mm'), format(startRange.end, 'HH:mm'))
-      console.log('end', format(timetable.end_time, 'HH:mm'), format(endRange.start, 'HH:mm'), format(endRange.end, 'HH:mm'))
 
       let candidateStartEvents = events.filter(event => isWithinRange(event, startRange.start, startRange.end))
       let candidateEndEvents = events.filter(event => isWithinRange(event, endRange.start, endRange.end))
@@ -300,7 +314,6 @@ function getRangeForEvent (event, references) {
     })
   }
 
-  console.log('Candidates for event', format(event, 'HH:mm'), ...candidateReferences.map(e => format(e, 'HH:mm')))
   return {
     start: max(...candidateReferences.filter(ref => isBefore(ref, event))),
     end: min(...candidateReferences.filter(ref => isAfter(ref, event)))
@@ -341,14 +354,13 @@ function getRangeForDate(date, references) {
 }
 
 function getScheduleForDate(date, shifts, exceptions) {
-  console.log(date)
 
   // TODO: sort exceptions  to favor the more recently created ones in case multiple ones cover same date
   const exceptionForDate = exceptions.find(exception => exception.slots.any(slot => isSameDay(slot.date === date)))
   const exceptionScheduleForDate = exceptionForDate && exceptionForDate.slots.any(slot => isSameDay(slot.date, date)) ? exceptionForDate.slots.find(slot => isSameDay(slot.date === date)).schedule : null
   
   const shiftForDate = shifts
-    .filter(shift => shift.end_date ? isWithinRange(date, shift.start_date, shift.end_date) : isAfter(date, shift.start_date))
+    .filter(shift => shift.end_date ? isWithinRange(date, shift.start_date, shift.end_date) : !isBefore(date, shift.start_date))
     .sort((a, b) => compareDesc(a.start_date, b.start_date))[0]
 
   const shiftScheduleForDate = (shiftForDate &&  shiftForDate.slots) ? shiftForDate.slots[differenceInCalendarDays(date, shiftForDate.start_date) % shiftForDate.slots.length].schedule : null
@@ -361,7 +373,7 @@ function getScheduleForDate(date, shifts, exceptions) {
       ...scheduleForDate,
       timetable: scheduleForDate.timetable ? scheduleForDate.timetable.map(t => mapTimetableToExpectedDate(date, t)) : null
     } : null,
-    shift: shiftForDate,
+    shift: shiftForDate || null,
     exception: exceptionForDate || null
   }
 }

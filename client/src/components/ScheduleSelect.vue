@@ -3,12 +3,13 @@
     <div class="row">
       <slot name="header"></slot>
       <div class="col-auto">
-        <q-toggle v-if="withSchedulePresets" v-model="advanced" left-label label="avanzado"></q-toggle>
+        <q-toggle v-if="withSchedulePresets" v-model="advanced" left-label class="q-caption" label="Mas opciones"></q-toggle>
       </div>
     </div>
     <slot></slot>
     <q-field v-if="withSchedulePresets && !advanced" :label="$t('field.schedule.label')">
       <q-select
+        :placeholder="$t('field.schedule.placeholder')"
         :options="presetScheduleOptions"
         :value="value ? value.schedule_id : null"
         @input="$event => $emit('input', $event ? schedulePresets.find(p => p.schedule_id === $event) : null)"
@@ -34,10 +35,10 @@
             <q-datetime :format24h="true" float-label="Duracion" class="col-6" type="time" v-model="model.timetable[index].duration"></q-datetime>
             <q-datetime :format24h="false" float-label="Inicio" class="col-6" type="time" v-model="model.timetable[index].start_time"></q-datetime>
             <q-datetime :format24h="false" float-label="Fin" class="col-6" type="time" v-model="model.timetable[index].end_time"></q-datetime>
-            <div class="col-6 q-pt-sm">
+            <div class="q-caption col-6 q-pt-sm">
               <q-checkbox v-model="model.timetable[index].start_require_event" label="debe marcar inicio"></q-checkbox>
             </div>
-            <div class="col-6 q-pt-sm">
+            <div class="q-caption col-6 q-pt-sm">
               <q-checkbox v-model="model.timetable[index].end_require_event" label="debe marcar fin"></q-checkbox>
             </div>
           </div>
@@ -55,13 +56,10 @@
               </q-item>
             </q-list>
           </q-popover>
+          <q-tooltip>Aggregar Componente</q-tooltip>
         </q-btn>
       </div>
     </template>
-    <pre>{{withSchedulePresets}}</pre>
-    <pre>{{schedulePresets.length}}</pre>
-    <pre>{{$data}}</pre>
-    <pre>{{value}}</pre>
   </div>
 </template>
 
@@ -268,13 +266,13 @@ export default {
   },
   data () {
     return {
-      advanced: false,
-      model: {
-        // schedule_id: null,
-        description: '',
-        standard: this.standard,
-        timetable: []
-      }
+      advanced: false
+      // model: {
+      //   // schedule_id: null,
+      //   description: '',
+      //   standard: this.standard,
+      //   timetable: []
+      // }
     }
   },
   watch: {
@@ -287,6 +285,7 @@ export default {
           timetable: []
         }
 
+        copy.standard = false
         delete copy.schedule_id
         delete copy.created_at
         delete copy.updated_at
@@ -310,11 +309,19 @@ export default {
     }
   },
   computed: {
+    model: {
+      get: function () {
+        return this.value
+      },
+      set: function (value) {
+        this.$emit('input', value)
+      }
+    },
     withSchedulePresets () {
       return !!(this.schedulePresets && this.schedulePresets.length > 0)
     },
     presetScheduleOptions () {
-      return this.withSchedulePresets() ? this.schedulePresets.map(p => ({
+      return this.withSchedulePresets ? this.schedulePresets.map(p => ({
         label: p.schedule_name,
         sublabel: p.description,
         value: p.schedule_id
@@ -324,12 +331,12 @@ export default {
       return this.timetablePresets ? this.timetablePresets : []
     },
     timetableTypesOptions () {
-      return this.timetableTypes.map(type => ({
+      return this.timetableTypes ? this.timetableTypes.map(type => ({
         value: type.type_id,
         label: type.type_name,
         sublabel: type.description,
         stamp: type.code
-      }))
+      })) : []
     }
   },
   methods: {

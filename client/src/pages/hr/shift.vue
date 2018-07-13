@@ -86,9 +86,10 @@
           >
             <q-datetime type="date" clearable v-model="$v.item.end_date.$model" :placeholder="$t(`field.end_date.placeholder`)"></q-datetime>
           </q-field>
-          <div class="shadow-3 q-pa-md">
-              shift
-            <div class="shadow-6" v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
+          <div class="q-headline">Jornadas</div>
+          <div class="q-py-md">
+
+            <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
               <schedule-select
                 v-model="slot.schedule.$model"
                 @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }"
@@ -96,6 +97,7 @@
                 :schedule-presets="schedulePresets">
                 <div class="col" slot="header">{{slotLabel(index)}}</div>
               </schedule-select>
+              <hr>
             </div>
             <!-- <div class="shadow-6 q-pa-md">
               slot/schedule (add toggle here for advanced mode)
@@ -104,36 +106,18 @@
               </div>
             </div> -->
             <div class="row justify-around items-center q-mt-lg">
-                <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()"></q-btn>
+                <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()">
+                  <q-tooltip>Remover Jornada</q-tooltip>
+                </q-btn>
                 <q-btn color="positive" icon="add" @click="$v.item.slots.$model.push({
                   index: $v.item.slots.$model.length,
                   schedule: null,
                   schedule_id: null
-                })"></q-btn>
+                })">
+                  <q-tooltip>Aggregar Jornada</q-tooltip>
+                </q-btn>
             </div>
           </div>
-          <pre>{{schedulePresets}}</pre>
-          <pre>{{item}}</pre>
-          <pre>{{item}}</pre>
-          <pre>{{$v}}</pre>
-          <!-- <q-field
-            v-for="(slot, index) in $v.item.slots.$each.$iter"
-            :key="index"
-            :label="`${$t('field.shift_slot.label')} ${Number(index) + 1}`"
-            :helper="$t(`field.shift_slot.helper`)"
-            :error="slot.$error"
-            :error-label="validationError(slot.timetable)"
-          >
-            <q-select v-model="slot.timetable.$model" :options="options.timetable" multiple :placeholder="$t('field.shift_slot.placeholder')"></q-select>
-          </q-field> -->
-          <!-- <div class="row justify-around q-pa-md">
-            <q-btn round icon="remove" color="negative"
-              @click="item.slots.pop()"
-            ></q-btn>
-            <q-btn round icon="add" color="positive"
-              @click="item.slots.push({ timetable: [], index: item.slots.length })"
-            ></q-btn>
-          </div> -->
         </div>
       </q-modal-layout>
     </q-modal>
@@ -252,7 +236,7 @@ export default {
   validations: {
     item: {
       shift_name: {
-        required
+        // required
       },
       description: {
 
@@ -311,12 +295,7 @@ export default {
     },
     deleteParams: (item) => ({ shift_id: item.shift_id }),
     slotLabel (index) {
-      return this.item.start_date ? this.$date.formatDate(this.$date.addToDate(new Date(this.item.start_date), { days: Number(index) }), 'dddd D') : Number(index) + 1
-    }
-  },
-  watch: {
-    'item.slots.index': function () {
-      console.log('there was a change')
+      return `Jornada ${Number(index) + 1}` + (this.item.start_date ? this.$date.formatDate(this.$date.addToDate(new Date(this.item.start_date), { days: Number(index) }), ' - dddd D') : '')
     }
   },
   mounted () {

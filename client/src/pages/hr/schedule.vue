@@ -108,7 +108,6 @@
             </q-btn>
           </div> -->
         </div>
-        <pre>{{$v}}</pre>
       </q-modal-layout>
     </q-modal>
   </q-page>
