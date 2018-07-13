@@ -20,8 +20,7 @@ function createWindow () {
     useContentSize: true
   })
 
-  // mainWindow.loadURL(process.env.APP_URL)
-  mainWindow.loadURL('http://192.168.0.19:80')
+  mainWindow.loadURL(process.env.PROD ? 'http://192.168.0.19:80' : process.env.APP_URL)
 
   mainWindow.on('closed', () => {
     mainWindow = null

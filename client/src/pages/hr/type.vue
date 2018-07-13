@@ -91,6 +91,38 @@
           >
             <q-color v-model="$v.item.color.$model" :placeholder="$t(`field.color.placeholder`)"></q-color>
           </q-field>
+          <q-field
+            :label="$t(`field.start_early_threshold.label`)"
+            :helper="$t(`field.start_early_threshold.helper`)"
+            :error="$v.item.start_early_threshold.$error"
+            :error-label="validationError($v.item.start_early_threshold)"
+          >
+            <q-datetime type="time" :format24h="false" v-model="$v.item.start_early_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
+          </q-field>
+          <q-field
+            :label="$t(`field.start_late_threshold.label`)"
+            :helper="$t(`field.start_late_threshold.helper`)"
+            :error="$v.item.start_late_threshold.$error"
+            :error-label="validationError($v.item.start_late_threshold)"
+          >
+            <q-datetime type="time" format24h v-model="$v.item.start_late_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
+          </q-field>
+          <q-field
+            :label="$t(`field.end_early_threshold.label`)"
+            :helper="$t(`field.end_early_threshold.helper`)"
+            :error="$v.item.end_early_threshold.$error"
+            :error-label="validationError($v.item.end_early_threshold)"
+          >
+            <q-datetime type="time" format24h v-model="$v.item.end_early_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
+          </q-field>
+          <q-field
+            :label="$t(`field.end_late_threshold.label`)"
+            :helper="$t(`field.end_late_threshold.helper`)"
+            :error="$v.item.start_late_threshold.$error"
+            :error-label="validationError($v.item.end_late_threshold)"
+          >
+            <q-datetime type="time" format24h v-model="$v.item.end_late_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
+          </q-field>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -130,7 +162,11 @@ function newItem () {
     type_name: '',
     description: '',
     code: '',
-    color: null
+    color: null,
+    start_early_threshold: null,
+    start_late_threshold: null,
+    end_early_threshold: null,
+    end_late_threshold: null
   }
 }
 
@@ -189,6 +225,34 @@ export default {
             field: 'code'
           },
           {
+            name: 'start_early_threshold',
+            label: this.$t('field.start_early_threshold.label'),
+            align: 'left',
+            sortable: true,
+            field: row => this.$date.formatDate(row.start_early_threshold, 'HH:mm')
+          },
+          {
+            name: 'start_late_threshold',
+            label: this.$t('field.start_late_threshold.label'),
+            align: 'left',
+            sortable: true,
+            field: row => this.$date.formatDate(row.start_late_threshold, 'HH:mm')
+          },
+          {
+            name: 'end_early_threshold',
+            label: this.$t('field.end_early_threshold.label'),
+            align: 'left',
+            sortable: true,
+            field: row => this.$date.formatDate(row.end_early_threshold, 'HH:mm')
+          },
+          {
+            name: 'end_late_threshold',
+            label: this.$t('field.end_late_threshold.label'),
+            align: 'left',
+            sortable: true,
+            field: row => this.$date.formatDate(row.end_late_threshold, 'HH:mm')
+          },
+          {
             name: 'edit',
             label: '',
             required: true
@@ -213,7 +277,11 @@ export default {
       },
       color: {
         required
-      }
+      },
+      start_early_threshold: { required },
+      start_late_threshold: { required },
+      end_early_threshold: { required },
+      end_late_threshold: { required }
     }
   },
   methods: {

@@ -1,6 +1,6 @@
 const knextlite = require('@db/knexlite')
 const { ATT_WORK, ATT_EXTRA, ATT_BREAK, ATT_TIMEOFF, ATT_VACATION, ATT_HOLIDAY, ATT_LEAVE_SICK, ATT_LEAVE_PAID, ATT_LEAVE_UNPAID } = require('@tools/attType')
-const { AttShift, AttException, Employee } = require('@models/hr')
+const { AttShift, AttException, Employee, AttType } = require('@models/hr')
 
 const format = require('date-fns/format')
 const isBefore = require('date-fns/is_before')
@@ -34,15 +34,16 @@ module.exports = async (input, { from, to, employee_id }, context) => {
 }
   
 async function getEmployeeAttendance(employee_id, from, to) {
+  const attTypes = await getAttTypes()
   const employee = await getEmployeeWithValidShiftsExceptions(employee_id, from, to)
-
+  
   const { shifts, exceptions, zktime_pin } = employee
   const punches = await getEmployeePunches(zktime_pin, from, to)
   const events = punches.map(({ punch_time }) => new Date(punch_time)).sort(compareAsc)
 
   const references = eachDay(subDays(from, 1), addDays(to, 2)).map(date => getScheduleForDate(date, shifts, exceptions))
 
-  const attendance = eachDay(from, to).map(date => getAttendanceForDate(date, references, events))
+  const attendance = eachDay(from, to).map(date => getAttendanceForDate(date, references, events, attTypes))
 
   delete employee.shifts
   delete employee.exceptions
@@ -52,13 +53,34 @@ async function getEmployeeAttendance(employee_id, from, to) {
   }
 }
 
-function getAttendanceForDate(date, references, events) {
+async function getAttTypes () {
+  let dayStart = startOfDay(new Date())
+  const types = await AttType.query()
+
+  return types.reduce((acc, val) => {
+    let { type_id, color, code, type_name, description, start_early_threshold, start_late_threshold, end_early_threshold, end_late_threshold } = val
+    acc[type_id] = {
+      type_id,
+      color,
+      code,
+      type_name,
+      description,
+      start_early_threshold: differenceInMinutes(start_early_threshold, dayStart),
+      start_late_threshold: differenceInMinutes(start_late_threshold, dayStart),
+      end_early_threshold: differenceInMinutes(end_early_threshold, dayStart),
+      end_late_threshold: differenceInMinutes(end_late_threshold, dayStart)
+    }
+    return acc
+  }, {})
+}
+
+function getAttendanceForDate(date, references, events, attTypes) {
 
   let { schedule, exception, shift } = references.find(ref => isSameDay(ref.date, date))
   let rangeForDate = getRangeForDate(date, references)
   let eventsForDate = events.filter(e => isWithinRange(e, rangeForDate.start, rangeForDate.end))
   let timetable = schedule ? schedule.timetable.map(t => getAttendanceTimetable(t, references, eventsForDate)) : []
-  let balance = getAttendanceBalance(timetable, eventsForDate)
+  let balance = getAttendanceBalance(timetable, eventsForDate, attTypes)
 
   if (shift && shift.slots) delete shift.slots
   if (exception && exception.slots) delete exception.slots
@@ -74,7 +96,7 @@ function getAttendanceForDate(date, references, events) {
   }
 }
 
-function getAttendanceBalance(timetables, events) {
+function getAttendanceBalance(timetables, events, attTypes) {
 
   const balance = {
     event: {
@@ -129,14 +151,13 @@ function getAttendanceBalance(timetables, events) {
           balance.event.normal += 1
           // registry provided, calculate diference
           // placeholder for different time thresholds. Needs to be replaced
-          let THRESHOLD_MISSING = 10
-          let THRESHOLD_EXTRA = 0
+
           let startDifference = differenceInMinutes(timetable.start_event, timetable.start_time)
 
           if (startDifference > 0) {
-            if (startDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].start_late += startDifference
+            if (startDifference > attTypes[ATT_WORK].start_late_threshold) balance.time[ATT_WORK].start_late += startDifference
           } else {
-            if (Math.abs(startDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].start_early += Math.abs(startDifference)
+            if (Math.abs(startDifference) > attTypes[ATT_WORK].start_early_threshold) balance.time[ATT_WORK].start_early += Math.abs(startDifference)
           }
         }
         
@@ -147,15 +168,13 @@ function getAttendanceBalance(timetables, events) {
           balance.event.missing += 1
         } else {
           balance.event.normal += 1
-          // placeholder for different time thresholds. Needs to be replaced
-          let THRESHOLD_MISSING = 10
-          let THRESHOLD_EXTRA = 0
+
           let endDifference = differenceInMinutes(timetable.end_event, timetable.end_event)
 
           if (endDifference > 0) {
-            if (endDifference > THRESHOLD_MISSING) balance.time[ATT_WORK].end_early += endDifference
+            if (endDifference > attTypes[ATT_WORK].end_early_threshold) balance.time[ATT_WORK].end_early += endDifference
           } else {
-            if (Math.abs(endDifference) > THRESHOLD_EXTRA) balance.time[ATT_WORK].end_late += Math.abs(endDifference)
+            if (Math.abs(endDifference) > attTypes[ATT_WORK].end_late_threshold) balance.time[ATT_WORK].end_late += Math.abs(endDifference)
           }
         }
 
@@ -184,14 +203,13 @@ function getAttendanceBalance(timetables, events) {
           balance.event.missing += 1
         } else if (timetable.start_event) {
           balance.event.normal += 1
-          // placeholder for different time thresholds. Needs to be replaced
-          let THRESHOLD = 0
+
           let endDifference = differenceInMinutes(timetable.end_event, addMinutes(timetable.start_event, differenceInMinutes(timetable.duration, startOfDay(timetable.duration))))
           
           if (endDifference > 0) {
-            if (endDifference > THRESHOLD) balance.time[ATT_BREAK].end_late += endDifference
+            if (endDifference > attTypes[ATT_BREAK].end_late_threshold) balance.time[ATT_BREAK].end_late += endDifference
           } else {
-            if (Math.abs(endDifference) > THRESHOLD) balance.time[ATT_BREAK].end_early += Math.abs(endDifference)
+            if (Math.abs(endDifference) > attTypes[ATT_BREAK].end_early_threshold) balance.time[ATT_BREAK].end_early += Math.abs(endDifference)
           }
         } else {
           throw new Error('Break type timetable requires a start event if there is an end event')

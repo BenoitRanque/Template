@@ -1,5 +1,5 @@
 module.exports = async (input, { eager, type_id }, { authorize, model }) => {
-  console.log(type_id)
+
   let permission = authorize(model.resourceName, 'read', 'any')
 
   let data = await model.query().allowEager('').eager(eager || '').where(query => {
