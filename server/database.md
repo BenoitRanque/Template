@@ -275,9 +275,9 @@ hr_employee_additional_info
 		boolean
 	aporta_afp
 		boolean
-	persona_con_descapacidad
+	persona_con_discapacidad
 		boolean
-	tutor_persona_con_descapacidad
+	tutor_persona_con_discapacidad
 		boolean
 	caja_de_salud
 		int

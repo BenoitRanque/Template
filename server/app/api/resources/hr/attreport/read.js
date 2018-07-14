@@ -44,12 +44,14 @@ async function getEmployeeAttendance(employee_id, from, to) {
   const references = eachDay(subDays(from, 1), addDays(to, 2)).map(date => getScheduleForDate(date, shifts, exceptions))
 
   const attendance = eachDay(from, to).map(date => getAttendanceForDate(date, references, events, attTypes))
+  const report = getAttendanceReport(attendance, attTypes)
 
   delete employee.shifts
   delete employee.exceptions
   return {
     employee,
-    attendance
+    attendance,
+    report
   }
 }
 
@@ -76,11 +78,12 @@ async function getAttTypes () {
 
 function getAttendanceForDate(date, references, events, attTypes) {
 
-  let { schedule, exception, shift } = references.find(ref => isSameDay(ref.date, date))
-  let rangeForDate = getRangeForDate(date, references)
-  let eventsForDate = events.filter(e => isWithinRange(e, rangeForDate.start, rangeForDate.end))
-  let timetable = schedule ? schedule.timetable.map(t => getAttendanceTimetable(t, references, eventsForDate)) : []
-  let balance = getAttendanceBalance(timetable, eventsForDate, attTypes)
+  const { schedule, exception, shift } = references.find(ref => isSameDay(ref.date, date))
+  const rangeForDate = getRangeForDate(date, references)
+  const eventsForDate = events.filter(e => isWithinRange(e, rangeForDate.start, rangeForDate.end))
+  const timetable = schedule ? schedule.timetable.map(t => getAttendanceTimetable(t, references, eventsForDate)) : []
+  const balance = getAttendanceBalance(timetable, eventsForDate, attTypes)
+  const summary = getAttendanceSummary(timetable, balance, attTypes)
 
   if (shift && shift.slots) delete shift.slots
   if (exception && exception.slots) delete exception.slots
@@ -91,8 +94,25 @@ function getAttendanceForDate(date, references, events, attTypes) {
     schedule,
     shift,
     exception,
+    timetable,
     balance,
-    timetable
+    summary
+  }
+}
+
+function getAttendanceReport(attendance, attTypes) {
+  return {
+    // report for all dates for given employee
+  }
+}
+
+function getAttendanceSummary(timetable, balance, attTypes) {
+  // summary for display puposes, covers single date
+  return {
+    // flags determine wether to display certain icons
+    events: timetable.reduce((acc, val) => {
+      // push events, with coresponding type, color?
+    }, [])
   }
 }
 

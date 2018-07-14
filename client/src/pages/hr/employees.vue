@@ -82,8 +82,8 @@
                   document_emitted: 'text',
                   jubilado: 'select',
                   aporta_afp: 'select',
-                  persona_con_descapacidad: 'select',
-                  tutor_persona_con_descapacidad: 'select',
+                  persona_con_discapacidad: 'select',
+                  tutor_persona_con_discapacidad: 'select',
                   caja_de_salud: 'select',
                   afp: 'select',
                   nua_cua: 'text'
@@ -223,8 +223,8 @@
                 document_emitted: 'text',
                 jubilado: 'select',
                 aporta_afp: 'select',
-                persona_con_descapacidad: 'select',
-                tutor_persona_con_descapacidad: 'select',
+                persona_con_discapacidad: 'select',
+                tutor_persona_con_discapacidad: 'select',
                 caja_de_salud: 'select',
                 afp: 'select',
                 nua_cua: 'text',
@@ -360,8 +360,8 @@ function newItem () {
 
     jubilado: false,
     aporta_afp: false,
-    persona_con_descapacidad: false,
-    tutor_persona_con_descapacidad: false,
+    persona_con_discapacidad: false,
+    tutor_persona_con_discapacidad: false,
     caja_de_salud: null,
     afp: null,
     nua_cua: '',
@@ -771,10 +771,10 @@ export default {
       aporta_afp: {
         // required
       },
-      persona_con_descapacidad: {
+      persona_con_discapacidad: {
         // required
       },
-      tutor_persona_con_descapacidad: {
+      tutor_persona_con_discapacidad: {
         // required
       },
       caja_de_salud: {

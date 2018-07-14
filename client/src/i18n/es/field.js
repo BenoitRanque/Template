@@ -125,13 +125,13 @@ export default {
     'placeholder': ' ',
     'helper': ' '
   },
-  persona_con_descapacidad: {
+  persona_con_discapacidad: {
     'label': 'Persona con discapacidad',
     'placeholder': ' ',
     'helper': ' '
   },
-  tutor_persona_con_descapacidad: {
-    'label': 'Tutor de persona con descapacidad',
+  tutor_persona_con_discapacidad: {
+    'label': 'Tutor de persona con discapacidad',
     'placeholder': ' ',
     'helper': ' '
   },
