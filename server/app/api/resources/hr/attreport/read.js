@@ -101,18 +101,112 @@ function getAttendanceForDate(date, references, events, attTypes) {
 }
 
 function getAttendanceReport(attendance, attTypes) {
-  return {
-    // report for all dates for given employee
+  
+  return attendance.reduce((acc, val) => {
+
+  }, {
+    [ATT_BREAK]: {
+      present: {
+        days: 0,
+        hours: 0,
+        minutes: 0
+      },
+      absent: {
+        days: 0,
+        hours: 0,
+        minutes: 0
+      },
+
+    },
+    [ATT_TIMEOFF]: {
+
+    },
+    [ATT_WORK]: {
+
+    }
+  })
+}
+
+event = {
+  total: events.length,
+  normal: 0,
+  unused: 0,
+  missing: 0
+}
+time = {
+  [ATT_BREAK]: {
+    present: 0,
+    absent: 0,
+    start_late: 0,
+    start_early: 0,
+    end_early: 0,
+    end_late: 0
+  },
+  [ATT_TIMEOFF]: {
+    present: 0,
+    absent: 0,
+    start_late: 0,
+    start_early: 0,
+    end_early: 0,
+    end_late: 0
+  },
+  [ATT_WORK]: {
+    present: 0,
+    absent: 0,
+    start_late: 0,
+    start_early: 0,
+    end_early: 0,
+    end_late: 0
   }
 }
+
 
 function getAttendanceSummary(timetable, balance, attTypes) {
   // summary for display puposes, covers single date
   return {
     // flags determine wether to display certain icons
+    flags: {
+      missing_events: balance.event.missing > 0,
+      unused_events: balance.event.unused > 0
+    },
     events: timetable.reduce((acc, val) => {
       // push events, with coresponding type, color?
-    }, [])
+      if (val.start_require_event) {
+        if (val.start_event) {
+          acc.push({
+            time: val.start_event,
+            missing: false,
+            label: format(val.start_event, 'HH:mm'),
+            type_id: val.type_id
+          })
+        } else {
+          acc.push({
+            time: val.start_time,
+            missing: true,
+            label: format(val.start_time, 'HH:mm'),
+            type_id: val.type_id
+          })
+        }
+      }
+      if (val.end_require_event) {
+        if (val.end_event) {
+          acc.push({
+            time: val.end_event,
+            missing: false,
+            label: format(val.end_event, 'HH:mm'),
+            type_id: val.type_id
+          })
+        } else {
+          acc.push({
+            time: val.end_time,
+            missing: true,
+            label: format(val.end_time, 'HH:mm'),
+            type_id: val.type_id
+          })
+        }
+      }
+      return acc
+    }, []).sort((a, b) => compareAsc(a.time, b.time))
   }
 }
 

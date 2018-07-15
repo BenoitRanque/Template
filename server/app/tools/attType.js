@@ -9,12 +9,14 @@ module.exports = {
   ATT_HOLIDAY: 23, //
   ATT_LEAVE_SICK: 24, //
   ATT_LEAVE_PAID: 25, //
-  ATT_LEAVE_UNPAID: 26 //
+  ATT_LEAVE_UNPAID: 26, //
 
   // ATT_ABSENCE: 32, //
   // ATT_ABSENCE_DOUBLE: 33, //
 
-  // ATT_LATE: 41,
-  // ATT_EARLY: 42,
-  // ATT_LATE_BREAK: 43
+  // ATT_START_LATE: 41,
+  // ATT_START_EARLY: 42,
+  // ATT_END_LATE: 43,
+  // ATT_END_EARLY: 44,
+  // ATT_LATE_BREAK: 45
 }
