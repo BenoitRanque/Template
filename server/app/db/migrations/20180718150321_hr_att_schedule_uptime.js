@@ -1,7 +1,7 @@
 
 exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_att_uptime', table => {
-    table.uuid('uptime_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
+    table.uuid('schedule_uptime_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
     table.integer('timetype_id').notNullable()
     table.time('start_time')
