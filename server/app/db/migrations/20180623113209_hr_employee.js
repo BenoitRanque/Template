@@ -37,27 +37,3 @@ exports.up = async function(knex, Promise) {
 exports.down = async function(knex, Promise) {
   await knex.schema.withSchema('public').dropTable('hr_employee')
 };
-
-
-name_first
-name_middle
-name_paternal
-name_maternal
-name_married
-sex
-date_of_birth
-place_of_birth
-nationality
-marital_status
-jubilado
-aporta_afp
-persona_con_discapacidad
-tutor_persona_con_discapacidad
-caja_de_salud
-afp
-nua_cua
-document_type
-document_number
-document_extension
-document_emitted
-zktime_pin
