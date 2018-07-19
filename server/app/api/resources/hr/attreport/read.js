@@ -1,6 +1,6 @@
 const knextlite = require('@db/knexlite')
 const { ATT_WORK, ATT_EXTRA, ATT_BREAK, ATT_TIMEOFF, ATT_VACATION, ATT_HOLIDAY, ATT_LEAVE_SICK, ATT_LEAVE_PAID, ATT_LEAVE_UNPAID } = require('@tools/attType')
-const { AttShift, AttException, Employee, AttType } = require('@models/hr')
+const { AttShift, AttException, Employee, AttTimetype } = require('@models/hr')
 
 const format = require('date-fns/format')
 const isBefore = require('date-fns/is_before')
@@ -126,40 +126,6 @@ function getAttendanceReport(attendance, attTypes) {
     }
   })
 }
-
-event = {
-  total: events.length,
-  normal: 0,
-  unused: 0,
-  missing: 0
-}
-time = {
-  [ATT_BREAK]: {
-    present: 0,
-    absent: 0,
-    start_late: 0,
-    start_early: 0,
-    end_early: 0,
-    end_late: 0
-  },
-  [ATT_TIMEOFF]: {
-    present: 0,
-    absent: 0,
-    start_late: 0,
-    start_early: 0,
-    end_early: 0,
-    end_late: 0
-  },
-  [ATT_WORK]: {
-    present: 0,
-    absent: 0,
-    start_late: 0,
-    start_early: 0,
-    end_early: 0,
-    end_late: 0
-  }
-}
-
 
 function getAttendanceSummary(timetable, balance, attTypes) {
   // summary for display puposes, covers single date

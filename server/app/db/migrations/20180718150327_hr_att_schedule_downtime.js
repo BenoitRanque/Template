@@ -3,6 +3,7 @@ exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_att_downtime', table => {
     table.uuid('schedule_downtime_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
+    table.text('description')
     table.integer('timetype_id').notNullable()
 
     table.decimal('value', 13, 12)

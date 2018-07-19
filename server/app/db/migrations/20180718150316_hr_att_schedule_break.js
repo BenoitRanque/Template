@@ -3,6 +3,7 @@ exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_att_break', table => {
     table.uuid('schedule_break_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
+    table.text('description')
     table.integer('timetype_id').notNullable()
     table.time('start_time')
     // table.specificType('start_time', 'TIME(6) WITH TIME ZONE')

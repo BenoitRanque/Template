@@ -101,7 +101,10 @@ module.exports = function (ctx) {
         'QTd',
         'QTh',
         'QSearch',
-        'QSlideTransition'
+        'QSlideTransition',
+        'QStepper',
+        'QStep',
+        'QStepperNavigation'
       ],
       directives: [
         'Ripple',

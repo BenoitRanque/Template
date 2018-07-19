@@ -1,13 +1,19 @@
 const router = require('express').Router()
 const Resolver = require('@tools/resolver')
 const {
-  AttSchedule, AttException, AttExceptionRequest, AttExceptionAuthorization, AttExceptionCancelation, AttShift, AttShiftAssign, AttType, Employee } = require('@models/hr')
+  AttSchedule, AttException, AttExceptionRequest, AttExceptionAuthorization, AttShift, AttType, Employee } = require('@models/hr')
 
 router.route('/attexception')
   .get(new Resolver(require('@resources/hr/attexception/read'), AttException))
   .post(new Resolver(require('@resources/hr/attexception/create'), AttException))
   .put(new Resolver(require('@resources/hr/attexception/update'), AttException))
   .delete(new Resolver(require('@resources/hr/attexception/delete'), AttException))
+
+router.route('/attexception/request')
+  .post(new Resolver(require('@resources/hr/attexception/request/create'), AttExceptionRequest))
+
+router.route('/attexception/authorization')
+  .post(new Resolver(require('@resources/hr/attexception/authorization/create'), AttExceptionAuthorization))
 
 router.route('/attshift')
   .get(new Resolver(require('@resources/hr/attshift/read'), AttShift))

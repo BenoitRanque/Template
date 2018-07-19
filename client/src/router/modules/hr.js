@@ -55,6 +55,18 @@ export default {
       }
     },
     {
+      hash: 'exceptionRequest',
+      layout: 'workspace',
+      meta: {
+        label: 'attexceptionrequest',
+        requireAuthentication: true,
+        requireAuthorization: {
+          resource: 'HRAttExceptionRequest',
+          posession: 'any'
+        }
+      }
+    },
+    {
       hash: 'shift',
       layout: 'workspace',
       meta: {
