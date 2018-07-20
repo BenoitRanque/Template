@@ -90,13 +90,16 @@
           <div class="q-py-md">
 
             <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
-              <schedule-select
+              <q-field :label="slotLabel(index)">
+                <schedule-select2 class="col" v-model="slot.$model" @remove="$v.item.slots.$model.splice(Number(index), 1)"></schedule-select2>
+              </q-field>
+              <!-- <schedule-select
                 v-model="slot.schedule.$model"
                 @input="$event => { slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null }"
                 :timetable-types="timetableTypes"
                 :schedule-presets="schedulePresets">
                 <div class="col" slot="header">{{slotLabel(index)}}</div>
-              </schedule-select>
+              </schedule-select> -->
               <hr>
             </div>
             <!-- <div class="shadow-6 q-pa-md">
@@ -125,12 +128,12 @@
 </template>
 
 <script>
-import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TYPE } from 'assets/apiRoutes'
+import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
 import ATT from 'assets/attType'
 const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
-import ScheduleSelect from 'components/ScheduleSelect'
+import ScheduleSelect2 from 'components/ScheduleSelect2'
 import {
   requiredIf,
   // requiredUnless,
@@ -161,14 +164,50 @@ function newItem () {
     employee_id: null,
     start_date: null,
     end_date: null,
-    slots: []
+    slots: [
+      {
+        index: 0,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 1,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 2,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 3,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 4,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 5,
+        schedule: null,
+        schedule_id: null
+      },
+      {
+        index: 6,
+        schedule: null,
+        schedule_id: null
+      }
+    ]
   }
 }
 
 export default {
   name: 'HRAttShift',
   mixins: [tableMixin, validationError],
-  components: { ScheduleSelect },
+  components: { ScheduleSelect2 },
   data () {
     return {
       resource: 'HRAttShift',
@@ -273,10 +312,10 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.timetable]' } }),
+        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.[break, uptime, downtime]]' } }),
         this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: 'timetable', standard: true } }),
-        this.$axios.get(HR_ATT_TYPE, { params: { eager: '', type_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[break, uptime, downtime]', standard: true } }),
+        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', timetype_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []

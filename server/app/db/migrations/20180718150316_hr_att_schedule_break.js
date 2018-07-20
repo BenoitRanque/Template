@@ -1,6 +1,6 @@
 
 exports.up = async function(knex, Promise) {
-  await knex.schema.withSchema('public').createTable('hr_att_break', table => {
+  await knex.schema.withSchema('public').createTable('hr_att_schedule_break', table => {
     table.uuid('schedule_break_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.uuid('schedule_id')
     table.text('description')
@@ -21,5 +21,5 @@ exports.up = async function(knex, Promise) {
 };
 
 exports.down = async function(knex, Promise) {
-  await knex.schema.withSchema('public').dropTable('hr_att_break')
+  await knex.schema.withSchema('public').dropTable('hr_att_schedule_break')
 };

@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="row q-px-sm" v-if="advancedTimetable">
-      <q-select class="col-6" :options="options.type_id" v-model="model.type_id"></q-select>
+      <q-select class="col-6" :options="options.type_id" v-model="model.timetype_id"></q-select>
       <q-datetime :format24h="true" class="col-6" type="time" v-model="model.duration"></q-datetime>
       <q-datetime :format24h="false" class="col-6" type="time" v-model="model.start_time"></q-datetime>
       <q-datetime :format24h="false" class="col-6" type="time" v-model="model.end_time"></q-datetime>
@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     timetableSummary () {
-      switch (this.model.type_id) {
+      switch (this.model.timetype_id) {
         case ATT_TIMEOFF:
           return `Duración ${this.$date.formatDate(this.model.duration, 'HH:mm')}`
         case ATT_BREAK:

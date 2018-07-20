@@ -95,6 +95,7 @@ module.exports = function (ctx) {
         'QItem',
         'QItemMain',
         'QItemSide',
+        'QItemTile',
         'QTable',
         'QTableColumns',
         'QTr',

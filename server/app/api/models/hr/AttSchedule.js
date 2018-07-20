@@ -5,9 +5,9 @@ module.exports = class HRAttSchedule extends Model {
   static get tableName () { return 'hr_att_schedule' }
   static get idColumn () { return 'schedule_id' }
   static get relationMappings () {
-    const AttTimetable = require('./AttTimetable')
-    const AttShiftSlot = require('./AttShiftSlot')
-    const AttExceptionSlot = require('./AttExceptionSlot')
+    const AttScheduleBreak = require('./AttScheduleBreak')
+    const AttScheduleUptime = require('./AttScheduleUptime')
+    const AttScheduleDowntime = require('./AttScheduleDowntime')
     return {
       // 'shift_slot': {
       //   relation: HasManyRelation,
@@ -25,12 +25,28 @@ module.exports = class HRAttSchedule extends Model {
       //     to: AttExceptionSlot.tableName + '.schedule_id'
       //   }
       // },
-      'timetable': {
+      'break': {
         relation: HasManyRelation,
-        modelClass: AttTimetable,
+        modelClass: AttScheduleBreak,
         join: {
           from: this.tableName + '.schedule_id',
-          to: AttTimetable.tableName + '.schedule_id'
+          to: AttScheduleBreak.tableName + '.schedule_id'
+        }
+      },
+      'uptime': {
+        relation: HasManyRelation,
+        modelClass: AttScheduleUptime,
+        join: {
+          from: this.tableName + '.schedule_id',
+          to: AttScheduleUptime.tableName + '.schedule_id'
+        }
+      },
+      'downtime': {
+        relation: HasManyRelation,
+        modelClass: AttScheduleDowntime,
+        join: {
+          from: this.tableName + '.schedule_id',
+          to: AttScheduleDowntime.tableName + '.schedule_id'
         }
       }
     }

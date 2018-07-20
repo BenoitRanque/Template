@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { HR_ATT_TYPE } from 'assets/apiRoutes'
+import { HR_ATT_TIMETYPE } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -176,7 +176,7 @@ export default {
   data () {
     return {
       resource: 'HRAttType',
-      apiRoute: HR_ATT_TYPE,
+      apiRoute: HR_ATT_TIMETYPE,
       editMode: false,
       item: newItem(),
       table: {
@@ -292,7 +292,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_TYPE, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []

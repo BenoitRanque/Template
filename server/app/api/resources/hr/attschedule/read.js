@@ -2,7 +2,7 @@ module.exports = async (input, { eager, standard }, { authorize, model }) => {
 
   let permission = authorize(model.resourceName, 'read', 'any')
 
-  let data = await model.query().allowEager('[timetable]').eager(eager || '').where(query => {
+  let data = await model.query().allowEager('[break, uptime, downtime]').eager(eager || '').where(query => {
     standard === undefined ? null : query.where({ standard })
   })
 
