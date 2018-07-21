@@ -91,7 +91,7 @@
 
             <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
               <q-field :label="slotLabel(index)">
-                <schedule-select2 class="col" v-model="slot.$model" @remove="$v.item.slots.$model.splice(Number(index), 1)"></schedule-select2>
+                <schedule-select2 class="col" :value="slot.$model" @input="slot.$model = $event" @remove="$v.item.slots.$model.splice(Number(index), 1)"></schedule-select2>
               </q-field>
               <!-- <schedule-select
                 v-model="slot.schedule.$model"

@@ -1,116 +1,91 @@
 <template>
   <div>
-    <q-stepper vertical :order="0" ref="stepper">
-      <q-step default name="first" title="Bienvenido" subtitle="Empecemos">
-        <div class="q-headline">
-          Bievenido al formulario de creacion de jornada
-        </div>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.next()" size="lg" color="primary" icon-right="arrow_forward">Empezar</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-      <q-step :order="1" name="second" title="Nombre e Descripcion">
-        <div class="q-headline">
-          Nombre e descripcion
-        </div>
-        <q-input placeholder="Nombre de la jornada" v-model="model.schedule_name"></q-input>
-        <q-input placeholder="Descripcion" v-model="model.description"></q-input>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
-          <q-btn @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-      <q-step :order="2" name="third" title="Tiempo Laboral">
-        <div class="q-headline">
-          Tiempo laboral
-        </div>
-        <schedule-uptime v-for="(item, index) in model.uptime" :key="index" v-model="model.uptime[index]" @remove="model.uptime.splice(index, 1)"></schedule-uptime>
-        <div class="text-center q-pa-md">
-          <q-btn size="lg" icon="add">
-            Aggregar
-            <q-popover>
-              <q-list link>
-                <q-item v-for="(preset, index) in uptimePresets" :key="index" v-close-overlay @click.native="model.uptime.push(preset.preset())">
-                  <q-item-main>
-                    <q-item-tile label>{{preset.label}}</q-item-tile>
-                    <q-item-tile sublabel>{{preset.sublabel}}</q-item-tile>
-                  </q-item-main>
-                </q-item>
-              </q-list>
-            </q-popover>
+    <q-input placeholder="Nombre de la jornada" v-model="$v.model.schedule_name.$model"></q-input>
+    <q-input placeholder="Descripcion" v-model="$v.model.description.$model"></q-input>
+    <div class="row gutter-sm q-my-sm">
+      <div class="col">
+        <div class="q-title">Tiempo Laboral</div>
+        <schedule-uptime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.uptime.$each.$iter" :key="index" v-model="item.$model" @remove="model.uptime.splice(Number(index), 1)"></schedule-uptime>
+      </div>
+      <div class="col">
+        <div class="q-title">Tiempo Pausa</div>
+        <schedule-break :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.break.$each.$iter" :key="index" v-model="item.$model" @remove="model.break.splice(Number(index), 1)"></schedule-break>
+      </div>
+      <div class="col">
+        <div class="q-title">Tiempo Libre</div>
+        <schedule-downtime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.downtime.$each.$iter" :key="index" v-model="item.$model" @remove="model.downtime.splice(Number(index), 1)"></schedule-downtime>
+      </div>
+    </div>
+    <q-slide-transition>
+      <div class="row" v-show="advanced">
+        <div class="col text-center q-my-md">
+          <q-btn
+            @click="model.break.push({
+              timetype_id: null,
+              description: '',
+              start_time: null,
+              start_require_event: true,
+              end_time: null,
+              end_require_event: true,
+              value: 0
+            })"
+            flat rounded icon="add">
+            <q-tooltip>
+              Aggregar Tiempo Laboral
+            </q-tooltip>
           </q-btn>
         </div>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
-          <q-btn @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-      <q-step :order="3" name="fourth" title="Tiempo Pausa">
-        <div class="q-headline">
-          Tiempo pausa
-        </div>
-        <schedule-break v-for="(item, index) in model.break" :key="index" v-model="model.break[index]" @remove="model.break.splice(index, 1)"></schedule-break>
-        <div class="text-center q-pa-md">
-          <q-btn size="lg" icon="add">
-            Aggregar
-            <q-popover>
-              <q-list link>
-                <q-item v-for="(preset, index) in breakPresets" :key="index" v-close-overlay @click.native="model.break.push(preset.preset())">
-                  <q-item-main>
-                    <q-item-tile label>{{preset.label}}</q-item-tile>
-                    <q-item-tile sublabel>{{preset.sublabel}}</q-item-tile>
-                  </q-item-main>
-                </q-item>
-              </q-list>
-            </q-popover>
+        <div class="col text-center q-my-md">
+          <q-btn
+            @click="model.break.push({
+              timetype_id: null,
+              description: '',
+              start_time: null,
+              start_require_event: true,
+              end_time: null,
+              end_require_event: true,
+              duration: null
+            })"
+            flat rounded icon="add">
+            <q-tooltip>
+              Aggregar Tiempo de Pausa
+            </q-tooltip>
           </q-btn>
         </div>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
-          <q-btn @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-      <q-step :order="4" name="fifth" title="Tiempo Libre">
-        <div class="q-headline">
-          Tiempo libre
-        </div>
-        <schedule-downtime v-for="(item, index) in model.downtime" :key="index" v-model="model.downtime[index]" @remove="model.downtime.splice(index, 1)"></schedule-downtime>
-        <div class="text-center q-pa-md">
-          <q-btn size="lg" icon="add">
-            Aggregar
-            <q-popover>
-              <q-list link>
-                <q-item v-for="(preset, index) in downtimePresets" :key="index" v-close-overlay @click.native="model.downtime.push(preset.preset())">
-                  <q-item-main>
-                    <q-item-tile label>{{preset.label}}</q-item-tile>
-                    <q-item-tile sublabel>{{preset.sublabel}}</q-item-tile>
-                  </q-item-main>
-                </q-item>
-              </q-list>
-            </q-popover>
+        <div class="col text-center q-my-md">
+          <q-btn
+            @click="model.break.push({
+              timetype_id: null,
+              description: '',
+              value: 0
+            })"
+            flat rounded icon="add">
+            <q-tooltip>
+              Aggregar Tiempo Libre
+            </q-tooltip>
           </q-btn>
         </div>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
-          <q-btn @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-      <q-step :order="5" name="sixth" title="Terminar">
-        <div class="q-display-1">
-          Terminar
-        </div>
-        <div class="text-negative" v-if="!$v.model.scheduleLength">
-          La suma del tiempo trabajado y del tiempo libre debe ser 100% de un dia
-        </div>
-        <schedule-dense :value="model"></schedule-dense>
-        <q-stepper-navigation class="justify-around">
-          <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
-          <q-btn @click="finish()" :disable="$v.model.$invalid" size="lg" color="primary" icon-right="arrow_forward">Terminar</q-btn>
-        </q-stepper-navigation>
-      </q-step>
-    </q-stepper>
-    <pre>{{model}}</pre>
-    <pre>{{$v}}</pre>
+      </div>
+    </q-slide-transition>
+    <div class="text-center q-my-md">
+      <q-btn-group rounded>
+        <q-btn rounded dense size="sm" icon="build" @click="advanced = !advanced">
+          <q-tooltip>
+            Modo avanzado
+          </q-tooltip>
+        </q-btn>
+        <q-btn-dropdown rounded size="md" label="Selecionar">
+          <q-list link>
+            <q-item v-for="(preset, index) in presets" :key="index" v-close-overlay @click.native="model = JSON.parse(JSON.stringify(preset))">
+              <q-item-main>
+                <q-item-tile label>{{preset.schedule_name}}</q-item-tile>
+                <q-item-tile sublabel>{{preset.description}}</q-item-tile>
+              </q-item-main>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+      </q-btn-group>
+    </div>
   </div>
 </template>
 
@@ -140,6 +115,7 @@ import {
   // withParams,
   required
 } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 import ATT from 'assets/attType'
 const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK } = ATT
 
@@ -147,7 +123,7 @@ function newModel (standard) {
   return {
     schedule_name: '',
     description: '',
-    standard,
+    standard: standard,
     break: [],
     uptime: [],
     downtime: []
@@ -171,6 +147,7 @@ export default {
   },
   data () {
     return {
+      advanced: false,
       model: newModel(this.standard),
       breakPresets: [
         {
@@ -371,18 +348,13 @@ export default {
   validations: {
     model: {
       required,
-      scheduleLength: schedule =>
-        schedule.uptime.reduce((acc, val) => acc + val.value, 0) +
-        schedule.downtime.reduce((acc, val) => acc + val.value, 0) === 1,
+      totalModelValue: function (model) { return this.totalModelValue === 1 },
       schedule_name: {
         requiredIf: requiredIf(function (model) {
           return this.standard
         })
       },
       description: {
-        requiredIf: requiredIf(function (model) {
-          return this.standard
-        })
       },
       break: {
         $each: {
@@ -415,24 +387,64 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('hr', {
+      presets: 'schedulePresets'
+    }),
+    valid: {
+      get () {
+        return !this.$v.model.$invalid
+      }
+    },
+    totalUpValue: {
+      get () {
+        return this.model.uptime.reduce((acc, val) => acc + val.value, 0)
+      }
+    },
+    totalDownValue: {
+      get () {
+        return this.model.downtime.reduce((acc, val) => acc + val.value, 0)
+      }
+    },
+    totalModelValue: {
+      get () {
+        return this.totalUpValue + this.totalDownValue
+      }
+    }
+  },
   watch: {
-    value () {
-      if (this.value === null) {
-        this.model = newModel(this.standard)
+    value (value) {
+      if (value === this.model) {
+        console.log('value and model are equal')
+      } else if (value !== null) {
+        this.model = value
+      }
+    },
+    model: {
+      deep: true,
+      handler () {
+        if (this.valid) {
+          this.$q.notify('hello')
+          this.$emit('input', this.model)
+        } else {
+          this.$q.notify('bye')
+          this.$emit('input', null)
+        }
       }
     }
   },
   methods: {
-    reset () {
-      this.model = newModel(this.standard)
-      this.$refs.stepper.reset()
-    },
-    finish () {
-      if (!this.$v.model.$invalid) {
-        this.$emit('input', this.model)
-        this.reset()
-      }
-    }
+
+    // reset () {
+    //   this.model = newModel(this.standard)
+    //   this.$refs.stepper.reset()
+    // },
+    // finish () {
+    //   if (!this.$v.model.$invalid) {
+    //     this.$emit('input', this.model)
+    //     this.reset()
+    //   }
+    // }
   }
 }
 </script>
