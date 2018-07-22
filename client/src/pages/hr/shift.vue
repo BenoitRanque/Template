@@ -91,7 +91,15 @@
 
             <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
               <q-field :label="slotLabel(index)">
-                <schedule-select2 class="col" :value="slot.$model" @input="slot.$model = $event" @remove="$v.item.slots.$model.splice(Number(index), 1)"></schedule-select2>
+                <schedule-select class="col"
+                  :value="slot.$model"
+                  @input="$set($v.item.slots.$model, Number(index), $event)"
+                ></schedule-select>
+                <div class="col-auto">
+                  <q-btn dense color="negative" icon="close" @click="$v.item.slots.$model.splice(Number(index), 1)">
+                    <q-tooltip>Quitar Dia</q-tooltip>
+                  </q-btn>
+                </div>
               </q-field>
               <!-- <schedule-select
                 v-model="slot.schedule.$model"
@@ -133,7 +141,7 @@ import ATT from 'assets/attType'
 const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
-import ScheduleSelect2 from 'components/ScheduleSelect2'
+import ScheduleSelect from 'components/ScheduleSelect'
 import {
   requiredIf,
   // requiredUnless,
@@ -207,7 +215,7 @@ function newItem () {
 export default {
   name: 'HRAttShift',
   mixins: [tableMixin, validationError],
-  components: { ScheduleSelect2 },
+  components: { ScheduleSelect },
   data () {
     return {
       resource: 'HRAttShift',
@@ -305,6 +313,10 @@ export default {
     }
   },
   methods: {
+    slotInput (input, index) {
+      this.$q.notify('input received')
+      this.$set(this.item.slots, index, input)
+    },
     newItem () {
       // return default item. Important
       return newItem()

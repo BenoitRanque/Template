@@ -133,45 +133,7 @@ export default {
         required,
         $each: {
           date: { required },
-          schedule: {
-            required,
-            scheduleLength: schedule => {
-              // sum of up and downtime value must be 1
-              console.log('schedule', schedule)
-              return true
-            },
-            schedule_name: {},
-            description: {},
-            break: {
-              $each: {
-                timetype_id: { required },
-                description: { },
-                start_time: { required },
-                start_require_event: { },
-                end_time: { required },
-                end_require_event: { },
-                duration: { required }
-              }
-            },
-            uptime: {
-              $each: {
-                timetype_id: { required },
-                description: { },
-                start_time: { required },
-                start_require_event: { },
-                end_time: { required },
-                end_require_event: { },
-                value: { required }
-              }
-            },
-            downtime: {
-              $each: {
-                timetype_id: { required },
-                description: { },
-                value: { required }
-              }
-            }
-          }
+          schedule: { required }
         }
       }
     }

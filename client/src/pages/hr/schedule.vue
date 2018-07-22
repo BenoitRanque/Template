@@ -51,7 +51,7 @@
           </template>
         </q-toolbar>
         <div class="layout-padding group">
-          <schedule-create standard v-model="$v.item.$model"/>
+          <schedule standard v-model="$v.item.$model"/>
           <!-- <q-field
             :label="$t(`field.schedule_name.label`)"
             :helper="$t(`field.schedule_name.helper`)"
@@ -115,7 +115,7 @@
 
 <script>
 import { HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
-import ScheduleCreate from 'components/ScheduleCreate'
+import Schedule from 'components/Schedule'
 import ATT from 'assets/attType'
 const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
@@ -149,7 +149,7 @@ function newItem () {
 export default {
   name: 'HRAttSchedule',
   mixins: [tableMixin, validationError],
-  components: { ScheduleCreate },
+  components: { Schedule },
   data () {
     return {
       resource: 'HRAttSchedule',

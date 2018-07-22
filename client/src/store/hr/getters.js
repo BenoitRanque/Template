@@ -32,6 +32,24 @@ export function downtimeTimetypesOptions (state) {
   ]
 }
 
+export function subordinateEmployeeOptions () {
+  return [
+    {
+      value: 'Employee ID',
+      label: 'An Employee'
+    }
+  ]
+}
+
+export function standardScheduleOptions () {
+  return [
+    {
+      value: 'Schedule ID',
+      label: 'A schedule'
+    }
+  ]
+}
+
 const LUNCH = {
   timetype_id: ATT_BREAK,
   description: 'Almuerzo',

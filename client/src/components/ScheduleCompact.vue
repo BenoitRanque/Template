@@ -50,7 +50,7 @@
 
 <script>
 export default {
-  name: 'ScheduleDense',
+  name: 'ScheduleCompact',
   props: {
     value: {
       type: Object,
