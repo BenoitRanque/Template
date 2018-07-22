@@ -91,14 +91,16 @@
 
             <div v-for="(slot, index) in $v.item.slots.$each.$iter" :key="index">
               <q-field :label="slotLabel(index)">
-                <schedule-select class="col"
-                  :value="slot.$model"
-                  @input="$set($v.item.slots.$model, Number(index), $event)"
-                ></schedule-select>
-                <div class="col-auto">
-                  <q-btn dense color="negative" icon="close" @click="$v.item.slots.$model.splice(Number(index), 1)">
-                    <q-tooltip>Quitar Dia</q-tooltip>
-                  </q-btn>
+                <div class="row">
+                  <schedule-select class="col"
+                    :value="slot.$model"
+                    @input="$set($v.item.slots.$model, Number(index), $event)"
+                  ></schedule-select>
+                  <div class="col-auto">
+                    <q-btn dense color="negative" icon="close" @click="$v.item.slots.$model.splice(Number(index), 1)">
+                      <q-tooltip>Quitar Dia</q-tooltip>
+                    </q-btn>
+                  </div>
                 </div>
               </q-field>
               <!-- <schedule-select

@@ -156,7 +156,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ExceptionSlot from 'components/ExceptionSlot'
 import ScheduleCompact from 'components/ScheduleCompact'
 import ScheduleSelect from 'components/ScheduleSelect'
 import {
@@ -182,7 +181,7 @@ import {
 } from 'vuelidate/lib/validators'
 export default {
   name: 'Exception',
-  components: { ExceptionSlot, ScheduleCompact, ScheduleSelect },
+  components: { ScheduleCompact, ScheduleSelect },
   data () {
     return {
       date1: null,
