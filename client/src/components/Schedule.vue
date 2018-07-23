@@ -76,7 +76,7 @@
         </q-btn>
         <q-btn-dropdown rounded size="md" label="Selecionar">
           <q-list link>
-            <q-item v-for="(preset, index) in presets" :key="index" v-close-overlay @click.native="setPresetModel(preset)">
+            <q-item v-for="(preset, index) in presets" :key="index" v-close-overlay @click.native="setPresetModelValue(preset)">
               <q-item-main>
                 <q-item-tile label>{{preset.schedule_name}}</q-item-tile>
                 <q-item-tile sublabel>{{preset.description}}</q-item-tile>
@@ -86,6 +86,9 @@
         </q-btn-dropdown>
       </q-btn-group>
     </div>
+    <pre>valid: {{valid}}</pre>
+    <pre>model: {{!!model}}</pre>
+    <pre>value: {{!!value}}</pre>
   </div>
 </template>
 
@@ -121,7 +124,7 @@ function newModel (standard) {
   return {
     schedule_name: '',
     description: '',
-    standard: standard,
+    standard,
     break: [],
     uptime: [],
     downtime: []
@@ -202,12 +205,12 @@ export default {
     },
     totalUpValue: {
       get () {
-        return this.model.uptime.reduce((acc, val) => acc + val.value, 0)
+        return this.model.uptime.reduce((acc, val) => acc + Number(val.value), 0)
       }
     },
     totalDownValue: {
       get () {
-        return this.model.downtime.reduce((acc, val) => acc + val.value, 0)
+        return this.model.downtime.reduce((acc, val) => acc + Number(val.value), 0)
       }
     },
     totalModelValue: {
@@ -217,6 +220,11 @@ export default {
     }
   },
   watch: {
+    value (value) {
+      if (value !== null && value !== this.model) {
+        this.model = value
+      }
+    },
     model: {
       deep: true,
       handler () {
@@ -225,8 +233,12 @@ export default {
     }
   },
   methods: {
-    setPresetModel (preset) {
-      this.model = Object.assign({}, { standard: this.standard }, JSON.parse(JSON.stringify(preset)))
+    setPresetModelValue (preset) {
+      this.model = Object.assign(this.model,
+        this.value ? this.value : {},
+        { standard: this.standard },
+        JSON.parse(JSON.stringify(preset))
+      )
     }
   }
 }

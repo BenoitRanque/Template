@@ -3,8 +3,8 @@ const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRela
 const { formatDate, formatTime, parseDate, parseTime, parseInterval } = require('@tools/dateUtils')
 
 module.exports = class HRAttScheduleDowntime extends Model {
-  static get tableName () { return 'hr_att_schedule_break' }
-  static get idColumn () { return 'schedule_break_id' }
+  static get tableName () { return 'hr_att_schedule_downtime' }
+  static get idColumn () { return 'schedule_downtime_id' }
   static get relationMappings () {
     const AttTimetype = require('./AttTimetype')
     const AttSchedule = require('./AttSchedule')

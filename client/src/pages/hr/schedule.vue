@@ -43,7 +43,7 @@
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <template v-if="editMode">
 
-            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
+            <q-btn v-if="isAuthorized(resource, 'delete', 'any')" size="lg" rounded color="negative" icon="delete" :disable="$v.item.$invalid" @click="deleteItem(item)">{{$t('buttons.deleteItem')}}</q-btn>
             <q-btn v-if="isAuthorized(resource, 'update', 'any')" size="lg" rounded color="positive" icon="save" :disable="$v.item.$invalid" @click="updateItem(item)">{{$t('buttons.updateItem')}}</q-btn>
           </template>
           <template v-else>
@@ -52,6 +52,8 @@
         </q-toolbar>
         <div class="layout-padding group">
           <schedule standard v-model="$v.item.$model"/>
+          <pre>item: {{!!item}}</pre>
+          <pre>id: {{item && !!item.schedule_id}}</pre>
           <!-- <q-field
             :label="$t(`field.schedule_name.label`)"
             :helper="$t(`field.schedule_name.helper`)"
@@ -144,7 +146,14 @@ import {
 
 function newItem () {
   // return default item. Important
-  return null
+  return {
+    schedule_name: '',
+    description: '',
+    standard: true,
+    break: [],
+    uptime: [],
+    downtime: []
+  }
 }
 export default {
   name: 'HRAttSchedule',

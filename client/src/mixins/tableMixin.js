@@ -34,6 +34,10 @@ export default {
               })
             })
         })
+        .catch(() => {
+          this.$q.loading.hide()
+          this.$q.notify('SYSTEM ERROR')
+        })
     },
     updateItem (item) {
       this.$q.dialog({
@@ -62,6 +66,10 @@ export default {
               })
             })
         })
+        .catch(() => {
+          this.$q.loading.hide()
+          this.$q.notify('SYSTEM ERROR')
+        })
     },
     deleteItem (item) {
       this.$q.dialog({
@@ -89,6 +97,10 @@ export default {
                 type: 'positive'
               })
             })
+        })
+        .catch(() => {
+          this.$q.loading.hide()
+          this.$q.notify('SYSTEM ERROR')
         })
     },
 
