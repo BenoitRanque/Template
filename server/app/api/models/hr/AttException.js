@@ -8,6 +8,7 @@ module.exports = class HRAttException extends Model {
     const AttExceptionSlot = require('./AttExceptionSlot')
     const AttExceptionRequest = require('./AttExceptionRequest')
     const AttExceptionAuthorization = require('./AttExceptionAuthorization')
+    const AttTransaction = require('./AttTransaction')
     const Employee = require('./Employee')
     return {
       'slots': {
@@ -40,6 +41,14 @@ module.exports = class HRAttException extends Model {
         join: {
           from: this.tableName + '.exception_id',
           to: AttExceptionAuthorization.tableName + '.exception_id'
+        }
+      },
+      'transaction': {
+        relation: HasManyRelation,
+        modelClass: AttTransaction,
+        join: {
+          from: this.tableName + '.exception_slot_id',
+          to: AttTransaction.tableName + '.exception_slot_id'
         }
       }
     }

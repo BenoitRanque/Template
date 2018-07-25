@@ -8,7 +8,7 @@ module.exports = class HRAttTransaction extends Model {
   static get relationMappings () {
     const AttType = require('./AttType')
     const AttSchedule = require('./AttSchedule')
-    const AttExceptionSlot = require('./AttExceptionSlot')
+    const AttException = require('./AttException')
     const Employee = require('./Employee')
     const User = require('@models/core/User')
     return {
@@ -28,12 +28,12 @@ module.exports = class HRAttTransaction extends Model {
           to: Employee.tableName + '.employee_id'
         }
       },
-      'exception_slot': {
+      'exception': {
         relation: BelongsToOneRelation,
-        modelClass: AttExceptionSlot,
+        modelClass: AttException,
         join: {
-          from: this.tableName + '.exception_slot_id',
-          to: AttExceptionSlot.tableName + '.exception_slot_id'
+          from: this.tableName + '.exception_id',
+          to: AttException.tableName + '.exception_id'
         }
       },
       'schedule': {

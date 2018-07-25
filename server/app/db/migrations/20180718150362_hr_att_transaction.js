@@ -9,13 +9,13 @@ exports.up = async function(knex, Promise) {
     table.text('type')
     table.decimal('amount', 15, 12)
     table.uuid('user_id')
-    table.uuid('exception_slot_id')
+    table.uuid('exception_id')
     
     table.timestamps()
     
     table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')
-    table.foreign('exception_slot_id').references('exception_slot_id').inTable('hr_att_exception_slot').onUpdate('CASCADE').onDelete('RESTRICT')
+    table.foreign('exception_id').references('exception_id').inTable('hr_att_exception').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };
 

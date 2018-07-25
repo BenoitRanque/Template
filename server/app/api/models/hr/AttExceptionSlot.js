@@ -7,7 +7,6 @@ module.exports = class HRAttExceptionSlot extends Model {
   static get relationMappings () {
     const AttException = require('./AttException')
     const AttSchedule = require('./AttSchedule')
-    const AttTransaction = require('./AttTransaction')
     return {
       'exception': {
         relation: BelongsToOneRelation,
@@ -23,14 +22,6 @@ module.exports = class HRAttExceptionSlot extends Model {
         join: {
           from: this.tableName + '.schedule_id',
           to: AttSchedule.tableName + '.schedule_id'
-        }
-      },
-      'transaction': {
-        relation: HasManyRelation,
-        modelClass: AttTransaction,
-        join: {
-          from: this.tableName + '.exception_slot_id',
-          to: AttTransaction.tableName + '.exception_slot_id'
         }
       }
     }
