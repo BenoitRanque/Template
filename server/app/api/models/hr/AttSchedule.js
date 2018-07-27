@@ -6,7 +6,7 @@ module.exports = class HRAttSchedule extends Model {
   static get tableName () { return 'hr_att_schedule' }
   static get idColumn () { return 'schedule_id' }
   static get relationMappings () {
-    const AttScheduleBreak = require('./AttScheduleBreak')
+    const AttScheduleBreaktime = require('./AttScheduleBreaktime')
     const AttScheduleUptime = require('./AttScheduleUptime')
     const AttScheduleDowntime = require('./AttScheduleDowntime')
     return {
@@ -26,12 +26,12 @@ module.exports = class HRAttSchedule extends Model {
       //     to: AttExceptionSlot.tableName + '.schedule_id'
       //   }
       // },
-      'break': {
+      'breaktime': {
         relation: HasManyRelation,
-        modelClass: AttScheduleBreak,
+        modelClass: AttScheduleBreaktime,
         join: {
           from: this.tableName + '.schedule_id',
-          to: AttScheduleBreak.tableName + '.schedule_id'
+          to: AttScheduleBreaktime.tableName + '.schedule_id'
         }
       },
       'uptime': {

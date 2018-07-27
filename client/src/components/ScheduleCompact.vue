@@ -25,7 +25,7 @@
     </div>
     <div class="col-3">
       <div class="">Tiempo Pausa</div>
-      <div class="row" v-for="(b, index) in value.break" :key="index">
+      <div class="row" v-for="(b, index) in value.breaktime" :key="index">
         <div class="col-3">
           <q-checkbox :value="b.start_require_event" readonly>
             <q-tooltip>Marca Inicio</q-tooltip>

@@ -1,5 +1,5 @@
 const knextlite = require('@db/knexlite')
-const { ATT_WORK, ATT_EXTRA, ATT_BREAK, ATT_TIMEOFF, ATT_VACATION, ATT_HOLIDAY, ATT_LEAVE_SICK, ATT_LEAVE_PAID, ATT_LEAVE_UNPAID } = require('@tools/attType')
+const { ATT_WORK, ATT_EXTRA, ATT_BREAKTIME, ATT_TIMEOFF, ATT_VACATION, ATT_HOLIDAY, ATT_LEAVE_SICK, ATT_LEAVE_PAID, ATT_LEAVE_UNPAID } = require('@tools/attType')
 const { AttShift, AttException, Employee, AttTimetype } = require('@models/hr')
 
 const format = require('date-fns/format')
@@ -105,7 +105,7 @@ function getAttendanceReport(attendance, attTypes) {
   return attendance.reduce((acc, val) => {
 
   }, {
-    [ATT_BREAK]: {
+    [ATT_BREAKTIME]: {
       present: {
         days: 0,
         hours: 0,
@@ -186,7 +186,7 @@ function getAttendanceBalance(timetables, events, attTypes) {
       missing: 0
     },
     time: {
-      [ATT_BREAK]: {
+      [ATT_BREAKTIME]: {
         present: 0,
         absent: 0,
         start_late: 0,
@@ -259,11 +259,11 @@ function getAttendanceBalance(timetables, events, attTypes) {
         }
 
         break
-      case ATT_BREAK:
+      case ATT_BREAKTIME:
         if ((timetable.start_require_event && !timetable.start_event) && (timetable.end_require_event && !timetable.end_event)) {
-          balance.time[ATT_BREAK].absent += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+          balance.time[ATT_BREAKTIME].absent += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
         } else {
-          balance.time[ATT_BREAK].present += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
+          balance.time[ATT_BREAKTIME].present += differenceInMinutes(timetable.duration, startOfDay(timetable.duration))
         }
 
         if (!timetable.start_require_event) {
@@ -287,12 +287,12 @@ function getAttendanceBalance(timetables, events, attTypes) {
           let endDifference = differenceInMinutes(timetable.end_event, addMinutes(timetable.start_event, differenceInMinutes(timetable.duration, startOfDay(timetable.duration))))
           
           if (endDifference > 0) {
-            if (endDifference > attTypes[ATT_BREAK].end_late_threshold) balance.time[ATT_BREAK].end_late += endDifference
+            if (endDifference > attTypes[ATT_BREAKTIME].end_late_threshold) balance.time[ATT_BREAKTIME].end_late += endDifference
           } else {
-            if (Math.abs(endDifference) > attTypes[ATT_BREAK].end_early_threshold) balance.time[ATT_BREAK].end_early += Math.abs(endDifference)
+            if (Math.abs(endDifference) > attTypes[ATT_BREAKTIME].end_early_threshold) balance.time[ATT_BREAKTIME].end_early += Math.abs(endDifference)
           }
         } else {
-          throw new Error('Break type timetable requires a start event if there is an end event')
+          throw new Error('Breaktime type timetable requires a start event if there is an end event')
         }
 
         break
@@ -353,7 +353,7 @@ function getHalfpointBetweenDates(a, b) {
 function getAttendanceTimetable(timetable, references, events) {
 
   switch (timetable.type_id) {
-    case ATT_BREAK:
+    case ATT_BREAKTIME:
       let candidateEvents = events.filter(event => isWithinRange(event, timetable.start_time, timetable.end_time)).sort(compareAsc)
       
       return {
@@ -391,7 +391,7 @@ function getRangeForEvent (event, references) {
   if (eventRef && eventRef.schedule && eventRef.schedule.timetable) {
     eventRef.schedule.timetable.forEach(timetable => {
       switch (timetable.type_id) {
-        case ATT_BREAK:
+        case ATT_BREAKTIME:
           if (timetable.start_require_event && timetable.start_time !== null) candidateReferences.push(timetable.start_time)
           if (timetable.end_require_event && timetable.end_time !== null) candidateReferences.push(timetable.end_time)
           break
@@ -489,7 +489,7 @@ function mapTimetableToExpectedDate(date, { type_id, timetable_name, duration, s
         end_time: isBefore(end_time, start_time) ? combineDateAndTime(addDays(date, 1), end_time) : combineDateAndTime(date, end_time),
         end_require_event
       }
-      case ATT_BREAK:
+      case ATT_BREAKTIME:
       return {
         type_id,
         date,

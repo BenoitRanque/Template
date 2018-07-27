@@ -31,7 +31,7 @@
 import AttReportCell from 'components/AttReportCell'
 import { HR_ATT_REPORT, HR_EMPLOYEE } from 'assets/apiRoutes'
 import attTypes from 'assets/attType'
-const { ATT_BREAK, ATT_WORK, ATT_TIMEOFF } = attTypes
+const { ATT_BREAKTIME, ATT_WORK, ATT_TIMEOFF } = attTypes
 import {
   // requiredIf,
   // requiredUnless,
@@ -61,7 +61,7 @@ export default {
   data () {
     return {
       attType: {
-        ATT_BREAK,
+        ATT_BREAKTIME,
         ATT_WORK,
         ATT_TIMEOFF
       },
@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     filterTimetables (timetable) {
-      return timetable.filter(t => t.type_id !== ATT_BREAK)
+      return timetable.filter(t => t.type_id !== ATT_BREAKTIME)
     },
     refresh () {
       Promise.all([

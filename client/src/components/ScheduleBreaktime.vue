@@ -18,7 +18,7 @@
     <q-slide-transition>
       <div class="row" v-show="edit">
         <div class="col-6">
-          <q-select v-model="model.timetype_id" :options="breakTimetypesOptions"></q-select>
+          <q-select v-model="model.timetype_id" :options="breaktimeTimetypesOptions"></q-select>
         </div>
         <div class="col-6">
           <q-datetime v-model="model.duration" type="time" format24h></q-datetime>
@@ -85,7 +85,7 @@ export default {
       }
     },
     ...mapGetters('hr', {
-      'breakTimetypesOptions': 'breakTimetypesOptions'
+      'breaktimeTimetypesOptions': 'breaktimeTimetypesOptions'
     })
   }
 }

@@ -140,7 +140,7 @@
 <script>
 import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
 import ATT from 'assets/attType'
-const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA } = ATT
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import ScheduleSelect from 'components/ScheduleSelect'
@@ -326,10 +326,10 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.[break, uptime, downtime]]' } }),
+        this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]' } }),
         this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[break, uptime, downtime]', standard: true } }),
-        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', timetype_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[breaktime, uptime, downtime]', standard: true } }),
+        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', timetype_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA] } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []

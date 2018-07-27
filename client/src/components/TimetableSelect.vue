@@ -24,7 +24,7 @@
 
 <script>
 import attType from 'assets/attType'
-const { ATT_TIMEOFF, ATT_BREAK, ATT_WORK } = attType
+const { ATT_TIMEOFF, ATT_BREAKTIME, ATT_WORK } = attType
 
 export default {
   name: 'TimetableSelect',
@@ -45,7 +45,7 @@ export default {
       switch (this.model.timetype_id) {
         case ATT_TIMEOFF:
           return `Duración ${this.$date.formatDate(this.model.duration, 'HH:mm')}`
-        case ATT_BREAK:
+        case ATT_BREAKTIME:
           return `${this.$date.formatDate(this.model.duration, 'HH:mm')} entre ${this.$date.formatDate(this.model.start_time, 'HH:mm')}-${this.$date.formatDate(this.model.end_time, 'HH:mm')}`
         case ATT_WORK:
           return `${this.$date.formatDate(this.model.start_time, 'HH:mm')}-${this.$date.formatDate(this.model.end_time, 'HH:mm')} duración ${this.$date.formatDate(this.model.duration, 'HH:mm')}`

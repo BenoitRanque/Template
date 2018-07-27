@@ -2,9 +2,9 @@ const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 const { formatDate, formatTime, parseDate, parseTime, parseInterval } = require('@tools/dateUtils')
 
-module.exports = class HRAttScheduleBreak extends Model {
-  static get tableName () { return 'hr_att_schedule_break' }
-  static get idColumn () { return 'schedule_break_id' }
+module.exports = class HRAttScheduleBreaktime extends Model {
+  static get tableName () { return 'hr_att_schedule_breaktime' }
+  static get idColumn () { return 'schedule_breaktime_id' }
   static get relationMappings () {
     const AttTimetype = require('./AttTimetype')
     const AttSchedule = require('./AttSchedule')

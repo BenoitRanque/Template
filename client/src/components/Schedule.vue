@@ -9,7 +9,7 @@
       </div>
       <div class="col">
         <div class="q-title">Tiempo Pausa</div>
-        <schedule-break :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.break.$each.$iter" :key="index" v-model="item.$model" @remove="model.break.splice(Number(index), 1)"></schedule-break>
+        <schedule-breaktime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.breaktime.$each.$iter" :key="index" v-model="item.$model" @remove="model.breaktime.splice(Number(index), 1)"></schedule-breaktime>
       </div>
       <div class="col">
         <div class="q-title">Tiempo Libre</div>
@@ -37,7 +37,7 @@
         </div>
         <div class="col text-center q-my-md">
           <q-btn
-            @click="model.break.push({
+            @click="model.breaktime.push({
               timetype_id: null,
               description: '',
               start_time: null,
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import ScheduleBreak from './ScheduleBreak'
+import ScheduleBreaktime from './ScheduleBreaktime'
 import ScheduleUptime from './ScheduleUptime'
 import ScheduleDowntime from './ScheduleDowntime'
 import ScheduleCompact from './ScheduleCompact'
@@ -125,7 +125,7 @@ function newModel (standard) {
     schedule_name: '',
     description: '',
     standard,
-    break: [],
+    breaktime: [],
     uptime: [],
     downtime: []
   }
@@ -133,7 +133,7 @@ function newModel (standard) {
 
 export default {
   name: 'Schedule',
-  components: { ScheduleBreak, ScheduleUptime, ScheduleDowntime, ScheduleCompact },
+  components: { ScheduleBreaktime, ScheduleUptime, ScheduleDowntime, ScheduleCompact },
   props: {
     standard: {
       type: Boolean,
@@ -163,7 +163,7 @@ export default {
       },
       description: {
       },
-      break: {
+      breaktime: {
         $each: {
           timetype_id: { required },
           description: { },

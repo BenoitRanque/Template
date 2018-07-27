@@ -1,11 +1,14 @@
 
 exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_att_timetype', table => {
-    table.integer('timetype_id').primary()
-    table.text('category')
+    table.increments('timetype_id').primary()
     table.text('timetype_name')
     table.text('description')
-    table.text('code').unique().notNullable()
+    table.enum('category', ['BREAKTIMETIME', 'UPTIME', 'DOWNTIME'])
+    table.boolean('additional') // whhether this type of time will count towards the standard day value, false on extra hours
+    table.boolean('accountable') // whether this type of time will go to account on changes
+    table.boolean('paid') // whether this type of time is paid
+    table.text('code')
     table.text('color')
    
     table.timestamps()

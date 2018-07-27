@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import { HR_ATT_BREAK } from 'assets/apiRoutes'
+import { HR_ATT_BREAKTIME } from 'assets/apiRoutes'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -131,12 +131,12 @@ function newItem () {
 }
 
 export default {
-  name: 'HRAttBreak',
+  name: 'HRAttBreaktime',
   mixins: [tableMixin, validationError],
   data () {
     return {
-      resource: 'HRAttBreak',
-      apiRoute: HR_ATT_BREAK,
+      resource: 'HRAttBreaktime',
+      apiRoute: HR_ATT_BREAKTIME,
       editMode: false,
       item: newItem(),
       table: {
@@ -228,7 +228,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_BREAK, { params: { eager: '' } })
+        this.$axios.get(HR_ATT_BREAKTIME, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []

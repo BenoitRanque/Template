@@ -6,7 +6,7 @@ module.exports = {
   AttShift: require('./AttShift'),
   AttShiftSlot: require('./AttShiftSlot'),
   AttSchedule: require('./AttSchedule'),
-  AttScheduleBreak: require('./AttScheduleBreak'),
+  AttScheduleBreaktime: require('./AttScheduleBreaktime'),
   AttScheduleUptime: require('./AttScheduleUptime'),
   AttScheduleDowntime: require('./AttScheduleDowntime'),
   AttTimetype: require('./AttTimetype'),

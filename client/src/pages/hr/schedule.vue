@@ -116,10 +116,11 @@
 </template>
 
 <script>
-import { HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
+import { HR_ATT_SCHEDULE } from 'assets/apiRoutes'
 import Schedule from 'components/Schedule'
-import ATT from 'assets/attType'
-const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA } = ATT
+// import ATT from 'assets/attType'
+// const { ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA } = ATT
+import { mapActions } from 'vuex'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import {
@@ -150,7 +151,7 @@ function newItem () {
     schedule_name: '',
     description: '',
     standard: true,
-    break: [],
+    breaktime: [],
     uptime: [],
     downtime: []
   }
@@ -223,6 +224,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('hr', { fetchTimetypes: 'fetchTimetypes' }),
     newItem () {
       // return default item. Important
       return newItem()
@@ -230,17 +232,18 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[break, uptime, downtime]' } }),
-        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', timetype_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAK, ATT_EXTRA] } })
+        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[breaktime, uptime, downtime]' } }),
+        this.fetchTimetypes()
+        // this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '' } })
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.timetype_id = (response[1] && response[1].data) ? response[1].data.map(t => ({
-            value: t.timetype_id,
-            label: t.type_name,
-            sublabel: t.description
-          })) : []
-          this.timetableTypes = (response[1] && response[1].data) ? response[1].data : []
+          // this.options.timetype_id = (response[1] && response[1].data) ? response[1].data.map(t => ({
+          //   value: t.timetype_id,
+          //   label: t.type_name,
+          //   sublabel: t.description
+          // })) : []
+          // this.timetableTypes = (response[1] && response[1].data) ? response[1].data : []
           this.table.loading = false
         })
         .catch(() => {
@@ -256,17 +259,17 @@ export default {
         if (clone[propName] instanceof Date) clone[propName] = this.$date.clone(clone[propName])
       })
       return clone
-    },
-    timetableSummary (timetable) {
-      switch (timetable.timetype_id) {
-        case ATT_TIMEOFF:
-          return `Duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
-        case ATT_BREAK:
-          return `${this.$date.formatDate(timetable.duration, 'HH:mm')} entre ${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')}`
-        case ATT_WORK:
-          return `${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')} duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
-      }
     }
+    // timetableSummary (timetable) {
+    //   switch (timetable.timetype_id) {
+    //     case ATT_TIMEOFF:
+    //       return `Duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
+    //     case ATT_BREAKTIME:
+    //       return `${this.$date.formatDate(timetable.duration, 'HH:mm')} entre ${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')}`
+    //     case ATT_WORK:
+    //       return `${this.$date.formatDate(timetable.start_time, 'HH:mm')}-${this.$date.formatDate(timetable.end_time, 'HH:mm')} duración ${this.$date.formatDate(timetable.duration, 'HH:mm')}`
+    //   }
+    // }
   },
   mounted () {
     this.fetchItems()

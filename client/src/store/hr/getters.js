@@ -1,57 +1,47 @@
 import { date } from 'quasar'
 const { buildDate } = date
 import ATT from 'assets/attType'
-const { ATT_TIMEOFF, ATT_WORK, ATT_BREAK } = ATT
+const { ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME } = ATT
 /*
 export const someGetter = (state) => {
 }
 */
 
-export function breakTimetypesOptions (state) {
-  return [
-    {
-      value: ATT_BREAK,
-      label: 'Tiempo Almuerzo'
-    }
-  ]
+export function timetypeById (state) {
+  return timetypeId => state.timetypes && state.timetypes.length ? state.timetypes.find(t => t.timetype_id === timetypeId) : null
+}
+
+export function timeTypes (state) {
+  return state.timetypes
+}
+
+export function breaktimeTimetypesOptions (state) {
+  return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'BREAKTIMETIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []
 }
 export function uptimeTimetypesOptions (state) {
-  return [
-    {
-      value: ATT_WORK,
-      label: 'Tiempo laboral'
-    }
-  ]
+  return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'UPTIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []
 }
 export function downtimeTimetypesOptions (state) {
-  return [
-    {
-      value: ATT_TIMEOFF,
-      label: 'Tiempo libre'
-    }
-  ]
+  return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'DOWNTIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []
 }
 
-export function subordinateEmployeeOptions () {
-  return [
-    {
-      value: 'Employee ID',
-      label: 'An Employee'
-    }
-  ]
+export function subordinateEmployeeOptions (state) {
+  return state.subordinateEmployees.map(e => ({
+    value: e.employee_id,
+    label: e.name_first
+  }))
 }
 
-export function standardScheduleOptions () {
-  return [
-    {
-      value: 'Schedule ID',
-      label: 'A schedule'
-    }
-  ]
+export function standardScheduleOptions (state) {
+  return state.standardSchedules.map(s => ({
+    value: s,
+    label: s.schedule_name,
+    sublabel: s.description
+  }))
 }
 
 const LUNCH = {
-  timetype_id: ATT_BREAK,
+  timetype_id: ATT_BREAKTIME,
   description: 'Almuerzo',
   start_time: buildDate({hours: 11, minutes: 0, seconds: 0, milliseconds: 0}),
   start_require_event: true,
@@ -76,7 +66,7 @@ export function schedulePresets () {
       schedule_name: 'Dia Libre',
       description: '',
       uptime: [],
-      break: [],
+      breaktime: [],
       downtime: [DAYOFF]
     },
     {
@@ -93,7 +83,7 @@ export function schedulePresets () {
           value: 1
         }
       ],
-      break: [LUNCH],
+      breaktime: [LUNCH],
       downtime: []
     },
     {
@@ -110,7 +100,7 @@ export function schedulePresets () {
           value: 1
         }
       ],
-      break: [LUNCH],
+      breaktime: [LUNCH],
       downtime: []
     },
     {
@@ -127,7 +117,7 @@ export function schedulePresets () {
           value: 1
         }
       ],
-      break: [LUNCH],
+      breaktime: [LUNCH],
       downtime: []
     },
     {
@@ -144,7 +134,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -161,7 +151,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -178,7 +168,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -195,7 +185,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -212,7 +202,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -229,7 +219,7 @@ export function schedulePresets () {
           value: 0.5
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: [HALFDAYOFF]
     },
     {
@@ -255,7 +245,7 @@ export function schedulePresets () {
           value: 0.5625
         }
       ],
-      break: [],
+      breaktime: [],
       downtime: []
     }
   ]

@@ -25,7 +25,7 @@ export default {
         label: 'attbreak',
         requireAuthentication: true,
         requireAuthorization: {
-          resource: 'HRAttBreak',
+          resource: 'HRAttBreaktime',
           posession: 'any'
         }
       }
