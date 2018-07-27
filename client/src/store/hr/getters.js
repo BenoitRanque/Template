@@ -16,7 +16,7 @@ export function timeTypes (state) {
 }
 
 export function breaktimeTimetypesOptions (state) {
-  return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'BREAKTIMETIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []
+  return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'BREAKTIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []
 }
 export function uptimeTimetypesOptions (state) {
   return state.timetypes && state.timetypes.length ? state.timetypes.filter(t => t.category === 'UPTIME').map(t => ({ value: t.timetype_id, label: t.timetype_name })) : []

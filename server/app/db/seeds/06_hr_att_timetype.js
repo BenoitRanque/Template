@@ -9,7 +9,7 @@ exports.seed = async function(knex, Promise) {
     { timetype_name: 'Trabajo', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true },
     { timetype_name: 'Trabajo Cuidad', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true },
     { timetype_name: 'Tiempo Extra', code: '', color: '#FFF', category: 'UPTIME', additional: true, accountable: false, paid: true },
-    { timetype_name: 'Almuerzo', code: '', color: '#FFF', category: 'BREAKTIMETIME', additional: false, accountable: false, paid: true },
+    { timetype_name: 'Almuerzo', code: '', color: '#FFF', category: 'BREAKTIME', additional: false, accountable: false, paid: true },
     { timetype_name: 'Libre', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
     { timetype_name: 'Feriado', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
     { timetype_name: 'Vacacion', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
