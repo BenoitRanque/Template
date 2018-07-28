@@ -228,8 +228,7 @@ export default {
     model: {
       deep: true,
       handler () {
-        this.$emit('input', this.model)
-        // this.$emit('input', this.valid ? this.model : null)
+        this.$emit('input', this.valid ? this.model : null)
       }
     }
   },

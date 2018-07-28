@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col">
-      <q-select hide-underline v-if="standard" :value="value.schedule_id" @input="inputScheduleId" :options="standardScheduleOptions"></q-select>
+      <q-select hide-underline v-if="standard" :value="value.schedule_id" @input="inputSchedule" :options="standardScheduleOptions"></q-select>
       <q-input hide-underline v-else :value="value.schedule ? value.schedule.schedule_name : ''"></q-input>
     </div>
     <div class="col-auto">
@@ -74,6 +74,11 @@ export default {
       const copy = Object.assign({}, this.value, {
         schedule
       })
+      if (schedule.schedule_id) {
+        copy.schedule_id = schedule.schedule_id
+      } else {
+        delete copy.schedule_id
+      }
       this.$emit('input', copy)
     },
     inputScheduleId (scheduleId) {

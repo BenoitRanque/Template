@@ -68,7 +68,7 @@
             :error="$v.item.employee_id.$error"
             :error-label="validationError($v.item.employee_id)"
           >
-            <q-select filter :options="options.employee_id" v-model="$v.item.employee_id.$model" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
+            <q-select filter :options="subordinateEmployeeOptions" v-model="$v.item.employee_id.$model" :placeholder="$t(`field.employee_id.placeholder`)"></q-select>
           </q-field>
           <q-field
             :label="$t(`field.start_date.label`)"
@@ -94,6 +94,8 @@
                 <div class="row">
                   <schedule-select class="col"
                     :value="slot.$model"
+                    v-model="slot.schedule.$model"
+                    @input="slot.schdule_id.$model = $event.schedule_id ? $event.schedule_id : null"
                     @input="$set($v.item.slots.$model, Number(index), $event)"
                   ></schedule-select>
                   <div class="col-auto">
@@ -132,15 +134,15 @@
             </div>
           </div>
         </div>
+        <pre>{{item}}</pre>
       </q-modal-layout>
     </q-modal>
   </q-page>
 </template>
 
 <script>
-import { HR_ATT_SHIFT, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
-import ATT from 'assets/attType'
-const { ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA } = ATT
+import { HR_ATT_SHIFT } from 'assets/apiRoutes'
+import { mapActions, mapGetters } from 'vuex'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import ScheduleSelect from 'components/ScheduleSelect'
@@ -302,10 +304,13 @@ export default {
       slots: {
         $each: {
           schedule: {
-            required
+            requiredIf: requiredIf(model => {
+              console.log(model)
+              return !model.schedule_id
+            })
           },
           schedule_id: {
-            requiredIf: requiredIf(model => model.schedule && model.schedule.schedule_id)
+            requiredIf: requiredIf(model => !model.schedule || (model.schedule && model.schedule.schedule_id))
           },
           index: {
             required
@@ -314,7 +319,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('hr', {
+      subordinateEmployeeOptions: 'subordinateEmployeeOptions'
+    })
+  },
   methods: {
+    ...mapActions('hr', {
+      fetchTimetypes: 'fetchTimetypes',
+      fetchSubordinateEmployees: 'fetchSubordinateEmployees',
+      fetchStandardSchedules: 'fetchStandardSchedules'
+    }),
     slotInput (input, index) {
       this.$q.notify('input received')
       this.$set(this.item.slots, index, input)
@@ -327,19 +342,12 @@ export default {
       this.table.loading = true
       Promise.all([
         this.$axios.get(HR_ATT_SHIFT, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]' } }),
-        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[breaktime, uptime, downtime]', standard: true } }),
-        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', timetype_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA] } })
+        this.fetchTimetypes(),
+        this.fetchSubordinateEmployees(),
+        this.fetchStandardSchedules()
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.employee_id = (response[1] && response[1].data) ? response[1].data.map(employee => ({
-            value: employee.employee_id,
-            label: employee.name_first + ' ' + employee.name_paternal,
-            stamp: String(employee.zktime_pin)
-          })) : []
-          this.schedulePresets = response[2] ? response[2].data : []
-          this.timetableTypes = response[3] ? response[3].data : []
           this.table.loading = false
         })
         .catch(() => {

@@ -1,11 +1,10 @@
 module.exports = async (input, params, { model, authorize }) => {
-console.log(input)
-console.log(input.slots)
+
   let permission = authorize(model.resourceName, 'create', 'any')
 
-  let data = await model.query().allowUpsert('slots.schedule.timetable')
+  let data = await model.query().allowUpsert('[slots.schedule.[breaktime, uptime, downtime], employee]')
     .upsertGraph(permission.filter(input), {
-      relate: ['slots.schedule', 'slots.schedule.timetable'],
+      relate: ['employee'],
       insertMissing: ['slots'],
       noUpdate: true
     }).returning('*')
