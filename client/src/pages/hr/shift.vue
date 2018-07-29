@@ -93,10 +93,8 @@
               <q-field :label="slotLabel(index)">
                 <div class="row">
                   <schedule-select class="col"
-                    :value="slot.$model"
                     v-model="slot.schedule.$model"
-                    @input="slot.schdule_id.$model = $event.schedule_id ? $event.schedule_id : null"
-                    @input="$set($v.item.slots.$model, Number(index), $event)"
+                    @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
                   ></schedule-select>
                   <div class="col-auto">
                     <q-btn dense color="negative" icon="close" @click="$v.item.slots.$model.splice(Number(index), 1)">
@@ -121,10 +119,7 @@
               </div>
             </div> -->
             <div class="row justify-around items-center q-mt-lg">
-                <q-btn color="negative" icon="remove" @click="$v.item.slots.$model.pop()">
-                  <q-tooltip>Remover Jornada</q-tooltip>
-                </q-btn>
-                <q-btn color="positive" icon="add" @click="$v.item.slots.$model.push({
+                <q-btn rounded color="positive" icon="add" @click="$v.item.slots.$model.push({
                   index: $v.item.slots.$model.length,
                   schedule: null,
                   schedule_id: null
@@ -134,7 +129,6 @@
             </div>
           </div>
         </div>
-        <pre>{{item}}</pre>
       </q-modal-layout>
     </q-modal>
   </q-page>

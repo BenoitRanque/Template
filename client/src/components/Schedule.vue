@@ -1,94 +1,97 @@
 <template>
   <div>
-    <q-input placeholder="Nombre de la jornada" v-model="$v.model.schedule_name.$model"></q-input>
-    <q-input placeholder="Descripcion" v-model="$v.model.description.$model"></q-input>
+    <q-input :readonly="readonly" placeholder="Nombre de la jornada" v-model="$v.model.schedule_name.$model"></q-input>
+    <q-input :readonly="readonly" placeholder="Descripcion" v-model="$v.model.description.$model"></q-input>
     <div class="row gutter-sm q-my-sm">
       <div class="col">
         <div class="q-title">Tiempo Laboral</div>
-        <schedule-uptime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.uptime.$each.$iter" :key="index" v-model="item.$model" @remove="model.uptime.splice(Number(index), 1)"></schedule-uptime>
+        <schedule-uptime :readonly="readonly" v-for="(item, index) in $v.model.uptime.$each.$iter" :key="index" v-model="item.$model" @remove="model.uptime.splice(Number(index), 1)"></schedule-uptime>
       </div>
       <div class="col">
         <div class="q-title">Tiempo Pausa</div>
-        <schedule-breaktime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.breaktime.$each.$iter" :key="index" v-model="item.$model" @remove="model.breaktime.splice(Number(index), 1)"></schedule-breaktime>
+        <schedule-breaktime :readonly="readonly" v-for="(item, index) in $v.model.breaktime.$each.$iter" :key="index" v-model="item.$model" @remove="model.breaktime.splice(Number(index), 1)"></schedule-breaktime>
       </div>
       <div class="col">
         <div class="q-title">Tiempo Libre</div>
-        <schedule-downtime :editable="advanced" :removable="advanced" v-for="(item, index) in $v.model.downtime.$each.$iter" :key="index" v-model="item.$model" @remove="model.downtime.splice(Number(index), 1)"></schedule-downtime>
+        <schedule-downtime :readonly="readonly" v-for="(item, index) in $v.model.downtime.$each.$iter" :key="index" v-model="item.$model" @remove="model.downtime.splice(Number(index), 1)"></schedule-downtime>
       </div>
     </div>
     <q-slide-transition>
-      <div class="row" v-show="advanced">
-        <div class="col text-center q-my-md">
-          <q-btn
-            @click="model.uptime.push({
-              timetype_id: null,
-              description: '',
-              start_time: null,
-              start_require_event: true,
-              end_time: null,
-              end_require_event: true,
-              value: 0
-            })"
-            flat rounded icon="add">
-            <q-tooltip>
-              Aggregar Tiempo Laboral
-            </q-tooltip>
+      <template v-if="readonly">
+        <div class="text-center q-my-md">
+          <q-btn rounded size="md" label="modificar" icon="edit" @click="setEditable">
+            <q-tooltip>Volver la jornada editable</q-tooltip>
           </q-btn>
         </div>
-        <div class="col text-center q-my-md">
-          <q-btn
-            @click="model.breaktime.push({
-              timetype_id: null,
-              description: '',
-              start_time: null,
-              start_require_event: true,
-              end_time: null,
-              end_require_event: true,
-              duration: null
-            })"
-            flat rounded icon="add">
-            <q-tooltip>
-              Aggregar Tiempo de Pausa
-            </q-tooltip>
-          </q-btn>
-        </div>
-        <div class="col text-center q-my-md">
-          <q-btn
-            @click="model.downtime.push({
-              timetype_id: null,
-              description: '',
-              value: 0
-            })"
-            flat rounded icon="add">
-            <q-tooltip>
-              Aggregar Tiempo Libre
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </div>
+      </template>
     </q-slide-transition>
-    <div class="text-center q-my-md">
-      <q-btn-group rounded>
-        <q-btn rounded dense size="sm" icon="build" @click="advanced = !advanced">
-          <q-tooltip>
-            Modo avanzado
-          </q-tooltip>
-        </q-btn>
-        <q-btn-dropdown rounded size="md" label="Selecionar">
-          <q-list link>
-            <q-item v-for="(preset, index) in presets" :key="index" v-close-overlay @click.native="setPresetModelValue(preset)">
-              <q-item-main>
-                <q-item-tile label>{{preset.schedule_name}}</q-item-tile>
-                <q-item-tile sublabel>{{preset.description}}</q-item-tile>
-              </q-item-main>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </q-btn-group>
-    </div>
-    <pre>valid: {{valid}}</pre>
-    <pre>model: {{!!model}}</pre>
-    <pre>value: {{!!value}}</pre>
+    <q-slide-transition>
+      <template v-if="!readonly">
+        <div>
+          <div class="row">
+            <div class="col text-center q-my-md">
+              <q-btn
+                @click="model.uptime.push({
+                  timetype_id: null,
+                  description: '',
+                  start_time: null,
+                  start_require_event: true,
+                  end_time: null,
+                  end_require_event: true,
+                  value: 0
+                })"
+                flat rounded icon="add">
+                <q-tooltip>
+                  Aggregar Tiempo Laboral
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div class="col text-center q-my-md">
+              <q-btn
+                @click="model.breaktime.push({
+                  timetype_id: null,
+                  description: '',
+                  start_time: null,
+                  start_require_event: true,
+                  end_time: null,
+                  end_require_event: true,
+                  duration: null
+                })"
+                flat rounded icon="add">
+                <q-tooltip>
+                  Aggregar Tiempo de Pausa
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div class="col text-center q-my-md">
+              <q-btn
+                @click="model.downtime.push({
+                  timetype_id: null,
+                  description: '',
+                  value: 0
+                })"
+                flat rounded icon="add">
+                <q-tooltip>
+                  Aggregar Tiempo Libre
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </div>
+          <div class="text-center q-my-md">
+            <q-btn-dropdown rounded size="md" label="Selecionar">
+              <q-list link>
+                <q-item v-for="(preset, index) in presets" :key="index" v-close-overlay @click.native="setPresetModelValue(preset)">
+                  <q-item-main>
+                    <q-item-tile label>{{preset.schedule_name}}</q-item-tile>
+                    <q-item-tile sublabel>{{preset.description}}</q-item-tile>
+                  </q-item-main>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </div>
+        </div>
+      </template>
+    </q-slide-transition>
   </div>
 </template>
 
@@ -140,7 +143,7 @@ export default {
       default: false
     },
     value: {
-      type: [Object, null],
+      type: Object,
       default: function () {
         return newModel(this.standard)
       }
@@ -148,7 +151,6 @@ export default {
   },
   data () {
     return {
-      advanced: false,
       model: newModel(this.standard)
     }
   },
@@ -198,25 +200,20 @@ export default {
     ...mapGetters('hr', {
       presets: 'schedulePresets'
     }),
-    valid: {
-      get () {
-        return !this.$v.model.$invalid
-      }
+    valid () {
+      return !this.$v.model.$invalid
     },
-    totalUpValue: {
-      get () {
-        return this.model.uptime.reduce((acc, val) => acc + Number(val.value), 0)
-      }
+    readonly () {
+      return !!this.model && !!this.model.schedule_id
     },
-    totalDownValue: {
-      get () {
-        return this.model.downtime.reduce((acc, val) => acc + Number(val.value), 0)
-      }
+    totalUpValue () {
+      return this.model && this.model.uptime ? this.model.uptime.reduce((acc, val) => acc + Number(val.value), 0) : 0
     },
-    totalModelValue: {
-      get () {
-        return this.totalUpValue + this.totalDownValue
-      }
+    totalDownValue () {
+      return this.model && this.model.downtime ? this.model.downtime.reduce((acc, val) => acc + Number(val.value), 0) : 0
+    },
+    totalModelValue () {
+      return this.totalUpValue + this.totalDownValue
     }
   },
   watch: {
@@ -228,17 +225,31 @@ export default {
     model: {
       deep: true,
       handler () {
-        this.$emit('input', this.valid ? this.model : null)
+        if (!this.readonly) this.$emit('input', this.valid ? this.model : null)
       }
     }
   },
   methods: {
+    setEditable () {
+      this.$delete(this.model, 'schedule_id')
+      this.model.breaktime.forEach(b => {
+        this.$delete(b, 'schedule_id')
+        this.$delete(b, 'schedule_breaktime_id')
+      })
+      this.model.uptime.forEach(u => {
+        this.$delete(u, 'schedule_id')
+        this.$delete(u, 'schedule_uptime_id')
+      })
+      this.model.downtime.forEach(d => {
+        this.$delete(d, 'schedule_id')
+        this.$delete(d, 'schedule_downtime_id')
+      })
+    },
     setPresetModelValue (preset) {
-      this.model = Object.assign(this.model,
-        this.value ? this.value : {},
+      const copy = JSON.parse(JSON.stringify(preset))
+      this.model = Object.assign({},
         { standard: this.standard },
-        JSON.parse(JSON.stringify(preset))
-      )
+        copy)
     }
   }
 }

@@ -52,9 +52,8 @@
 </template>
 
 <script>
-import { HR_ATT_EXCEPTION, HR_EMPLOYEE, HR_ATT_SCHEDULE, HR_ATT_TIMETYPE } from 'assets/apiRoutes'
-import ATT from 'assets/attType'
-const { ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA } = ATT
+import { HR_ATT_EXCEPTION } from 'assets/apiRoutes'
+import { mapActions } from 'vuex'
 import tableMixin from 'src/mixins/tableMixin'
 import validationError from 'src/mixins/validationError'
 import Exception from 'components/Exception'
@@ -185,6 +184,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions('hr', {
+      fetchTimetypes: 'fetchTimetypes',
+      fetchSubordinateEmployees: 'fetchSubordinateEmployees',
+      fetchStandardSchedules: 'fetchStandardSchedules'
+    }),
     newItem () {
       // return default item. Important
       return newItem()
@@ -193,19 +197,12 @@ export default {
       this.table.loading = true
       Promise.all([
         this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]' } }),
-        this.$axios.get(HR_EMPLOYEE, { params: { eager: '' } }),
-        this.$axios.get(HR_ATT_SCHEDULE, { params: { eager: '[breaktime, uptime, downtime]', standard: true } }),
-        this.$axios.get(HR_ATT_TIMETYPE, { params: { eager: '', type_id: [ATT_TIMEOFF, ATT_WORK, ATT_BREAKTIME, ATT_EXTRA] } })
+        this.fetchTimetypes(),
+        this.fetchSubordinateEmployees(),
+        this.fetchStandardSchedules()
       ])
         .then(response => {
           this.table.data = (response[0] && response[0].data) ? response[0].data : []
-          this.options.employee_id = (response[1] && response[1].data) ? response[1].data.map(employee => ({
-            value: employee.employee_id,
-            label: employee.name_first + ' ' + employee.name_paternal,
-            stamp: String(employee.zktime_pin)
-          })) : []
-          this.schedulePresets = response[2] ? response[2].data : []
-          this.timetableTypes = response[3] ? response[3].data : []
           this.table.loading = false
         })
         .catch(() => {

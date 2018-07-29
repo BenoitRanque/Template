@@ -2,12 +2,19 @@
   <div>
     <div class="row">
       <div class="col">
-        <q-input placeholder="Descripcion" :readonly="!edit" hide-underline v-model="model.description"></q-input>
+        <q-input placeholder="Descripcion" :readonly="readonly || !expanded" hide-underline v-model="model.description"></q-input>
       </div>
-      <div v-if="editable" class="col-auto">
-        <q-btn dense flat icon="edit" @click="edit = !edit"></q-btn>
+      <div class="col-auto">
+        <q-btn
+          v-if="expandable"
+          dense
+          flat
+          @click="expanded = !expanded"
+          :icon="`keyboard_arrow_${expanded ? 'up' : 'down'}`"
+        >
+        </q-btn>
       </div>
-      <div v-if="removable" class="col-auto">
+      <div v-if="!readonly" class="col-auto">
         <q-btn dense color="negative" icon="close" @click="$emit('remove')">
           <q-tooltip>
             Quitar {{model.description}}
@@ -16,22 +23,22 @@
       </div>
     </div>
     <q-slide-transition>
-      <div class="row" v-show="edit">
+      <div class="row" v-show="expanded">
         <div class="col-6">
-          <q-select v-model="model.timetype_id" :options="breaktimeTimetypesOptions"></q-select>
+          <q-select :readonly="readonly" v-model="model.timetype_id" :options="breaktimeTimetypesOptions"></q-select>
         </div>
         <div class="col-6">
-          <q-datetime v-model="model.duration" type="time" format24h></q-datetime>
+          <q-datetime :readonly="readonly" v-model="model.duration" type="time" format24h></q-datetime>
         </div>
         <div class="col-6">
-          <q-datetime v-model="model.start_time" type="time" :format24h="false" ></q-datetime>
-          <q-checkbox v-model="model.start_require_event">
+          <q-datetime :readonly="readonly" v-model="model.start_time" type="time" :format24h="false" ></q-datetime>
+          <q-checkbox :readonly="readonly" v-model="model.start_require_event">
             <q-tooltip>Debe Marcar Inicio</q-tooltip>
           </q-checkbox>
         </div>
         <div class="col-6">
-          <q-datetime v-model="model.end_time" type="time" :format24h="false" ></q-datetime>
-          <q-checkbox v-model="model.end_require_event">
+          <q-datetime :readonly="readonly" v-model="model.end_time" type="time" :format24h="false" ></q-datetime>
+          <q-checkbox :readonly="readonly" v-model="model.end_require_event">
             <q-tooltip>Debe Marcar Fin</q-tooltip>
           </q-checkbox>
         </div>
@@ -50,21 +57,22 @@ export default {
       type: Object,
       required: true
     },
-    validation: {
-      type: Object
+    hoursInDay: {
+      type: Number,
+      default: 8
     },
-    editable: {
+    expandable: {
       type: Boolean,
       default: true
     },
-    removable: {
+    readonly: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data () {
     return {
-      edit: false
+      expanded: false
     }
   },
   watch: {

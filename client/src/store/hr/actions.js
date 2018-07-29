@@ -18,7 +18,7 @@ export async function fetchSubordinateEmployees ({ commit, dispatch }, payload) 
 }
 
 export async function fetchStandardSchedules ({ commit, dispatch }, payload) {
-  const { data } = await $axios.get(HR_ATT_SCHEDULE, { params: { standard: true } })
+  const { data } = await $axios.get(HR_ATT_SCHEDULE, { params: { standard: true, eager: '[breaktime, uptime, downtime]' } })
 
   commit('standardSchedules', data)
 }

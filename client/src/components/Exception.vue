@@ -113,15 +113,37 @@
             </q-field>
             <q-field label="Jornada">
               <schedule-select class="col"
-                :value="slot.$model"
-                @input="$set($v.model.slots.$model, Number(index), $event)"
+                v-model="slot.schedule.$model"
+                @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
               ></schedule-select>
             </q-field>
           </div>
           <div class="text-center q-my-md">
-            <q-btn icon="add" flat rounded @click="$v.model.slots.$model.push({ date: null, schedule_id: null })">
+            <q-btn icon="add" flat rounded @click="$v.model.slots.$model.push({ date: null, schedule_id: null, schedule: null })">
               <q-tooltip>aggregar dia</q-tooltip>
             </q-btn>
+          </div>
+        </template>
+        <template v-else-if="mode === 1">
+          <div v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index">
+            <q-field label="Fecha">
+              <div class="row">
+                <div class="col">
+                  <q-datetime v-model="slot.date.$model"></q-datetime>
+                </div>
+                <div class="col-auto">
+                  <q-btn dense color="negative" icon="close" @click="$v.model.slots.$model.splice(Number(index), 1)">
+                    <q-tooltip>Quitar Dia</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </q-field>
+            <q-field label="Jornada">
+              <schedule-select class="col"
+                v-model="slot.schedule.$model"
+                @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
+              ></schedule-select>
+            </q-field>
           </div>
         </template>
         <q-stepper-navigation class="justify-around">
@@ -232,10 +254,10 @@ export default {
       // set default model values depending on mode
       switch (mode) {
         case 0:
-
+          this.model.slots.push({ date: null, schedule_id: null, schedule: null })
           break
         case 1:
-
+          this.model.slots.push({ date: null, schedule_id: null, schedule: null })
           break
         case 2:
 

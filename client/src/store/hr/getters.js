@@ -34,10 +34,14 @@ export function subordinateEmployeeOptions (state) {
 
 export function standardScheduleOptions (state) {
   return state.standardSchedules.map(s => ({
-    value: s,
+    value: s.schedule_id,
     label: s.schedule_name,
     sublabel: s.description
   }))
+}
+
+export function standardScheduleById (state) {
+  return id => state.standardSchedules.find(s => s.schedule_id === id)
 }
 
 const LUNCH = {
