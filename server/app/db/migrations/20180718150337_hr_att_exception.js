@@ -4,10 +4,12 @@ exports.up = async function(knex, Promise) {
     table.uuid('exception_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
     table.text('exception_external_id')
     table.text('description')
+    table.uuid('owner_id')
     table.uuid('employee_id')
 
     table.timestamps()
 
+    table.foreign('owner_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')
   })
 };

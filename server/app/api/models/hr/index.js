@@ -1,7 +1,6 @@
 module.exports = {
   AttException: require('./AttException'),
   AttExceptionSlot: require('./AttExceptionSlot'),
-  AttExceptionRequest: require('./AttExceptionRequest'),
   AttExceptionAuthorization: require('./AttExceptionAuthorization'),
   AttShift: require('./AttShift'),
   AttShiftSlot: require('./AttShiftSlot'),

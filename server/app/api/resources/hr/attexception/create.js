@@ -1,11 +1,12 @@
-module.exports = async (input, params, { model, authorize }) => {
+module.exports = async (input, params, { model, authorize, session }) => {
 
   let permission = authorize(model.resourceName, 'create', 'any')
 
-  let data = await model.query().allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], request, authorization]')
+  input.owner_id = session.user_id
+
+  let data = await model.query().allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization]')
     .upsertGraph(permission.filter(input), {
-      relate: ['slots.schedule'],
-      insertMissing: ['slots'],
+      relate: ['slots.schedule', 'owner'],
       noUpdate: true
     }).returning('*')
 

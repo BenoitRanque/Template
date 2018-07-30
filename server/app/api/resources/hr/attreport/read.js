@@ -315,18 +315,22 @@ function getEmployeeWithValidShiftsExceptions(employee_id, from, to) {
   // expand range by one day back and two days forward. Will use to make sure we get a next and previous reference that are accurate
   from = subDays(from, 1)
   to = addDays(to, 2)
-  return Employee.query().where({ employee_id }).eager('[shifts(onlyValidShift).slots.schedule.timetable, exceptions.slots(onlyValidException).schedule.timetable]', {
-    onlyValidShift (query) {
-      // filter shifts, get only ones valid for range
-      query
-        .whereNot('start_date', '>', format(to, 'YYYY-MM-DD'))
-        .where(query => query.where('end_date', null).orWhereNot('end_date', '<', format(from, 'YYYY-MM-DD')))
-    },
-    onlyValidException (query) {
-      // filter exceptions, get only ones that are authorized and valid
-      query.whereBetween('date', [format(from, 'YYYY-MM-DD'), format(to, 'YYYY-MM-DD')])
-    } 
-  }).first()
+  return Employee.query()
+    .where({ employee_id })
+    .eager('[shifts(onlyValidShift).slots.schedule.[breaktime, uptime, downtime], exceptions.slots(onlyValidException).schedule.[breaktime, uptime, downtime]]', {
+      onlyValidShift (query) {
+        // filter shifts, get only ones valid for range
+        query
+          .whereNot('start_date', '>', format(to, 'YYYY-MM-DD'))
+          .where(query => query.where('end_date', null).orWhereNot('end_date', '<', format(from, 'YYYY-MM-DD')))
+      },
+      onlyValidException (query) {
+        // filter exceptions, get only ones that are authorized and valid
+        query.whereBetween('date', [format(from, 'YYYY-MM-DD'), format(to, 'YYYY-MM-DD')])
+        query.innerJoin('hr_att_exception_autorization', 'exception_id', 'exception_id')
+        query.where({ granted: true })
+      } 
+    }).first()
 }
 
 function getEmployeePunches(pin, from, to) {

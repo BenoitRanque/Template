@@ -9,9 +9,6 @@ router.route('/attexception')
   .put(new Resolver(require('@resources/hr/attexception/update'), AttException))
   .delete(new Resolver(require('@resources/hr/attexception/delete'), AttException))
 
-router.route('/attexception/request')
-  .post(new Resolver(require('@resources/hr/attexception/request/create'), AttExceptionRequest))
-
 router.route('/attexception/authorization')
   .post(new Resolver(require('@resources/hr/attexception/authorization/create'), AttExceptionAuthorization))
 
