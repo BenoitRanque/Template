@@ -1,14 +1,32 @@
-module.exports = async (input, params, { model, authorize, session }) => {
+const compareAsc = require('date-fns/compare_asc')
+const isSameDay = require('date-fns/is_same_day')
+const compareDesc = require('date-fns/compare_desc')
+const ServerError = require('@tools/serverError')
+const EmployeeAttendance = require('@tools/employeeAttendance')
+
+module.exports = async (input, params, { model, authorize, session, transaction }) => {
 
   let permission = authorize(model.resourceName, 'create', 'any')
 
-  input.owner_id = session.user_id
+  if (!input.employee_id) throw new ServerError(400, `employee_id  is a required field`)
 
-  let data = await model.query().allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization]')
+  const dates = input.slots.map(slot => slot.date).sort(compareAsc)
+  
+  dates.forEach((date, index) => {
+    if (index !== 0 && isSameDay(date, dates[index -1])) {
+      throw new ServerError(400, `duplicate date ${date} in exception`)
+    }
+  })
+
+  input.owner_id = session.user.user_id
+
+  const data = await transaction(model.knex(), async trx => await model.query(trx)
+    .allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization]')
     .upsertGraph(permission.filter(input), {
       relate: ['slots.schedule', 'owner'],
       noUpdate: true
     }).returning('*')
+  )
 
   permission = authorize(model.resourceName, 'read', 'any')
 
