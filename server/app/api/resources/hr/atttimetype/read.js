@@ -19,6 +19,7 @@ module.exports = async (input, { eager, timetype_id, category, additional, accou
       query.where({ accountable })
     }
   })
+  .orderBy('timetype_id')
 
   return permission.filter(data)
 }

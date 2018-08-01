@@ -18,16 +18,20 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
+        <q-checkbox v-model="queryParams.own" label="Solo Excepciones Propias"></q-checkbox>
+        <q-checkbox v-model="queryParams.pending" label="Solo Excepciones pendientes"></q-checkbox>
+        <q-checkbox v-model="queryParams.aproved" label="Solo Excepciones aprobadas"></q-checkbox>
+        <q-checkbox v-model="queryParams.denied" label="Solo Excepciones denegadas"></q-checkbox>
         <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
       </template>
 
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
-        <q-btn v-if="isAuthorized(resource, ['update', 'delete'], 'any')" size="md" round dense flat icon="edit" color="dark" @click="edit(props.row)"></q-btn>
+        <q-btn size="md" round dense flat icon="edit" color="dark" @click="view = props.row; $refs.viewModal.show()"></q-btn>
       </q-td>
 
     </q-table>
 
-    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
+    <!-- <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="modal">
       <q-modal-layout>
         <q-toolbar slot="header" class="q-py-none q-pr-none">
           <q-toolbar-title>
@@ -47,6 +51,44 @@
         </q-toolbar>
         <exception v-model="item" />
       </q-modal-layout>
+    </q-modal> -->
+
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="createModal">
+      <q-modal-layout>
+        <q-toolbar slot="header" class="q-py-none q-pr-none">
+          <q-toolbar-title>
+            {{ $t('create')}} {{$t('modal.title')}}
+            <span slot="subtitle">{{$t('modal.subtitle')}}</span>
+          </q-toolbar-title>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel($refs.createModal)"></q-btn>
+        </q-toolbar>
+        <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+          <q-btn v-if="isAuthorized(resource.create, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
+        </q-toolbar>
+        <exception v-model="item" />
+      </q-modal-layout>
+    </q-modal>
+
+    <q-modal no-esc-dismiss no-backdrop-dismiss content-css="width: 80vw; height: 80vh;" ref="viewModal">
+      <q-modal-layout>
+        <q-toolbar slot="header" class="q-py-none q-pr-none">
+          <q-toolbar-title>
+            {{ $t('edit') }} {{$t('modal.title')}}
+            <span slot="subtitle">{{$t('modal.subtitle')}}</span>
+          </q-toolbar-title>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel($refs.viewModal)"></q-btn>
+        </q-toolbar>
+        <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
+          <q-btn v-if="isAuthorized(resource.create, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
+          <template v-else-if="isAuthorized(resource.authorize, 'delete', 'any')">
+            <q-btn size="lg" rounded color="negative" icon="delete" @click="grantAuthorization(false)">{{$t('buttons.denyAuthorization')}}</q-btn>
+            <q-btn size="lg" rounded color="positive" icon="check" @click="grantAuthorization(true)">{{$t('buttons.grantAuthorization')}}</q-btn>
+          </template>
+        </q-toolbar>
+      </q-modal-layout>
+      <div class="layout-padding">
+        <exception-view :value="view"></exception-view>
+      </div>
     </q-modal>
   </q-page>
 </template>
@@ -54,8 +96,6 @@
 <script>
 import { HR_ATT_EXCEPTION } from 'assets/apiRoutes'
 import { mapActions } from 'vuex'
-import tableMixin from 'src/mixins/tableMixin'
-import validationError from 'src/mixins/validationError'
 import Exception from 'components/Exception'
 import {
   requiredIf,
@@ -91,26 +131,19 @@ function newItem () {
 
 export default {
   name: 'HRAttException',
-  mixins: [tableMixin, validationError],
   components: { Exception },
   data () {
     return {
       resource: 'HRAttException',
       apiRoute: HR_ATT_EXCEPTION,
-      editMode: false,
+      view: null, // the item currently being viewed
+      queryParams: {
+        own: false,
+        pending: false,
+        approved: false,
+        denied: false
+      },
       item: newItem(),
-      schedulePresets: [],
-      timetableTypes: [],
-      mapItemOptions: {
-        // slots: slot => {
-        //   slot.timetable = slot.timetable.map(timetable => this.options.timetable.find(option => option.value.timetable_id === timetable.timetable_id).value)
-        //   return slot
-        // }
-      },
-      options: {
-        // timetable: []
-        employee_id: []
-      },
       table: {
         loading: false,
         rowKey: 'exception_id',
@@ -183,6 +216,16 @@ export default {
       }
     }
   },
+  computed: {
+    canAuthorize () {
+      // check privileges and whether item is already authorized
+      return true
+    },
+    canDelete () {
+      // check if current user is owner
+      return true
+    }
+  },
   methods: {
     ...mapActions('hr', {
       fetchTimetypes: 'fetchTimetypes',
@@ -196,7 +239,7 @@ export default {
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]' } }),
+        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]', ...this.queryParams } }),
         this.fetchTimetypes(),
         this.fetchSubordinateEmployees(),
         this.fetchStandardSchedules()
@@ -209,7 +252,16 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ exception_id: item.exception_id })
+    deleteParams: (item) => ({ exception_id: item.exception_id }), // REMOVE
+    createException () {
+
+    },
+    deleteException () {
+
+    },
+    grantAuthorization (grant = true) {
+
+    }
   },
   mounted () {
     this.fetchItems()
