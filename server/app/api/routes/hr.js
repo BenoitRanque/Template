@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const Resolver = require('@tools/resolver')
 const {
-  AttSchedule, AttException, AttExceptionRequest, AttExceptionAuthorization, AttShift, AttTimetype, Employee } = require('@models/hr')
+  AttSchedule, AttException, AttExceptionAuthorization, AttShift, AttTimetype, Employee } = require('@models/hr')
 
 router.route('/attexception')
   .get(new Resolver(require('@resources/hr/attexception/read'), AttException))

@@ -153,7 +153,6 @@
       </q-step>
 
       <q-step :order="3" @select="setAutoTitleAndDesc" title="Revisar e Solicitar">
-        <q-input v-model="$v.model.exception_name.$model" placeholder="Nombre de Boleta"></q-input>
         <q-field v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index" :label="$date.formatDate(slot.date.$model, 'DD/MM/YYYY')">
           <!-- <schedule-compact :value="slot.schedule.$model"></schedule-compact> -->
         </q-field>
@@ -177,6 +176,7 @@
 </template>
 
 <script>
+import { HR_ATT_EXCEPTION, HR_ATT_EXCEPTION_AUTHORIZATION } from 'assets/apiRoutes'
 import { mapGetters } from 'vuex'
 import ScheduleCompact from 'components/ScheduleCompact'
 import ScheduleSelect from 'components/ScheduleSelect'
@@ -211,7 +211,6 @@ export default {
       loading: false,
       mode: 0,
       model: {
-        exception_name: '',
         description: '',
         employee_id: null,
         slots: []
@@ -220,7 +219,6 @@ export default {
   },
   validations: {
     model: {
-      exception_name: {},
       description: {},
       employee_id: { required },
       slots: {
@@ -280,14 +278,29 @@ export default {
       this.$q.notify('imprimiendo')
     },
     setAutoTitleAndDesc () {
-
+      console.log(HR_ATT_EXCEPTION_AUTHORIZATION)
     },
     requestException () {
       this.loading = true
-      setTimeout(() => {
-        this.loading = false
-        this.$refs.stepper.next()
-      }, 1000)
+      this.$axios.post(HR_ATT_EXCEPTION, this.model)
+        .then(() => {
+          this.loading = false
+          this.$q.notify({
+            message: this.$t('operation.create.success'),
+            type: 'positive'
+          })
+        })
+        .catch(() => {
+          this.loading = false
+          this.$q.notify({
+            message: this.$t('operation.create.failure'),
+            type: 'warning'
+          })
+        })
+      // setTimeout(() => {
+      //   this.loading = false
+      //   this.$refs.stepper.next()
+      // }, 1000)
     },
     setMode (mode) {
       this.mode = mode

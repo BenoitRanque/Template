@@ -40,7 +40,9 @@ export default {
   'buttons': {
     'createItem': 'Crear Item',
     'updateItem': 'Modificar Item',
-    'deleteItem': 'Elimninar Item'
+    'deleteItem': 'Elimninar Item',
+    'grantauthorization': 'Authorizar',
+    'denyauthorization': 'Denegar'
   },
   'confirm': {
     'cancelEdit': {

@@ -2,8 +2,8 @@ const Model = require('@tools/model')
 const { HasOneRelation, BelongsToOneRelation, HasOneThroughRelation, HasManyRelation, ManyToManyRelation } = Model
 
 module.exports = class HRAttExceptionAuthorization extends Model {
-  static get tableName () { return 'hr_att_exception_slot' }
-  static get idColumn () { return 'exception_slot_id' }
+  static get tableName () { return 'hr_att_exception_authorization' }
+  static get idColumn () { return 'authorization_id' }
   static get relationMappings () {
     const AttException = require('./AttException')
     const User = require('@models/core/User')

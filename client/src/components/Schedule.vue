@@ -1,23 +1,23 @@
 <template>
   <div>
-    <q-input :readonly="readonly" placeholder="Nombre de la jornada" v-model="$v.model.schedule_name.$model"></q-input>
-    <q-input :readonly="readonly" placeholder="Descripcion" v-model="$v.model.description.$model"></q-input>
+    <q-input :readonly="isReadonly" placeholder="Nombre de la jornada" v-model="$v.model.schedule_name.$model"></q-input>
+    <q-input :readonly="isReadonly" placeholder="Descripcion" v-model="$v.model.description.$model"></q-input>
     <div class="row gutter-sm q-my-sm">
       <div class="col">
         <div class="q-title">Tiempo Laboral</div>
-        <schedule-uptime :readonly="readonly" v-for="(item, index) in $v.model.uptime.$each.$iter" :key="index" v-model="item.$model" @remove="model.uptime.splice(Number(index), 1)"></schedule-uptime>
+        <schedule-uptime :readonly="isReadonly" v-for="(item, index) in $v.model.uptime.$each.$iter" :key="index" v-model="item.$model" @remove="model.uptime.splice(Number(index), 1)"></schedule-uptime>
       </div>
       <div class="col">
         <div class="q-title">Tiempo Pausa</div>
-        <schedule-breaktime :readonly="readonly" v-for="(item, index) in $v.model.breaktime.$each.$iter" :key="index" v-model="item.$model" @remove="model.breaktime.splice(Number(index), 1)"></schedule-breaktime>
+        <schedule-breaktime :readonly="isReadonly" v-for="(item, index) in $v.model.breaktime.$each.$iter" :key="index" v-model="item.$model" @remove="model.breaktime.splice(Number(index), 1)"></schedule-breaktime>
       </div>
       <div class="col">
         <div class="q-title">Tiempo Libre</div>
-        <schedule-downtime :readonly="readonly" v-for="(item, index) in $v.model.downtime.$each.$iter" :key="index" v-model="item.$model" @remove="model.downtime.splice(Number(index), 1)"></schedule-downtime>
+        <schedule-downtime :readonly="isReadonly" v-for="(item, index) in $v.model.downtime.$each.$iter" :key="index" v-model="item.$model" @remove="model.downtime.splice(Number(index), 1)"></schedule-downtime>
       </div>
     </div>
     <q-slide-transition>
-      <template v-if="readonly">
+      <template v-if="isReadonly">
         <div class="text-center q-my-md">
           <q-btn rounded size="md" label="modificar" icon="edit" @click="setEditable">
             <q-tooltip>Volver la jornada editable</q-tooltip>
@@ -26,7 +26,7 @@
       </template>
     </q-slide-transition>
     <q-slide-transition>
-      <template v-if="!readonly">
+      <template v-if="!isReadonly">
         <div>
           <div class="row">
             <div class="col text-center q-my-md">
@@ -138,6 +138,10 @@ export default {
   name: 'Schedule',
   components: { ScheduleBreaktime, ScheduleUptime, ScheduleDowntime, ScheduleCompact },
   props: {
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     standard: {
       type: Boolean,
       default: false
@@ -203,8 +207,8 @@ export default {
     valid () {
       return !this.$v.model.$invalid
     },
-    readonly () {
-      return !!this.model && !!this.model.schedule_id
+    isReadonly () {
+      return this.readonly || (!!this.model && !!this.model.schedule_id)
     },
     totalUpValue () {
       return this.model && this.model.uptime ? this.model.uptime.reduce((acc, val) => acc + Number(val.value), 0) : 0
@@ -225,7 +229,7 @@ export default {
     model: {
       deep: true,
       handler () {
-        if (!this.readonly) this.$emit('input', this.valid ? this.model : null)
+        if (!this.isReadonly) this.$emit('input', this.valid ? this.model : null)
       }
     }
   },

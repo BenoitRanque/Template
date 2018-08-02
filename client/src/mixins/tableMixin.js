@@ -34,10 +34,7 @@ export default {
               })
             })
         })
-        .catch(() => {
-          this.$q.loading.hide()
-          this.$q.notify('SYSTEM ERROR')
-        })
+        .catch(() => {})
     },
     updateItem (item) {
       this.$q.dialog({
@@ -66,10 +63,7 @@ export default {
               })
             })
         })
-        .catch(() => {
-          this.$q.loading.hide()
-          this.$q.notify('SYSTEM ERROR')
-        })
+        .catch(() => {})
     },
     deleteItem (item) {
       this.$q.dialog({
@@ -98,10 +92,7 @@ export default {
               })
             })
         })
-        .catch(() => {
-          this.$q.loading.hide()
-          this.$q.notify('SYSTEM ERROR')
-        })
+        .catch(() => {})
     },
 
     edit (item) {

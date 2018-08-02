@@ -18,11 +18,19 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-checkbox v-model="queryParams.own" label="Solo Excepciones Propias"></q-checkbox>
-        <q-checkbox v-model="queryParams.pending" label="Solo Excepciones pendientes"></q-checkbox>
-        <q-checkbox v-model="queryParams.aproved" label="Solo Excepciones aprobadas"></q-checkbox>
-        <q-checkbox v-model="queryParams.denied" label="Solo Excepciones denegadas"></q-checkbox>
-        <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="edit()"  />
+        <q-select
+          prefix="Ver: "
+          hide-underline
+          v-model="queryParams"
+          :display-value="queryParams.length ? '' : 'Todas'"
+          multiple
+          :options="[
+            { value: 'pending', label: 'Pendientes'},
+            { value: 'approved', label: 'Aprobadas'},
+            { value: 'denied', label: 'Denegada'}
+          ]"
+        ></q-select>
+        <q-btn v-if="isAuthorized(resource, 'create', 'any')" round color="positive" icon="add" size="md" @click="$refs.createModal.show()"  />
       </template>
 
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
@@ -65,7 +73,7 @@
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
           <q-btn v-if="isAuthorized(resource.create, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
         </q-toolbar>
-        <exception v-model="item" />
+        <exception v-model="item"/>
       </q-modal-layout>
     </q-modal>
 
@@ -79,24 +87,25 @@
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel($refs.viewModal)"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
-          <q-btn v-if="isAuthorized(resource.create, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
-          <template v-else-if="isAuthorized(resource.authorize, 'delete', 'any')">
-            <q-btn size="lg" rounded color="negative" icon="delete" @click="grantAuthorization(false)">{{$t('buttons.denyAuthorization')}}</q-btn>
+          <q-btn v-if="canDelete" size="lg" rounded color="negative" icon="create" @click="deleteException">{{$t('buttons.createItem')}}</q-btn>
+          <template v-if="canAuthorize">
+            <q-btn size="lg" rounded color="warning" icon="delete" @click="grantAuthorization(false)">{{$t('buttons.denyAuthorization')}}</q-btn>
             <q-btn size="lg" rounded color="positive" icon="check" @click="grantAuthorization(true)">{{$t('buttons.grantAuthorization')}}</q-btn>
           </template>
         </q-toolbar>
+        <div class="layout-padding">
+          <exception-view v-if="view" :value="view"></exception-view>
+        </div>
       </q-modal-layout>
-      <div class="layout-padding">
-        <exception-view :value="view"></exception-view>
-      </div>
     </q-modal>
   </q-page>
 </template>
 
 <script>
-import { HR_ATT_EXCEPTION } from 'assets/apiRoutes'
-import { mapActions } from 'vuex'
+import { HR_ATT_EXCEPTION, HR_ATT_EXCEPTION_AUTHORIZATION } from 'assets/apiRoutes'
+import { mapActions, mapGetters } from 'vuex'
 import Exception from 'components/Exception'
+import ExceptionView from 'components/ExceptionView'
 import {
   requiredIf,
   // requiredUnless,
@@ -122,7 +131,6 @@ import {
 function newItem () {
   // return default item. Important
   return {
-    exception_name: '',
     description: '',
     employee_id: null,
     slots: []
@@ -131,18 +139,13 @@ function newItem () {
 
 export default {
   name: 'HRAttException',
-  components: { Exception },
+  components: { Exception, ExceptionView },
   data () {
     return {
       resource: 'HRAttException',
       apiRoute: HR_ATT_EXCEPTION,
       view: null, // the item currently being viewed
-      queryParams: {
-        own: false,
-        pending: false,
-        approved: false,
-        denied: false
-      },
+      queryParams: ['pending'],
       item: newItem(),
       table: {
         loading: false,
@@ -157,14 +160,6 @@ export default {
           rowsPerPage: 10 // current rows per page being displayed
         },
         columns: [
-          {
-            name: 'exception_name',
-            required: true,
-            label: this.$t('field.exception_name.label'),
-            align: 'left',
-            field: 'exception_name',
-            sortable: true
-          },
           {
             name: 'description',
             required: true,
@@ -192,9 +187,6 @@ export default {
   },
   validations: {
     item: {
-      exception_name: {
-
-      },
       description: {
 
       },
@@ -217,6 +209,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('core', {
+      isAuthorized: 'isAuthorized'
+    }),
     canAuthorize () {
       // check privileges and whether item is already authorized
       return true
@@ -236,10 +231,28 @@ export default {
       // return default item. Important
       return newItem()
     },
+    cancel (modal) {
+      this.$q.dialog({
+        title: this.$t('confirm.cancelEdit.title'),
+        message: this.$t('confirm.cancelEdit.message'),
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          modal.hide()
+        })
+        .catch(() => {})
+    },
     fetchItems () {
       this.table.loading = true
       Promise.all([
-        this.$axios.get(HR_ATT_EXCEPTION, { params: { eager: '[employee, slots.schedule.[breaktime, uptime, downtime]]', ...this.queryParams } }),
+        this.$axios.get(HR_ATT_EXCEPTION, { params: {
+          eager: '[employee, slots.schedule.[breaktime, uptime, downtime], authorization, owner]',
+          own: false, // TODO: check if user has permission to see exceptions they do not own
+          pending: this.queryParams.includes('pending'),
+          approved: this.queryParams.includes('approved'),
+          denied: this.queryParams.includes('denied')
+        } }),
         this.fetchTimetypes(),
         this.fetchSubordinateEmployees(),
         this.fetchStandardSchedules()
@@ -257,10 +270,64 @@ export default {
 
     },
     deleteException () {
-
+      this.$q.dialog({
+        title: this.$t('confirm.deleteItem.title'),
+        message: this.$t('confirm.deleteItem.message'),
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.delete(HR_ATT_EXCEPTION, { params: { exception_id: this.view.exception_id } })
+            .then(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.delete.success'),
+                type: 'positive'
+              })
+              this.fetchItems()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.delete.failure'),
+                type: 'positive'
+              })
+            })
+        })
+        .catch(() => {
+          this.$q.loading.hide()
+          this.$q.notify('SYSTEM ERROR')
+        })
     },
-    grantAuthorization (grant = true) {
-
+    grantAuthorization (granted = true) {
+      this.$q.dialog({
+        title: granted ? this.$t('buttons.denyAuthorization') : this.$t('buttons.denyAuthorization'),
+        message: '',
+        ok: true,
+        cancel: true
+      })
+        .then(() => {
+          this.$q.loading.show()
+          this.$axios.post(HR_ATT_EXCEPTION_AUTHORIZATION, { exception_id: this.view.exception_id, granted })
+            .then(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.update.success'),
+                type: 'positive'
+              })
+              this.reset()
+              this.fetchItems()
+            })
+            .catch(() => {
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: this.$t('operation.update.failure'),
+                type: 'warning'
+              })
+            })
+        })
+        .catch(() => {})
     }
   },
   mounted () {

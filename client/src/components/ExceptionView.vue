@@ -1,12 +1,13 @@
 <template>
-  <div>
-
-  </div>
+  <pre>{{value}}</pre>
+  <!-- <schedule :value="value" readonly/> -->
 </template>
 
 <script>
+import Schedule from './Schedule'
 export default {
   name: 'ExceptionView',
+  components: { Schedule },
   props: {
     value: {
       type: Object,

@@ -20,10 +20,14 @@ module.exports = async (input, params, { model, authorize, session, transaction 
 
   input.owner_id = session.user.user_id
 
+console.log(input)
+console.log(input.slots[0].schedule)
+
   const data = await transaction(model.knex(), async trx => await model.query(trx)
-    .allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization]')
+    .allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization, owner]')
     .upsertGraph(permission.filter(input), {
-      relate: ['slots.schedule', 'owner'],
+      relate: ['slots.schedule', 'slots.schedule.breaktime', 'slots.schedule.uptime', 'slots.schedule.downtime'],
+      // relate: ['slots.schedule', 'owner', 'slots.schedule.[breaktime, uptime, downtime]'],
       noUpdate: true
     }).returning('*')
   )
