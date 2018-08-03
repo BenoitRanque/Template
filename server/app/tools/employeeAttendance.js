@@ -43,19 +43,20 @@ module.exports = class EmployeeAttendance {
   async init () {
     if (this.initialized) return
 
+    debugger
     const from = subDays(this.from, 1)
     const to = addDays(this.to, 2)
 
     const shifts = await this.getEmployeeShifts(from, to)
     const exceptions = await this.getEmployeeExceptions(from, to)
 
-    this.references = eachDay(from, to).map(date => mapDateToReference(date, shifts, exceptions))
+    this.references = eachDay(from, to).map(date => this.mapDateToReference(date, shifts, exceptions))
 
     this.events = await this.getEmployeeEvents(from, to)
 
     this.timetypes = await AttTimetype.query()
     this.thresholds = await AttThreshold.query().first()
-
+    debugger
     this.initialized = true
   }
 
@@ -64,12 +65,13 @@ module.exports = class EmployeeAttendance {
       .where({ employee_id: this.employee_id })
       .whereNot('start_date', '>', format(to, 'YYYY-MM-DD'))
       .where(query => query.where('end_date', null).orWhereNot('end_date', '<', format(from, 'YYYY-MM-DD')))
+      .eager('[slots.schedule.[breaktime, uptime, downtime]]')
   }
 
   async getEmployeeExceptions (from, to) {
     return AttException.query()
       .where({ employee_id: this.employee_id })
-      .innerJoin('hr_att_exception_autorization', 'exception_id', 'exception_id')
+      .innerJoin('hr_att_exception_authorization', 'hr_att_exception.exception_id', 'hr_att_exception_authorization.exception_id')
       .where({ granted: true })
       .eager('[slots(inDateRange).schedule.[breaktime, uptime, downtime], authorization]', {
         inDateRange (query) {
@@ -93,19 +95,21 @@ module.exports = class EmployeeAttendance {
   }
 
   mapDateToReference(date, shifts, exceptions) {
+    debugger
     // find all exceptions with a slot within range
     // sort by exception aproval date
     const candidateExceptionsForDate = exceptions
-    .filter(exception => exception.slots.any(slot => isSameDay(slot.date, date)))
-    .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))
+      .filter(exception => exception && exception.slots && exception.slots.length > 1)
+      .filter(exception => exception.slots.any(slot => isSameDay(slot.date, date)))
+      .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))
     
     const exceptionForDate = candidateExceptionsForDate[0] ? candidateExceptionsForDate[0] : null
     
     const exceptionScheduleForDate = exceptionForDate ? exceptionForDate.slots.find(slot => isSameDay(slot.date, date)).schedule : null
     
     const candidateShiftsForDate = shifts
-    .filter(shift => shift.end_date ? isWithinRange(date, shift.start_date, shift.end_date) : !isBefore(date, shift.start_date))
-    .sort((a, b) => compareDesc(a.start_date, b.start_date))
+      .filter(shift => shift.end_date ? isWithinRange(date, shift.start_date, shift.end_date) : !isBefore(date, shift.start_date))
+      .sort((a, b) => compareDesc(a.start_date, b.start_date))
     
     const shiftForDate = candidateShiftsForDate[0] ? candidateShiftsForDate[0] : null
     
@@ -122,18 +126,19 @@ module.exports = class EmployeeAttendance {
   }
 
   mapScheduleToDate (schedule, date) {
+    debugger
     return {
       ...schedule,
       breaktime: schedule.breaktime.map(breaktime => ({
         ...breaktime,
         duration: combineDateAndTime(date, breaktime.duration),
         start_time: combineDateAndTime(date, breaktime.start_time),
-        end_time: isBefore(end_time, breaktime.start_time) ? combineDateAndTime(addDays(date, 1), breaktime.end_time) : combineDateAndTime(date, breaktime.end_time)
+        end_time: isBefore(breaktime.end_time, breaktime.start_time) ? combineDateAndTime(addDays(date, 1), breaktime.end_time) : combineDateAndTime(date, breaktime.end_time)
       })),
       uptime: schedule.uptime.map(uptime => ({
         ...uptime,
         start_time: combineDateAndTime(date, uptime.start_time),
-        end_time: isBefore(end_time, uptime.start_time) ? combineDateAndTime(addDays(date, 1), uptime.end_time) : combineDateAndTime(date, uptime.end_time)
+        end_time: isBefore(uptime.end_time, uptime.start_time) ? combineDateAndTime(addDays(date, 1), uptime.end_time) : combineDateAndTime(date, uptime.end_time)
       }))
     }
   }
@@ -146,8 +151,8 @@ module.exports = class EmployeeAttendance {
     return timetype
   }
 
-  async getReferenceForDate(date) {
-    if (!this.initialized) await this.init()
+  getReferenceForDate(date) {
+    // if (!this.initialized) await this.init()
     const from = subDays(this.from, 1)
     const to = addDays(this.to, 2)
 
@@ -241,6 +246,7 @@ module.exports = class EmployeeAttendance {
 
     exception.slots.forEach(slot => {
       const currentRef = this.getReferenceForDate(slot.date)
+      debugger
 
       if (currentRef && currentRef.schedule) {
         currentRef.schedule.uptime.forEach(uptime => {
@@ -268,23 +274,25 @@ module.exports = class EmployeeAttendance {
         })
       }
     })
+    debugger
+    // TOODO: verify logic here
 
-    accountableTimetypes.forEach(timetype => {
-      if (currentTally[timetype] > exceptionTally[timetype]) {
+    accountableTimetypes.forEach(timetype_id => {
+      if (currentTally[timetype_id] > exceptionTally[timetype_id]) {
         transactions.push({
           exception_id: exception.exception_id,
           employee_id: this.employee_id,
-          account: timetype,
+          timetype_id,
           type: 'CREDIT',
-          amount: currentTally[timetype] - exceptionTally[timetype]
+          amount: currentTally[timetype_id] - exceptionTally[timetype_id]
         })
-      } else if (exceptionTally[timetype] > currentTally[timetype]) {
+      } else if (exceptionTally[timetype_id] > currentTally[timetype_id]) {
         transactions.push({
           exception_id: exception.exception_id,
           employee_id: this.employee_id,
-          account: timetype,
+          timetype_id,
           type: 'DEBIT',
-          amount: exceptionTally[timetype] - currentTally[timetype]
+          amount: exceptionTally[timetype_id] - currentTally[timetype_id]
         })
       }
     })

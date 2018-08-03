@@ -1,9 +1,6 @@
-module.exports = async (input, { eager, own, pending, approved, denied }, { authorize, model, session }) => {
-  console.log(own, pending, approved, denied)
-  if (own) {
-    console.log(typeof own)
-  }
-  // NOTE: current problem is params are string, not boolean
+module.exports = async (input, { eager, own, status }, { authorize, model, session }) => {
+  // convert own to boolean from string
+  if (own) own = Boolean(own)
   
   let permission = authorize(model.resourceName, 'read', 'any')
 
@@ -17,7 +14,10 @@ module.exports = async (input, { eager, own, pending, approved, denied }, { auth
     query.where({ owner_id })
   }
   
-  if ([pending, approved, denied].includes(true)) {    
+  if (status && status.length) {
+    let pending = status.includes('pending')
+    let approved = status.includes('approved')
+    let denied = status.includes('denied')
     query.leftJoin('hr_att_exception_authorization', 'hr_att_exception.exception_id', 'hr_att_exception_authorization.exception_id')
     query.where(function () {
       if (pending) {

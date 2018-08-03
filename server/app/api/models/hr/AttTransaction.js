@@ -6,7 +6,7 @@ module.exports = class HRAttTransaction extends Model {
   static get tableName () { return 'hr_att_transaction' }
   static get idColumn () { return 'transaction_id' }
   static get relationMappings () {
-    const AttType = require('./AttType')
+    const AttTimetype = require('./AttTimetype')
     const AttSchedule = require('./AttSchedule')
     const AttException = require('./AttException')
     const Employee = require('./Employee')
@@ -44,12 +44,12 @@ module.exports = class HRAttTransaction extends Model {
           to: AttSchedule.tableName + '.schedule_id'
         }
       },
-      'type': {
+      'timetype': {
         relation: HasOneRelation,
-        modelClass: AttType,
+        modelClass: AttTimetype,
         join: {
-          from: this.tableName + '.type_id',
-          to: AttType.tableName + '.type_id'
+          from: this.tableName + '.timetype_id',
+          to: AttTimetype.tableName + '.timetype_id'
         }
       }
     }

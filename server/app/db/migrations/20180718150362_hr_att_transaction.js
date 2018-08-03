@@ -5,7 +5,7 @@ exports.up = async function(knex, Promise) {
     table.text('transaction_name')
     table.text('description')
     table.uuid('employee_id').notNullable()
-    table.integer('account')
+    table.integer('timetype_id')
     table.enu('type', ['CREDIT', 'DEBIT'], { useNative: true, enumName: 'transaction_type' })
     table.decimal('amount', 15, 12)
     table.uuid('user_id')
@@ -13,7 +13,7 @@ exports.up = async function(knex, Promise) {
     
     table.timestamps()
     
-    table.foreign('account').references('timetype_id').inTable('hr_att_timetype').onUpdate('CASCADE').onDelete('RESTRICT')
+    table.foreign('timetype_id').references('timetype_id').inTable('hr_att_timetype').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('user_id').references('user_id').inTable('core_users').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('employee_id').references('employee_id').inTable('hr_employee').onUpdate('CASCADE').onDelete('RESTRICT')
     table.foreign('exception_id').references('exception_id').inTable('hr_att_exception').onUpdate('CASCADE').onDelete('RESTRICT')

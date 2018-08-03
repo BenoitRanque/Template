@@ -1,6 +1,6 @@
 module.exports = {
   server: {
-    PORT: process.env.PORT === undefined ? Number(process.env.PORT) : 80,
+    PORT: process.env.PORT ? Number(process.env.PORT) : 80,
     HOST: process.env.HOST || 'localhost',
     ENV: process.env.NODE_ENV || 'dev'
   },

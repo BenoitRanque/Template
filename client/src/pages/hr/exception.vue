@@ -161,20 +161,35 @@ export default {
         },
         columns: [
           {
+            name: 'fechaSolicitud',
+            required: true,
+            label: 'Fecha de Solicitud',
+            align: 'left',
+            field: row => this.$date.formatDate(row.created_at, 'DD/MM/YYYY'),
+            sortable: true
+          },
+          {
+            name: 'employee',
+            required: true,
+            label: 'Empleado',
+            align: 'left',
+            field: row => row.employee.name_first,
+            sortable: true
+          },
+          {
             name: 'description',
             required: true,
-            label: this.$t('field.description.label'),
+            label: 'Comentario',
             align: 'left',
             field: 'description',
             sortable: true
           },
           {
-            name: 'slots',
+            name: 'status',
+            label: 'Estado',
             required: true,
-            label: this.$t('field.exception_slots.label'),
-            align: 'left',
-            field: row => row.slots.length,
-            sortable: true
+            sortable: true,
+            field: row => row.authorization ? row.authorization.granted ? 'Authorizada' : 'Denegada' : 'Pendiente'
           },
           {
             name: 'edit',
@@ -210,15 +225,21 @@ export default {
   },
   computed: {
     ...mapGetters('core', {
-      isAuthorized: 'isAuthorized'
+      isAuthorized: 'isAuthorized',
+      sessionUser: 'sessionUser'
     }),
+    isPending () {
+      return this.view ? !!this.view.authorization : false
+    },
     canAuthorize () {
       // check privileges and whether item is already authorized
-      return true
+      return !this.isPending && this.isAuthorized('HRAttExceptionAuthorization', 'create', 'any')
     },
     canDelete () {
       // check if current user is owner
-      return true
+      return !this.isPending &&
+        this.isAuthorized('HRAttExceptionAuthorization', 'delete', 'own') &&
+        this.sessionUser.user_id === this.view.owner_id
     }
   },
   methods: {
@@ -249,9 +270,7 @@ export default {
         this.$axios.get(HR_ATT_EXCEPTION, { params: {
           eager: '[employee, slots.schedule.[breaktime, uptime, downtime], authorization, owner]',
           own: false, // TODO: check if user has permission to see exceptions they do not own
-          pending: this.queryParams.includes('pending'),
-          approved: this.queryParams.includes('approved'),
-          denied: this.queryParams.includes('denied')
+          status: this.queryParams
         } }),
         this.fetchTimetypes(),
         this.fetchSubordinateEmployees(),

@@ -23,18 +23,20 @@ module.exports = async (input, params, { model, authorize, session, transaction 
     return permission.filter(data)
   }
 
+  debugger
   const exception = await AttException.query().where({ exception_id }).eager('[slots.schedule.[breaktime, uptime, downtime]]').first()
-
+  
   const dates = exception.slots.map(slot => slot.date).sort(compareAsc)
-  const attendance = new EmployeeAttendance(input.employee_id, dates[0], dates[dates.length -1])
+  const attendance = new EmployeeAttendance(exception.employee_id, dates[0], dates[dates.length -1])
   await attendance.init()
+
+  debugger
 
   const exceptionTransactions = await attendance.getTransactionsForException(exception)
   const exceptionTransactionsWithUserId = exceptionTransactions.map(t => ({
     ...t,
     user_id: session.user.user_id
   }))
-
   const data = await transaction(model.knex(), async trx => {
     const authorization = await model.query(trx).insert({
       granted, exception_id, user_id: session.user.user_id
