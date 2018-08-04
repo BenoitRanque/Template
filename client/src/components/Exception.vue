@@ -96,7 +96,7 @@
         </q-stepper-navigation>
       </q-step>
 
-      <q-step :order="2" title="Detalles de la boleta">
+      <!-- <q-step :order="2" title="Detalles de la boleta">
         <template v-if="mode === 0">
           <div v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index">
             <q-field label="Fecha">
@@ -146,23 +146,131 @@
             </q-field>
           </div>
         </template>
+        <template v-else-if="mode === 2">
+          <div v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index">
+            <q-field label="Fecha">
+              <div class="row">
+                <div class="col">
+                  <q-datetime v-model="slot.date.$model"></q-datetime>
+                </div>
+                <div class="col-auto">
+                  <q-btn dense color="negative" icon="close" @click="$v.model.slots.$model.splice(Number(index), 1)">
+                    <q-tooltip>Quitar Dia</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </q-field>
+            <q-field label="Jornada">
+              <schedule-select class="col"
+                v-model="slot.schedule.$model"
+                @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
+              ></schedule-select>
+            </q-field>
+          </div>
+        </template>
         <q-stepper-navigation class="justify-around">
           <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
           <q-btn :disable="$v.model.slots.$invalid" @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
         </q-stepper-navigation>
-      </q-step>
+      </q-step> -->
 
-      <q-step :order="3" @select="setAutoTitleAndDesc" title="Revisar e Solicitar">
+      <template v-if="mode === 0">
+        <q-step title="Detalles" :order="11">
+          <div v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index">
+            <q-field label="Fecha">
+              <div class="row">
+                <div class="col">
+                  <q-datetime v-model="slot.date.$model"></q-datetime>
+                </div>
+                <div class="col-auto">
+                  <q-btn dense color="negative" icon="close" @click="$v.model.slots.$model.splice(Number(index), 1)">
+                    <q-tooltip>Quitar Dia</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </q-field>
+            <q-field label="Jornada">
+              <schedule-select class="col"
+                v-model="slot.schedule.$model"
+                @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
+              ></schedule-select>
+            </q-field>
+          </div>
+          <div class="text-center q-my-md">
+            <q-btn icon="add" flat rounded @click="$v.model.slots.$model.push({ date: null, schedule_id: null, schedule: null })">
+              <q-tooltip>aggregar dia</q-tooltip>
+            </q-btn>
+          </div>
+          <q-stepper-navigation class="justify-around">
+            <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
+            <q-btn :disable="$v.model.slots.$invalid" @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
+          </q-stepper-navigation>
+        </q-step>
+      </template>
+      <template v-if="mode === 1">
+        <q-step title="Escoja la fecha y el horario" :order="11">
+          <div v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index">
+            <q-field label="Fecha">
+              <div class="row">
+                <div class="col">
+                  <q-datetime v-model="slot.date.$model"></q-datetime>
+                </div>
+              </div>
+            </q-field>
+            <q-field label="Jornada">
+              <schedule-select class="col"
+                v-model="slot.schedule.$model"
+                @input="slot.schedule_id.$model = $event && $event.schedule_id ? $event.schedule_id : null"
+              ></schedule-select>
+            </q-field>
+          </div>
+          <q-stepper-navigation class="justify-around">
+            <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
+            <q-btn :disable="$v.model.slots.$invalid" @click="$refs.stepper.next()" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
+          </q-stepper-navigation>
+        </q-step>
+      </template>
+      <template v-if="mode === 2">
+        <q-step title="Escoja las fechas" :order="11">
+
+          <q-field label="Fecha 1">
+            <q-datetime v-model="dateA"></q-datetime>
+          </q-field>
+          <q-field label="Fecha 2">
+            <q-datetime v-model="dateB"></q-datetime>
+          </q-field>
+          <q-stepper-navigation class="justify-around">
+            <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
+            <q-btn :disable="$v.dateA.$invalid || $v.dateB.$invalid" @click="automate" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
+          </q-stepper-navigation>
+        </q-step>
+      </template>
+      <template v-if="mode === 3">
+        <q-step title="Escoja las fechas" :order="11">
+          <q-stepper-navigation class="justify-around">
+            <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
+            <q-btn :disable="$v.dateA.$invalid || $v.dateB.$invalid" @click="automate" color="primary" icon-right="arrow_forward">Siguiente</q-btn>
+          </q-stepper-navigation>
+        </q-step>
+      </template>
+      <!-- <template v-if="mode === 4">
+        <q-step title="" :order="11"></q-step>
+        <q-step title="" :order="12"></q-step>
+        <q-step title="" :order="13"></q-step>
+      </template> -->
+
+      <q-step :order="21" @select="setAutoTitleAndDesc" title="Revisar e Solicitar">
         <q-field v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index" :label="$date.formatDate(slot.date.$model, 'DD/MM/YYYY')">
           <!-- <schedule-compact :value="slot.schedule.$model"></schedule-compact> -->
         </q-field>
         <q-input v-model="$v.model.description.$model" placeholder="Comentario"></q-input>
+        <pre>{{model}}</pre>
         <q-stepper-navigation class="justify-around">
           <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
           <q-btn :disable="$v.model.$invalid" @click="requestException" color="primary" icon-right="check">Solicitar</q-btn>
         </q-stepper-navigation>
       </q-step>
-      <q-step :order="4" title="Imprimir">
+      <q-step :order="22" title="Imprimir">
         imprimir
         Boleta Solicitada exitosamente
         <q-stepper-navigation class="justify-around">
@@ -176,7 +284,7 @@
 </template>
 
 <script>
-import { HR_ATT_EXCEPTION, HR_ATT_EXCEPTION_AUTHORIZATION } from 'assets/apiRoutes'
+import { HR_ATT_EXCEPTION_AUTHORIZATION, HR_ATT_EXCEPTION_AUTOMATE } from 'assets/apiRoutes'
 import { mapGetters } from 'vuex'
 import ScheduleCompact from 'components/ScheduleCompact'
 import ScheduleSelect from 'components/ScheduleSelect'
@@ -206,8 +314,8 @@ export default {
   components: { ScheduleCompact, ScheduleSelect },
   data () {
     return {
-      date1: null,
-      date2: null,
+      dateA: null,
+      dateB: null,
       loading: false,
       mode: 0,
       model: {
@@ -218,6 +326,8 @@ export default {
     }
   },
   validations: {
+    dateA: { required },
+    dateB: { required },
     model: {
       description: {},
       employee_id: { required },
@@ -248,8 +358,54 @@ export default {
     }
   },
   watch: {
-    mode (mode) {
-      // set default model values depending on mode
+    model: {
+      deep: true,
+      handler () {
+        this.$emit('input', this.valid ? this.model : null)
+      }
+    }
+  },
+  methods: {
+    automate () {
+      this.loading = true
+      this.$axios.post(HR_ATT_EXCEPTION_AUTOMATE, {
+        employee: this.model.employee_id,
+        dateA: this.dateA,
+        dateB: this.dateB
+      }, {
+        params: {
+          mode: this.mode
+        }
+      }).then(({ data }) => {
+        this.loading = false
+        this.model.slots = data.slots
+        this.$refs.stepper.next()
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    print () {
+      this.$q.notify('imprimiendo')
+    },
+    setAutoTitleAndDesc () {
+      console.log(HR_ATT_EXCEPTION_AUTHORIZATION)
+    },
+    requestException () {
+      this.loading = true
+      this.$emit('create', [
+        this.model,
+        () => {
+          // success callback
+          this.loading = false
+        },
+        () => {
+          // failure callback
+          this.loading = false
+        }
+      ])
+    },
+    setMode (mode) {
+      this.mode = mode
       switch (mode) {
         case 0:
           this.model.slots.push({ date: null, schedule_id: null, schedule: null })
@@ -265,45 +421,6 @@ export default {
           break
         default: throw new Error(`Unknown exception mode: ${mode}`)
       }
-    },
-    model: {
-      deep: true,
-      handler () {
-        this.$emit('input', this.valid ? this.model : null)
-      }
-    }
-  },
-  methods: {
-    print () {
-      this.$q.notify('imprimiendo')
-    },
-    setAutoTitleAndDesc () {
-      console.log(HR_ATT_EXCEPTION_AUTHORIZATION)
-    },
-    requestException () {
-      this.loading = true
-      this.$axios.post(HR_ATT_EXCEPTION, this.model)
-        .then(() => {
-          this.loading = false
-          this.$q.notify({
-            message: this.$t('operation.create.success'),
-            type: 'positive'
-          })
-        })
-        .catch(() => {
-          this.loading = false
-          this.$q.notify({
-            message: this.$t('operation.create.failure'),
-            type: 'warning'
-          })
-        })
-      // setTimeout(() => {
-      //   this.loading = false
-      //   this.$refs.stepper.next()
-      // }, 1000)
-    },
-    setMode (mode) {
-      this.mode = mode
       this.$refs.stepper.next()
     }
   }

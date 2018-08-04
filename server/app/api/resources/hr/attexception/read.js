@@ -1,4 +1,4 @@
-module.exports = async (input, { eager, own, status }, { authorize, model, session }) => {
+module.exports = async (input, { eager, own, status, employee }, { authorize, model, session }) => {
   // convert own to boolean from string
   if (own) own = Boolean(own)
   
@@ -12,6 +12,12 @@ module.exports = async (input, { eager, own, status }, { authorize, model, sessi
 
   if (own) {
     query.where({ owner_id })
+  }
+
+  if (employee) {
+    query.where({
+      employee_id: employee
+    })
   }
   
   if (status && status.length) {

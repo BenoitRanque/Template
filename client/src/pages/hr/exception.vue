@@ -18,11 +18,12 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
+        <q-select v-model="queryParams.employee" :options="subordinateEmployeeOptions" clearable filter hide-underline prefix="Empleados: " :display-value="queryParams.employee ? '' : 'Todos'"></q-select>
         <q-select
-          prefix="Ver: "
+          prefix="Estado: "
           hide-underline
-          v-model="queryParams"
-          :display-value="queryParams.length ? '' : 'Todas'"
+          v-model="queryParams.status"
+          :display-value="queryParams.status.length ? '' : 'Todos'"
           multiple
           :options="[
             { value: 'pending', label: 'Pendientes'},
@@ -34,7 +35,7 @@
       </template>
 
       <q-td slot="body-cell-edit" slot-scope="props" :props="props" auto-width>
-        <q-btn size="md" round dense flat icon="edit" color="dark" @click="view = props.row; $refs.viewModal.show()"></q-btn>
+        <q-btn size="md" round dense flat icon="info" color="dark" @click="view = props.row; $refs.viewModal.show()"></q-btn>
       </q-td>
 
     </q-table>
@@ -71,9 +72,8 @@
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel($refs.createModal)"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
-          <q-btn v-if="isAuthorized(resource.create, 'create', 'any')" size="lg" rounded color="positive" icon="create" :disable="$v.item.$invalid" @click="createItem(item)">{{$t('buttons.createItem')}}</q-btn>
         </q-toolbar>
-        <exception v-model="item"/>
+        <exception @create="createException" @close="$refs.createModal.hide()" v-model="item"/>
       </q-modal-layout>
     </q-modal>
 
@@ -84,10 +84,10 @@
             {{ $t('edit') }} {{$t('modal.title')}}
             <span slot="subtitle">{{$t('modal.subtitle')}}</span>
           </q-toolbar-title>
-          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="cancel($refs.viewModal)"></q-btn>
+          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="$refs.viewModal.hide()"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
-          <q-btn v-if="canDelete" size="lg" rounded color="negative" icon="create" @click="deleteException">{{$t('buttons.createItem')}}</q-btn>
+          <q-btn v-if="canDelete" size="lg" rounded color="negative" icon="delete" @click="deleteException">{{$t('buttons.createItem')}}</q-btn>
           <template v-if="canAuthorize">
             <q-btn size="lg" rounded color="warning" icon="delete" @click="grantAuthorization(false)">{{$t('buttons.denyAuthorization')}}</q-btn>
             <q-btn size="lg" rounded color="positive" icon="check" @click="grantAuthorization(true)">{{$t('buttons.grantAuthorization')}}</q-btn>
@@ -145,7 +145,10 @@ export default {
       resource: 'HRAttException',
       apiRoute: HR_ATT_EXCEPTION,
       view: null, // the item currently being viewed
-      queryParams: ['pending'],
+      queryParams: {
+        status: ['pending'],
+        employee: null
+      },
       item: newItem(),
       table: {
         loading: false,
@@ -228,6 +231,9 @@ export default {
       isAuthorized: 'isAuthorized',
       sessionUser: 'sessionUser'
     }),
+    ...mapGetters('hr', {
+      subordinateEmployeeOptions: 'subordinateEmployeeOptions'
+    }),
     isPending () {
       return this.view ? !!this.view.authorization : false
     },
@@ -270,7 +276,7 @@ export default {
         this.$axios.get(HR_ATT_EXCEPTION, { params: {
           eager: '[employee, slots.schedule.[breaktime, uptime, downtime], authorization, owner]',
           own: false, // TODO: check if user has permission to see exceptions they do not own
-          status: this.queryParams
+          ...this.queryParams
         } }),
         this.fetchTimetypes(),
         this.fetchSubordinateEmployees(),
@@ -284,9 +290,22 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ exception_id: item.exception_id }), // REMOVE
-    createException () {
-
+    createException ([exception, success, failure]) {
+      this.$axios.post(HR_ATT_EXCEPTION, exception)
+        .then(() => {
+          this.$q.notify({
+            message: this.$t('operation.create.success'),
+            type: 'positive'
+          })
+          success()
+        })
+        .catch(() => {
+          this.$q.notify({
+            message: this.$t('operation.create.failure'),
+            type: 'warning'
+          })
+          failure()
+        })
     },
     deleteException () {
       this.$q.dialog({
@@ -314,10 +333,7 @@ export default {
               })
             })
         })
-        .catch(() => {
-          this.$q.loading.hide()
-          this.$q.notify('SYSTEM ERROR')
-        })
+        .catch(() => {})
     },
     grantAuthorization (granted = true) {
       this.$q.dialog({

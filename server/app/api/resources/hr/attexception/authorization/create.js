@@ -32,7 +32,7 @@ module.exports = async (input, params, { model, authorize, session, transaction 
 
   debugger
 
-  const exceptionTransactions = await attendance.getTransactionsForException(exception)
+  const exceptionTransactions = attendance.getTransactionsForException(exception)
   const exceptionTransactionsWithUserId = exceptionTransactions.map(t => ({
     ...t,
     user_id: session.user.user_id

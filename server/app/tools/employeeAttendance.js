@@ -143,8 +143,8 @@ module.exports = class EmployeeAttendance {
     }
   }
 
-  async getTimetype (timetype_id) {
-    if (!this.initialized) await this.init()
+  getTimetype (timetype_id) {
+    if (!this.initialized) throw new Error(`Please initialize before calling this function`)
     
     const timetype = this.timetypes.find(t => t.timetype_id === timetype_id)
     if (!timetype) throw new Error(`Unknown timetype_id ${timetype_id}`)
@@ -152,17 +152,17 @@ module.exports = class EmployeeAttendance {
   }
 
   getReferenceForDate(date) {
-    // if (!this.initialized) await this.init()
+    if (!this.initialized) throw new Error(`Please initialize before calling this function`)
     const from = subDays(this.from, 1)
     const to = addDays(this.to, 2)
-
+    
     if (!isWithinRange(date, from, to)) throw new Error(`Date ${date} out of bounds ${from} ${to}`)
-
+    
     return this.references.find(ref => isSameDay(ref.date, date))
   }
-
-  async getBoundsForDate(date) {
-    if (!this.initialized) await this.init()
+  
+  getBoundsForDate(date) {
+    if (!this.initialized) throw new Error(`Please initialize before calling this function`)
     
     const startRef = this.getReferenceForDate(subDays(date, 1))
     const startCandidates = [startOfDay(date)]
@@ -195,14 +195,14 @@ module.exports = class EmployeeAttendance {
       end: max(...endCandidates)
     }
   }
-
-  async getBoundsForEvent(event) {
-    if (!this.initialized) await this.init()
-
+  
+  getBoundsForEvent(event) {
+    if (!this.initialized) throw new Error(`Please initialize before calling this function`)
+    
     let candidateReferences = [startOfDay(event), endOfDay(event)]
-
+    
     let eventRef = this.getReferenceForDate(event)
-
+    
     if (eventRef && eventRef.schedule) {
       if (eventRef.schedule.uptime) {
         eventRef.schedule.uptime.forEach(uptime => {
@@ -221,15 +221,15 @@ module.exports = class EmployeeAttendance {
         })
       }
     }
-
+    
     return {
       start: max(...candidateReferences.filter(ref => isBefore(ref, event))),
       end: min(...candidateReferences.filter(ref => isAfter(ref, event)))
     }
   }
-
-  async getTransactionsForException(exception) {
-    if (!this.initialized) await this.init()
+  
+  getTransactionsForException(exception) {
+    if (!this.initialized) throw new Error(`Please initialize before calling this function`)
 
     const accountableTimetypes = []
     const currentTally = {}
