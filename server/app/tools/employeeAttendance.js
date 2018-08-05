@@ -69,7 +69,7 @@ module.exports = class EmployeeAttendance {
   }
 
   async getEmployeeExceptions (from, to) {
-    return AttException.query()
+    const data = await AttException.query()
       .where({ employee_id: this.employee_id })
       .innerJoin('hr_att_exception_authorization', 'hr_att_exception.exception_id', 'hr_att_exception_authorization.exception_id')
       .where({ granted: true })
@@ -78,6 +78,7 @@ module.exports = class EmployeeAttendance {
           query.whereBetween('date', [format(from, 'YYYY-MM-DD'), format(to, 'YYYY-MM-DD')])
         }
       })
+    return data.filter(exception => exception && exception.slots && exception.slots.length > 0)
   }
 
   async getEmployeeEvents (from, to) {
@@ -99,8 +100,7 @@ module.exports = class EmployeeAttendance {
     // find all exceptions with a slot within range
     // sort by exception aproval date
     const candidateExceptionsForDate = exceptions
-      .filter(exception => exception && exception.slots && exception.slots.length > 1)
-      .filter(exception => exception.slots.any(slot => isSameDay(slot.date, date)))
+      .filter(exception => exception && exception.slots && exception.slots.some(slot => isSameDay(slot.date, date)))
       .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))
     
     const exceptionForDate = candidateExceptionsForDate[0] ? candidateExceptionsForDate[0] : null
@@ -298,6 +298,10 @@ module.exports = class EmployeeAttendance {
     })
 
     return transactions
+  }
+
+  getVacationScheduleForDate(date) {
+    // return whatever schedule is apropriate for a vacation day on date
   }
 
 }

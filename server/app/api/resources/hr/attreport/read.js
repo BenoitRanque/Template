@@ -458,8 +458,8 @@ function getRangeForDate(date, references) {
 function getScheduleForDate(date, shifts, exceptions) {
 
   // TODO: sort exceptions  to favor the more recently created ones in case multiple ones cover same date
-  const exceptionForDate = exceptions.find(exception => exception.slots.any(slot => isSameDay(slot.date === date)))
-  const exceptionScheduleForDate = exceptionForDate && exceptionForDate.slots.any(slot => isSameDay(slot.date, date)) ? exceptionForDate.slots.find(slot => isSameDay(slot.date === date)).schedule : null
+  const exceptionForDate = exceptions.find(exception => exception.slots.some(slot => isSameDay(slot.date === date)))
+  const exceptionScheduleForDate = exceptionForDate && exceptionForDate.slots.some(slot => isSameDay(slot.date, date)) ? exceptionForDate.slots.find(slot => isSameDay(slot.date === date)).schedule : null
   
   const shiftForDate = shifts
     .filter(shift => shift.end_date ? isWithinRange(date, shift.start_date, shift.end_date) : !isBefore(date, shift.start_date))
