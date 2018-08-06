@@ -8,6 +8,7 @@ exports.up = async function(knex, Promise) {
     table.boolean('additional') // whhether this type of time will count towards the standard day value, false on extra hours
     table.boolean('accountable') // whether this type of time will go to account on changes
     table.boolean('paid') // whether this type of time is paid
+    table.boolean('vacation') // whether this type of time is vacation
     table.text('code')
     table.text('color')
    
