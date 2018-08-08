@@ -247,6 +247,12 @@
       </template>
       <template v-if="mode === 3">
         <q-step title="Escoja las fechas" :order="11">
+          <q-field label="Fecha 1">
+            <q-datetime v-model="dateA"></q-datetime>
+          </q-field>
+          <q-field label="Fecha 2">
+            <q-datetime v-model="dateB"></q-datetime>
+          </q-field>
           <q-stepper-navigation class="justify-around">
             <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
             <q-btn :disable="$v.dateA.$invalid || $v.dateB.$invalid" @click="automate" color="primary" icon-right="arrow_forward">Siguiente</q-btn>

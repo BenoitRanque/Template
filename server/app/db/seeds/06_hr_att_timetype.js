@@ -6,21 +6,21 @@ exports.seed = async function(knex, Promise) {
   await AttTimeType.query().del()
 
   await AttTimeType.query().insert([
-    { timetype_name: 'Trabajo', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Trabajo Cuidad', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Tiempo Extra', code: '', color: '#FFF', category: 'UPTIME', additional: true, accountable: false, paid: true },
-    { timetype_name: 'Almuerzo', code: '', color: '#FFF', category: 'BREAKTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Libre', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
-    { timetype_name: 'Feriado', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
-    { timetype_name: 'Vacacion', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true },
-    { timetype_name: 'Permiso sin Descuento', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Permiso con Descuento', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: false },
-    { timetype_name: 'Baja Medica', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Permiso Por Salud', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Permiso Por Defunción', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Permiso Por Nacido Vivo ', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Cumpleaños', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
-    { timetype_name: 'Hora Lactancia', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true },
+    { timetype_name: 'Trabajo', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Trabajo Cuidad', code: '', color: '#FFF', category: 'UPTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Tiempo Extra', code: '', color: '#FFF', category: 'UPTIME', additional: true, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Almuerzo', code: '', color: '#FFF', category: 'BREAKTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Libre', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true, vacation: false },
+    { timetype_name: 'Feriado', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true, vacation: false },
+    { timetype_name: 'Vacacion', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: true, paid: true, vacation: true },
+    { timetype_name: 'Permiso sin Descuento', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Permiso con Descuento', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: false, vacation: false },
+    { timetype_name: 'Baja Medica', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Permiso Por Salud', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Permiso Por Defunción', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Permiso Por Nacido Vivo ', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Cumpleaños', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
+    { timetype_name: 'Hora Lactancia', code: '', color: '#FFF', category: 'DOWNTIME', additional: false, accountable: false, paid: true, vacation: false },
   ])
 }
 

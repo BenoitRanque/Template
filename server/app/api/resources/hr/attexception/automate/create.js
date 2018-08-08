@@ -77,11 +77,11 @@ async function vacations({ dateA, dateB, employee } = {}) {
   if (!isBefore(dateA, dateB)) throw new ServerError(400, `Mode 3 requires dateA ${dateA} not be before dataB ${dateB}`)
   const attendance = new EmployeeAttendance(employee, dateA, dateB)
   await attendance.init()
+  
+  const slots = await attendance.getVacationScheduleForDateRange(dateA, dateB)
 
   const data = {
-    slots: eachDay(dateA, dateB).map(date => ({
-      date,
-      schedule: attendance.getVacationScheduleForDate(date)
-    }))
+    slots
   }
+  return data
 }

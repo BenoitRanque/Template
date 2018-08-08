@@ -1,4 +1,4 @@
-const { AttException, AttThreshold, AttShift, AttTimetype, Employee } = require('@models/hr')
+const { AttException, AttThreshold, AttShift, AttTimetype, Employee, AttSchedule, AttScheduleDowntime } = require('@models/hr')
 
 const format = require('date-fns/format')
 const isBefore = require('date-fns/is_before')
@@ -300,8 +300,47 @@ module.exports = class EmployeeAttendance {
     return transactions
   }
 
-  getVacationScheduleForDate(date) {
+  async getVacationScheduleForDateRange(from, to) {
     // return whatever schedule is apropriate for a vacation day on date
-  }
+    const { timetype_id } = await AttTimetype.query().select('timetype_id').where({ vacation: true }).first()
+    const { schedule_id } = await AttScheduleDowntime.query().select('schedule_id').where({ timetype_id, value: 1 }).first()
+    const schedule = await AttSchedule.query().where({ schedule_id }).eager('[uptime, downtime, breaktime]').first()
 
+    return await Promise.all(eachDay(from, to).map(async date => {
+      let refForDate = this.getReferenceForDate(date)
+      let totalAccountableValue = refForDate.schedule.downtime.reduce((acc, val) => this.getTimetype(val.timetype_id).accountable ? acc + Number(val.value) : acc, 0) 
+      
+      if (totalAccountableValue === 0) {
+        return {
+          date,
+          schedule,
+          schedule_id
+        }
+      }
+
+      const vacationSchedule = {
+        uptime: [],
+        breaktime: [],
+        downtime: refForDate.schedule.downtime
+          .filter(d => this.getTimetype(d.timetype_id).accountable)
+          .map(({ value, timetype_id, description }) => ({ value, timetype_id, description }))
+      }
+      
+      const vacationScheduleAccountableValue = vacationSchedule.downtime.reduce((acc, val) => acc + Number(val.value), 0)
+
+      if (vacationScheduleAccountableValue !== 1) {
+        vacationSchedule.downtime.push({
+          timetype_id,
+          value: 1 - vacationScheduleAccountableValue,
+          description: 'Vacación'
+        })
+      }
+
+      return {
+        date,
+        schedule: vacationSchedule
+      }
+
+    }))
+  }
 }
