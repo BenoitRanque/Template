@@ -87,7 +87,7 @@
           <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="$refs.viewModal.hide()"></q-btn>
         </q-toolbar>
         <q-toolbar slot="footer" class="justify-around q-py-sm" align="around">
-          <q-btn v-if="canDelete" size="lg" rounded color="negative" icon="delete" @click="deleteException">{{$t('buttons.createItem')}}</q-btn>
+          <q-btn v-if="canDelete" size="lg" rounded color="negative" icon="delete" @click="deleteException">{{$t('buttons.deleteItem')}}</q-btn>
           <template v-if="canAuthorize">
             <q-btn size="lg" rounded color="warning" icon="delete" @click="grantAuthorization(false)">{{$t('buttons.denyAuthorization')}}</q-btn>
             <q-btn size="lg" rounded color="positive" icon="check" @click="grantAuthorization(true)">{{$t('buttons.grantAuthorization')}}</q-btn>
@@ -239,11 +239,11 @@ export default {
     },
     canAuthorize () {
       // check privileges and whether item is already authorized
-      return !this.isPending && this.isAuthorized('HRAttExceptionAuthorization', 'create', 'any')
+      return !!this.view && !this.isPending && this.isAuthorized('HRAttExceptionAuthorization', 'create', 'any')
     },
     canDelete () {
       // check if current user is owner
-      return !this.isPending &&
+      return !!this.view && !this.isPending &&
         this.isAuthorized('HRAttExceptionAuthorization', 'delete', 'own') &&
         this.sessionUser.user_id === this.view.owner_id
     }
@@ -337,7 +337,7 @@ export default {
     },
     grantAuthorization (granted = true) {
       this.$q.dialog({
-        title: granted ? this.$t('buttons.denyAuthorization') : this.$t('buttons.denyAuthorization'),
+        title: granted ? this.$t('buttons.grantAuthorization') : this.$t('buttons.denyAuthorization'),
         message: '',
         ok: true,
         cancel: true

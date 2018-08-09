@@ -9,6 +9,8 @@ module.exports = class HRAttSchedule extends Model {
     const AttScheduleBreaktime = require('./AttScheduleBreaktime')
     const AttScheduleUptime = require('./AttScheduleUptime')
     const AttScheduleDowntime = require('./AttScheduleDowntime')
+    // const AttShiftSlot = require('./AttShiftSlot')
+    // const AttExceptionSlot = require('./AttExceptionSlot')
     return {
       // 'shift_slot': {
       //   relation: HasManyRelation,

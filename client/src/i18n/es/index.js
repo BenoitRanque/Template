@@ -41,8 +41,8 @@ export default {
     'createItem': 'Crear Item',
     'updateItem': 'Modificar Item',
     'deleteItem': 'Elimninar Item',
-    'grantauthorization': 'Authorizar',
-    'denyauthorization': 'Denegar'
+    'grantAuthorization': 'Authorizar',
+    'denyAuthorization': 'Denegar'
   },
   'confirm': {
     'cancelEdit': {

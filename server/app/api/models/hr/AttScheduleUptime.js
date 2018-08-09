@@ -42,6 +42,7 @@ module.exports = class HRAttScheduleUptime extends Model {
   async $afterGet (ctx) {
     this.start_time ? this.start_time = parseTime(this.start_time) : null
     this.end_time ? this.end_time = parseTime(this.end_time) : null
+    this.value =  this.value ? Number(this.value) : 0
     return this
   }
 }

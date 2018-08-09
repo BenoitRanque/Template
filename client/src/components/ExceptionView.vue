@@ -1,13 +1,14 @@
 <template>
-  <pre>{{value}}</pre>
-  <!-- <schedule :value="value" readonly/> -->
+  <div>
+    <schedule-view :value="slot.schedule"  v-for="(slot, index) in value.slots" :key="index"/>
+  </div>
 </template>
 
 <script>
-import Schedule from './Schedule'
+import ScheduleView from './ScheduleView'
 export default {
   name: 'ExceptionView',
-  components: { Schedule },
+  components: { ScheduleView },
   props: {
     value: {
       type: Object,

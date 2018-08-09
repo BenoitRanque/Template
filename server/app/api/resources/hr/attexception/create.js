@@ -7,9 +7,9 @@ const EmployeeAttendance = require('@tools/employeeAttendance')
 module.exports = async (input, params, { model, authorize, session, transaction }) => {
 
   let permission = authorize(model.resourceName, 'create', 'any')
-
+  
   if (!input.employee_id) throw new ServerError(400, `employee_id  is a required field`)
-
+  
   const dates = input.slots.map(slot => slot.date).sort(compareAsc)
   
   dates.forEach((date, index) => {
@@ -17,20 +17,18 @@ module.exports = async (input, params, { model, authorize, session, transaction 
       throw new ServerError(400, `duplicate date ${date} in exception`)
     }
   })
-
+  
   input.owner_id = session.user.user_id
-
-console.log(input)
-console.log(input.slots[0].schedule)
-
-  const data = await transaction(model.knex(), async trx => await model.query(trx)
+  debugger
+  const data = await model.query()
     .allowUpsert('[slots.[schedule.[breaktime, uptime, downtime], transaction], authorization, owner]')
     .upsertGraph(permission.filter(input), {
-      relate: ['slots.schedule', 'slots.schedule.breaktime', 'slots.schedule.uptime', 'slots.schedule.downtime'],
+      relate: true,
+      // relate: ['slots.schedule', 'slots.schedule.breaktime', 'slots.schedule.uptime', 'slots.schedule.downtime'],
       // relate: ['slots.schedule', 'owner', 'slots.schedule.[breaktime, uptime, downtime]'],
       noUpdate: true
     }).returning('*')
-  )
+
 
   permission = authorize(model.resourceName, 'read', 'any')
 

@@ -266,11 +266,12 @@
       </template> -->
 
       <q-step :order="21" @select="setAutoTitleAndDesc" title="Revisar e Solicitar">
-        <q-field v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index" :label="$date.formatDate(slot.date.$model, 'DD/MM/YYYY')">
+        <q-field v-for="(slot, index) in $v.model.slots.$each.$iter" :key="index" :label="$date.formatDate(slot.date.$model, 'YYYY/MM/DD - dddd')">
           <!-- <schedule-compact :value="slot.schedule.$model"></schedule-compact> -->
+          <!-- <pre>{{slot.schedule.$model}}</pre> -->
+          <schedule-view :value="slot.schedule.$model"></schedule-view>
         </q-field>
         <q-input v-model="$v.model.description.$model" placeholder="Comentario"></q-input>
-        <pre>{{model}}</pre>
         <q-stepper-navigation class="justify-around">
           <q-btn @click="$refs.stepper.previous()" flat icon="arrow_back">Anterior</q-btn>
           <q-btn :disable="$v.model.$invalid" @click="requestException" color="primary" icon-right="check">Solicitar</q-btn>
@@ -292,7 +293,7 @@
 <script>
 import { HR_ATT_EXCEPTION_AUTHORIZATION, HR_ATT_EXCEPTION_AUTOMATE } from 'assets/apiRoutes'
 import { mapGetters } from 'vuex'
-import ScheduleCompact from 'components/ScheduleCompact'
+import ScheduleView from 'components/ScheduleView'
 import ScheduleSelect from 'components/ScheduleSelect'
 import {
   requiredIf,
@@ -317,7 +318,7 @@ import {
 } from 'vuelidate/lib/validators'
 export default {
   name: 'Exception',
-  components: { ScheduleCompact, ScheduleSelect },
+  components: { ScheduleView, ScheduleSelect },
   data () {
     return {
       dateA: null,

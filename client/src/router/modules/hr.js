@@ -31,13 +31,13 @@ export default {
       }
     },
     {
-      hash: 'type',
+      hash: 'timetype',
       layout: 'workspace',
       meta: {
-        label: 'atttype',
+        label: 'atttimetype',
         requireAuthentication: true,
         requireAuthorization: {
-          resource: 'HRAttType',
+          resource: 'HRAttTimeType',
           posession: 'any'
         }
       }

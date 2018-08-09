@@ -27,5 +27,9 @@ module.exports = class HRAttScheduleDowntime extends Model {
       }
     }
   }
+  async $afterGet (ctx) {
+    this.value =  this.value ? Number(this.value) : 0
+    return this
+  }
 }
 
