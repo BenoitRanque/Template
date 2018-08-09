@@ -17,7 +17,7 @@ module.exports = class HRAttExceptionSlot extends Model {
         }
       },
       'schedule': {
-        relation: HasOneRelation,
+        relation: BelongsToOneRelation,
         modelClass: AttSchedule,
         join: {
           from: this.tableName + '.schedule_id',
