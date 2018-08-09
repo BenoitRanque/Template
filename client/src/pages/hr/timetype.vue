@@ -52,20 +52,20 @@
         </q-toolbar>
         <div class="layout-padding group">
           <q-field
-            :label="$t(`field.type_id.label`)"
-            :helper="$t(`field.type_id.helper`)"
-            :error="$v.item.type_id.$error"
-            :error-label="validationError($v.item.type_id)"
+            :label="$t(`field.timetype_id.label`)"
+            :helper="$t(`field.timetype_id.helper`)"
+            :error="$v.item.timetype_id.$error"
+            :error-label="validationError($v.item.timetype_id)"
           >
-            <q-input type="number" v-model="$v.item.type_id.$model" :placeholder="$t(`field.type_id.placeholder`)"></q-input>
+            <q-input type="number" v-model="$v.item.timetype_id.$model" :placeholder="$t(`field.timetype_id.placeholder`)"></q-input>
           </q-field>
           <q-field
-            :label="$t(`field.type_name.label`)"
-            :helper="$t(`field.type_name.helper`)"
-            :error="$v.item.type_name.$error"
-            :error-label="validationError($v.item.type_name)"
+            :label="$t(`field.timetype_name.label`)"
+            :helper="$t(`field.timetype_name.helper`)"
+            :error="$v.item.timetype_name.$error"
+            :error-label="validationError($v.item.timetype_name)"
           >
-            <q-input v-model="$v.item.type_name.$model" :placeholder="$t(`field.type_name.placeholder`)"></q-input>
+            <q-input v-model="$v.item.timetype_name.$model" :placeholder="$t(`field.timetype_name.placeholder`)"></q-input>
           </q-field>
           <q-field
             :label="$t(`field.description.label`)"
@@ -76,12 +76,12 @@
             <q-input v-model="$v.item.description.$model" :placeholder="$t(`field.description.placeholder`)"></q-input>
           </q-field>
           <q-field
-            :label="$t(`field.type_code.label`)"
-            :helper="$t(`field.type_code.helper`)"
+            :label="$t(`field.timetype_code.label`)"
+            :helper="$t(`field.timetype_code.helper`)"
             :error="$v.item.code.$error"
             :error-label="validationError($v.item.code)"
           >
-            <q-input v-model="$v.item.code.$model" :placeholder="$t(`field.type_code.placeholder`)"></q-input>
+            <q-input v-model="$v.item.code.$model" :placeholder="$t(`field.timetype_code.placeholder`)"></q-input>
           </q-field>
           <q-field
             :label="$t(`field.color.label`)"
@@ -90,38 +90,6 @@
             :error-label="validationError($v.item.color)"
           >
             <q-color v-model="$v.item.color.$model" :placeholder="$t(`field.color.placeholder`)"></q-color>
-          </q-field>
-          <q-field
-            :label="$t(`field.start_early_threshold.label`)"
-            :helper="$t(`field.start_early_threshold.helper`)"
-            :error="$v.item.start_early_threshold.$error"
-            :error-label="validationError($v.item.start_early_threshold)"
-          >
-            <q-datetime type="time" :format24h="false" v-model="$v.item.start_early_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
-          </q-field>
-          <q-field
-            :label="$t(`field.start_late_threshold.label`)"
-            :helper="$t(`field.start_late_threshold.helper`)"
-            :error="$v.item.start_late_threshold.$error"
-            :error-label="validationError($v.item.start_late_threshold)"
-          >
-            <q-datetime type="time" format24h v-model="$v.item.start_late_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
-          </q-field>
-          <q-field
-            :label="$t(`field.end_early_threshold.label`)"
-            :helper="$t(`field.end_early_threshold.helper`)"
-            :error="$v.item.end_early_threshold.$error"
-            :error-label="validationError($v.item.end_early_threshold)"
-          >
-            <q-datetime type="time" format24h v-model="$v.item.end_early_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
-          </q-field>
-          <q-field
-            :label="$t(`field.end_late_threshold.label`)"
-            :helper="$t(`field.end_late_threshold.helper`)"
-            :error="$v.item.start_late_threshold.$error"
-            :error-label="validationError($v.item.end_late_threshold)"
-          >
-            <q-datetime type="time" format24h v-model="$v.item.end_late_threshold.$model" :placeholder="$t(`field.start_early_threshold.placeholder`)"></q-datetime>
           </q-field>
         </div>
       </q-modal-layout>
@@ -158,8 +126,8 @@ import {
 function newItem () {
   // return default item. Important
   return {
-    type_id: null,
-    type_name: '',
+    timetype_id: null,
+    timetype_name: '',
     description: '',
     code: '',
     color: null,
@@ -171,17 +139,17 @@ function newItem () {
 }
 
 export default {
-  name: 'HRAttType',
+  name: 'HRAttTimeType',
   mixins: [tableMixin, validationError],
   data () {
     return {
-      resource: 'HRAttType',
+      resource: 'HRAttTimeType',
       apiRoute: HR_ATT_TIMETYPE,
       editMode: false,
       item: newItem(),
       table: {
         loading: false,
-        rowKey: 'type_id',
+        rowKey: 'timetype_id',
         title: '',
         filter: '',
         data: [],
@@ -193,19 +161,19 @@ export default {
         },
         columns: [
           {
-            name: 'type_id',
+            name: 'timetype_id',
             required: true,
-            label: this.$t('field.type_id.label'),
+            label: this.$t('field.timetype_id.label'),
             align: 'left',
-            field: 'type_id',
+            field: 'timetype_id',
             sortable: true
           },
           {
-            name: 'type_name',
+            name: 'timetype_name',
             required: true,
-            label: this.$t('field.type_name.label'),
+            label: this.$t('field.timetype_name.label'),
             align: 'left',
-            field: 'type_name',
+            field: 'timetype_name',
             sortable: true
           },
           {
@@ -225,34 +193,6 @@ export default {
             field: 'code'
           },
           {
-            name: 'start_early_threshold',
-            label: this.$t('field.start_early_threshold.label'),
-            align: 'left',
-            sortable: true,
-            field: row => this.$date.formatDate(row.start_early_threshold, 'HH:mm')
-          },
-          {
-            name: 'start_late_threshold',
-            label: this.$t('field.start_late_threshold.label'),
-            align: 'left',
-            sortable: true,
-            field: row => this.$date.formatDate(row.start_late_threshold, 'HH:mm')
-          },
-          {
-            name: 'end_early_threshold',
-            label: this.$t('field.end_early_threshold.label'),
-            align: 'left',
-            sortable: true,
-            field: row => this.$date.formatDate(row.end_early_threshold, 'HH:mm')
-          },
-          {
-            name: 'end_late_threshold',
-            label: this.$t('field.end_late_threshold.label'),
-            align: 'left',
-            sortable: true,
-            field: row => this.$date.formatDate(row.end_late_threshold, 'HH:mm')
-          },
-          {
             name: 'edit',
             label: '',
             required: true
@@ -263,10 +203,10 @@ export default {
   },
   validations: {
     item: {
-      type_id: {
+      timetype_id: {
         required
       },
-      type_name: {
+      timetype_name: {
         required
       },
       description: {
@@ -277,11 +217,7 @@ export default {
       },
       color: {
         required
-      },
-      start_early_threshold: { required },
-      start_late_threshold: { required },
-      end_early_threshold: { required },
-      end_late_threshold: { required }
+      }
     }
   },
   methods: {
@@ -302,7 +238,7 @@ export default {
           this.table.loading = false
         })
     },
-    deleteParams: (item) => ({ type_id: item.type_id })
+    deleteParams: (item) => ({ timetype_id: item.timetype_id })
   },
   mounted () {
     this.fetchItems()
