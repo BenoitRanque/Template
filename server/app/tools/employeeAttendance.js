@@ -38,9 +38,10 @@ module.exports = class EmployeeAttendance {
     this.from = from
     this.to = to
     this.initialized = false
+    this.withEvents = false
   }
 
-  async init () {
+  async init (withEvents = false) {
     if (this.initialized) return
 
     debugger
@@ -52,7 +53,10 @@ module.exports = class EmployeeAttendance {
 
     this.references = eachDay(from, to).map(date => this.mapDateToReference(date, shifts, exceptions))
 
-    this.events = await this.getEmployeeEvents(from, to)
+    if (withEvents) {
+      this.events = await this.getEmployeeEvents(from, to)
+      this.withEvents = true
+    }
 
     this.timetypes = await AttTimetype.query()
     this.thresholds = await AttThreshold.query().first()
@@ -194,6 +198,13 @@ module.exports = class EmployeeAttendance {
       start: max(...startCandidates),
       end: max(...endCandidates)
     }
+  }
+  
+  getEventsForDate(date) {
+    if (!this.initialized || !this.withEvents) throw new Error(`Please initialize before calling this function`)
+    
+    const { start, end } = this.getBoundsForDate(date)
+    return this.events.filter(event => isWithinRange(event, start, end))
   }
   
   getBoundsForEvent(event) {
@@ -339,6 +350,78 @@ module.exports = class EmployeeAttendance {
       return {
         date,
         schedule: vacationSchedule
+      }
+
+    }))
+  }
+
+  async getAttendanceReport() {
+    return await Promise.all(eachDay(this.from, this.to).map(async date => {
+      const { schedule, exception, shift } = this.getReferenceForDate(date)
+      const events = this.getEventsForDate(date)
+      const summary = this.getSummaryForDate(date)
+
+      return {
+        date,
+        events: this.getEventsForDate(date),
+        schedule,
+        shift,
+        exception,
+        summary: this.getSummaryForDate(date),
+        details: this.getDetailsForDate(date),
+        summary: {
+          flags: {
+            missing_events: Boolean,
+            unused_events: Boolean
+          },
+          events: [
+            {
+              time: Date, // either event or reference time
+              missing: Boolean,
+              label: String
+            }
+          ],
+          balance: {
+            [timetype_id] {
+
+            }
+          },
+          totals: [
+            {
+              timetype: 0,
+              present: 0,
+              absent: 0
+            }
+          ]
+        }
+        date,
+        details: {
+          events: eventsForDate,
+          schedule,
+          exception,
+          shift
+        },
+        summary: {
+          events: [],
+          absence: []
+        }
+        attendance: {
+          uptime: [
+            {
+              
+            }
+          ],
+          downtime: [
+            {
+
+            }
+          ],
+          breaktime: [
+            {
+
+            }
+          ]
+        }
       }
 
     }))

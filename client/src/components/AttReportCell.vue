@@ -64,7 +64,41 @@ export default {
   },
   data () {
     return {
-      popover: false
+      popover: false,
+      value: {
+        events: [
+          {
+            time: '',
+            label: '',
+            missing: false,
+            late: false
+          }
+        ],
+        abscence: [
+          {
+            label: '',
+            code: '',
+            color: ''
+          }
+        ],
+        downtime: [
+          {
+            label: '',
+            code: '',
+            color: ''
+          }
+        ],
+        details: {
+          schedule: {
+            name: null,
+            description: null,
+            uptime: null
+          },
+          exception: null,
+          shift: null,
+          events: []
+        }
+      }
     }
   },
   computed: {
