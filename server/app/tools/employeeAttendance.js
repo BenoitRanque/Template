@@ -355,74 +355,111 @@ module.exports = class EmployeeAttendance {
     }))
   }
 
+  getAttendanceForDate(schedule, events) {
+    return {
+      balance: 0,
+      late: 0,
+      present: 0,
+      absent: 0,
+    }
+  }
+
+  getSummaryForDate(attendance) {
+    const summary = {
+      uptime: [],
+      downtime: []
+    }
+  }
+
   async getAttendanceReport() {
     return await Promise.all(eachDay(this.from, this.to).map(async date => {
       const { schedule, exception, shift } = this.getReferenceForDate(date)
+      
       const events = this.getEventsForDate(date)
-      const summary = this.getSummaryForDate(date)
-
-      return {
-        date,
-        events: this.getEventsForDate(date),
+      const attendance = this.getAttendanceForDate(schedule, events)
+      const summary = this.getSummaryForDate(attendance)
+      const details = {
+        events,
         schedule,
         shift,
         exception,
-        summary: this.getSummaryForDate(date),
-        details: this.getDetailsForDate(date),
-        summary: {
-          flags: {
-            missing_events: Boolean,
-            unused_events: Boolean
-          },
-          events: [
-            {
-              time: Date, // either event or reference time
-              missing: Boolean,
-              label: String
-            }
-          ],
-          balance: {
-            [timetype_id] {
-
-            }
-          },
-          totals: [
-            {
-              timetype: 0,
-              present: 0,
-              absent: 0
-            }
-          ]
-        }
-        date,
-        details: {
-          events: eventsForDate,
-          schedule,
-          exception,
-          shift
-        },
-        summary: {
-          events: [],
-          absence: []
-        }
-        attendance: {
-          uptime: [
-            {
-              
-            }
-          ],
-          downtime: [
-            {
-
-            }
-          ],
-          breaktime: [
-            {
-
-            }
-          ]
-        }
+        attendance
       }
+      return {
+        date,
+        summary,
+        details
+      }
+      // const summary = this.getSummaryForDate(date)
+
+      // return {
+      //   date,
+      //   events: this.getEventsForDate(date),
+      //   schedule,
+      //   shift,
+      //   exception,
+      //   summary: this.getSummaryForDate(date),
+      //   details: this.getDetailsForDate(date),
+      //   summary: {
+      //     uptime: {
+
+      //     },
+      //     downtime: {
+
+      //     }
+      //     flags: {
+      //       missing_events: Boolean,
+      //       unused_events: Boolean
+      //     },
+      //     events: [
+      //       {
+      //         time: Date, // either event or reference time
+      //         missing: Boolean,
+      //         label: String
+      //       }
+      //     ],
+      //     balance: {
+      //       [timetype_id] {
+
+      //       }
+      //     },
+      //     totals: [
+      //       {
+      //         timetype: 0,
+      //         present: 0,
+      //         absent: 0
+      //       }
+      //     ]
+      //   },
+      //   date,
+      //   details: {
+      //     events: eventsForDate,
+      //     schedule,
+      //     exception,
+      //     shift
+      //   },
+      //   summary: {
+      //     events: [],
+      //     absence: []
+      //   }
+      //   attendance: {
+      //     uptime: [
+      //       {
+              
+      //       }
+      //     ],
+      //     downtime: [
+      //       {
+
+      //       }
+      //     ],
+      //     breaktime: [
+      //       {
+
+      //       }
+      //     ]
+      //   }
+      // }
 
     }))
   }
