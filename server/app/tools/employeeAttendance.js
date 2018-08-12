@@ -19,6 +19,7 @@ const addDays = require('date-fns/add_days')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const addMinutes = require('date-fns/add_minutes')
+const subMinutes = require('date-fns/sub_minutes')
 
 function combineDateAndTime (date, time) {
   if (typeof date === 'string') date = new Date(date)
@@ -356,11 +357,117 @@ module.exports = class EmployeeAttendance {
   }
 
   getAttendanceForDate(schedule, events) {
+    
+    const uptime = schedule.uptime.map(uptime => {
+      const startBounds = uptime.start_require_event ? this.getBoundsForEvent(this.start_time) : null
+      const start_candidates = uptime.start_require_event ? events.filter(event => isWithinRange(event, startBounds.start, startBounds.end)).sort(compareAsc) : []
+      const start_event = start_candidates && start_candidates.length ? min(...start_candidates) : null
+      const start_missing_event = uptime.start_require_event && start_event === null ? true : false
+
+      const start_early_threshold = subMinutes(uptime.start_time, 
+        this.thresholds.start_early.getMinutes() +
+        (this.thresholds.start_early.getHours()  * 60))
+      const start_early = start_event && isBefore(start_event, start_early_threshold) ? differenceInMinutes(uptime.start_time, start_event) : 0
+
+      const start_late_threshold = addMinutes(uptime.start_time, 
+        this.thresholds.start_late.getMinutes() +
+        (this.thresholds.start_late.getHours()  * 60))
+      const start_late = start_event && isAfter(start_event, start_late_threshold) ? differenceInMinutes(start_event, uptime.start_time) : 0
+
+      const endBounds = uptime.end_require_event ? this.getBoundsForEvent(this.end_time) : null
+      const end_candidates = uptime.end_require_event ? events.filter(event => isWithinRange(event, endBounds.start, endBounds.end)).sort(compareAsc) : []
+      const end_event = end_candidates && end_candidates.length ? max(...end_candidates) : null
+      const end_missing_event = uptime.end_require_event && end_event === null ? true : false
+      
+      const end_early_threshold = subMinutes(uptime.end_time, 
+        this.thresholds.end_early.getMinutes() +
+        (this.thresholds.end_early.getHours()  * 60))
+      const end_early = end_event && isBefore(end_event, end_early_threshold) ? differenceInMinutes(uptime.end_time, end_event) : 0
+
+      const end_late_threshold = addMinutes(uptime.end_time, 
+        this.thresholds.end_late.getMinutes() +
+        (this.thresholds.end_late.getHours()  * 60))
+      const end_late = end_event && isAfter(end_event, end_late_threshold) ? differenceInMinutes(end_event, uptime.end_time) : 0
+
+      const absent = start_missing_event && end_missing_event ? uptime.value : 0 
+      return {
+        ...uptime,
+        start_candidates,
+        start_event,
+        start_early,
+        start_late,
+        start_missing_event,
+        end_candidates,
+        end_event,
+        end_early,
+        end_late,
+        end_missing_event,
+        absent
+      }
+    })
+    const downtime = schedule.downtime
+    const breaktime = schedule.breaktime.map(breaktime => {
+
+      const candidates = events.filter(event => isWithinRange(event, breaktime.start_time, breaktime.end_time)).sort(compareAsc)
+      
+      const start_candidates = breaktime.start_require_event && candidates.length ? [candidates[0]] : []
+      const start_event = start_candidates.length ? min(...start_candidates) : null
+      const start_missing_event = breaktime.start_require_event && start_event === null ? true : false
+      
+      const end_candidates = breaktime.end_require_event ? candidates.slice(breaktime.start_require_event ? 1 : 0) : []
+      const end_event = end_candidates.length ? max(...start_candidates) : null
+      const end_missing_event = breaktime.end_require_event && end_event === null ? true : false
+
+      const overtime_threshold = start_event ? addMinutes(start_event, breaktime.duration.getMinutes() + (breaktime.duration.getHours() * 60)) : null 
+      const overtime = overtime_threshold && end_event && isAfter(end_event, overtime_threshold) ? differenceInMinutes(end_event, overtime_threshold) : 0
+
+      const skipped = !start_event && !end_event
+
+      return {
+        ...breaktime,
+        start_candidates,
+        start_event,
+        start_missing_event,
+        end_candidates,
+        end_event,
+        end_missing_event,
+        overtime,
+        skipped
+      }
+    })
+
+    const balance = {
+      timeSum: {
+        breaktimeLate: 0,
+        uptimeLateStart: 0,
+        uptimeEarlyEnd: 0,
+        uptimeUnauthorized: 0
+      },
+      eventCount: {
+        totals: events.length,
+        expected: uptime.reduce((acc, val) => acc + Number(val.start_require_event) + Number(val.end_require_event), 0) +
+          breaktime.reduce((acc, val) => acc + Number(val.start_require_event) + Number(val.end_require_event), 0),
+        missing: uptime.reduce((acc, val) => acc + Number(val.start_missing_event) + Number(val.end_missing_event), 0) +
+          breaktime.reduce((acc, val) => acc + Number(val.start_missing_event) + Number(val.end_missing_event), 0),
+        used: uptime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0) +
+          breaktime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0),
+        unused: 0,
+      },
+      absence: {
+        value: 0,
+        multiplier: 0
+      },
+      breakOvertime: breaktime.reduce((acc, val) => acc + val.overtime, 0),
+      unauthorizedUptime: uptime.reduce((acc, val) => acc + val.start_early + val.end_late, 0),
+      missingUptime: uptime.reduce((acc, val) => acc + val.start_late + val.end_early, 0),
+      absent: uptime.reduce((acc, val) => acc + val.absent, 0)
+    }
+
     return {
-      balance: 0,
-      late: 0,
-      present: 0,
-      absent: 0,
+      uptime,
+      downtime,
+      breaktime,
+      balance
     }
   }
 
