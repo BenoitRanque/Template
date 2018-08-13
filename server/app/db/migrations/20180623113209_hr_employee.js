@@ -19,6 +19,7 @@ exports.up = async function(knex, Promise) {
     table.text('persona_con_discapacidad')
     table.text('tutor_persona_con_discapacidad')
     table.text('caja_de_salud')
+    table.text('cargo')
     table.text('afp')
     table.text('nua_cua')
     

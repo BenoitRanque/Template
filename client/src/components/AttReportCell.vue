@@ -1,51 +1,38 @@
 <template>
-  <q-td>
-    <div class="row full-height full-width">
-      <div class="col-8 column justify-between">
-        <div class="col q-pa-sm" v-for="(event, index) in attendance.events" :key="index">
-          {{$date.formatDate(event, 'HH:mm')}}
+  <q-td class="q-caption" style="padding: 0 2px;">
+    <div class="full-height full-width row">
+      <div v-if="hasEvents" class="full-height column" :class="leftClass">
+        <div v-for="(e, index) in value.summary.events" :key="index" :class="{ 'bg-positive': !e.missing && !e.late, 'bg-negative': e.late, 'bg-tertiary': e.missing }" class="col row items-center justify-center text-white text-center">
+          <div class="col q-pa-xs">
+            {{$date.formatDate(e.time, 'HH:mm')}}
+            <q-tooltip>
+              {{e.label}}
+            </q-tooltip>
+          </div>
         </div>
       </div>
-      <div class="col-4">
-        <q-btn icon="info" size="sm" color="info" flat round dense>
-          <q-popover>
-
-            <pre>
-              {{attendance}}
-            </pre>
-          </q-popover>
-        </q-btn>
-        <template v-if="attendance.balance.event.unused > 0">
-          <br>
-          <q-btn icon="warning" size="sm" color="warning" flat round dense>
+      <div v-if="hasAbsence || hasDowntime" class="full-height column" :class="rightClass">
+        <div v-for="(d, index) in value.summary.downtime" :key="index" :style="{ background: d.color }" class="col row items-center justify-center text-white text-center">
+          <div class="col q-pa-xs">
+            {{d.code}}
             <q-tooltip>
-              {{attendance.balance.event.unused}} marcaciones por demas
+              {{d.label}}
             </q-tooltip>
-          </q-btn>
-        </template>
-        <template v-if="attendance.balance.event.missing > 0">
-          <br>
-          <q-btn icon="warning" size="sm" color="negative" flat round dense>
+          </div>
+        </div>
+        <div v-if="hasAbsence" class="col row items-center justify-center text-white text-center bg-negative">
+          <div class="col q-pa-xs">
+            {{value.summary.absent.code}}
             <q-tooltip>
-              Faltan {{attendance.balance.event.missing}} marcaciones
+              {{value.summary.absent.label}}
             </q-tooltip>
-          </q-btn>
-        </template>
-      </div>
-    </div>
-    <!-- <div class="col-8 column">
-      <div v-for="(event, index) in events"
-        :style="{ 'background': event.type_id && attTypes && attTypes.length > 0 ? attTypes.find(t => t.type_id === event.type_id).color : null }" :key="index"
-        class="col">
-        <div class="q-pa-xs">
-
-          {{$date.formatDate(event.time, 'HH:mm')}}
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-4 full-height">
-      <q-icon name="settings" size="xs"></q-icon>
-    </div> -->
+    <q-popover anchor="bottom middle" self="top middle" class="q-pa-md">
+      <pre>{{value}}</pre>
+    </q-popover>
   </q-td>
 </template>
 
@@ -53,72 +40,26 @@
 export default {
   name: 'AttReportCell',
   props: {
-    // attTypes: {
-    //   type: Array,
-    //   required: true
-    // },
-    attendance: {
+    value: {
       type: Object,
       required: true
     }
   },
-  data () {
-    return {
-      popover: false,
-      value: {
-        events: [
-          {
-            time: '',
-            label: '',
-            missing: false,
-            late: false
-          }
-        ],
-        abscence: [
-          {
-            label: '',
-            code: '',
-            color: ''
-          }
-        ],
-        downtime: [
-          {
-            label: '',
-            code: '',
-            color: ''
-          }
-        ],
-        details: {
-          schedule: {
-            name: null,
-            description: null,
-            uptime: null
-          },
-          exception: null,
-          shift: null,
-          events: []
-        }
-      }
-    }
-  },
   computed: {
-    events () {
-      let e = []
-      if (!this.attendance) return e
-
-      return this.attendance.timetable.reduce((acc, val) => {
-        acc.push({
-          time: val.start_event,
-          reference: val.start_time,
-          type_id: val.type_id
-        })
-        acc.push({
-          time: val.end_event,
-          reference: val.end_time,
-          type_id: val.type_id
-        })
-        return acc
-      }, []).sort((a, b) => this.$date.getDateDiff(new Date(a.time), new Date(b.time), 'minutes'))
+    hasAbsence () {
+      return this.value.summary && this.value.summary.absent
+    },
+    hasDowntime () {
+      return this.value.summary && this.value.summary.downtime && this.value.summary.downtime.length
+    },
+    hasEvents () {
+      return this.value.summary && this.value.summary.events && this.value.summary.events.length
+    },
+    leftClass () {
+      return this.hasAbsence || this.hasDowntime ? 'col-8' : 'col-12'
+    },
+    rightClass () {
+      return this.hasEvents ? 'col-4' : 'col-12'
     }
   }
 }

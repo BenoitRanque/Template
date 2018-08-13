@@ -10,12 +10,12 @@ module.exports.parseTime = date => {
   let d = new Date()
   let [t, h, m, s] = date.match(/(\d?\d):(\d\d):(\d\d)/)
   d.setHours(Number(h), Number(m), Number(s), 0)
-  return d.toISOString()
+  return d
 }
 module.exports.parseInterval = date => {
   let d = new Date()
   d.setHours(date.hours ? date.hours : 0, date.minutes ? date.minutes : 0, date.seconds ? date.seconds : 0, 0)
-  return d.toISOString()
+  return d
   
   // return {
   //   miliseconds: 0,

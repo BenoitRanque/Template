@@ -22,7 +22,7 @@
       :data="data"
       :columns="columns"
     >
-      <att-report-cell v-for="(date, index) in dates" :key="index" :slot="`body-cell-${date}`" slot-scope="props" :attendance="props.row.attendance.find(att => att.date === date)"></att-report-cell>
+      <att-report-cell v-for="(date, index) in dates" :key="index" :slot="`body-cell-${date}`" slot-scope="props" :value="props.row.attendance.find(att => att.date === date)"></att-report-cell>
     </q-table>
     <div class="row">
       <div class="q-caption row col-auto" style="width: 80px; height: 80px">
@@ -229,6 +229,7 @@
         </q-popover>
       </div>
     </div>
+    <pre>{{report}}</pre>
   </q-page>
 </template>
 
@@ -337,6 +338,7 @@ export default {
       })
         .then(response => {
           this.report = response.data
+          console.log(response.data)
         })
     }
   }

@@ -359,7 +359,7 @@ module.exports = class EmployeeAttendance {
   getAttendanceForDate(date, schedule, events) {
     
     const uptime = schedule.uptime.map(uptime => {
-      const startBounds = uptime.start_require_event ? this.getBoundsForEvent(this.start_time) : null
+      const startBounds = uptime.start_require_event ? this.getBoundsForEvent(uptime.start_time) : null
       const start_candidates = uptime.start_require_event ? events.filter(event => isWithinRange(event, startBounds.start, startBounds.end)).sort(compareAsc) : []
       const start_event = start_candidates && start_candidates.length ? min(...start_candidates) : null
       const start_missing_event = uptime.start_require_event && start_event === null ? true : false
@@ -374,7 +374,7 @@ module.exports = class EmployeeAttendance {
         (this.thresholds.start_late.getHours()  * 60))
       const start_late = start_event && isAfter(start_event, start_late_threshold) ? differenceInMinutes(start_event, uptime.start_time) : 0
 
-      const endBounds = uptime.end_require_event ? this.getBoundsForEvent(this.end_time) : null
+      const endBounds = uptime.end_require_event ? this.getBoundsForEvent(uptime.end_time) : null
       const end_candidates = uptime.end_require_event ? events.filter(event => isWithinRange(event, endBounds.start, endBounds.end)).sort(compareAsc) : []
       const end_event = end_candidates && end_candidates.length ? max(...end_candidates) : null
       const end_missing_event = uptime.end_require_event && end_event === null ? true : false
@@ -415,7 +415,7 @@ module.exports = class EmployeeAttendance {
       const start_missing_event = breaktime.start_require_event && start_event === null ? true : false
       
       const end_candidates = breaktime.end_require_event ? candidates.slice(breaktime.start_require_event ? 1 : 0) : []
-      const end_event = end_candidates.length ? max(...start_candidates) : null
+      const end_event = end_candidates.length ? max(...end_candidates) : null
       const end_missing_event = breaktime.end_require_event && end_event === null ? true : false
 
       const overtime_threshold = start_event ? addMinutes(start_event, breaktime.duration.getMinutes() + (breaktime.duration.getHours() * 60)) : null 
@@ -472,66 +472,71 @@ module.exports = class EmployeeAttendance {
   }
 
   getSummaryForDate({ uptime, downtime, breaktime, balance }) {
-    const summary = {
+    return {
       events: []
         .concat(
           uptime.reduce((acc, val) => {
-            if (val.start_require_event) {
-              acc.push({
-                time: val.start_missing_event ? val.start_time : val.start_event,
-                code: this.getTimetype(val.timetype_id).code,
-                color: this.getTimetype(val.timetype_id).color,
-                missing: val.start_missing_event,
-                late: !!val.start_late
-              })
-            }
-            if (val.end_require_event) {
-              acc.push({
-                time: val.end_missing_event ? val.end_time : val.end_event,
-                code: this.getTimetype(val.timetype_id).code,
-                color: this.getTimetype(val.timetype_id).color,
-                missing: val.end_missing_event,
-                late: !!val.end_early
-              })
+            if (!val.absent) {
+              if (val.start_require_event) {
+                acc.push({
+                  time: val.start_missing_event ? val.start_time : val.start_event,
+                  code: this.getTimetype(val.timetype_id).code,
+                  color: this.getTimetype(val.timetype_id).color,
+                  missing: val.start_missing_event,
+                  late: !!val.start_late
+                })
+              }
+              if (val.end_require_event) {
+                acc.push({
+                  time: val.end_missing_event ? val.end_time : val.end_event,
+                  code: this.getTimetype(val.timetype_id).code,
+                  color: this.getTimetype(val.timetype_id).color,
+                  missing: val.end_missing_event,
+                  late: !!val.end_early
+                })
+              }
             }
             return acc
           },[]),
           breaktime.reduce((acc, val) => {
-            if (val.start_require_event) {
-              acc.push({
-                time: val.start_missing_event ? val.start_time : val.start_event,
-                code: this.getTimetype(val.timetype_id).code,
-                color: this.getTimetype(val.timetype_id).color,
-                missing: val.start_missing_event,
-                late: false
-              })
-            }
-            if (val.end_require_event) {
-              acc.push({
-                time: val.end_missing_event ? val.end_time : val.end_event,
-                code: this.getTimetype(val.timetype_id).code,
-                color: this.getTimetype(val.timetype_id).color,
-                missing: val.end_missing_event,
-                late: !!val.overtime
-              })
+            if (!val.skipped) {
+              if (val.start_require_event) {
+                acc.push({
+                  time: val.start_missing_event ? val.start_time : val.start_event,
+                  code: this.getTimetype(val.timetype_id).code,
+                  color: this.getTimetype(val.timetype_id).color,
+                  missing: val.start_missing_event,
+                  late: false
+                })
+              }
+              if (val.end_require_event) {
+                acc.push({
+                  time: val.end_missing_event ? val.end_time : val.end_event,
+                  code: this.getTimetype(val.timetype_id).code,
+                  color: this.getTimetype(val.timetype_id).color,
+                  missing: val.end_missing_event,
+                  late: !!val.overtime
+                })
+              }
             }
             return acc
           },[])
         ).sort((a, b) => compareAsc(a.time, b.time)),
       downtime: downtime.map(d => ({
-        label: `${d.value} dias de ${this.getTimetype(d.timetype_id).name}`,
+        label: `${d.value} dias de ${this.getTimetype(d.timetype_id).timetype_name}`,
         color: this.getTimetype(d.timetype_id).color,
-        code: this.getTimetype(d.timetype_id).code
+        code: this.getTimetype(d.timetype_id).code,
 
-      })).concat(absence.value > 0 ? [{
-        label: `Falta ${absence.value} dias, descuento de ${absence.value * absence.multiplier } dias`,
-        color: '#F00', // todo: get real color
-        code: absence.multiplier === 3 ? 'FF' : 'F'
-      }] : [])
+      })),
+      absent: balance.absent.value > 0 ? {
+        label: `Falta ${balance.absent.value} dias, descuento de ${balance.absent.value * balance.absent.multiplier } dias`,
+        code: balance.absent.multiplier === 3 ? 'FF' : 'F'
+      } : null
     }
   }
 
   async getAttendanceReport() {
+    if (!this.initialized) await this.init(true)
     return await Promise.all(eachDay(this.from, this.to).map(async date => {
       const { schedule, exception, shift } = this.getReferenceForDate(date)
       
@@ -541,8 +546,8 @@ module.exports = class EmployeeAttendance {
       const details = {
         events,
         schedule,
-        shift,
-        exception,
+        // shift,
+        // exception,
         attendance
       }
       return {
