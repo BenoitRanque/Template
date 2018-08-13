@@ -356,7 +356,7 @@ module.exports = class EmployeeAttendance {
     }))
   }
 
-  getAttendanceForDate(schedule, events) {
+  getAttendanceForDate(date, schedule, events) {
     
     const uptime = schedule.uptime.map(uptime => {
       const startBounds = uptime.start_require_event ? this.getBoundsForEvent(this.start_time) : null
@@ -443,24 +443,24 @@ module.exports = class EmployeeAttendance {
         uptimeEarlyEnd: 0,
         uptimeUnauthorized: 0
       },
-      eventCount: {
-        totals: events.length,
+      events: {
+        total: events.length,
         expected: uptime.reduce((acc, val) => acc + Number(val.start_require_event) + Number(val.end_require_event), 0) +
           breaktime.reduce((acc, val) => acc + Number(val.start_require_event) + Number(val.end_require_event), 0),
         missing: uptime.reduce((acc, val) => acc + Number(val.start_missing_event) + Number(val.end_missing_event), 0) +
           breaktime.reduce((acc, val) => acc + Number(val.start_missing_event) + Number(val.end_missing_event), 0),
-        used: uptime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0) +
-          breaktime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0),
-        unused: 0,
+        unused: events.length - (uptime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0) +
+          breaktime.reduce((acc, val) => acc + Number(!!val.start_event) + Number(!!val.end_event), 0))
       },
-      absence: {
-        value: 0,
-        multiplier: 0
+      time: {
+        breakOvertime: breaktime.reduce((acc, val) => acc + val.overtime, 0),
+        unauthorizedUptime: uptime.reduce((acc, val) => acc + val.start_early + val.end_late, 0),
+        missingUptime: uptime.reduce((acc, val) => acc + val.start_late + val.end_early, 0),
       },
-      breakOvertime: breaktime.reduce((acc, val) => acc + val.overtime, 0),
-      unauthorizedUptime: uptime.reduce((acc, val) => acc + val.start_early + val.end_late, 0),
-      missingUptime: uptime.reduce((acc, val) => acc + val.start_late + val.end_early, 0),
-      absent: uptime.reduce((acc, val) => acc + val.absent, 0)
+      absent: {
+        value: uptime.reduce((acc, val) => acc + val.absent, 0),
+        multiplier: [0,6].includes(date.getDay()) ? 3: 2// TODO: also check for holidays
+      }
     }
 
     return {
@@ -471,10 +471,63 @@ module.exports = class EmployeeAttendance {
     }
   }
 
-  getSummaryForDate(attendance) {
+  getSummaryForDate({ uptime, downtime, breaktime, balance }) {
     const summary = {
-      uptime: [],
-      downtime: []
+      events: []
+        .concat(
+          uptime.reduce((acc, val) => {
+            if (val.start_require_event) {
+              acc.push({
+                time: val.start_missing_event ? val.start_time : val.start_event,
+                code: this.getTimetype(val.timetype_id).code,
+                color: this.getTimetype(val.timetype_id).color,
+                missing: val.start_missing_event,
+                late: !!val.start_late
+              })
+            }
+            if (val.end_require_event) {
+              acc.push({
+                time: val.end_missing_event ? val.end_time : val.end_event,
+                code: this.getTimetype(val.timetype_id).code,
+                color: this.getTimetype(val.timetype_id).color,
+                missing: val.end_missing_event,
+                late: !!val.end_early
+              })
+            }
+            return acc
+          },[]),
+          breaktime.reduce((acc, val) => {
+            if (val.start_require_event) {
+              acc.push({
+                time: val.start_missing_event ? val.start_time : val.start_event,
+                code: this.getTimetype(val.timetype_id).code,
+                color: this.getTimetype(val.timetype_id).color,
+                missing: val.start_missing_event,
+                late: false
+              })
+            }
+            if (val.end_require_event) {
+              acc.push({
+                time: val.end_missing_event ? val.end_time : val.end_event,
+                code: this.getTimetype(val.timetype_id).code,
+                color: this.getTimetype(val.timetype_id).color,
+                missing: val.end_missing_event,
+                late: !!val.overtime
+              })
+            }
+            return acc
+          },[])
+        ).sort((a, b) => compareAsc(a.time, b.time)),
+      downtime: downtime.map(d => ({
+        label: `${d.value} dias de ${this.getTimetype(d.timetype_id).name}`,
+        color: this.getTimetype(d.timetype_id).color,
+        code: this.getTimetype(d.timetype_id).code
+
+      })).concat(absence.value > 0 ? [{
+        label: `Falta ${absence.value} dias, descuento de ${absence.value * absence.multiplier } dias`,
+        color: '#F00', // todo: get real color
+        code: absence.multiplier === 3 ? 'FF' : 'F'
+      }] : [])
     }
   }
 
@@ -483,7 +536,7 @@ module.exports = class EmployeeAttendance {
       const { schedule, exception, shift } = this.getReferenceForDate(date)
       
       const events = this.getEventsForDate(date)
-      const attendance = this.getAttendanceForDate(schedule, events)
+      const attendance = this.getAttendanceForDate(date, schedule, events)
       const summary = this.getSummaryForDate(attendance)
       const details = {
         events,
