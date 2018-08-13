@@ -1,0 +1,6 @@
+endpoint: http://localhost:4466/wasp/dev
+datamodel: datamodel.graphql
+secret: mysecret123
+hooks:
+  post-deploy:
+    - graphql get-schema --project database

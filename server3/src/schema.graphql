@@ -1,0 +1,43 @@
+# import UUID from "./generated/prisma.graphql"
+# import UserCreateInput from "./generated/prisma.graphql"
+# import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput from "./generated/prisma.graphql"
+# import Schedule ScheduleCreateInput from "./generated/prisma.graphql"
+# import Shift ShiftCreateInput from "./generated/prisma.graphql"
+# import Exception ExceptionCreateInput from "./generated/prisma.graphql"
+
+type Query {
+  user(id: UUID!): User
+  users: [User!]!
+  employee(id: UUID!): Employee
+  employees: [Employee!]!
+  exception(id: UUID!): Exception
+  exceptions: [Exception]!
+  shift(id: UUID!): Shift
+  shifts: [Shift]!
+  schedule(id: UUID!): Schedule
+  schedules: [Schedule]!
+}
+
+type Mutation {
+  createUser(data: UserCreateInput!): User
+  createEmployee(data: EmployeeCreateInput!): Employee
+  updateEmployee(data: EmployeeUpdateInput! where: EmployeeWhereUniqueInput!): Employee
+  createShift(data: ShiftCreateInput!): Shift
+  createException(data: ExceptionCreateInput!): Exception
+  createSchedule(data: ScheduleCreateInput!): Schedule!
+  authenticate(username: String!, password: String!): AuthPayload
+}
+# type Subscription {
+#   newLink: LinkSubscriptionPayload
+#   newVote: VoteSubscriptionPayload
+# }
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: UUID!
+  username: String!
+}

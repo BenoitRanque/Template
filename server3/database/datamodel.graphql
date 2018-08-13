@@ -1,0 +1,142 @@
+# type Link {
+#   id: ID! @unique
+#   createdAt: DateTime!
+#   description: String!
+#   url: String!
+#   postedBy: User
+#   votes: [Vote!]!
+# }
+
+# type User {
+#   id: ID! @unique
+#   name: String!
+#   email: String! @unique
+#   password: String!
+#   links: [Link!]!
+#   votes: [Vote!]!
+# }
+
+# type Vote {
+#   id: ID! @unique
+#   link: Link!
+#   user: User!
+# }
+
+type User {
+  id: UUID! @unique
+  username: String! @unique
+  password: String!
+}
+
+type Employee {
+  id: UUID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+type Shift {
+  id: UUID! @unique
+  employee: Employee!
+  slots: [ShiftSlot!]!
+  user: User! @relation(name: "ShiftToShiftCreator")
+}
+
+type ShiftSlot {
+  id: UUID! @unique
+  schedule: Schedule!
+  index: Int!
+}
+
+type Exception {
+  id: UUID! @unique
+  employee: Employee!
+  slots: [ExceptionSlot!]!
+  owner: User! @relation(name: "ExceptionToExceptionOwner")
+}
+
+type ExceptionSlot {
+  id: UUID! @unique
+  schedule: Schedule!
+  date: DateTime!
+}
+
+type ExceptionAuthorization {
+  id: UUID! @unique
+  granted: Boolean!
+  user: User! @relation(name: "ExceptionToExceptionGrantor")
+}
+
+type Schedule {
+  id: UUID! @unique
+  name: String
+  description: String
+  uptime: [ScheduleUptime!]! @relation(name: "ScheduleToScheduleUptime" onDelete: CASCADE)
+  downtime: [ScheduleDowntime!]! @relation(name: "ScheduleToScheduleDowntime" onDelete: CASCADE)
+  breaktime: [ScheduleBreaktime!]! @relation(name: "ScheduleToScheduleBreaktime" onDelete: CASCADE)
+}
+
+type ScheduleUptime {
+  id: UUID! @unique
+  class: UptimeClass!
+  startTime: DateTime!
+  endTime: DateTime!
+  value: Float!
+}
+
+type ScheduleDowntime {
+  id: UUID! @unique
+  class: DowntimeClass!
+  value: Float!
+}
+
+type ScheduleBreaktime {
+  id: UUID! @unique
+  class: BreaktimeClass!
+  startTime: DateTime!
+  endTime: DateTime!
+  duration: DateTime!
+}
+
+type UptimeClass {
+  name: UptimeClassEnum! @unique
+  label: String!
+  color: String!
+  code: String!
+}
+
+enum UptimeClassEnum {
+  STANDARDWORK
+  EXTRAWORK
+}
+
+type DowntimeClass {
+  name: DowntimeClass! @unique
+  label: String!
+  color: String!
+  code: String!
+}
+
+enum DowntimeClassEnum {
+  TIMEOFF
+  VACATION
+  HOLIDAY
+  LEAVEPAID
+  LEAVEUNPAID
+}
+
+type BreaktimeClass {
+  name: BreaktimeClassEnum! @unique
+  label: String!
+  color: String!
+  code: String!
+}
+
+enum BreaktimeClassEnum {
+  LUNCHBREAK
+}

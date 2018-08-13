@@ -1,0 +1,3171 @@
+# source: http://localhost:4466/wasp/dev
+# timestamp: Sat Aug 11 2018 23:12:20 GMT-0400 (SA Western Standard Time)
+
+type AggregateBreaktimeClass {
+  count: Int!
+}
+
+type AggregateDowntimeClass {
+  count: Int!
+}
+
+type AggregateEmployee {
+  count: Int!
+}
+
+type AggregateException {
+  count: Int!
+}
+
+type AggregateExceptionAuthorization {
+  count: Int!
+}
+
+type AggregateExceptionSlot {
+  count: Int!
+}
+
+type AggregateSchedule {
+  count: Int!
+}
+
+type AggregateScheduleBreaktime {
+  count: Int!
+}
+
+type AggregateScheduleDowntime {
+  count: Int!
+}
+
+type AggregateScheduleUptime {
+  count: Int!
+}
+
+type AggregateShift {
+  count: Int!
+}
+
+type AggregateShiftSlot {
+  count: Int!
+}
+
+type AggregateUptimeClass {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+type BreaktimeClass {
+  name: BreaktimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+"""A connection to a list of items."""
+type BreaktimeClassConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [BreaktimeClassEdge]!
+  aggregate: AggregateBreaktimeClass!
+}
+
+input BreaktimeClassCreateInput {
+  name: BreaktimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+input BreaktimeClassCreateOneInput {
+  create: BreaktimeClassCreateInput
+  connect: BreaktimeClassWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type BreaktimeClassEdge {
+  """The item at the end of the edge."""
+  node: BreaktimeClass!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum BreaktimeClassEnum {
+  LUNCHBREAK
+}
+
+enum BreaktimeClassOrderByInput {
+  name_ASC
+  name_DESC
+  label_ASC
+  label_DESC
+  color_ASC
+  color_DESC
+  code_ASC
+  code_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type BreaktimeClassPreviousValues {
+  name: BreaktimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+type BreaktimeClassSubscriptionPayload {
+  mutation: MutationType!
+  node: BreaktimeClass
+  updatedFields: [String!]
+  previousValues: BreaktimeClassPreviousValues
+}
+
+input BreaktimeClassSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BreaktimeClassSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BreaktimeClassSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BreaktimeClassSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: BreaktimeClassWhereInput
+}
+
+input BreaktimeClassUpdateDataInput {
+  name: BreaktimeClassEnum
+  label: String
+  color: String
+  code: String
+}
+
+input BreaktimeClassUpdateInput {
+  name: BreaktimeClassEnum
+  label: String
+  color: String
+  code: String
+}
+
+input BreaktimeClassUpdateOneInput {
+  create: BreaktimeClassCreateInput
+  connect: BreaktimeClassWhereUniqueInput
+  delete: Boolean
+  update: BreaktimeClassUpdateDataInput
+  upsert: BreaktimeClassUpsertNestedInput
+}
+
+input BreaktimeClassUpsertNestedInput {
+  update: BreaktimeClassUpdateDataInput!
+  create: BreaktimeClassCreateInput!
+}
+
+input BreaktimeClassWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BreaktimeClassWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BreaktimeClassWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BreaktimeClassWhereInput!]
+  name: BreaktimeClassEnum
+
+  """All values that are not equal to given value."""
+  name_not: BreaktimeClassEnum
+
+  """All values that are contained in given list."""
+  name_in: [BreaktimeClassEnum!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [BreaktimeClassEnum!]
+  label: String
+
+  """All values that are not equal to given value."""
+  label_not: String
+
+  """All values that are contained in given list."""
+  label_in: [String!]
+
+  """All values that are not contained in given list."""
+  label_not_in: [String!]
+
+  """All values less than the given value."""
+  label_lt: String
+
+  """All values less than or equal the given value."""
+  label_lte: String
+
+  """All values greater than the given value."""
+  label_gt: String
+
+  """All values greater than or equal the given value."""
+  label_gte: String
+
+  """All values containing the given string."""
+  label_contains: String
+
+  """All values not containing the given string."""
+  label_not_contains: String
+
+  """All values starting with the given string."""
+  label_starts_with: String
+
+  """All values not starting with the given string."""
+  label_not_starts_with: String
+
+  """All values ending with the given string."""
+  label_ends_with: String
+
+  """All values not ending with the given string."""
+  label_not_ends_with: String
+  color: String
+
+  """All values that are not equal to given value."""
+  color_not: String
+
+  """All values that are contained in given list."""
+  color_in: [String!]
+
+  """All values that are not contained in given list."""
+  color_not_in: [String!]
+
+  """All values less than the given value."""
+  color_lt: String
+
+  """All values less than or equal the given value."""
+  color_lte: String
+
+  """All values greater than the given value."""
+  color_gt: String
+
+  """All values greater than or equal the given value."""
+  color_gte: String
+
+  """All values containing the given string."""
+  color_contains: String
+
+  """All values not containing the given string."""
+  color_not_contains: String
+
+  """All values starting with the given string."""
+  color_starts_with: String
+
+  """All values not starting with the given string."""
+  color_not_starts_with: String
+
+  """All values ending with the given string."""
+  color_ends_with: String
+
+  """All values not ending with the given string."""
+  color_not_ends_with: String
+  code: String
+
+  """All values that are not equal to given value."""
+  code_not: String
+
+  """All values that are contained in given list."""
+  code_in: [String!]
+
+  """All values that are not contained in given list."""
+  code_not_in: [String!]
+
+  """All values less than the given value."""
+  code_lt: String
+
+  """All values less than or equal the given value."""
+  code_lte: String
+
+  """All values greater than the given value."""
+  code_gt: String
+
+  """All values greater than or equal the given value."""
+  code_gte: String
+
+  """All values containing the given string."""
+  code_contains: String
+
+  """All values not containing the given string."""
+  code_not_contains: String
+
+  """All values starting with the given string."""
+  code_starts_with: String
+
+  """All values not starting with the given string."""
+  code_not_starts_with: String
+
+  """All values ending with the given string."""
+  code_ends_with: String
+
+  """All values not ending with the given string."""
+  code_not_ends_with: String
+}
+
+input BreaktimeClassWhereUniqueInput {
+  name: BreaktimeClassEnum
+}
+
+scalar DateTime
+
+type DowntimeClass {
+  name(where: DowntimeClassWhereInput): DowntimeClass!
+  label: String!
+  color: String!
+  code: String!
+}
+
+"""A connection to a list of items."""
+type DowntimeClassConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [DowntimeClassEdge]!
+  aggregate: AggregateDowntimeClass!
+}
+
+input DowntimeClassCreateInput {
+  label: String!
+  color: String!
+  code: String!
+  name: DowntimeClassCreateOneInput!
+}
+
+input DowntimeClassCreateOneInput {
+  create: DowntimeClassCreateInput
+}
+
+"""An edge in a connection."""
+type DowntimeClassEdge {
+  """The item at the end of the edge."""
+  node: DowntimeClass!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum DowntimeClassOrderByInput {
+  label_ASC
+  label_DESC
+  color_ASC
+  color_DESC
+  code_ASC
+  code_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type DowntimeClassPreviousValues {
+  label: String!
+  color: String!
+  code: String!
+}
+
+type DowntimeClassSubscriptionPayload {
+  mutation: MutationType!
+  node: DowntimeClass
+  updatedFields: [String!]
+  previousValues: DowntimeClassPreviousValues
+}
+
+input DowntimeClassSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DowntimeClassSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DowntimeClassSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DowntimeClassSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: DowntimeClassWhereInput
+}
+
+input DowntimeClassUpdateDataInput {
+  label: String
+  color: String
+  code: String
+  name: DowntimeClassUpdateOneInput
+}
+
+input DowntimeClassUpdateInput {
+  label: String
+  color: String
+  code: String
+  name: DowntimeClassUpdateOneInput
+}
+
+input DowntimeClassUpdateOneInput {
+  create: DowntimeClassCreateInput
+  delete: Boolean
+  update: DowntimeClassUpdateDataInput
+  upsert: DowntimeClassUpsertNestedInput
+}
+
+input DowntimeClassUpsertNestedInput {
+  update: DowntimeClassUpdateDataInput!
+  create: DowntimeClassCreateInput!
+}
+
+input DowntimeClassWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DowntimeClassWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DowntimeClassWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DowntimeClassWhereInput!]
+  label: String
+
+  """All values that are not equal to given value."""
+  label_not: String
+
+  """All values that are contained in given list."""
+  label_in: [String!]
+
+  """All values that are not contained in given list."""
+  label_not_in: [String!]
+
+  """All values less than the given value."""
+  label_lt: String
+
+  """All values less than or equal the given value."""
+  label_lte: String
+
+  """All values greater than the given value."""
+  label_gt: String
+
+  """All values greater than or equal the given value."""
+  label_gte: String
+
+  """All values containing the given string."""
+  label_contains: String
+
+  """All values not containing the given string."""
+  label_not_contains: String
+
+  """All values starting with the given string."""
+  label_starts_with: String
+
+  """All values not starting with the given string."""
+  label_not_starts_with: String
+
+  """All values ending with the given string."""
+  label_ends_with: String
+
+  """All values not ending with the given string."""
+  label_not_ends_with: String
+  color: String
+
+  """All values that are not equal to given value."""
+  color_not: String
+
+  """All values that are contained in given list."""
+  color_in: [String!]
+
+  """All values that are not contained in given list."""
+  color_not_in: [String!]
+
+  """All values less than the given value."""
+  color_lt: String
+
+  """All values less than or equal the given value."""
+  color_lte: String
+
+  """All values greater than the given value."""
+  color_gt: String
+
+  """All values greater than or equal the given value."""
+  color_gte: String
+
+  """All values containing the given string."""
+  color_contains: String
+
+  """All values not containing the given string."""
+  color_not_contains: String
+
+  """All values starting with the given string."""
+  color_starts_with: String
+
+  """All values not starting with the given string."""
+  color_not_starts_with: String
+
+  """All values ending with the given string."""
+  color_ends_with: String
+
+  """All values not ending with the given string."""
+  color_not_ends_with: String
+  code: String
+
+  """All values that are not equal to given value."""
+  code_not: String
+
+  """All values that are contained in given list."""
+  code_in: [String!]
+
+  """All values that are not contained in given list."""
+  code_not_in: [String!]
+
+  """All values less than the given value."""
+  code_lt: String
+
+  """All values less than or equal the given value."""
+  code_lte: String
+
+  """All values greater than the given value."""
+  code_gt: String
+
+  """All values greater than or equal the given value."""
+  code_gte: String
+
+  """All values containing the given string."""
+  code_contains: String
+
+  """All values not containing the given string."""
+  code_not_contains: String
+
+  """All values starting with the given string."""
+  code_starts_with: String
+
+  """All values not starting with the given string."""
+  code_not_starts_with: String
+
+  """All values ending with the given string."""
+  code_ends_with: String
+
+  """All values not ending with the given string."""
+  code_not_ends_with: String
+  name: DowntimeClassWhereInput
+}
+
+type Employee {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+"""A connection to a list of items."""
+type EmployeeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [EmployeeEdge]!
+  aggregate: AggregateEmployee!
+}
+
+input EmployeeCreateInput {
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+input EmployeeCreateOneInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type EmployeeEdge {
+  """The item at the end of the edge."""
+  node: Employee!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum EmployeeOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  nameFirst_ASC
+  nameFirst_DESC
+  nameMiddle_ASC
+  nameMiddle_DESC
+  namePaternal_ASC
+  namePaternal_DESC
+  nameMaternal_ASC
+  nameMaternal_DESC
+  nameMarried_ASC
+  nameMarried_DESC
+  zkTimePin_ASC
+  zkTimePin_DESC
+}
+
+type EmployeePreviousValues {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+type EmployeeSubscriptionPayload {
+  mutation: MutationType!
+  node: Employee
+  updatedFields: [String!]
+  previousValues: EmployeePreviousValues
+}
+
+input EmployeeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmployeeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmployeeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmployeeSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: EmployeeWhereInput
+}
+
+input EmployeeUpdateDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+input EmployeeUpdateInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  zkTimePin: Int
+}
+
+input EmployeeUpdateOneInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
+  delete: Boolean
+  update: EmployeeUpdateDataInput
+  upsert: EmployeeUpsertNestedInput
+}
+
+input EmployeeUpsertNestedInput {
+  update: EmployeeUpdateDataInput!
+  create: EmployeeCreateInput!
+}
+
+input EmployeeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmployeeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmployeeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmployeeWhereInput!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  nameFirst: String
+
+  """All values that are not equal to given value."""
+  nameFirst_not: String
+
+  """All values that are contained in given list."""
+  nameFirst_in: [String!]
+
+  """All values that are not contained in given list."""
+  nameFirst_not_in: [String!]
+
+  """All values less than the given value."""
+  nameFirst_lt: String
+
+  """All values less than or equal the given value."""
+  nameFirst_lte: String
+
+  """All values greater than the given value."""
+  nameFirst_gt: String
+
+  """All values greater than or equal the given value."""
+  nameFirst_gte: String
+
+  """All values containing the given string."""
+  nameFirst_contains: String
+
+  """All values not containing the given string."""
+  nameFirst_not_contains: String
+
+  """All values starting with the given string."""
+  nameFirst_starts_with: String
+
+  """All values not starting with the given string."""
+  nameFirst_not_starts_with: String
+
+  """All values ending with the given string."""
+  nameFirst_ends_with: String
+
+  """All values not ending with the given string."""
+  nameFirst_not_ends_with: String
+  nameMiddle: String
+
+  """All values that are not equal to given value."""
+  nameMiddle_not: String
+
+  """All values that are contained in given list."""
+  nameMiddle_in: [String!]
+
+  """All values that are not contained in given list."""
+  nameMiddle_not_in: [String!]
+
+  """All values less than the given value."""
+  nameMiddle_lt: String
+
+  """All values less than or equal the given value."""
+  nameMiddle_lte: String
+
+  """All values greater than the given value."""
+  nameMiddle_gt: String
+
+  """All values greater than or equal the given value."""
+  nameMiddle_gte: String
+
+  """All values containing the given string."""
+  nameMiddle_contains: String
+
+  """All values not containing the given string."""
+  nameMiddle_not_contains: String
+
+  """All values starting with the given string."""
+  nameMiddle_starts_with: String
+
+  """All values not starting with the given string."""
+  nameMiddle_not_starts_with: String
+
+  """All values ending with the given string."""
+  nameMiddle_ends_with: String
+
+  """All values not ending with the given string."""
+  nameMiddle_not_ends_with: String
+  namePaternal: String
+
+  """All values that are not equal to given value."""
+  namePaternal_not: String
+
+  """All values that are contained in given list."""
+  namePaternal_in: [String!]
+
+  """All values that are not contained in given list."""
+  namePaternal_not_in: [String!]
+
+  """All values less than the given value."""
+  namePaternal_lt: String
+
+  """All values less than or equal the given value."""
+  namePaternal_lte: String
+
+  """All values greater than the given value."""
+  namePaternal_gt: String
+
+  """All values greater than or equal the given value."""
+  namePaternal_gte: String
+
+  """All values containing the given string."""
+  namePaternal_contains: String
+
+  """All values not containing the given string."""
+  namePaternal_not_contains: String
+
+  """All values starting with the given string."""
+  namePaternal_starts_with: String
+
+  """All values not starting with the given string."""
+  namePaternal_not_starts_with: String
+
+  """All values ending with the given string."""
+  namePaternal_ends_with: String
+
+  """All values not ending with the given string."""
+  namePaternal_not_ends_with: String
+  nameMaternal: String
+
+  """All values that are not equal to given value."""
+  nameMaternal_not: String
+
+  """All values that are contained in given list."""
+  nameMaternal_in: [String!]
+
+  """All values that are not contained in given list."""
+  nameMaternal_not_in: [String!]
+
+  """All values less than the given value."""
+  nameMaternal_lt: String
+
+  """All values less than or equal the given value."""
+  nameMaternal_lte: String
+
+  """All values greater than the given value."""
+  nameMaternal_gt: String
+
+  """All values greater than or equal the given value."""
+  nameMaternal_gte: String
+
+  """All values containing the given string."""
+  nameMaternal_contains: String
+
+  """All values not containing the given string."""
+  nameMaternal_not_contains: String
+
+  """All values starting with the given string."""
+  nameMaternal_starts_with: String
+
+  """All values not starting with the given string."""
+  nameMaternal_not_starts_with: String
+
+  """All values ending with the given string."""
+  nameMaternal_ends_with: String
+
+  """All values not ending with the given string."""
+  nameMaternal_not_ends_with: String
+  nameMarried: String
+
+  """All values that are not equal to given value."""
+  nameMarried_not: String
+
+  """All values that are contained in given list."""
+  nameMarried_in: [String!]
+
+  """All values that are not contained in given list."""
+  nameMarried_not_in: [String!]
+
+  """All values less than the given value."""
+  nameMarried_lt: String
+
+  """All values less than or equal the given value."""
+  nameMarried_lte: String
+
+  """All values greater than the given value."""
+  nameMarried_gt: String
+
+  """All values greater than or equal the given value."""
+  nameMarried_gte: String
+
+  """All values containing the given string."""
+  nameMarried_contains: String
+
+  """All values not containing the given string."""
+  nameMarried_not_contains: String
+
+  """All values starting with the given string."""
+  nameMarried_starts_with: String
+
+  """All values not starting with the given string."""
+  nameMarried_not_starts_with: String
+
+  """All values ending with the given string."""
+  nameMarried_ends_with: String
+
+  """All values not ending with the given string."""
+  nameMarried_not_ends_with: String
+  zkTimePin: Int
+
+  """All values that are not equal to given value."""
+  zkTimePin_not: Int
+
+  """All values that are contained in given list."""
+  zkTimePin_in: [Int!]
+
+  """All values that are not contained in given list."""
+  zkTimePin_not_in: [Int!]
+
+  """All values less than the given value."""
+  zkTimePin_lt: Int
+
+  """All values less than or equal the given value."""
+  zkTimePin_lte: Int
+
+  """All values greater than the given value."""
+  zkTimePin_gt: Int
+
+  """All values greater than or equal the given value."""
+  zkTimePin_gte: Int
+}
+
+input EmployeeWhereUniqueInput {
+  id: UUID
+}
+
+type Exception {
+  id: UUID!
+  employee(where: EmployeeWhereInput): Employee!
+  slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
+  owner(where: UserWhereInput): User!
+}
+
+type ExceptionAuthorization {
+  id: UUID!
+  granted: Boolean!
+  user(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type ExceptionAuthorizationConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ExceptionAuthorizationEdge]!
+  aggregate: AggregateExceptionAuthorization!
+}
+
+input ExceptionAuthorizationCreateInput {
+  granted: Boolean!
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ExceptionAuthorizationEdge {
+  """The item at the end of the edge."""
+  node: ExceptionAuthorization!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ExceptionAuthorizationOrderByInput {
+  id_ASC
+  id_DESC
+  granted_ASC
+  granted_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ExceptionAuthorizationPreviousValues {
+  id: UUID!
+  granted: Boolean!
+}
+
+type ExceptionAuthorizationSubscriptionPayload {
+  mutation: MutationType!
+  node: ExceptionAuthorization
+  updatedFields: [String!]
+  previousValues: ExceptionAuthorizationPreviousValues
+}
+
+input ExceptionAuthorizationSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionAuthorizationSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionAuthorizationSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionAuthorizationSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ExceptionAuthorizationWhereInput
+}
+
+input ExceptionAuthorizationUpdateInput {
+  granted: Boolean
+  user: UserUpdateOneInput
+}
+
+input ExceptionAuthorizationWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionAuthorizationWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionAuthorizationWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionAuthorizationWhereInput!]
+  granted: Boolean
+
+  """All values that are not equal to given value."""
+  granted_not: Boolean
+  user: UserWhereInput
+}
+
+input ExceptionAuthorizationWhereUniqueInput {
+  id: UUID
+}
+
+"""A connection to a list of items."""
+type ExceptionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ExceptionEdge]!
+  aggregate: AggregateException!
+}
+
+input ExceptionCreateInput {
+  employee: EmployeeCreateOneInput!
+  slots: ExceptionSlotCreateManyInput
+  owner: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ExceptionEdge {
+  """The item at the end of the edge."""
+  node: Exception!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ExceptionOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ExceptionPreviousValues {
+  id: UUID!
+}
+
+type ExceptionSlot {
+  id: UUID!
+  schedule(where: ScheduleWhereInput): Schedule!
+  date: DateTime!
+}
+
+"""A connection to a list of items."""
+type ExceptionSlotConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ExceptionSlotEdge]!
+  aggregate: AggregateExceptionSlot!
+}
+
+input ExceptionSlotCreateInput {
+  date: DateTime!
+  schedule: ScheduleCreateOneInput!
+}
+
+input ExceptionSlotCreateManyInput {
+  create: [ExceptionSlotCreateInput!]
+  connect: [ExceptionSlotWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ExceptionSlotEdge {
+  """The item at the end of the edge."""
+  node: ExceptionSlot!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ExceptionSlotOrderByInput {
+  id_ASC
+  id_DESC
+  date_ASC
+  date_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ExceptionSlotPreviousValues {
+  id: UUID!
+  date: DateTime!
+}
+
+type ExceptionSlotSubscriptionPayload {
+  mutation: MutationType!
+  node: ExceptionSlot
+  updatedFields: [String!]
+  previousValues: ExceptionSlotPreviousValues
+}
+
+input ExceptionSlotSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionSlotSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionSlotSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionSlotSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ExceptionSlotWhereInput
+}
+
+input ExceptionSlotUpdateDataInput {
+  date: DateTime
+  schedule: ScheduleUpdateOneInput
+}
+
+input ExceptionSlotUpdateInput {
+  date: DateTime
+  schedule: ScheduleUpdateOneInput
+}
+
+input ExceptionSlotUpdateManyInput {
+  create: [ExceptionSlotCreateInput!]
+  connect: [ExceptionSlotWhereUniqueInput!]
+  disconnect: [ExceptionSlotWhereUniqueInput!]
+  delete: [ExceptionSlotWhereUniqueInput!]
+  update: [ExceptionSlotUpdateWithWhereUniqueNestedInput!]
+  upsert: [ExceptionSlotUpsertWithWhereUniqueNestedInput!]
+}
+
+input ExceptionSlotUpdateWithWhereUniqueNestedInput {
+  where: ExceptionSlotWhereUniqueInput!
+  data: ExceptionSlotUpdateDataInput!
+}
+
+input ExceptionSlotUpsertWithWhereUniqueNestedInput {
+  where: ExceptionSlotWhereUniqueInput!
+  update: ExceptionSlotUpdateDataInput!
+  create: ExceptionSlotCreateInput!
+}
+
+input ExceptionSlotWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionSlotWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionSlotWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionSlotWhereInput!]
+  date: DateTime
+
+  """All values that are not equal to given value."""
+  date_not: DateTime
+
+  """All values that are contained in given list."""
+  date_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  date_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  date_lt: DateTime
+
+  """All values less than or equal the given value."""
+  date_lte: DateTime
+
+  """All values greater than the given value."""
+  date_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  date_gte: DateTime
+  schedule: ScheduleWhereInput
+}
+
+input ExceptionSlotWhereUniqueInput {
+  id: UUID
+}
+
+type ExceptionSubscriptionPayload {
+  mutation: MutationType!
+  node: Exception
+  updatedFields: [String!]
+  previousValues: ExceptionPreviousValues
+}
+
+input ExceptionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ExceptionWhereInput
+}
+
+input ExceptionUpdateInput {
+  employee: EmployeeUpdateOneInput
+  slots: ExceptionSlotUpdateManyInput
+  owner: UserUpdateOneInput
+}
+
+input ExceptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExceptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExceptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExceptionWhereInput!]
+  employee: EmployeeWhereInput
+  slots_every: ExceptionSlotWhereInput
+  slots_some: ExceptionSlotWhereInput
+  slots_none: ExceptionSlotWhereInput
+  owner: UserWhereInput
+}
+
+input ExceptionWhereUniqueInput {
+  id: UUID
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createShift(data: ShiftCreateInput!): Shift!
+  createException(data: ExceptionCreateInput!): Exception!
+  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
+  createSchedule(data: ScheduleCreateInput!): Schedule!
+  createUptimeClass(data: UptimeClassCreateInput!): UptimeClass!
+  createEmployee(data: EmployeeCreateInput!): Employee!
+  createUser(data: UserCreateInput!): User!
+  createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
+  createScheduleUptime(data: ScheduleUptimeCreateInput!): ScheduleUptime!
+  createBreaktimeClass(data: BreaktimeClassCreateInput!): BreaktimeClass!
+  createScheduleBreaktime(data: ScheduleBreaktimeCreateInput!): ScheduleBreaktime!
+  createDowntimeClass(data: DowntimeClassCreateInput!): DowntimeClass!
+  createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
+  createScheduleDowntime(data: ScheduleDowntimeCreateInput!): ScheduleDowntime!
+  updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
+  updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
+  updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
+  updateUptimeClass(data: UptimeClassUpdateInput!, where: UptimeClassWhereUniqueInput!): UptimeClass
+  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  updateScheduleUptime(data: ScheduleUptimeUpdateInput!, where: ScheduleUptimeWhereUniqueInput!): ScheduleUptime
+  updateBreaktimeClass(data: BreaktimeClassUpdateInput!, where: BreaktimeClassWhereUniqueInput!): BreaktimeClass
+  updateScheduleBreaktime(data: ScheduleBreaktimeUpdateInput!, where: ScheduleBreaktimeWhereUniqueInput!): ScheduleBreaktime
+  updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  updateScheduleDowntime(data: ScheduleDowntimeUpdateInput!, where: ScheduleDowntimeWhereUniqueInput!): ScheduleDowntime
+  deleteShift(where: ShiftWhereUniqueInput!): Shift
+  deleteException(where: ExceptionWhereUniqueInput!): Exception
+  deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
+  deleteUptimeClass(where: UptimeClassWhereUniqueInput!): UptimeClass
+  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  deleteScheduleUptime(where: ScheduleUptimeWhereUniqueInput!): ScheduleUptime
+  deleteBreaktimeClass(where: BreaktimeClassWhereUniqueInput!): BreaktimeClass
+  deleteScheduleBreaktime(where: ScheduleBreaktimeWhereUniqueInput!): ScheduleBreaktime
+  deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  deleteScheduleDowntime(where: ScheduleDowntimeWhereUniqueInput!): ScheduleDowntime
+  upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
+  upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
+  upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
+  upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
+  upsertUptimeClass(where: UptimeClassWhereUniqueInput!, create: UptimeClassCreateInput!, update: UptimeClassUpdateInput!): UptimeClass!
+  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
+  upsertScheduleUptime(where: ScheduleUptimeWhereUniqueInput!, create: ScheduleUptimeCreateInput!, update: ScheduleUptimeUpdateInput!): ScheduleUptime!
+  upsertBreaktimeClass(where: BreaktimeClassWhereUniqueInput!, create: BreaktimeClassCreateInput!, update: BreaktimeClassUpdateInput!): BreaktimeClass!
+  upsertScheduleBreaktime(where: ScheduleBreaktimeWhereUniqueInput!, create: ScheduleBreaktimeCreateInput!, update: ScheduleBreaktimeUpdateInput!): ScheduleBreaktime!
+  upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
+  upsertScheduleDowntime(where: ScheduleDowntimeWhereUniqueInput!, create: ScheduleDowntimeCreateInput!, update: ScheduleDowntimeUpdateInput!): ScheduleDowntime!
+  updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
+  updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
+  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
+  updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
+  updateManyUptimeClasses(data: UptimeClassUpdateInput!, where: UptimeClassWhereInput): BatchPayload!
+  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
+  updateManyScheduleUptimes(data: ScheduleUptimeUpdateInput!, where: ScheduleUptimeWhereInput): BatchPayload!
+  updateManyBreaktimeClasses(data: BreaktimeClassUpdateInput!, where: BreaktimeClassWhereInput): BatchPayload!
+  updateManyScheduleBreaktimes(data: ScheduleBreaktimeUpdateInput!, where: ScheduleBreaktimeWhereInput): BatchPayload!
+  updateManyDowntimeClasses(data: DowntimeClassUpdateInput!, where: DowntimeClassWhereInput): BatchPayload!
+  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
+  updateManyScheduleDowntimes(data: ScheduleDowntimeUpdateInput!, where: ScheduleDowntimeWhereInput): BatchPayload!
+  deleteManyShifts(where: ShiftWhereInput): BatchPayload!
+  deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
+  deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
+  deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
+  deleteManyUptimeClasses(where: UptimeClassWhereInput): BatchPayload!
+  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
+  deleteManyScheduleUptimes(where: ScheduleUptimeWhereInput): BatchPayload!
+  deleteManyBreaktimeClasses(where: BreaktimeClassWhereInput): BatchPayload!
+  deleteManyScheduleBreaktimes(where: ScheduleBreaktimeWhereInput): BatchPayload!
+  deleteManyDowntimeClasses(where: DowntimeClassWhereInput): BatchPayload!
+  deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
+  deleteManyScheduleDowntimes(where: ScheduleDowntimeWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
+  exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
+  exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
+  schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
+  uptimeClasses(where: UptimeClassWhereInput, orderBy: UptimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UptimeClass]!
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
+  scheduleUptimes(where: ScheduleUptimeWhereInput, orderBy: ScheduleUptimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleUptime]!
+  breaktimeClasses(where: BreaktimeClassWhereInput, orderBy: BreaktimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BreaktimeClass]!
+  scheduleBreaktimes(where: ScheduleBreaktimeWhereInput, orderBy: ScheduleBreaktimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleBreaktime]!
+  downtimeClasses(where: DowntimeClassWhereInput, orderBy: DowntimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DowntimeClass]!
+  shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
+  scheduleDowntimes(where: ScheduleDowntimeWhereInput, orderBy: ScheduleDowntimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDowntime]!
+  shift(where: ShiftWhereUniqueInput!): Shift
+  exception(where: ExceptionWhereUniqueInput!): Exception
+  exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  schedule(where: ScheduleWhereUniqueInput!): Schedule
+  uptimeClass(where: UptimeClassWhereUniqueInput!): UptimeClass
+  employee(where: EmployeeWhereUniqueInput!): Employee
+  user(where: UserWhereUniqueInput!): User
+  exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  scheduleUptime(where: ScheduleUptimeWhereUniqueInput!): ScheduleUptime
+  breaktimeClass(where: BreaktimeClassWhereUniqueInput!): BreaktimeClass
+  scheduleBreaktime(where: ScheduleBreaktimeWhereUniqueInput!): ScheduleBreaktime
+  shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  scheduleDowntime(where: ScheduleDowntimeWhereUniqueInput!): ScheduleDowntime
+  shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
+  exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
+  exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
+  schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
+  uptimeClassesConnection(where: UptimeClassWhereInput, orderBy: UptimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UptimeClassConnection!
+  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
+  scheduleUptimesConnection(where: ScheduleUptimeWhereInput, orderBy: ScheduleUptimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleUptimeConnection!
+  breaktimeClassesConnection(where: BreaktimeClassWhereInput, orderBy: BreaktimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BreaktimeClassConnection!
+  scheduleBreaktimesConnection(where: ScheduleBreaktimeWhereInput, orderBy: ScheduleBreaktimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleBreaktimeConnection!
+  downtimeClassesConnection(where: DowntimeClassWhereInput, orderBy: DowntimeClassOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DowntimeClassConnection!
+  shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
+  scheduleDowntimesConnection(where: ScheduleDowntimeWhereInput, orderBy: ScheduleDowntimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleDowntimeConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Schedule {
+  id: UUID!
+  name: String
+  description: String
+  uptime(where: ScheduleUptimeWhereInput, orderBy: ScheduleUptimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleUptime!]
+  downtime(where: ScheduleDowntimeWhereInput, orderBy: ScheduleDowntimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDowntime!]
+  breaktime(where: ScheduleBreaktimeWhereInput, orderBy: ScheduleBreaktimeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleBreaktime!]
+}
+
+type ScheduleBreaktime {
+  id: UUID!
+  class(where: BreaktimeClassWhereInput): BreaktimeClass!
+  startTime: DateTime!
+  endTime: DateTime!
+  duration: DateTime!
+}
+
+"""A connection to a list of items."""
+type ScheduleBreaktimeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleBreaktimeEdge]!
+  aggregate: AggregateScheduleBreaktime!
+}
+
+input ScheduleBreaktimeCreateInput {
+  startTime: DateTime!
+  endTime: DateTime!
+  duration: DateTime!
+  class: BreaktimeClassCreateOneInput!
+}
+
+input ScheduleBreaktimeCreateManyInput {
+  create: [ScheduleBreaktimeCreateInput!]
+  connect: [ScheduleBreaktimeWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ScheduleBreaktimeEdge {
+  """The item at the end of the edge."""
+  node: ScheduleBreaktime!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleBreaktimeOrderByInput {
+  id_ASC
+  id_DESC
+  startTime_ASC
+  startTime_DESC
+  endTime_ASC
+  endTime_DESC
+  duration_ASC
+  duration_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ScheduleBreaktimePreviousValues {
+  id: UUID!
+  startTime: DateTime!
+  endTime: DateTime!
+  duration: DateTime!
+}
+
+type ScheduleBreaktimeSubscriptionPayload {
+  mutation: MutationType!
+  node: ScheduleBreaktime
+  updatedFields: [String!]
+  previousValues: ScheduleBreaktimePreviousValues
+}
+
+input ScheduleBreaktimeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleBreaktimeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleBreaktimeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleBreaktimeSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleBreaktimeWhereInput
+}
+
+input ScheduleBreaktimeUpdateDataInput {
+  startTime: DateTime
+  endTime: DateTime
+  duration: DateTime
+  class: BreaktimeClassUpdateOneInput
+}
+
+input ScheduleBreaktimeUpdateInput {
+  startTime: DateTime
+  endTime: DateTime
+  duration: DateTime
+  class: BreaktimeClassUpdateOneInput
+}
+
+input ScheduleBreaktimeUpdateManyInput {
+  create: [ScheduleBreaktimeCreateInput!]
+  connect: [ScheduleBreaktimeWhereUniqueInput!]
+  disconnect: [ScheduleBreaktimeWhereUniqueInput!]
+  delete: [ScheduleBreaktimeWhereUniqueInput!]
+  update: [ScheduleBreaktimeUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScheduleBreaktimeUpsertWithWhereUniqueNestedInput!]
+}
+
+input ScheduleBreaktimeUpdateWithWhereUniqueNestedInput {
+  where: ScheduleBreaktimeWhereUniqueInput!
+  data: ScheduleBreaktimeUpdateDataInput!
+}
+
+input ScheduleBreaktimeUpsertWithWhereUniqueNestedInput {
+  where: ScheduleBreaktimeWhereUniqueInput!
+  update: ScheduleBreaktimeUpdateDataInput!
+  create: ScheduleBreaktimeCreateInput!
+}
+
+input ScheduleBreaktimeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleBreaktimeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleBreaktimeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleBreaktimeWhereInput!]
+  startTime: DateTime
+
+  """All values that are not equal to given value."""
+  startTime_not: DateTime
+
+  """All values that are contained in given list."""
+  startTime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  startTime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  startTime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  startTime_lte: DateTime
+
+  """All values greater than the given value."""
+  startTime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  startTime_gte: DateTime
+  endTime: DateTime
+
+  """All values that are not equal to given value."""
+  endTime_not: DateTime
+
+  """All values that are contained in given list."""
+  endTime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  endTime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  endTime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  endTime_lte: DateTime
+
+  """All values greater than the given value."""
+  endTime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  endTime_gte: DateTime
+  duration: DateTime
+
+  """All values that are not equal to given value."""
+  duration_not: DateTime
+
+  """All values that are contained in given list."""
+  duration_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  duration_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  duration_lt: DateTime
+
+  """All values less than or equal the given value."""
+  duration_lte: DateTime
+
+  """All values greater than the given value."""
+  duration_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  duration_gte: DateTime
+  class: BreaktimeClassWhereInput
+}
+
+input ScheduleBreaktimeWhereUniqueInput {
+  id: UUID
+}
+
+"""A connection to a list of items."""
+type ScheduleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleEdge]!
+  aggregate: AggregateSchedule!
+}
+
+input ScheduleCreateInput {
+  name: String
+  description: String
+  uptime: ScheduleUptimeCreateManyInput
+  downtime: ScheduleDowntimeCreateManyInput
+  breaktime: ScheduleBreaktimeCreateManyInput
+}
+
+input ScheduleCreateOneInput {
+  create: ScheduleCreateInput
+  connect: ScheduleWhereUniqueInput
+}
+
+type ScheduleDowntime {
+  id: UUID!
+  class(where: DowntimeClassWhereInput): DowntimeClass!
+  value: Float!
+}
+
+"""A connection to a list of items."""
+type ScheduleDowntimeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleDowntimeEdge]!
+  aggregate: AggregateScheduleDowntime!
+}
+
+input ScheduleDowntimeCreateInput {
+  value: Float!
+  class: DowntimeClassCreateOneInput!
+}
+
+input ScheduleDowntimeCreateManyInput {
+  create: [ScheduleDowntimeCreateInput!]
+  connect: [ScheduleDowntimeWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ScheduleDowntimeEdge {
+  """The item at the end of the edge."""
+  node: ScheduleDowntime!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleDowntimeOrderByInput {
+  id_ASC
+  id_DESC
+  value_ASC
+  value_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ScheduleDowntimePreviousValues {
+  id: UUID!
+  value: Float!
+}
+
+type ScheduleDowntimeSubscriptionPayload {
+  mutation: MutationType!
+  node: ScheduleDowntime
+  updatedFields: [String!]
+  previousValues: ScheduleDowntimePreviousValues
+}
+
+input ScheduleDowntimeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleDowntimeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleDowntimeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleDowntimeSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleDowntimeWhereInput
+}
+
+input ScheduleDowntimeUpdateDataInput {
+  value: Float
+  class: DowntimeClassUpdateOneInput
+}
+
+input ScheduleDowntimeUpdateInput {
+  value: Float
+  class: DowntimeClassUpdateOneInput
+}
+
+input ScheduleDowntimeUpdateManyInput {
+  create: [ScheduleDowntimeCreateInput!]
+  connect: [ScheduleDowntimeWhereUniqueInput!]
+  disconnect: [ScheduleDowntimeWhereUniqueInput!]
+  delete: [ScheduleDowntimeWhereUniqueInput!]
+  update: [ScheduleDowntimeUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScheduleDowntimeUpsertWithWhereUniqueNestedInput!]
+}
+
+input ScheduleDowntimeUpdateWithWhereUniqueNestedInput {
+  where: ScheduleDowntimeWhereUniqueInput!
+  data: ScheduleDowntimeUpdateDataInput!
+}
+
+input ScheduleDowntimeUpsertWithWhereUniqueNestedInput {
+  where: ScheduleDowntimeWhereUniqueInput!
+  update: ScheduleDowntimeUpdateDataInput!
+  create: ScheduleDowntimeCreateInput!
+}
+
+input ScheduleDowntimeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleDowntimeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleDowntimeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleDowntimeWhereInput!]
+  value: Float
+
+  """All values that are not equal to given value."""
+  value_not: Float
+
+  """All values that are contained in given list."""
+  value_in: [Float!]
+
+  """All values that are not contained in given list."""
+  value_not_in: [Float!]
+
+  """All values less than the given value."""
+  value_lt: Float
+
+  """All values less than or equal the given value."""
+  value_lte: Float
+
+  """All values greater than the given value."""
+  value_gt: Float
+
+  """All values greater than or equal the given value."""
+  value_gte: Float
+  class: DowntimeClassWhereInput
+}
+
+input ScheduleDowntimeWhereUniqueInput {
+  id: UUID
+}
+
+"""An edge in a connection."""
+type ScheduleEdge {
+  """The item at the end of the edge."""
+  node: Schedule!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type SchedulePreviousValues {
+  id: UUID!
+  name: String
+  description: String
+}
+
+type ScheduleSubscriptionPayload {
+  mutation: MutationType!
+  node: Schedule
+  updatedFields: [String!]
+  previousValues: SchedulePreviousValues
+}
+
+input ScheduleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleWhereInput
+}
+
+input ScheduleUpdateDataInput {
+  name: String
+  description: String
+  uptime: ScheduleUptimeUpdateManyInput
+  downtime: ScheduleDowntimeUpdateManyInput
+  breaktime: ScheduleBreaktimeUpdateManyInput
+}
+
+input ScheduleUpdateInput {
+  name: String
+  description: String
+  uptime: ScheduleUptimeUpdateManyInput
+  downtime: ScheduleDowntimeUpdateManyInput
+  breaktime: ScheduleBreaktimeUpdateManyInput
+}
+
+input ScheduleUpdateOneInput {
+  create: ScheduleCreateInput
+  connect: ScheduleWhereUniqueInput
+  delete: Boolean
+  update: ScheduleUpdateDataInput
+  upsert: ScheduleUpsertNestedInput
+}
+
+input ScheduleUpsertNestedInput {
+  update: ScheduleUpdateDataInput!
+  create: ScheduleCreateInput!
+}
+
+type ScheduleUptime {
+  id: UUID!
+  class(where: UptimeClassWhereInput): UptimeClass!
+  startTime: DateTime!
+  endTime: DateTime!
+  value: Float!
+}
+
+"""A connection to a list of items."""
+type ScheduleUptimeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleUptimeEdge]!
+  aggregate: AggregateScheduleUptime!
+}
+
+input ScheduleUptimeCreateInput {
+  startTime: DateTime!
+  endTime: DateTime!
+  value: Float!
+  class: UptimeClassCreateOneInput!
+}
+
+input ScheduleUptimeCreateManyInput {
+  create: [ScheduleUptimeCreateInput!]
+  connect: [ScheduleUptimeWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ScheduleUptimeEdge {
+  """The item at the end of the edge."""
+  node: ScheduleUptime!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleUptimeOrderByInput {
+  id_ASC
+  id_DESC
+  startTime_ASC
+  startTime_DESC
+  endTime_ASC
+  endTime_DESC
+  value_ASC
+  value_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ScheduleUptimePreviousValues {
+  id: UUID!
+  startTime: DateTime!
+  endTime: DateTime!
+  value: Float!
+}
+
+type ScheduleUptimeSubscriptionPayload {
+  mutation: MutationType!
+  node: ScheduleUptime
+  updatedFields: [String!]
+  previousValues: ScheduleUptimePreviousValues
+}
+
+input ScheduleUptimeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleUptimeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleUptimeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleUptimeSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleUptimeWhereInput
+}
+
+input ScheduleUptimeUpdateDataInput {
+  startTime: DateTime
+  endTime: DateTime
+  value: Float
+  class: UptimeClassUpdateOneInput
+}
+
+input ScheduleUptimeUpdateInput {
+  startTime: DateTime
+  endTime: DateTime
+  value: Float
+  class: UptimeClassUpdateOneInput
+}
+
+input ScheduleUptimeUpdateManyInput {
+  create: [ScheduleUptimeCreateInput!]
+  connect: [ScheduleUptimeWhereUniqueInput!]
+  disconnect: [ScheduleUptimeWhereUniqueInput!]
+  delete: [ScheduleUptimeWhereUniqueInput!]
+  update: [ScheduleUptimeUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScheduleUptimeUpsertWithWhereUniqueNestedInput!]
+}
+
+input ScheduleUptimeUpdateWithWhereUniqueNestedInput {
+  where: ScheduleUptimeWhereUniqueInput!
+  data: ScheduleUptimeUpdateDataInput!
+}
+
+input ScheduleUptimeUpsertWithWhereUniqueNestedInput {
+  where: ScheduleUptimeWhereUniqueInput!
+  update: ScheduleUptimeUpdateDataInput!
+  create: ScheduleUptimeCreateInput!
+}
+
+input ScheduleUptimeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleUptimeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleUptimeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleUptimeWhereInput!]
+  startTime: DateTime
+
+  """All values that are not equal to given value."""
+  startTime_not: DateTime
+
+  """All values that are contained in given list."""
+  startTime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  startTime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  startTime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  startTime_lte: DateTime
+
+  """All values greater than the given value."""
+  startTime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  startTime_gte: DateTime
+  endTime: DateTime
+
+  """All values that are not equal to given value."""
+  endTime_not: DateTime
+
+  """All values that are contained in given list."""
+  endTime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  endTime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  endTime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  endTime_lte: DateTime
+
+  """All values greater than the given value."""
+  endTime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  endTime_gte: DateTime
+  value: Float
+
+  """All values that are not equal to given value."""
+  value_not: Float
+
+  """All values that are contained in given list."""
+  value_in: [Float!]
+
+  """All values that are not contained in given list."""
+  value_not_in: [Float!]
+
+  """All values less than the given value."""
+  value_lt: Float
+
+  """All values less than or equal the given value."""
+  value_lte: Float
+
+  """All values greater than the given value."""
+  value_gt: Float
+
+  """All values greater than or equal the given value."""
+  value_gte: Float
+  class: UptimeClassWhereInput
+}
+
+input ScheduleUptimeWhereUniqueInput {
+  id: UUID
+}
+
+input ScheduleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleWhereInput!]
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  uptime_every: ScheduleUptimeWhereInput
+  uptime_some: ScheduleUptimeWhereInput
+  uptime_none: ScheduleUptimeWhereInput
+  downtime_every: ScheduleDowntimeWhereInput
+  downtime_some: ScheduleDowntimeWhereInput
+  downtime_none: ScheduleDowntimeWhereInput
+  breaktime_every: ScheduleBreaktimeWhereInput
+  breaktime_some: ScheduleBreaktimeWhereInput
+  breaktime_none: ScheduleBreaktimeWhereInput
+}
+
+input ScheduleWhereUniqueInput {
+  id: UUID
+}
+
+type Shift {
+  id: UUID!
+  employee(where: EmployeeWhereInput): Employee!
+  slots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot!]
+  user(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type ShiftConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ShiftEdge]!
+  aggregate: AggregateShift!
+}
+
+input ShiftCreateInput {
+  employee: EmployeeCreateOneInput!
+  slots: ShiftSlotCreateManyInput
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ShiftEdge {
+  """The item at the end of the edge."""
+  node: Shift!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ShiftOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ShiftPreviousValues {
+  id: UUID!
+}
+
+type ShiftSlot {
+  id: UUID!
+  schedule(where: ScheduleWhereInput): Schedule!
+  index: Int!
+}
+
+"""A connection to a list of items."""
+type ShiftSlotConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ShiftSlotEdge]!
+  aggregate: AggregateShiftSlot!
+}
+
+input ShiftSlotCreateInput {
+  index: Int!
+  schedule: ScheduleCreateOneInput!
+}
+
+input ShiftSlotCreateManyInput {
+  create: [ShiftSlotCreateInput!]
+  connect: [ShiftSlotWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ShiftSlotEdge {
+  """The item at the end of the edge."""
+  node: ShiftSlot!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ShiftSlotOrderByInput {
+  id_ASC
+  id_DESC
+  index_ASC
+  index_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ShiftSlotPreviousValues {
+  id: UUID!
+  index: Int!
+}
+
+type ShiftSlotSubscriptionPayload {
+  mutation: MutationType!
+  node: ShiftSlot
+  updatedFields: [String!]
+  previousValues: ShiftSlotPreviousValues
+}
+
+input ShiftSlotSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShiftSlotSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShiftSlotSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShiftSlotSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShiftSlotWhereInput
+}
+
+input ShiftSlotUpdateDataInput {
+  index: Int
+  schedule: ScheduleUpdateOneInput
+}
+
+input ShiftSlotUpdateInput {
+  index: Int
+  schedule: ScheduleUpdateOneInput
+}
+
+input ShiftSlotUpdateManyInput {
+  create: [ShiftSlotCreateInput!]
+  connect: [ShiftSlotWhereUniqueInput!]
+  disconnect: [ShiftSlotWhereUniqueInput!]
+  delete: [ShiftSlotWhereUniqueInput!]
+  update: [ShiftSlotUpdateWithWhereUniqueNestedInput!]
+  upsert: [ShiftSlotUpsertWithWhereUniqueNestedInput!]
+}
+
+input ShiftSlotUpdateWithWhereUniqueNestedInput {
+  where: ShiftSlotWhereUniqueInput!
+  data: ShiftSlotUpdateDataInput!
+}
+
+input ShiftSlotUpsertWithWhereUniqueNestedInput {
+  where: ShiftSlotWhereUniqueInput!
+  update: ShiftSlotUpdateDataInput!
+  create: ShiftSlotCreateInput!
+}
+
+input ShiftSlotWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShiftSlotWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShiftSlotWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShiftSlotWhereInput!]
+  index: Int
+
+  """All values that are not equal to given value."""
+  index_not: Int
+
+  """All values that are contained in given list."""
+  index_in: [Int!]
+
+  """All values that are not contained in given list."""
+  index_not_in: [Int!]
+
+  """All values less than the given value."""
+  index_lt: Int
+
+  """All values less than or equal the given value."""
+  index_lte: Int
+
+  """All values greater than the given value."""
+  index_gt: Int
+
+  """All values greater than or equal the given value."""
+  index_gte: Int
+  schedule: ScheduleWhereInput
+}
+
+input ShiftSlotWhereUniqueInput {
+  id: UUID
+}
+
+type ShiftSubscriptionPayload {
+  mutation: MutationType!
+  node: Shift
+  updatedFields: [String!]
+  previousValues: ShiftPreviousValues
+}
+
+input ShiftSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShiftSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShiftSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShiftSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShiftWhereInput
+}
+
+input ShiftUpdateInput {
+  employee: EmployeeUpdateOneInput
+  slots: ShiftSlotUpdateManyInput
+  user: UserUpdateOneInput
+}
+
+input ShiftWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShiftWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShiftWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShiftWhereInput!]
+  employee: EmployeeWhereInput
+  slots_every: ShiftSlotWhereInput
+  slots_some: ShiftSlotWhereInput
+  slots_none: ShiftSlotWhereInput
+  user: UserWhereInput
+}
+
+input ShiftWhereUniqueInput {
+  id: UUID
+}
+
+type Subscription {
+  shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
+  exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
+  exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
+  schedule(where: ScheduleSubscriptionWhereInput): ScheduleSubscriptionPayload
+  uptimeClass(where: UptimeClassSubscriptionWhereInput): UptimeClassSubscriptionPayload
+  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
+  scheduleUptime(where: ScheduleUptimeSubscriptionWhereInput): ScheduleUptimeSubscriptionPayload
+  breaktimeClass(where: BreaktimeClassSubscriptionWhereInput): BreaktimeClassSubscriptionPayload
+  scheduleBreaktime(where: ScheduleBreaktimeSubscriptionWhereInput): ScheduleBreaktimeSubscriptionPayload
+  downtimeClass(where: DowntimeClassSubscriptionWhereInput): DowntimeClassSubscriptionPayload
+  shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
+  scheduleDowntime(where: ScheduleDowntimeSubscriptionWhereInput): ScheduleDowntimeSubscriptionPayload
+}
+
+type UptimeClass {
+  name: UptimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+"""A connection to a list of items."""
+type UptimeClassConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UptimeClassEdge]!
+  aggregate: AggregateUptimeClass!
+}
+
+input UptimeClassCreateInput {
+  name: UptimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+input UptimeClassCreateOneInput {
+  create: UptimeClassCreateInput
+  connect: UptimeClassWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type UptimeClassEdge {
+  """The item at the end of the edge."""
+  node: UptimeClass!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UptimeClassEnum {
+  STANDARDWORK
+  EXTRAWORK
+}
+
+enum UptimeClassOrderByInput {
+  name_ASC
+  name_DESC
+  label_ASC
+  label_DESC
+  color_ASC
+  color_DESC
+  code_ASC
+  code_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UptimeClassPreviousValues {
+  name: UptimeClassEnum!
+  label: String!
+  color: String!
+  code: String!
+}
+
+type UptimeClassSubscriptionPayload {
+  mutation: MutationType!
+  node: UptimeClass
+  updatedFields: [String!]
+  previousValues: UptimeClassPreviousValues
+}
+
+input UptimeClassSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UptimeClassSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UptimeClassSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UptimeClassSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UptimeClassWhereInput
+}
+
+input UptimeClassUpdateDataInput {
+  name: UptimeClassEnum
+  label: String
+  color: String
+  code: String
+}
+
+input UptimeClassUpdateInput {
+  name: UptimeClassEnum
+  label: String
+  color: String
+  code: String
+}
+
+input UptimeClassUpdateOneInput {
+  create: UptimeClassCreateInput
+  connect: UptimeClassWhereUniqueInput
+  delete: Boolean
+  update: UptimeClassUpdateDataInput
+  upsert: UptimeClassUpsertNestedInput
+}
+
+input UptimeClassUpsertNestedInput {
+  update: UptimeClassUpdateDataInput!
+  create: UptimeClassCreateInput!
+}
+
+input UptimeClassWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UptimeClassWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UptimeClassWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UptimeClassWhereInput!]
+  name: UptimeClassEnum
+
+  """All values that are not equal to given value."""
+  name_not: UptimeClassEnum
+
+  """All values that are contained in given list."""
+  name_in: [UptimeClassEnum!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [UptimeClassEnum!]
+  label: String
+
+  """All values that are not equal to given value."""
+  label_not: String
+
+  """All values that are contained in given list."""
+  label_in: [String!]
+
+  """All values that are not contained in given list."""
+  label_not_in: [String!]
+
+  """All values less than the given value."""
+  label_lt: String
+
+  """All values less than or equal the given value."""
+  label_lte: String
+
+  """All values greater than the given value."""
+  label_gt: String
+
+  """All values greater than or equal the given value."""
+  label_gte: String
+
+  """All values containing the given string."""
+  label_contains: String
+
+  """All values not containing the given string."""
+  label_not_contains: String
+
+  """All values starting with the given string."""
+  label_starts_with: String
+
+  """All values not starting with the given string."""
+  label_not_starts_with: String
+
+  """All values ending with the given string."""
+  label_ends_with: String
+
+  """All values not ending with the given string."""
+  label_not_ends_with: String
+  color: String
+
+  """All values that are not equal to given value."""
+  color_not: String
+
+  """All values that are contained in given list."""
+  color_in: [String!]
+
+  """All values that are not contained in given list."""
+  color_not_in: [String!]
+
+  """All values less than the given value."""
+  color_lt: String
+
+  """All values less than or equal the given value."""
+  color_lte: String
+
+  """All values greater than the given value."""
+  color_gt: String
+
+  """All values greater than or equal the given value."""
+  color_gte: String
+
+  """All values containing the given string."""
+  color_contains: String
+
+  """All values not containing the given string."""
+  color_not_contains: String
+
+  """All values starting with the given string."""
+  color_starts_with: String
+
+  """All values not starting with the given string."""
+  color_not_starts_with: String
+
+  """All values ending with the given string."""
+  color_ends_with: String
+
+  """All values not ending with the given string."""
+  color_not_ends_with: String
+  code: String
+
+  """All values that are not equal to given value."""
+  code_not: String
+
+  """All values that are contained in given list."""
+  code_in: [String!]
+
+  """All values that are not contained in given list."""
+  code_not_in: [String!]
+
+  """All values less than the given value."""
+  code_lt: String
+
+  """All values less than or equal the given value."""
+  code_lte: String
+
+  """All values greater than the given value."""
+  code_gt: String
+
+  """All values greater than or equal the given value."""
+  code_gte: String
+
+  """All values containing the given string."""
+  code_contains: String
+
+  """All values not containing the given string."""
+  code_not_contains: String
+
+  """All values starting with the given string."""
+  code_starts_with: String
+
+  """All values not starting with the given string."""
+  code_not_starts_with: String
+
+  """All values ending with the given string."""
+  code_ends_with: String
+
+  """All values not ending with the given string."""
+  code_not_ends_with: String
+}
+
+input UptimeClassWhereUniqueInput {
+  name: UptimeClassEnum
+}
+
+type User {
+  id: UUID!
+  username: String!
+  password: String!
+}
+
+"""A connection to a list of items."""
+type UserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  username: String!
+  password: String!
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  username_ASC
+  username_DESC
+  password_ASC
+  password_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: UUID!
+  username: String!
+  password: String!
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateDataInput {
+  username: String
+  password: String
+}
+
+input UserUpdateInput {
+  username: String
+  password: String
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
+}
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  username: String
+
+  """All values that are not equal to given value."""
+  username_not: String
+
+  """All values that are contained in given list."""
+  username_in: [String!]
+
+  """All values that are not contained in given list."""
+  username_not_in: [String!]
+
+  """All values less than the given value."""
+  username_lt: String
+
+  """All values less than or equal the given value."""
+  username_lte: String
+
+  """All values greater than the given value."""
+  username_gt: String
+
+  """All values greater than or equal the given value."""
+  username_gte: String
+
+  """All values containing the given string."""
+  username_contains: String
+
+  """All values not containing the given string."""
+  username_not_contains: String
+
+  """All values starting with the given string."""
+  username_starts_with: String
+
+  """All values not starting with the given string."""
+  username_not_starts_with: String
+
+  """All values ending with the given string."""
+  username_ends_with: String
+
+  """All values not ending with the given string."""
+  username_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+}
+
+input UserWhereUniqueInput {
+  id: UUID
+  username: String
+}
+
+"""A type 4 UUID according to IETF RFC 4122."""
+scalar UUID
