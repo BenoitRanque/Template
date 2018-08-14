@@ -262,6 +262,14 @@ export default {
             sortable: true
           },
           {
+            name: 'employee',
+            required: true,
+            label: this.$t('field.name.label'),
+            align: 'left',
+            field: row => row.employee.name_first,
+            sortable: true
+          },
+          {
             name: 'slots',
             required: true,
             label: this.$t('field.shift_slots.label'),

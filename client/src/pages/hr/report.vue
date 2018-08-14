@@ -8,7 +8,7 @@
         <q-datetime v-model="reportParams.to"></q-datetime>
       </div>
       <div class="col-4">
-        <q-select multiple v-model="reportParams.employee_id" :options="options.employee_id"></q-select>
+        <q-select filter multiple v-model="reportParams.employee_id" :options="options.employee_id"></q-select>
       </div>
     </div>
     <div class="q-pa-sm row justify-center">
@@ -21,215 +21,11 @@
     <q-table
       :data="data"
       :columns="columns"
+      :loading="loading"
     >
       <att-report-cell v-for="(date, index) in dates" :key="index" :slot="`body-cell-${date}`" slot-scope="props" :value="props.row.attendance.find(att => att.date === date)"></att-report-cell>
     </q-table>
-    <div class="row">
-      <div class="q-caption row col-auto" style="width: 80px; height: 80px">
-        <div class="column col-12">
-          <div class="col row items-center justify-center text-white text-center bg-info">
-            <div class="col">
-              V
-              <q-tooltip>
-                0.5 dia de vacacion
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-info">
-            <div class="col">
-              L
-              <q-tooltip>
-                0.5 dia libre
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <q-popover>
-          hello
-        </q-popover>
-      </div>
-      <div class="q-caption row col-auto" style="width: 80px; height: 80px">
-        <div class="column col-8">
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-negative">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion atrasada
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-positive">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion adecuada
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-positive">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion adecuada
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <div class="column col-4">
-          <div class="col row items-center justify-center text-white text-center bg-info">
-            <div class="col">
-              V
-              <q-tooltip>
-                0.5 dia de vacacion
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-info">
-            <div class="col">
-              L
-              <q-tooltip>
-                0.5 dia libre
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <q-popover>
-          hello
-        </q-popover>
-      </div>
-      <div class="q-caption row col-auto" style="width: 80px; height: 80px">
-        <div class="column col-8">
-          <div class="col row items-center justify-center text-white text-center bg-negative">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion atrasada
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-positive">
-            <div class="col">
-              12:30
-              <q-tooltip>
-                Marcacion adecuada
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <div class="column col-4">
-          <div class="col row items-center justify-center text-white text-center bg-negative">
-            <div class="col">
-              F
-              <q-tooltip>
-                0.5 dia de falta
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <q-popover>
-          hello
-        </q-popover>
-      </div>
-      <div class="q-caption row col-auto" style="width: 80px; height: 80px">
-        <div class="column col-12">
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-negative">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion atrasada
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-positive">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion adecuada
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-positive">
-            <div class="col">
-              09:45
-              <q-tooltip>
-                Marcacion adecuada
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <q-popover anchor="bottom middle" self="top middle" class="q-pa-md">
-          hello
-        </q-popover>
-      </div>
-      <div class="q-caption row col-auto" style="width: 80px; height: 80px">
-        <div class="column col-12">
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-          <div class="col row items-center justify-center text-white text-center bg-tertiary">
-            <div class="col">
-              <del>
-                08:30
-              </del>
-              <q-tooltip>
-                Marcacion faltante
-              </q-tooltip>
-            </div>
-          </div>
-        </div>
-        <q-popover anchor="bottom middle" self="top middle" class="q-pa-md">
-          hello
-        </q-popover>
-      </div>
-    </div>
-    <pre>{{report}}</pre>
+    <!-- <pre>{{report}}</pre> -->
   </q-page>
 </template>
 
@@ -266,6 +62,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       attType: {
         ATT_BREAKTIME,
         ATT_WORK,
@@ -333,12 +130,16 @@ export default {
     },
     fetch () {
       this.report = null
+      this.loading = true
       this.$axios.get(HR_ATT_REPORT, {
         params: this.reportParams
       })
         .then(response => {
+          this.loading = false
           this.report = response.data
-          console.log(response.data)
+        })
+        .catch(() => {
+          this.loading = false
         })
     }
   }
