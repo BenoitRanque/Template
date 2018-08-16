@@ -28,7 +28,7 @@ export function downtimeTimetypesOptions (state) {
 export function subordinateEmployeeOptions (state) {
   return state.subordinateEmployees.map(e => ({
     value: e.employee_id,
-    label: e.name_first
+    label: `${e.name_first} ${e.name_paternal}`
   }))
 }
 

@@ -19,18 +19,6 @@ export default {
       }
     },
     {
-      hash: 'break',
-      layout: 'workspace',
-      meta: {
-        label: 'attbreak',
-        requireAuthentication: true,
-        requireAuthorization: {
-          resource: 'HRAttBreaktime',
-          posession: 'any'
-        }
-      }
-    },
-    {
       hash: 'timetype',
       layout: 'workspace',
       meta: {

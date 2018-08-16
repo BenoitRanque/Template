@@ -1,28 +1,22 @@
 <template>
   <q-page>
-    <div class="row">
-      <div class="col-4">
-        <q-datetime v-model="reportParams.from"></q-datetime>
-      </div>
-      <div class="col-4">
-        <q-datetime v-model="reportParams.to"></q-datetime>
-      </div>
-      <div class="col-4">
-        <q-select filter multiple v-model="reportParams.employee_id" :options="options.employee_id"></q-select>
-      </div>
-    </div>
-    <div class="q-pa-sm row justify-center">
-      <q-btn @click="refresh" icon="refresh">refresh</q-btn>
-    </div>
-    <div class="q-pa-sm row justify-center">
-      <q-btn @click="fetch" icon="refresh">report</q-btn>
-    </div>
-    <hr>
     <q-table
+      :filter="filter"
       :data="data"
       :columns="columns"
       :loading="loading"
     >
+      <template slot="top-left" slot-scope="props">
+        <q-btn class="q-mr-sm" round flat color="primary" icon="refresh" size="md" @click="fetch()" />
+        <q-search hide-underline color="secondary"  v-model="filter" class="col-6" />
+      </template>
+
+      <template slot="top-right" slot-scope="props">
+        <q-datetime float-label="desde" v-model="reportParams.from"></q-datetime>
+        <q-datetime float-label="hasta" v-model="reportParams.to"></q-datetime>
+        <q-select float-label="empleados" filter multiple v-model="reportParams.employee_id" :options="subordinateEmployeeOptions"></q-select>
+      </template>
+
       <att-report-cell v-for="(date, index) in dates" :key="index" :slot="`body-cell-${date}`" slot-scope="props" :value="props.row.attendance.find(att => att.date === date)"></att-report-cell>
     </q-table>
     <!-- <pre>{{report}}</pre> -->
@@ -31,9 +25,8 @@
 
 <script>
 import AttReportCell from 'components/AttReportCell'
-import { HR_ATT_REPORT, HR_EMPLOYEE } from 'assets/apiRoutes'
-import attTypes from 'assets/attType'
-const { ATT_BREAKTIME, ATT_WORK, ATT_TIMEOFF } = attTypes
+import { HR_ATT_REPORT } from 'assets/apiRoutes'
+import { mapGetters } from 'vuex'
 import {
   // requiredIf,
   // requiredUnless,
@@ -62,19 +55,12 @@ export default {
   },
   data () {
     return {
+      filter: '',
       loading: false,
-      attType: {
-        ATT_BREAKTIME,
-        ATT_WORK,
-        ATT_TIMEOFF
-      },
       report: null,
       reportParams: {
         from: null,
         to: null,
-        employee_id: []
-      },
-      options: {
         employee_id: []
       }
     }
@@ -87,6 +73,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('hr', {
+      subordinateEmployeeOptions: 'subordinateEmployeeOptions'
+    }),
     dates () {
       if (!this.report || !this.report[0] || !this.report[0].attendance) return []
 
@@ -105,29 +94,13 @@ export default {
         },
         ...this.dates.map(date => ({
           name: date,
-          label: this.$date.formatDate(date, 'DD/MM/YYYY'),
+          label: this.$date.formatDate(date, 'DDD DD/MM/YYYY'),
           field: row => row.attendance.find(att => att.date === date)
         }))
       ]
     }
   },
   methods: {
-    filterTimetables (timetable) {
-      return timetable.filter(t => t.type_id !== ATT_BREAKTIME)
-    },
-    refresh () {
-      Promise.all([
-        this.$axios.get(HR_EMPLOYEE)
-      ]).then(response => {
-        this.options.employee_id = (response[0] && response[0].data) ? response[0].data.map(e => ({
-          value: e.employee_id,
-          label: e.name_first + ' ' + e.name_paternal,
-          stamp: e.zktime_id
-        })) : []
-      }).catch(() => {
-
-      })
-    },
     fetch () {
       this.report = null
       this.loading = true

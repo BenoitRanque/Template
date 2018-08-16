@@ -4,6 +4,7 @@ module.exports = {
   // ATT_EXTRA: 12,
 
   ATT_TIMEOFF: 5,
+  ATT_VACATION: 7,
   // ATT_VACATION: 22,
   // ATT_HOLIDAY: 23,
   // ATT_LEAVE_SICK: 24,

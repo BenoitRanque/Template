@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col">
-      <q-select hide-underline v-if="showSelect" :value="value ? value.schedule_id : null" @input="inputScheduleId" :options="standardScheduleOptions"></q-select>
+      <q-select filter hide-underline v-if="showSelect" :value="value ? value.schedule_id : null" @input="inputScheduleId" :options="standardScheduleOptions"></q-select>
       <q-input hide-underline v-else :value="value ? value.schedule_name : ''"></q-input>
     </div>
     <div class="col-auto">

@@ -418,7 +418,7 @@ module.exports = class EmployeeAttendance {
       const end_event = end_candidates.length ? max(...end_candidates) : null
       const end_missing_event = breaktime.end_require_event && end_event === null ? true : false
 
-      const overtime_threshold = start_event ? addMinutes(start_event, breaktime.duration.getMinutes() + (breaktime.duration.getHours() * 60)) : null 
+      const overtime_threshold = addMinutes(start_event ? start_event : breaktime.start_time, breaktime.duration.getMinutes() + (breaktime.duration.getHours() * 60)) 
       const overtime = overtime_threshold && end_event && isAfter(end_event, overtime_threshold) ? differenceInMinutes(end_event, overtime_threshold) : 0
 
       const skipped = !start_event && !end_event
@@ -431,6 +431,7 @@ module.exports = class EmployeeAttendance {
         end_candidates,
         end_event,
         end_missing_event,
+        overtime_threshold,
         overtime,
         skipped
       }
@@ -479,20 +480,24 @@ module.exports = class EmployeeAttendance {
             if (!val.absent) {
               if (val.start_require_event) {
                 acc.push({
+                  label: this.uptimeStartLabel(val),
                   time: val.start_missing_event ? val.start_time : val.start_event,
                   code: this.getTimetype(val.timetype_id).code,
                   color: this.getTimetype(val.timetype_id).color,
                   missing: val.start_missing_event,
-                  late: !!val.start_late
+                  late: !!val.start_late,
+                  early: !!val.start_early
                 })
               }
               if (val.end_require_event) {
                 acc.push({
+                  label: this.uptimeEndLabel(val),
                   time: val.end_missing_event ? val.end_time : val.end_event,
                   code: this.getTimetype(val.timetype_id).code,
                   color: this.getTimetype(val.timetype_id).color,
                   missing: val.end_missing_event,
-                  late: !!val.end_early
+                  late: !!val.end_early,
+                  early: !!val.end_late
                 })
               }
             }
@@ -502,6 +507,7 @@ module.exports = class EmployeeAttendance {
             if (!val.skipped) {
               if (val.start_require_event) {
                 acc.push({
+                  label: this.breaktimeStartLabel(val),
                   time: val.start_missing_event ? val.start_time : val.start_event,
                   code: this.getTimetype(val.timetype_id).code,
                   color: this.getTimetype(val.timetype_id).color,
@@ -511,7 +517,8 @@ module.exports = class EmployeeAttendance {
               }
               if (val.end_require_event) {
                 acc.push({
-                  time: val.end_missing_event ? val.end_time : val.end_event,
+                  label: this.breaktimeEndLabel(val),
+                  time: val.end_missing_event ? val.overtime_threshold : val.end_event,
                   code: this.getTimetype(val.timetype_id).code,
                   color: this.getTimetype(val.timetype_id).color,
                   missing: val.end_missing_event,
@@ -532,6 +539,48 @@ module.exports = class EmployeeAttendance {
         label: `Falta ${balance.absent.value} dias, descuento de ${balance.absent.value * balance.absent.multiplier } dias`,
         code: balance.absent.multiplier === 3 ? 'FF' : 'F'
       } : null
+    }
+  }
+
+  uptimeStartLabel ({ start_time, start_event, start_early, start_late, start_missing_event }) {
+    if (start_missing_event) {
+      return `${format(start_time, 'HH:mm')} - falta entrada`
+    } else if (start_late) {
+      return `${format(start_event, 'HH:mm')} - entrada atrasada con ${start_late} minutos`
+    } else if (start_early) {
+      return `${format(start_event, 'HH:mm')} - entrada adelantada con ${start_early} minutos`
+    } else {
+      return `${format(start_event, 'HH:mm')} - entrada conforme`
+    }
+  }
+
+  uptimeEndLabel ({ end_time, end_event, end_early, end_late, end_missing_event }) {
+    if (end_missing_event) {
+      return `${format(end_time, 'HH:mm')} - falta salida`
+    } else if (end_early) {
+      return `${format(end_event, 'HH:mm')} - salida adelantada con ${end_early} minutos`
+    } else if (end_late) {
+      return `${format(end_event, 'HH:mm')} - salida atrasada con ${end_late} minutos`
+    } else {
+      return `${format(end_event, 'HH:mm')} - salida conforme`
+    }
+  }
+
+  breaktimeStartLabel ({ start_time, start_event, start_missing_event }) {
+    if (start_missing_event) {
+      return `${format(start_time, 'HH:mm')} - falta entrada de almuerzo`
+    } else {
+      return `${format(start_event, 'HH:mm')} - entrada de almuerzo`
+    }
+  }
+
+  breaktimeEndLabel ({ end_event, overtime_threshold, overtime, end_missing_event}) {
+    if (end_missing_event) {
+      return `${format(overtime_threshold, 'HH:mm')} - falta salida de almuerzo`
+    } else if (overtime) {
+      return `${format(end_event, 'HH:mm')} - salida de almuerzo atrasada con ${overtime} minutos`
+    } else {
+      return `${format(end_event, 'HH:mm')} - salida de almuerzo`
     }
   }
 

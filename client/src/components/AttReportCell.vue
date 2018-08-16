@@ -2,7 +2,7 @@
   <q-td class="q-caption" style="padding: 0 2px;">
     <div class="full-height full-width row">
       <div v-if="hasEvents" class="full-height column" :class="leftClass">
-        <div v-for="(e, index) in value.summary.events" :key="index" :class="{ 'bg-positive': !e.missing && !e.late, 'bg-negative': e.late, 'bg-tertiary': e.missing }" class="col row items-center justify-center text-white text-center">
+        <div v-for="(e, index) in value.summary.events" :key="index" :class="{ 'bg-positive': !e.missing && !e.late, 'bg-negative': e.late, 'bg-tertiary': e.missing, 'bg-warning': e.early, }" class="col row items-center justify-center text-white text-center">
           <div class="col q-pa-xs">
             {{$date.formatDate(e.time, 'HH:mm')}}
             <q-tooltip>
@@ -31,6 +31,7 @@
       </div>
     </div>
     <q-popover anchor="bottom middle" self="top middle" class="q-pa-md">
+      <div class="q-title">Fecha: {{$date.formatDate(value.date, 'DD/MM/YYYY')}}</div>
       <pre>{{value}}</pre>
     </q-popover>
   </q-td>
