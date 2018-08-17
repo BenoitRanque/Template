@@ -12,8 +12,8 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-datetime float-label="desde" v-model="reportParams.from"></q-datetime>
-        <q-datetime float-label="hasta" v-model="reportParams.to"></q-datetime>
+        <q-datetime :max="reportParams.to ? reportParams.to : yesterday" float-label="desde" v-model="reportParams.from"></q-datetime>
+        <q-datetime :max="yesterday" :min="reportParams.from ? reportParams.from : null" float-label="hasta" v-model="reportParams.to"></q-datetime>
         <q-select float-label="empleados" filter multiple v-model="reportParams.employee_id" :options="subordinateEmployeeOptions"></q-select>
       </template>
 
@@ -26,7 +26,7 @@
 <script>
 import AttReportCell from 'components/AttReportCell'
 import { HR_ATT_REPORT } from 'assets/apiRoutes'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import {
   // requiredIf,
   // requiredUnless,
@@ -58,6 +58,7 @@ export default {
       filter: '',
       loading: false,
       report: null,
+      yesterday: this.$date.subtractFromDate(new Date().setHours(0, 0, 0, 0), { days: 1 }),
       reportParams: {
         from: null,
         to: null,
@@ -90,17 +91,21 @@ export default {
           name: 'employee',
           field: row => row.employee.name_first + ' ' + row.employee.name_paternal,
           label: 'Nombre del Empleado',
+          align: 'left',
           sort: true
         },
         ...this.dates.map(date => ({
           name: date,
-          label: this.$date.formatDate(date, 'DDD DD/MM/YYYY'),
+          label: this.$date.formatDate(date, 'ddd DD/MM/YYYY'),
           field: row => row.attendance.find(att => att.date === date)
         }))
       ]
     }
   },
   methods: {
+    ...mapActions('hr', {
+      fetchSubordinateEmployees: 'fetchSubordinateEmployees'
+    }),
     fetch () {
       this.report = null
       this.loading = true
@@ -115,6 +120,9 @@ export default {
           this.loading = false
         })
     }
+  },
+  mounted () {
+    this.fetchSubordinateEmployees()
   }
 }
 </script>

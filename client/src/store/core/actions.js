@@ -4,6 +4,7 @@ import {
   CORE_LOGOUT
   // CORE_PING
 } from 'assets/apiRoutes'
+import router from 'src/router'
 
 // const IDLE_TIMEOUT = 1000 * 60 * 10
 // const PING_TIMEOUT = 1000 * 60 * 5
@@ -74,6 +75,7 @@ export function login ({ commit, dispatch }, { username, password, success, fail
 export function logout ({ commit }, { success, failure }) {
   commit('idleTimerOff')
   commit('pingTimerOff')
+  router.push('/')
   $axios.delete(CORE_LOGOUT)
     .then(() => {
       commit('logout')
