@@ -404,6 +404,7 @@ export default {
         () => {
           // success callback
           this.loading = false
+          this.$refs.stepper.next()
         },
         () => {
           // failure callback

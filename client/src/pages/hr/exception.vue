@@ -293,17 +293,17 @@ export default {
     createException ([exception, success, failure]) {
       this.$axios.post(HR_ATT_EXCEPTION, exception)
         .then(() => {
-          this.$q.notify({
-            message: this.$t('operation.create.success'),
-            type: 'positive'
-          })
+          // this.$q.notify({
+          //   message: this.$t('operation.create.success'),
+          //   type: 'positive'
+          // })
           success()
         })
         .catch(() => {
-          this.$q.notify({
-            message: this.$t('operation.create.failure'),
-            type: 'warning'
-          })
+          // this.$q.notify({
+          //   message: this.$t('operation.create.failure'),
+          //   type: 'warning'
+          // })
           failure()
         })
     },

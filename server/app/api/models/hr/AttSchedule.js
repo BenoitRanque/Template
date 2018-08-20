@@ -56,7 +56,6 @@ module.exports = class HRAttSchedule extends Model {
   }
 
   $beforeValidate(jsonSchema, json, opt) {
-    console.log('validatig', this)
     if (!Object.keys(this).length) return jsonSchema
 
     if (!this.uptime || !this.downtime) throw new ServerError(400, `Validation Error: Schedule ${this.schedule_name} should have uptime and downtime properties`)

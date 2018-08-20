@@ -13,5 +13,6 @@ module.exports = {
   Contact: require('./Contact'),
   Contract: require('./Contract'),
   EmployeeData: require('./EmployeeData'),
-  Employee: require('./Employee')
+  Employee: require('./Employee'),
+  Department: require('./Department')
 }

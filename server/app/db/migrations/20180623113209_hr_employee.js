@@ -3,6 +3,9 @@ exports.up = async function(knex, Promise) {
   await knex.schema.withSchema('public').createTable('hr_employee', table => {
     table.uuid('employee_id').primary().defaultTo(knex.raw('public.gen_random_uuid()'))
 
+    table.integer('zktime_pin')
+    table.text('position')
+
     table.text('name_first')
     table.text('name_middle')
     table.text('name_paternal')
@@ -19,7 +22,6 @@ exports.up = async function(knex, Promise) {
     table.text('persona_con_discapacidad')
     table.text('tutor_persona_con_discapacidad')
     table.text('caja_de_salud')
-    table.text('cargo')
     table.text('afp')
     table.text('nua_cua')
     
@@ -28,7 +30,6 @@ exports.up = async function(knex, Promise) {
     table.text('document_extension')
     table.text('document_emitted')
     
-    table.integer('zktime_pin')
 
     table.timestamps()
 

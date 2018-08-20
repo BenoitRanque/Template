@@ -66,6 +66,7 @@
               <q-field
                 v-for="(type, field) in {
                   zktime_pin: 'number',
+                  position: 'select',
                   name_first: 'text',
                   name_middle: 'text',
                   name_paternal: 'text',
@@ -659,6 +660,224 @@ export default {
           {
             value: 3,
             label: this.$t('options.marital_status.civil_union')
+          }
+        ],
+        position: [
+          {
+            label: 'ADMINISTRADOR DE RESTAURANTE',
+            value: 'ADMINISTRADOR DE RESTAURANTE'
+          },
+          {
+            label: 'AGENTE DE VENTAS',
+            value: 'AGENTE DE VENTAS'
+          },
+          {
+            label: 'ASESOR DE VENTAS',
+            value: 'ASESOR DE VENTAS'
+          },
+          {
+            label: 'AUXILIAR DE CONTABILIDAD',
+            value: 'AUXILIAR DE CONTABILIDAD'
+          },
+          {
+            label: 'AUXILIAR DE RECURSOS HUMANOS',
+            value: 'AUXILIAR DE RECURSOS HUMANOS'
+          },
+          {
+            label: 'AYUDANTE DE COCINA',
+            value: 'AYUDANTE DE COCINA'
+          },
+          {
+            label: 'BACHERO',
+            value: 'BACHERO'
+          },
+          {
+            label: 'BARMAN Y BARISTA',
+            value: 'BARMAN Y BARISTA'
+          },
+          {
+            label: 'CAJERAS/OS',
+            value: 'CAJERAS/OS'
+          },
+          {
+            label: 'CALL CENTER',
+            value: 'CALL CENTER'
+          },
+          {
+            label: 'CHEF EJECUTIVO CHOFER DEL BUS',
+            value: 'CHEF EJECUTIVO CHOFER DEL BUS'
+          },
+          {
+            label: 'COCINERO',
+            value: 'COCINERO'
+          },
+          {
+            label: 'COMPOSTAJE',
+            value: 'COMPOSTAJE'
+          },
+          {
+            label: 'ENCARGADO SAP Y SOPORTE TECNICO',
+            value: 'ENCARGADO SAP Y SOPORTE TECNICO'
+          },
+          {
+            label: 'ENCARGADO DE ALMACEN ',
+            value: 'ENCARGADO DE ALMACEN '
+          },
+          {
+            label: 'ENCARGADO DE DISEÑO Y PUBLICIDAD',
+            value: 'ENCARGADO DE DISEÑO Y PUBLICIDAD'
+          },
+          {
+            label: 'ENCARGADO DE OBRA',
+            value: 'ENCARGADO DE OBRA'
+          },
+          {
+            label: 'GARZONES ',
+            value: 'GARZONES '
+          },
+          {
+            label: 'GERENCIA DE PARQUE',
+            value: 'GERENCIA DE PARQUE'
+          },
+          {
+            label: 'GERENCIA GENERAL',
+            value: 'GERENCIA GENERAL'
+          },
+          {
+            label: 'GERENCIA COMERCIAL',
+            value: 'GERENCIA COMERCIAL'
+          },
+          {
+            label: 'GERENCIA FINANCIERA',
+            value: 'GERENCIA FINANCIERA'
+          },
+          {
+            label: 'GUARDAFAUNA',
+            value: 'GUARDAFAUNA'
+          },
+          {
+            label: 'GUIA',
+            value: 'GUIA'
+          },
+          {
+            label: 'JARDINERO',
+            value: 'JARDINERO'
+          },
+          {
+            label: 'JEFE BIOLOGICA',
+            value: 'JEFE BIOLOGICA'
+          },
+          {
+            label: 'JEFE DE CONTABILIDAD',
+            value: 'JEFE DE CONTABILIDAD'
+          },
+          {
+            label: 'JEFE DE SEGURIDAD',
+            value: 'JEFE DE SEGURIDAD'
+          },
+          {
+            label: 'JEFE DE CALIDAD',
+            value: 'JEFE DE CALIDAD'
+          },
+          {
+            label: 'JEFE DE MANTENIMIENTO',
+            value: 'JEFE DE MANTENIMIENTO'
+          },
+          {
+            label: 'JEFE DE RECURSOS HUMANOS',
+            value: 'JEFE DE RECURSOS HUMANOS'
+          },
+          {
+            label: 'JEFE DE SISTEMAS',
+            value: 'JEFE DE SISTEMAS'
+          },
+          {
+            label: 'LIMPIEZA',
+            value: 'LIMPIEZA'
+          },
+          {
+            label: 'MEDICO ',
+            value: 'MEDICO '
+          },
+          {
+            label: 'MAITRE',
+            value: 'MAITRE'
+          },
+          {
+            label: 'MENSAJERO – COMPRADOR',
+            value: 'MENSAJERO – COMPRADOR'
+          },
+          {
+            label: 'MUCAMAS',
+            value: 'MUCAMAS'
+          },
+          {
+            label: 'OPERARIO BIOLOGICO',
+            value: 'OPERARIO BIOLOGICO'
+          },
+          {
+            label: 'OPERARIO DE EQUIPO PESADO',
+            value: 'OPERARIO DE EQUIPO PESADO'
+          },
+          {
+            label: 'OPERARIO DE MANTENIMIENTO',
+            value: 'OPERARIO DE MANTENIMIENTO'
+          },
+          {
+            label: 'OPERARIO DE MARIPOSAS E INFRAESTRUCTURAS',
+            value: 'OPERARIO DE MARIPOSAS E INFRAESTRUCTURAS'
+          },
+          {
+            label: 'OPERARIO DE PISCINAS',
+            value: 'OPERARIO DE PISCINAS'
+          },
+          {
+            label: 'OPERARIO DE LIMPIEZA',
+            value: 'OPERARIO DE LIMPIEZA'
+          },
+          {
+            label: 'OPERARIO DE COMPOSTAJE',
+            value: 'OPERARIO DE COMPOSTAJE'
+          },
+          {
+            label: 'PASTELERA',
+            value: 'PASTELERA'
+          },
+          {
+            label: 'PARAMEDICO',
+            value: 'PARAMEDICO'
+          },
+          {
+            label: 'RECEPCIONISTA',
+            value: 'RECEPCIONISTA'
+          },
+          {
+            label: 'RECEPCIONISTA – CAJERO',
+            value: 'RECEPCIONISTA – CAJERO'
+          },
+          {
+            label: 'REPRESENTANTE DE LA DIRECCION',
+            value: 'REPRESENTANTE DE LA DIRECCION'
+          },
+          {
+            label: 'RESPONSABLE DE FAUNA',
+            value: 'RESPONSABLE DE FAUNA'
+          },
+          {
+            label: 'RESPONSABLE DE FLORA',
+            value: 'RESPONSABLE DE FLORA'
+          },
+          {
+            label: 'SALVAVIDAS',
+            value: 'SALVAVIDAS'
+          },
+          {
+            label: 'SERVICIOS GENERALES',
+            value: 'SERVICIOS GENERALES'
+          },
+          {
+            label: 'TESORERIA',
+            value: 'TESORERIA'
           }
         ]
       },
