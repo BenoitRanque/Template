@@ -54,8 +54,7 @@
               employee_id: 'select',
               timetype_id: 'select',
               type: 'text',
-              amount: 'number',
-              user_id: 'select'
+              amount: 'number'
             }"
             :key="field"
             :label="$t(`field.${field}.label`)"
@@ -63,7 +62,7 @@
             :error="$v.item[field].$error"
             :error-label="validationError($v.item[field])"
           >
-            <q-select v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="$vm[field]"></q-select>
+            <q-select v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-if="type === 'select'" :options="_self[field]"></q-select>
             <q-datetime v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else-if="['date','time','datetime'].includes(type)" :type="type"></q-datetime>
             <q-input v-model="$v.item[field].$model" :placeholder="$t(`field.${field}.placeholder`)" v-else :type="type"></q-input>
           </q-field>
@@ -219,7 +218,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('hr', {
+      timetype_id: 'downtimeTimetypesOptions',
+      employee_id: 'subordinateEmployeeOptions'
+    })
+  },
   methods: {
+    ...mapActions('hr', {
+      fetchTimetypes: 'fetchTimetypes',
+      fetchSubordinateEmployees: 'fetchSubordinateEmployees'
+    }),
     newItem () {
       // return default item. Important
       return newItem()
@@ -240,6 +249,9 @@ export default {
     deleteParams: (item) => ({ transaction_id: item.transaction_id })
   },
   mounted () {
+    console.log(this)
+    this.fetchTimetypes()
+    this.fetchSubordinateEmployees()
     this.fetchItems()
   }
 }

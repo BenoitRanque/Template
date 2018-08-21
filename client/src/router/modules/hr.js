@@ -67,6 +67,30 @@ export default {
       }
     },
     {
+      hash: 'transaction',
+      layout: 'workspace',
+      meta: {
+        label: 'atttransaction',
+        requireAuthentication: true
+        // requireAuthorization: {
+        //   resource: 'HRAttTransaction',
+        //   posession: 'any'
+        // }
+      }
+    },
+    {
+      hash: 'department',
+      layout: 'workspace',
+      meta: {
+        label: 'department',
+        requireAuthentication: true
+        // requireAuthorization: {
+        //   resource: 'HRDepartment',
+        //   posession: 'any'
+        // }
+      }
+    },
+    {
       hash: 'report',
       layout: 'workspace',
       meta: {

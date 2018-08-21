@@ -10,6 +10,7 @@ module.exports = {
   AttScheduleDowntime: require('./AttScheduleDowntime'),
   AttTimetype: require('./AttTimetype'),
   AttThreshold: require('./AttThreshold'),
+  AttTransaction: require('./AttTransaction'),
   Contact: require('./Contact'),
   Contract: require('./Contract'),
   EmployeeData: require('./EmployeeData'),
