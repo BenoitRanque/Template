@@ -7,7 +7,7 @@
       :loading="loading"
     >
       <template slot="top-left" slot-scope="props">
-        <q-btn class="q-mr-sm" round flat color="primary" icon="refresh" size="md" @click="fetch()" />
+        <q-btn class="q-mr-sm" round flat color="primary" icon="refresh" size="md" :disable="$v.reportParams.$invalid" @click="fetch()" />
         <q-search hide-underline color="secondary"  v-model="filter" class="col-6" />
       </template>
 
