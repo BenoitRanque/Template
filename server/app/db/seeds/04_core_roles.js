@@ -13,5 +13,3 @@ exports.seed = async function(knex, Promise) {
   await knex('core_role_privileges').del()
   await knex('core_role_privileges').insert(privileges.map(({ privilege_id }) => ({ privilege_id, role_id: adminRoleId })))
 }
-
-
