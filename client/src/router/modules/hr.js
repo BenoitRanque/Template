@@ -92,7 +92,7 @@ export default {
     },
     {
       hash: 'report',
-      layout: 'workspace',
+      layout: 'report',
       meta: {
         label: 'attreport',
         requireAuthentication: true

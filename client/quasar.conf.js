@@ -107,7 +107,9 @@ module.exports = function (ctx) {
         'QStepper',
         'QStep',
         'QStepperNavigation',
-        'QInnerLoading'
+        'QInnerLoading',
+        'QCollapsible',
+        'QScrollArea'
       ],
       directives: [
         'Ripple',
