@@ -59,6 +59,27 @@
         <q-btn :disable="!vacation.dateA || !vacation.dateB" color="secondary" size="lg">Generar</q-btn>
       </div>
     </q-modal>
+    <q-btn @click="$refs.scheduleModal.show()">show</q-btn>
+    <q-modal ref="scheduleModal" maximized>
+      <div class="bg-blue" style="width: 576px; display: grid; grid-template-columns: repeat(288, 2px); grid-template-rows: 30px repeat(1, 40px) 40px">
+        <div class="row justify-between items-center bg-green" :style="`grid-column: ${start} / span 96; grid-row: 2;`">
+          <div class="col-auto q-caption">
+            {{Math.floor(start / 12)}}:{{Math.floor(((start - 1) % 12) * 5)}}
+          </div>
+          <div class="col-auto">
+            <q-btn-group rounded>
+              <q-btn color="white" text-color="black" rounded dense size="xs" icon="keyboard_arrow_left"></q-btn>
+              <q-btn v-touch-pan.horizontal="handler" color="white" text-color="black" rounded dense size="xs" icon="code"></q-btn>
+              <q-btn color="white" text-color="black" rounded dense size="xs" icon="keyboard_arrow_right"></q-btn>
+            </q-btn-group>
+          </div>
+          <div class="col-auto q-caption">
+            {{Math.floor(start / 12)}}:{{Math.floor(((start - 1) % 12) * 5)}}
+          </div>
+        </div>
+        <div class="bg-red" style="grid-column: 35 / span 96; grid-row: 3;"></div>
+      </div>
+    </q-modal>
   </div>
 </template>
 
@@ -68,6 +89,8 @@ export default {
   name: 'ExceptionSidebar',
   data () {
     return {
+      start: 1,
+      value: 0,
       vacation: {
         dateA: null,
         dateB: null
@@ -105,6 +128,24 @@ export default {
       //       value: 0.5
       //     }
       //   ]
+      // }
+    }
+  },
+  methods: {
+    handler ({ direction, distance, delta }) {
+      const newStart = this.start + (delta.x / 2)
+      if (newStart < 1) {
+        this.start = 1
+      } else if (newStart > 288) {
+        this.start = 288
+      } else {
+        this.start = newStart
+        // this.start += (delta.x / 2)
+      }
+      // if (direction === 'left') {
+      //   this.start += (delta.x / 2)
+      // } else if (direction === 'right') {
+      //   this.start -= (delta.x / 2)
       // }
     }
   },

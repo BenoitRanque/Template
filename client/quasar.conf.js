@@ -113,7 +113,8 @@ module.exports = function (ctx) {
       ],
       directives: [
         'Ripple',
-        'CloseOverlay'
+        'CloseOverlay',
+        'TouchPan'
       ],
       plugins: [
         'Notify',
