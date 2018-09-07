@@ -24,6 +24,33 @@
         </q-btn>
       </div>
     </div>
+    <div class="bg-grey-3" :style="`min-height: 20px; display: grid; grid-template-columns: repeat(${scheduleColumns}, 1fr);`">
+      <div v-for="(up, index) in schedule.up" :key="`up_${index}`"
+        :class="`row items-center justify-between bg-${up.color} full-height`"
+        :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * up.offset) + 1} / span ${Math.floor(schedule.base * up.span)}`">
+        <div class="q-caption col-auto">{{time(up.start)}}</div>
+        some_long_text
+        <div class="q-caption col-auto">{{time(up.end)}}</div>
+      </div>
+      <div v-for="(down, index) in schedule.down" :key="`down_${index}`"
+        :class="`row items-center justify-center bg-${down.color} full-height`"
+        :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * down.offset) + 1} / span ${Math.floor(schedule.base * down.span)}`">
+        <div class="q-caption">{{down.class}}</div>
+      </div>
+      <template v-for="(gap, index) in gaps">
+        <drop :key="`gap_${index}_start`" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * gap.offset) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
+          start
+        </drop>
+        <drop :key="`gap_${index}_end`" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * (gap.offset + (gap.span / 2))) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
+          end
+        </drop>
+      </template>
+    </div>
+    <q-btn class="col-auto" dense flat color="primary" size="sm" icon="fingerprint"></q-btn>
+    <q-icon class="" name="fingerprint"></q-icon>
+    <pre>{{gaps}}</pre>
+    <pre>{{Math.floor(totalDuration * schedule.up[0].offset) + 1}}</pre>
+    <pre>{{Math.floor(totalDuration * schedule.up[0].span) + 1}}</pre>
     <template v-for="(slot, index) in exception.slots">
       <!-- <hr  :key="index"> -->
       <q-collapsible :key="index" icon-toggle>
@@ -65,6 +92,7 @@
         <div class="row justify-between items-center bg-green" :style="`grid-column: ${start} / span 96; grid-row: 2;`">
           <div class="col-auto q-caption">
             {{Math.floor(start / 12)}}:{{Math.floor(((start - 1) % 12) * 5)}}
+            <q-checkbox></q-checkbox>
           </div>
           <div class="col-auto">
             <q-btn-group rounded>
@@ -75,6 +103,7 @@
           </div>
           <div class="col-auto q-caption">
             {{Math.floor(start / 12)}}:{{Math.floor(((start - 1) % 12) * 5)}}
+            <q-checkbox></q-checkbox>
           </div>
         </div>
         <div class="bg-red" style="grid-column: 35 / span 96; grid-row: 3;"></div>
@@ -107,6 +136,43 @@ export default {
             date: null
           }
         ]
+      },
+      schedule: {
+        base: 8 * 60, // 8 hours in minutes
+        up: [
+          {
+            class: 'WORK',
+            color: 'green',
+            offset: 0,
+            span: 0.5,
+            start: 8.5 * 60,
+            end: 12.5 * 60
+          },
+          {
+            class: 'EXTRA',
+            color: 'yellow',
+            offset: 0.5,
+            span: 0.25,
+            start: 12.5 * 60,
+            end: 14.5 * 60
+          }
+        ],
+        down: [
+          // {
+          //   class: 'OFF',
+          //   color: 'blue',
+          //   offset: 0.75,
+          //   span: 0.5
+          // }
+        ],
+        pause: [
+          {
+            class: 'LUNCH',
+            start: 11.5 * 60, // 11:30
+            end: 13.5 * 60,
+            duration: 30
+          }
+        ]
       }
       // schedule: {
       //   baseTime: '8h', // date, total length of date
@@ -132,6 +198,12 @@ export default {
     }
   },
   methods: {
+    time (time) {
+      const hours = Math.floor(time / 60)
+      const minutes = Math.floor(time % 60)
+
+      return `0${hours}:0${minutes}`.replace(/0([0-9][0-9])/g, '$1')
+    },
     handler ({ direction, distance, delta }) {
       const newStart = this.start + (delta.x / 2)
       if (newStart < 1) {
@@ -150,6 +222,40 @@ export default {
     }
   },
   computed: {
+    totalDuration () {
+      return this.schedule.base + this.schedule.up
+        .filter(up => ['EXTRA'].includes(up.class))
+        .reduce((acc, val) => acc + (val.end - val.start), 0)
+    },
+    totalSpace () {
+      return this.totalDuration / this.schedule.base
+    },
+    occupiedSpace () {
+      // return [{ offset: 0, span: 0.25 }, { offset: 0.5, span: 0.25 }]
+      return this.schedule.up.map(({ offset, span }) => ({ offset, span }))
+        .concat(this.schedule.down.map(({ offset, span }) => ({ offset, span })))
+        .sort((a, b) => a.offset - b.offset)
+    },
+    gaps () {
+      const gaps = []
+      let currentOffset = 0
+
+      this.occupiedSpace.forEach(space => {
+        if (currentOffset < space.offset) {
+          gaps.push({ offset: currentOffset, span: space.offset - currentOffset })
+        }
+
+        currentOffset = space.offset + space.span
+      })
+
+      if (currentOffset !== this.totalSpace) {
+        gaps.push({ offset: currentOffset, span: this.totalSpace - currentOffset })
+      }
+      return gaps
+    },
+    scheduleColumns () {
+      return this.totalDuration
+    },
     ...mapGetters('hr', {
       subordinateEmployeeOptions: 'subordinateEmployeeOptions'
     })
@@ -157,6 +263,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+.schedule-item-up,
+.schedule-item-down,
+.schedule-item-extra
+  z-index 1
 
+  &:hover
+    z-index 3
+.schedule-item-pause
+  z-index 2
+
+  &:hover
+    z-index 3
 </style>

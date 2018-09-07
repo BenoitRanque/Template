@@ -7,7 +7,8 @@ module.exports = function (ctx) {
       'axios',
       'vuelidate',
       'portal',
-      'date'
+      'date',
+      'VueDragDrop'
     ],
     css: [
       'app.styl'
