@@ -38,11 +38,15 @@
         <div class="q-caption">{{down.class}}</div>
       </div>
       <template v-for="(gap, index) in gaps">
-        <drop :key="`gap_${index}_start`" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * gap.offset) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
-          start
+        <drop :key="`gap_${index}_start`" class="row items-center justify-start" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * gap.offset) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
+          <template slot-scope="{ transferData }">
+            <q-icon name="first_page" :color="transferData ? 'black' : 'grey'"></q-icon>
+          </template>
         </drop>
-        <drop :key="`gap_${index}_end`" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * (gap.offset + (gap.span / 2))) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
-          end
+        <drop :key="`gap_${index}_end`" class="row items-center justify-end" :style="`overflow: hidden; grid-column: ${Math.floor(schedule.base * (gap.offset + (gap.span / 2))) + 1} / span ${Math.floor(schedule.base * (gap.span / 2))} ;`">
+          <template slot-scope="{ transferData }">
+            <q-icon name="last_page" :color="transferData ? 'black' : 'grey'"></q-icon>
+          </template>
         </drop>
       </template>
     </div>
@@ -139,15 +143,27 @@ export default {
       },
       schedule: {
         base: 8 * 60, // 8 hours in minutes
-        up: [
+        items: [
           {
+            superclass: 'UPTIME',
             class: 'WORK',
-            color: 'green',
-            offset: 0,
-            span: 0.5,
-            start: 8.5 * 60,
-            end: 12.5 * 60
-          },
+            subclass: '',
+            offset: 0, // offset as fraction of one
+            span: 0.5, // span as fraction of one
+            index: 0,
+            start: 0,
+            end: 0
+          }
+        ],
+        up: [
+          // {
+          //   class: 'WORK',
+          //   color: 'green',
+          //   offset: 0,
+          //   span: 0.5,
+          //   start: 8.5 * 60,
+          //   end: 12.5 * 60
+          // },
           {
             class: 'EXTRA',
             color: 'yellow',
