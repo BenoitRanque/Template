@@ -50,6 +50,24 @@
         </drop>
       </template>
     </div>
+    <div class="bg-grey">
+      <div class="row" style="">
+        <div class="bg-green q-caption text-center" style="width: 37.5%">
+          <div class="">{{time(8.5*60)}}</div>
+          <div class="">{{time(11.5*60)}}</div>
+        </div>
+        <div class="bg-brown full-height" style="width: 12.5%"></div>
+        <div class="bg-green q-caption items-between" style="width: 12.5%">
+          <div class="">{{time(8.5*60)}}</div>
+          <div class="">{{time(11.5*60)}}</div>
+        </div>
+      </div>
+      <div class="row" style="height: 30px">
+        <div class="col bg-blue"></div>
+        <div class="col bg-purple"></div>
+        <div class="col"></div>
+      </div>
+    </div>
     <q-btn class="col-auto" dense flat color="primary" size="sm" icon="fingerprint"></q-btn>
     <q-icon class="" name="fingerprint"></q-icon>
     <pre>{{gaps}}</pre>
@@ -143,11 +161,14 @@ export default {
       },
       schedule: {
         base: 8 * 60, // 8 hours in minutes
-        items: [
+        events: [
+          0,
+          0
+        ],
+        up: [
           {
             superclass: 'UPTIME',
             class: 'WORK',
-            subclass: '',
             offset: 0, // offset as fraction of one
             span: 0.5, // span as fraction of one
             index: 0,
@@ -155,40 +176,61 @@ export default {
             end: 0
           }
         ],
-        up: [
-          // {
-          //   class: 'WORK',
-          //   color: 'green',
-          //   offset: 0,
-          //   span: 0.5,
-          //   start: 8.5 * 60,
-          //   end: 12.5 * 60
-          // },
-          {
-            class: 'EXTRA',
-            color: 'yellow',
-            offset: 0.5,
-            span: 0.25,
-            start: 12.5 * 60,
-            end: 14.5 * 60
-          }
-        ],
         down: [
-          // {
-          //   class: 'OFF',
-          //   color: 'blue',
-          //   offset: 0.75,
-          //   span: 0.5
-          // }
+          {
+            superclass: 'DOWNTIME',
+            class: 'OFF',
+            offset: 0, // offset as fraction of one
+            span: 0.5, // span as fraction of one
+            index: 0,
+            start: 0,
+            end: 0
+          }
         ],
         pause: [
           {
-            class: 'LUNCH',
-            start: 11.5 * 60, // 11:30
-            end: 13.5 * 60,
-            duration: 30
+
+          }
+        ],
+        extra: [
+          {
+
           }
         ]
+        // up: [
+        //   // {
+        //   //   class: 'WORK',
+        //   //   color: 'green',
+        //   //   offset: 0,
+        //   //   span: 0.5,
+        //   //   start: 8.5 * 60,
+        //   //   end: 12.5 * 60
+        //   // },
+        //   {
+        //     class: 'EXTRA',
+        //     color: 'yellow',
+        //     offset: 0.5,
+        //     span: 0.25,
+        //     start: 12.5 * 60,
+        //     end: 14.5 * 60
+        //   }
+        // ],
+        // down: [
+        //   // {
+        //   //   class: 'OFF',
+        //   //   color: 'blue',
+        //   //   offset: 0.75,
+        //   //   span: 0.5
+        //   // }
+        // ],
+        // pause: [
+        //   {
+        //     class: 'LUNCH',
+        //     start: 11.5 * 60, // 11:30
+        //     end: 13.5 * 60,
+        //     duration: 30
+        //   }
+        // ]
       }
       // schedule: {
       //   baseTime: '8h', // date, total length of date
