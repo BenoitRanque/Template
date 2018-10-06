@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId } = require('../utils')
+const { APP_SECRET, BCRYPT_SALT_ROUNDS, getUserId } = require('../utils')
 
 // function post(parent, args, context, info) {
 //   const userId = getUserId(context)
@@ -16,19 +16,19 @@ const { APP_SECRET, getUserId } = require('../utils')
 //   )
 // }
 
-async function createUser(parent, args, context, info) {
-  const password = await bcrypt.hash(args.data.password, 10)
-  const user = await context.db.mutation.createUser({
+async function createUser(parent, args, ctx, info) {
+  const password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
+  const user = await ctx.db.mutation.createUser({
     data: { ...args.data, password },
   }, `{ id }`)
 
   // const token = jwt.sign({ userId: user.id }, APP_SECRET)
 
-  return user
+  return ctx.db.query.user({ where: { id: user.id }}, info)
 }
 
-async function authenticate(parent, args, context, info) {
-  const user = await context.db.query.user({ where: { username: args.username } }, `{ id password }`)
+async function authenticate(parent, args, ctx, info) {
+  const user = await ctx.db.query.user({ where: { username: args.username } }, `{ id password }`)
   if (!user) {
     throw new Error('No such user found')
   }
@@ -44,19 +44,19 @@ async function authenticate(parent, args, context, info) {
   }
 }
 
-async function createEmployee (parent, args, context, info) {
-  return context.db.mutation.createEmployee(args, info)
-}
-async function createSchedulePreset (parent, args, context, info) {
-  return context.db.mutation.createSchedulePreset(args, info)
-}
-async function createException (parent, args, context, info) {
-  return context.db.mutation.createException(args, info)
-}
-async function createShift (parent, args, context, info) {
-  return context.db.mutation.createShift(args, info)
+
+module.exports = {
+  // post,
+  createUser,
+  authenticate,
+  createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
+  updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
+  createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),
+  createShift: (parent, args, ctx, info) => ctx.db.mutation.createShift(args, info),
+  createException: (parent, args, ctx, info) => ctx.db.mutation.createException(args, info)
 }
 
+// vote
 // async function vote(parent, args, context, info) {
 //   const userId = getUserId(context)
 //   const linkExists = await context.db.exists.Vote({
@@ -77,15 +77,3 @@ async function createShift (parent, args, context, info) {
 //     info,
 //   )
 // }
-
-module.exports = {
-  // post,
-  createUser,
-  authenticate,
-  createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
-  updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
-  createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),
-  createShift: (parent, args, ctx, info) => ctx.db.mutation.createShift(args, info),
-  createException: (parent, args, ctx, info) => ctx.db.mutation.createException(args, info)
-  // vote
-}

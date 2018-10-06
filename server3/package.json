@@ -4,18 +4,25 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
-    "start-dev": "nodemon src/index.js",
+    "start": "node --require dotenv/config src/index.js",
+    "start-dev": "nodemon --require dotenv/config src/index.js",
     "dev": "npm-run-all --parallel start-dev playground",
     "playground": "graphql playground",
-    "prisma": "prisma",
-    "graphql": "graphql"
+    "prisma": "prisma --env-file .env",
+    "graphql": "graphql",
+    "docker-compose": "docker-compose -f database/docker-compose.yml up -d",
+    "prisma-deploy": "prisma deploy --env-file .env",
+    "prisma-token": "prisma token --env-file .env"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "date-fns": "^1.29.0",
+    "dotenv": "^6.0.0",
     "graphql-yoga": "^1.7.0",
     "jsonwebtoken": "^8.2.0",
-    "prisma-binding": "^2.0.2"
+    "knex": "^0.15.2",
+    "prisma-binding": "^2.0.2",
+    "sqlite3": "^4.0.2"
   },
   "devDependencies": {
     "graphql-cli": "^2.16.4",

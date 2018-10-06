@@ -1,7 +1,7 @@
 version: '3'
 services:
   prisma:
-    image: prismagraphql/prisma:1.13
+    image: prismagraphql/prisma:1.17
     restart: always
     ports:
     - "4466:4466"
@@ -15,19 +15,19 @@ services:
             connector: postgres
             host: postgres
             port: '5432'
-            database: wasp
-            # schema: dev
-            user: wasp
-            password: wasp
+            database: ${PG_DATABASE}
+            # schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
+            user: ${PG_USERNAME}
+            password: ${PG_PASSWORD}
             migrations: true
   postgres:
-    image: postgres
+    image: postgres:10.5
     restart: always
     ports:
     - "6543:5432"
     environment:
-      POSTGRES_USER: wasp
-      POSTGRES_PASSWORD: wasp
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
     volumes:
       - postgres:/var/lib/postgresql/data
 volumes:

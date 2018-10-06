@@ -37,7 +37,7 @@ type Employee {
   namePaternal: String
   nameMaternal: String
   nameMarried: String
-  zkTimePin: Int
+  zkTimePin: Int!
 }
 
 type Shift {
@@ -85,7 +85,11 @@ type ScheduleUptime {
   id: UUID! @unique
   class: UptimeClass!
   startTime: DateTime!
+  startDelimiter: Boolean! @default(value: "true")
+  startSkipEvent: Boolean! @default(value: "false")
   endTime: DateTime!
+  endDelimiter: Boolean! @default(value: "true")
+  endSkipEvent: Boolean! @default(value: "false")
   value: Float!
 }
 
@@ -98,9 +102,11 @@ type ScheduleDowntime {
 type ScheduleBreaktime {
   id: UUID! @unique
   class: BreaktimeClass!
-  startTime: DateTime!
-  endTime: DateTime!
+  rangeStart: DateTime!
+  rangeEnd: DateTime!
   duration: DateTime!
+  skipStartEvent: Boolean! @default(value: "false")
+  skipEndEvent: Boolean! @default(value: "false")
 }
 
 type UptimeClass {

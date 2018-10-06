@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Sat Aug 11 2018 23:12:20 GMT-0400 (SA Western Standard Time)
+# timestamp: Wed Oct 03 2018 23:09:23 GMT-0400 (SA Western Standard Time)
 
 type AggregateBreaktimeClass {
   count: Int!
@@ -181,10 +181,9 @@ input BreaktimeClassUpdateInput {
   code: String
 }
 
-input BreaktimeClassUpdateOneInput {
+input BreaktimeClassUpdateOneRequiredInput {
   create: BreaktimeClassCreateInput
   connect: BreaktimeClassWhereUniqueInput
-  delete: Boolean
   update: BreaktimeClassUpdateDataInput
   upsert: BreaktimeClassUpsertNestedInput
 }
@@ -442,19 +441,18 @@ input DowntimeClassUpdateDataInput {
   label: String
   color: String
   code: String
-  name: DowntimeClassUpdateOneInput
+  name: DowntimeClassUpdateOneRequiredInput
 }
 
 input DowntimeClassUpdateInput {
   label: String
   color: String
   code: String
-  name: DowntimeClassUpdateOneInput
+  name: DowntimeClassUpdateOneRequiredInput
 }
 
-input DowntimeClassUpdateOneInput {
+input DowntimeClassUpdateOneRequiredInput {
   create: DowntimeClassCreateInput
-  delete: Boolean
   update: DowntimeClassUpdateDataInput
   upsert: DowntimeClassUpsertNestedInput
 }
@@ -605,7 +603,7 @@ type Employee {
   namePaternal: String
   nameMaternal: String
   nameMarried: String
-  zkTimePin: Int
+  zkTimePin: Int!
 }
 
 """A connection to a list of items."""
@@ -624,7 +622,7 @@ input EmployeeCreateInput {
   namePaternal: String
   nameMaternal: String
   nameMarried: String
-  zkTimePin: Int
+  zkTimePin: Int!
 }
 
 input EmployeeCreateOneInput {
@@ -671,7 +669,7 @@ type EmployeePreviousValues {
   namePaternal: String
   nameMaternal: String
   nameMarried: String
-  zkTimePin: Int
+  zkTimePin: Int!
 }
 
 type EmployeeSubscriptionPayload {
@@ -731,10 +729,9 @@ input EmployeeUpdateInput {
   zkTimePin: Int
 }
 
-input EmployeeUpdateOneInput {
+input EmployeeUpdateOneRequiredInput {
   create: EmployeeCreateInput
   connect: EmployeeWhereUniqueInput
-  delete: Boolean
   update: EmployeeUpdateDataInput
   upsert: EmployeeUpsertNestedInput
 }
@@ -1119,7 +1116,7 @@ input ExceptionAuthorizationSubscriptionWhereInput {
 
 input ExceptionAuthorizationUpdateInput {
   granted: Boolean
-  user: UserUpdateOneInput
+  user: UserUpdateOneRequiredInput
 }
 
 input ExceptionAuthorizationWhereInput {
@@ -1272,12 +1269,12 @@ input ExceptionSlotSubscriptionWhereInput {
 
 input ExceptionSlotUpdateDataInput {
   date: DateTime
-  schedule: ScheduleUpdateOneInput
+  schedule: ScheduleUpdateOneRequiredInput
 }
 
 input ExceptionSlotUpdateInput {
   date: DateTime
-  schedule: ScheduleUpdateOneInput
+  schedule: ScheduleUpdateOneRequiredInput
 }
 
 input ExceptionSlotUpdateManyInput {
@@ -1378,9 +1375,9 @@ input ExceptionSubscriptionWhereInput {
 }
 
 input ExceptionUpdateInput {
-  employee: EmployeeUpdateOneInput
+  employee: EmployeeUpdateOneRequiredInput
   slots: ExceptionSlotUpdateManyInput
-  owner: UserUpdateOneInput
+  owner: UserUpdateOneRequiredInput
 }
 
 input ExceptionWhereInput {
@@ -1582,9 +1579,11 @@ type Schedule {
 type ScheduleBreaktime {
   id: UUID!
   class(where: BreaktimeClassWhereInput): BreaktimeClass!
-  startTime: DateTime!
-  endTime: DateTime!
+  rangeStart: DateTime!
+  rangeEnd: DateTime!
   duration: DateTime!
+  skipStartEvent: Boolean!
+  skipEndEvent: Boolean!
 }
 
 """A connection to a list of items."""
@@ -1598,9 +1597,11 @@ type ScheduleBreaktimeConnection {
 }
 
 input ScheduleBreaktimeCreateInput {
-  startTime: DateTime!
-  endTime: DateTime!
+  rangeStart: DateTime!
+  rangeEnd: DateTime!
   duration: DateTime!
+  skipStartEvent: Boolean
+  skipEndEvent: Boolean
   class: BreaktimeClassCreateOneInput!
 }
 
@@ -1621,12 +1622,16 @@ type ScheduleBreaktimeEdge {
 enum ScheduleBreaktimeOrderByInput {
   id_ASC
   id_DESC
-  startTime_ASC
-  startTime_DESC
-  endTime_ASC
-  endTime_DESC
+  rangeStart_ASC
+  rangeStart_DESC
+  rangeEnd_ASC
+  rangeEnd_DESC
   duration_ASC
   duration_DESC
+  skipStartEvent_ASC
+  skipStartEvent_DESC
+  skipEndEvent_ASC
+  skipEndEvent_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1635,9 +1640,11 @@ enum ScheduleBreaktimeOrderByInput {
 
 type ScheduleBreaktimePreviousValues {
   id: UUID!
-  startTime: DateTime!
-  endTime: DateTime!
+  rangeStart: DateTime!
+  rangeEnd: DateTime!
   duration: DateTime!
+  skipStartEvent: Boolean!
+  skipEndEvent: Boolean!
 }
 
 type ScheduleBreaktimeSubscriptionPayload {
@@ -1680,17 +1687,21 @@ input ScheduleBreaktimeSubscriptionWhereInput {
 }
 
 input ScheduleBreaktimeUpdateDataInput {
-  startTime: DateTime
-  endTime: DateTime
+  rangeStart: DateTime
+  rangeEnd: DateTime
   duration: DateTime
-  class: BreaktimeClassUpdateOneInput
+  skipStartEvent: Boolean
+  skipEndEvent: Boolean
+  class: BreaktimeClassUpdateOneRequiredInput
 }
 
 input ScheduleBreaktimeUpdateInput {
-  startTime: DateTime
-  endTime: DateTime
+  rangeStart: DateTime
+  rangeEnd: DateTime
   duration: DateTime
-  class: BreaktimeClassUpdateOneInput
+  skipStartEvent: Boolean
+  skipEndEvent: Boolean
+  class: BreaktimeClassUpdateOneRequiredInput
 }
 
 input ScheduleBreaktimeUpdateManyInput {
@@ -1722,50 +1733,50 @@ input ScheduleBreaktimeWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleBreaktimeWhereInput!]
-  startTime: DateTime
+  rangeStart: DateTime
 
   """All values that are not equal to given value."""
-  startTime_not: DateTime
+  rangeStart_not: DateTime
 
   """All values that are contained in given list."""
-  startTime_in: [DateTime!]
+  rangeStart_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  startTime_not_in: [DateTime!]
+  rangeStart_not_in: [DateTime!]
 
   """All values less than the given value."""
-  startTime_lt: DateTime
+  rangeStart_lt: DateTime
 
   """All values less than or equal the given value."""
-  startTime_lte: DateTime
+  rangeStart_lte: DateTime
 
   """All values greater than the given value."""
-  startTime_gt: DateTime
+  rangeStart_gt: DateTime
 
   """All values greater than or equal the given value."""
-  startTime_gte: DateTime
-  endTime: DateTime
+  rangeStart_gte: DateTime
+  rangeEnd: DateTime
 
   """All values that are not equal to given value."""
-  endTime_not: DateTime
+  rangeEnd_not: DateTime
 
   """All values that are contained in given list."""
-  endTime_in: [DateTime!]
+  rangeEnd_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  endTime_not_in: [DateTime!]
+  rangeEnd_not_in: [DateTime!]
 
   """All values less than the given value."""
-  endTime_lt: DateTime
+  rangeEnd_lt: DateTime
 
   """All values less than or equal the given value."""
-  endTime_lte: DateTime
+  rangeEnd_lte: DateTime
 
   """All values greater than the given value."""
-  endTime_gt: DateTime
+  rangeEnd_gt: DateTime
 
   """All values greater than or equal the given value."""
-  endTime_gte: DateTime
+  rangeEnd_gte: DateTime
   duration: DateTime
 
   """All values that are not equal to given value."""
@@ -1788,6 +1799,14 @@ input ScheduleBreaktimeWhereInput {
 
   """All values greater than or equal the given value."""
   duration_gte: DateTime
+  skipStartEvent: Boolean
+
+  """All values that are not equal to given value."""
+  skipStartEvent_not: Boolean
+  skipEndEvent: Boolean
+
+  """All values that are not equal to given value."""
+  skipEndEvent_not: Boolean
   class: BreaktimeClassWhereInput
 }
 
@@ -1910,12 +1929,12 @@ input ScheduleDowntimeSubscriptionWhereInput {
 
 input ScheduleDowntimeUpdateDataInput {
   value: Float
-  class: DowntimeClassUpdateOneInput
+  class: DowntimeClassUpdateOneRequiredInput
 }
 
 input ScheduleDowntimeUpdateInput {
   value: Float
-  class: DowntimeClassUpdateOneInput
+  class: DowntimeClassUpdateOneRequiredInput
 }
 
 input ScheduleDowntimeUpdateManyInput {
@@ -2059,10 +2078,9 @@ input ScheduleUpdateInput {
   breaktime: ScheduleBreaktimeUpdateManyInput
 }
 
-input ScheduleUpdateOneInput {
+input ScheduleUpdateOneRequiredInput {
   create: ScheduleCreateInput
   connect: ScheduleWhereUniqueInput
-  delete: Boolean
   update: ScheduleUpdateDataInput
   upsert: ScheduleUpsertNestedInput
 }
@@ -2076,7 +2094,11 @@ type ScheduleUptime {
   id: UUID!
   class(where: UptimeClassWhereInput): UptimeClass!
   startTime: DateTime!
+  startDelimiter: Boolean!
+  startSkipEvent: Boolean!
   endTime: DateTime!
+  endDelimiter: Boolean!
+  endSkipEvent: Boolean!
   value: Float!
 }
 
@@ -2092,7 +2114,11 @@ type ScheduleUptimeConnection {
 
 input ScheduleUptimeCreateInput {
   startTime: DateTime!
+  startDelimiter: Boolean
+  startSkipEvent: Boolean
   endTime: DateTime!
+  endDelimiter: Boolean
+  endSkipEvent: Boolean
   value: Float!
   class: UptimeClassCreateOneInput!
 }
@@ -2116,8 +2142,16 @@ enum ScheduleUptimeOrderByInput {
   id_DESC
   startTime_ASC
   startTime_DESC
+  startDelimiter_ASC
+  startDelimiter_DESC
+  startSkipEvent_ASC
+  startSkipEvent_DESC
   endTime_ASC
   endTime_DESC
+  endDelimiter_ASC
+  endDelimiter_DESC
+  endSkipEvent_ASC
+  endSkipEvent_DESC
   value_ASC
   value_DESC
   updatedAt_ASC
@@ -2129,7 +2163,11 @@ enum ScheduleUptimeOrderByInput {
 type ScheduleUptimePreviousValues {
   id: UUID!
   startTime: DateTime!
+  startDelimiter: Boolean!
+  startSkipEvent: Boolean!
   endTime: DateTime!
+  endDelimiter: Boolean!
+  endSkipEvent: Boolean!
   value: Float!
 }
 
@@ -2174,16 +2212,24 @@ input ScheduleUptimeSubscriptionWhereInput {
 
 input ScheduleUptimeUpdateDataInput {
   startTime: DateTime
+  startDelimiter: Boolean
+  startSkipEvent: Boolean
   endTime: DateTime
+  endDelimiter: Boolean
+  endSkipEvent: Boolean
   value: Float
-  class: UptimeClassUpdateOneInput
+  class: UptimeClassUpdateOneRequiredInput
 }
 
 input ScheduleUptimeUpdateInput {
   startTime: DateTime
+  startDelimiter: Boolean
+  startSkipEvent: Boolean
   endTime: DateTime
+  endDelimiter: Boolean
+  endSkipEvent: Boolean
   value: Float
-  class: UptimeClassUpdateOneInput
+  class: UptimeClassUpdateOneRequiredInput
 }
 
 input ScheduleUptimeUpdateManyInput {
@@ -2237,6 +2283,14 @@ input ScheduleUptimeWhereInput {
 
   """All values greater than or equal the given value."""
   startTime_gte: DateTime
+  startDelimiter: Boolean
+
+  """All values that are not equal to given value."""
+  startDelimiter_not: Boolean
+  startSkipEvent: Boolean
+
+  """All values that are not equal to given value."""
+  startSkipEvent_not: Boolean
   endTime: DateTime
 
   """All values that are not equal to given value."""
@@ -2259,6 +2313,14 @@ input ScheduleUptimeWhereInput {
 
   """All values greater than or equal the given value."""
   endTime_gte: DateTime
+  endDelimiter: Boolean
+
+  """All values that are not equal to given value."""
+  endDelimiter_not: Boolean
+  endSkipEvent: Boolean
+
+  """All values that are not equal to given value."""
+  endSkipEvent_not: Boolean
   value: Float
 
   """All values that are not equal to given value."""
@@ -2529,12 +2591,12 @@ input ShiftSlotSubscriptionWhereInput {
 
 input ShiftSlotUpdateDataInput {
   index: Int
-  schedule: ScheduleUpdateOneInput
+  schedule: ScheduleUpdateOneRequiredInput
 }
 
 input ShiftSlotUpdateInput {
   index: Int
-  schedule: ScheduleUpdateOneInput
+  schedule: ScheduleUpdateOneRequiredInput
 }
 
 input ShiftSlotUpdateManyInput {
@@ -2635,9 +2697,9 @@ input ShiftSubscriptionWhereInput {
 }
 
 input ShiftUpdateInput {
-  employee: EmployeeUpdateOneInput
+  employee: EmployeeUpdateOneRequiredInput
   slots: ShiftSlotUpdateManyInput
-  user: UserUpdateOneInput
+  user: UserUpdateOneRequiredInput
 }
 
 input ShiftWhereInput {
@@ -2797,10 +2859,9 @@ input UptimeClassUpdateInput {
   code: String
 }
 
-input UptimeClassUpdateOneInput {
+input UptimeClassUpdateOneRequiredInput {
   create: UptimeClassCreateInput
   connect: UptimeClassWhereUniqueInput
-  delete: Boolean
   update: UptimeClassUpdateDataInput
   upsert: UptimeClassUpsertNestedInput
 }
@@ -3058,10 +3119,9 @@ input UserUpdateInput {
   password: String
 }
 
-input UserUpdateOneInput {
+input UserUpdateOneRequiredInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
-  delete: Boolean
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
 }

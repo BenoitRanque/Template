@@ -4,8 +4,10 @@
 # import Schedule ScheduleCreateInput from "./generated/prisma.graphql"
 # import Shift ShiftCreateInput from "./generated/prisma.graphql"
 # import Exception ExceptionCreateInput from "./generated/prisma.graphql"
+# import DowntimeClass UptimeClass BreaktimeClass from "./generated/prisma.graphql"
 
 type Query {
+  sessionUser: User
   user(id: UUID!): User
   users: [User!]!
   employee(id: UUID!): Employee
@@ -33,11 +35,118 @@ type Mutation {
 # }
 
 type AuthPayload {
-  token: String
-  user: User
+  token: String!
+  user: User!
 }
 
 type User {
   id: UUID!
   username: String!
+  subordinates: [Employee]!
+  departments: [Department]!
+}
+
+type Employee {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  nameMarried: String
+  nameFull: String
+  department: Department!
+  zkTimePin: Int!
+  attendance(from: DateTime! to: DateTime!): [AttendanceDate!]!
+  scheduleForDate(date: DateTime!): Schedule!
+  scheduleForDateRange(from: DateTime! to: DateTime!): [Schedule!]!
+}
+
+type Department {
+  id: UUID!
+  name: String!
+  subordinates: [Employee!]!
+  supervisors: [User]!
+}
+
+type AttendanceDate {
+  date: DateTime!
+  events: [DateTime!]!
+  schedule: Schedule!
+  shift: Shift!
+  exception: Exception!
+  report: AttendanceReport!
+}
+
+type AttendanceReport {
+  sumary: AttendanceSummary!
+  uptime: [AttendanceReportUptime]!
+  downtime: [AttendanceReportDowntime]!
+  breaktime: [AttendanceReportBreaktime]!
+}
+
+type AttendanceReportUptime {
+  class: UptimeClass!
+  startTime: DateTime!
+  startSkipEvent: Boolean!
+  startDelimiter: Boolean!
+  startCandidateEvents: [DateTime!]!
+  startEvent: DateTime
+  startMissingEvent: Boolean
+  startEarlyMinutes: Int!
+  startLateMinutes: Int!
+  endTime: DateTime!
+  endSkipEvent: Boolean!
+  endDelimiter: Boolean!
+  endCandidateEvents: [DateTime!]!
+  endEvent: DateTime
+  endMissingEvent: Boolean
+  endEarlyMinutes: Int!
+  endLateMinutes: Int!
+  value: Float!
+  skipped: Boolean!
+}
+
+type AttendanceReportDowntime {
+  class: DowntimeClass!
+  value: Float!
+}
+
+type AttendanceReportBreaktime {
+  class: BreaktimeClass!
+  rangeStart: DateTime!
+  rangeEnd: DateTime!
+  duration: DateTime!
+  skipStartEvent: Boolean!
+  skipEndEvent: Boolean!
+  startEvent: DateTime!
+  endEvent: DateTime!
+  overtimeThresholdTime: DateTime!
+  overtimeMinutes: Int!
+  skipped: Boolean!
+}
+
+type AttendanceSummary {
+  minutes: AttendanceSummaryMinutes!
+  events: AttendanceSummaryEvents!
+  absent: AttendanceSummaryAbsent!
+}
+
+type AttendanceSummaryMinutes {
+  breaktimeOvertime: Int!
+  uptimeMissing: Int!
+  uptimeUnauthorized: Int!
+}
+
+type AttendanceSummaryEvents {
+  total: Int!
+  used: Int!
+  unused: Int!
+  expected: Int!
+}
+
+type AttendanceSummaryAbsent {
+  multiplier: Int!
+  value: Float!
 }
