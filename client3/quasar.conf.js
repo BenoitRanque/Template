@@ -61,10 +61,12 @@ module.exports = function (ctx) {
         'QItem',
         'QItemMain',
         'QItemSide',
-        'QPopover'
+        'QPopover',
+        'QTooltip'
       ],
       directives: [
-        'Ripple'
+        'Ripple',
+        'CloseOverlay'
       ],
       // Quasar plugins
       plugins: [
