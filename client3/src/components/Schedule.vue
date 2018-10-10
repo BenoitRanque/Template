@@ -1,72 +1,113 @@
 <template>
-  <div class="bg-grey-4 pa-md" :style="gridStyle">
+  <div class="" :style="gridStyle">
+    <div class="row items-center q-py-xs q-px-xs" style="grid-area: header">
+      <div class="col">
+        <q-input hide-underline :value="hello"></q-input>
+      </div>
+      <div class="col-auto">
+        <q-btn flat dense color="primary" icon="settings"></q-btn>
+      </div>
+    </div>
+    <div class="bg-green-2" style="grid-area: timeline"></div>
+    <div class="bg-yellow-2" style="grid-area: pause"></div>
+    <div class="bg-blue-2" style="grid-area: timeoff1"></div>
+    <div class="bg-blue-2" style="grid-area: timeoff2"></div>
     <schedule-label style="grid-area: label"></schedule-label>
-    <schedule-uptime v-model="schedule.uptime" style="grid-area: uptime"></schedule-uptime>
-    <schedule-pausetime v-model="schedule.pausetime" style="grid-area: pausetime"></schedule-pausetime>
-    <schedule-downtime v-model="schedule.downtime1" style="grid-area: downtime1"></schedule-downtime>
-    <schedule-downtime v-model="schedule.downtime2" style="grid-area: downtime2"></schedule-downtime>
+    <schedule-timeline v-model="model.timeline" style="grid-area: timeline"></schedule-timeline>
+    <schedule-pause v-model="model.pausetime" style="grid-area: pause"></schedule-pause>
+    <schedule-timeoff v-model="model.timeoff1" style="grid-area: timeoff1"></schedule-timeoff>
+    <schedule-timeoff v-model="model.timeoff2" style="grid-area: timeoff2"></schedule-timeoff>
   </div>
 </template>
 
 <script>
+import ScheduleLabel from './ScheduleLabel.vue'
+import ScheduleTimeoff from './ScheduleTimeoff.vue'
+import SchedulePause from './SchedulePause.vue'
+import ScheduleTimeline from './ScheduleTimeline.vue'
+// import SchedulePausetimeGap from './SchedulePausetimeGap.vue'
+// import SchedulePausetimeElement from './SchedulePausetimeElement.vue'
+// import ScheduleTimelineGap from './ScheduleTimelineGap.vue'
+// import ScheduleTimelineElement from './ScheduleTimelineElement.vue'
+
+const
+  UPTIME = 'UPTIME',
+  // DOWNTIME = 'DOWNTIME',
+  WORK = 'WORK',
+  EXTRA = 'EXTRA'
+
 export default {
   name: 'Schedule',
+  components: {
+    ScheduleLabel,
+    ScheduleTimeoff,
+    SchedulePause,
+    ScheduleTimeline
+  },
   data () {
     return {
-      schedule: {
-        basetime: 8 * 60,
-        uptime: [
+      model: {
+        pauses: [],
+        timeoff1: null,
+        timeoff2: null,
+        timeline: [
           {
-            time: 9.5 * 60,
-            bound: true,
-            type: null, // the type of time starting. null if nothing is starting
-            startEvent: false,
+            superclass: UPTIME,
+            class: WORK,
+            startTime: 8.5 * 60,
+            startEvent: true,
+            endTime: 12 * 60,
+            endEvent: true
+          },
+          {
+            superclass: UPTIME,
+            class: WORK,
+            startTime: 14 * 60,
+            startEvent: true,
+            endTime: 14.5 * 60,
             endEvent: false
           },
           {
-            time: 17.5 * 60,
-            bound: true,
-            type: null, // the type of time starting. null if nothing is starting
+            superclass: UPTIME,
+            class: EXTRA,
+            startTime: 14.5 * 60,
             startEvent: false,
-            endEvent: false
-          }
-        ],
-        downtime1: null,
-        downtime2: null,
-        pausetime: [
-          {
-
+            endTime: 18.5 * 60,
+            endEvent: true
           }
         ]
       }
     }
   },
-  provide: {
-    '$schedule': this
+  provide () {
+    return {
+      $schedule: this
+    }
   },
   computed: {
     gridStyle () {
       return {
         display: 'grid',
         gridTemplateColumns: '2',
-        gridTemplateRows: 'auto repeat(3, 30px)',
+        gridTemplateRows: 'auto auto repeat(3, 1fr)',
         gridTemplateAreas: `
+          "header header"
           "label label"
-          "uptime uptime"
-          "pausetime pausetime"
-          "downtime1 downtime2"
+          "timeline timeline"
+          "pause pause"
+          "timeoff1 timeoff2"
         `
       }
     },
     innerBound () {
       const maxBound = 8 * 60
       const minBound = 0
-      if (this.schedule.uptime.length === 0) {
+      if (this.model.timeline.length === 0) {
         return maxBound
       }
 
-      const smallBound = this.schedule.uptime.reduce((acc, val) => val.time < acc ? val.time : acc, maxBound) // smallest bound in uptime
-      const roundedSmallBound = Math.floor((smallBound - 60) / 60) * 60 // rounded to closest hour
+      const smallBound = this.model.timeline.reduce((acc, val) => val.startTime < acc ? val.startTime : acc, maxBound) // smallest bound in uptime
+      const roundedSmallBound = Math.floor((smallBound - 30) / 120) * 120 // rounded to closest hour
 
       if (roundedSmallBound > maxBound) {
         return maxBound
@@ -79,12 +120,12 @@ export default {
     outerBound () {
       const maxBound = 48 * 60
       const minBound = 18 * 60
-      if (this.schedule.uptime.length === 0) {
+      if (this.model.timeline.length === 0) {
         return minBound
       }
 
-      const largeBound = this.schedule.uptime.reduce((acc, val) => val.time > acc ? val.time : acc, minBound) // largest bound in uptime
-      const roundedLargeBound = Math.ceil((largeBound + 60) / 60) * 60 // rounded to closest hour
+      const largeBound = this.model.timeline.reduce((acc, val) => val.endTime > acc ? val.endTime : acc, minBound) // largest bound in uptime
+      const roundedLargeBound = Math.ceil((largeBound + 30) / 120) * 120 // rounded to closest hour
 
       if (roundedLargeBound > maxBound) {
         return maxBound
@@ -94,9 +135,12 @@ export default {
         return roundedLargeBound
       }
     },
+    gridColumns () {
+      return (this.outerBound - this.innerBound) / 5
+    }
   },
   methods: {
-    formatAsTime (minutes) {
+    formatTime (minutes) {
       return `0${Math.floor(minutes / 60)}:0${minutes % 60}`.replace(/0([0-9][0-9])/g, '$1')
     }
   }

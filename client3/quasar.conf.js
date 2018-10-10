@@ -62,7 +62,8 @@ module.exports = function (ctx) {
         'QItemMain',
         'QItemSide',
         'QPopover',
-        'QTooltip'
+        'QTooltip',
+        'QInput'
       ],
       directives: [
         'Ripple',
