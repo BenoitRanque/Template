@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-blue-2">
     <q-btn class="fit" icon="add" color="blue" outline dense></q-btn>
   </div>
 </template>

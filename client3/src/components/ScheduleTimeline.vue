@@ -1,5 +1,5 @@
 <template>
-  <div :style="gridStyle">
+  <div :style="gridStyle" class="bg-green-2">
     <timeline-gap v-for="(gap, index) in gaps" :key="`gap_${index}`" :value="gap"></timeline-gap>
     <timeline-element v-for="(element, index) in $schedule.model.timeline" :key="`element_${index}`" :value="element"></timeline-element>
   </div>

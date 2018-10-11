@@ -1,17 +1,13 @@
 <template>
   <div class="" :style="gridStyle">
-    <div class="row items-center q-py-xs q-px-xs" style="grid-area: header">
+    <div class="row items-center q-py-xs q-pl-xs" style="grid-area: header">
       <div class="col">
-        <q-input hide-underline :value="hello"></q-input>
+        <q-input hide-underline v-model="model.name"></q-input>
       </div>
       <div class="col-auto">
-        <q-btn flat dense color="primary" icon="settings"></q-btn>
+        <q-btn flat dense color="primary" icon="more_vert"></q-btn>
       </div>
     </div>
-    <div class="bg-green-2" style="grid-area: timeline"></div>
-    <div class="bg-yellow-2" style="grid-area: pause"></div>
-    <div class="bg-blue-2" style="grid-area: timeoff1"></div>
-    <div class="bg-blue-2" style="grid-area: timeoff2"></div>
     <schedule-label style="grid-area: label"></schedule-label>
     <schedule-timeline v-model="model.timeline" style="grid-area: timeline"></schedule-timeline>
     <schedule-pause v-model="model.pausetime" style="grid-area: pause"></schedule-pause>
@@ -47,13 +43,14 @@ export default {
   data () {
     return {
       model: {
+        name: 'Schedule Name',
         pauses: [],
         timeoff1: null,
         timeoff2: null,
         timeline: [
           {
             superclass: UPTIME,
-            class: WORK,
+            subclass: WORK,
             startTime: 8.5 * 60,
             startEvent: true,
             endTime: 12 * 60,
@@ -61,7 +58,7 @@ export default {
           },
           {
             superclass: UPTIME,
-            class: WORK,
+            subclass: WORK,
             startTime: 14 * 60,
             startEvent: true,
             endTime: 14.5 * 60,
@@ -69,8 +66,8 @@ export default {
           },
           {
             superclass: UPTIME,
-            class: EXTRA,
-            startTime: 14.5 * 60,
+            subclass: EXTRA,
+            startTime: 15 * 60,
             startEvent: false,
             endTime: 18.5 * 60,
             endEvent: true
