@@ -51,10 +51,10 @@ export default {
         })
       }
 
-      // filter gaps smaller than one hour and shrink by 30 minutes each end
       return uptime
     },
     gaps () {
+      // filter gaps smaller than one hour and shrink by 30 minutes each end
       const trimmedGaps = this.uptime
         .filter(({ start, end }) => (end - 60) > start)
         .map(({ start, end }) => ({
@@ -62,6 +62,7 @@ export default {
           end: end - 30
         }))
 
+        // TODO: filter to remove occupied space
       return trimmedGaps
     }
   }
