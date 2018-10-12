@@ -1,7 +1,7 @@
 <template>
-  <div :style="style" class="timeline-gap">
-    <q-btn icon="add" color="green" outline dense class="fit" @click="modal = true">
-      <q-tooltip>Aggregar elemento laboral</q-tooltip>
+  <div :style="style" class="restline-gap">
+    <q-btn icon="add" color="amber" outline dense class="fit" @click="modal = true">
+      <q-tooltip>Aggregar elemento de descanso</q-tooltip>
     </q-btn>
     <q-modal v-model="modal" @show="reset">
       <q-modal-layout>
@@ -51,6 +51,13 @@
               </q-field>
             </q-item-main>
           </q-item>
+          <q-item>
+            <q-item-main>
+              <q-field label-width="6" label="Duracion">
+                <time-input align="right" hide-underline v-model="model.duration" :min="0" :max="model.endTime - model.startTime"></time-input>
+              </q-field>
+            </q-item-main>
+          </q-item>
         </q-list>
         <q-toolbar slot="footer" glossy class="justify-center">
           <q-btn rounded glossy color="positive" @click="add" :disable="!valid">Aggregar</q-btn>
@@ -63,7 +70,7 @@
 <script>
 import TimeInput from 'components/TimeInput.vue'
 export default {
-  name: 'TimelineGap',
+  name: 'RestlineGap',
   components: { TimeInput },
   props: {
     value: {
@@ -80,24 +87,13 @@ export default {
         startTime: 0,
         startEvent: true,
         endTime: 0,
-        endEvent: true
+        endEvent: true,
+        duration: 0
       },
       categoryOptions: [
         {
-          value: 'SCH_TIME_WORK',
-          label: 'Tiempo Laboral'
-        },
-        {
-          value: 'SCH_TIME_EXTRA',
-          label: 'Tiempo Extra'
-        },
-        {
-          value: 'SCH_TIME_LEAVE',
-          label: 'Permiso sin descuento'
-        },
-        {
-          value: 'SCH_TIME_MATERNAL',
-          label: 'Tiempo Lactancia'
+          value: 'SCH_TIME_LUNCH',
+          label: 'Almuerzo'
         }
       ]
     }
@@ -108,7 +104,7 @@ export default {
       const end = Math.floor(((this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end) - this.$schedule.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 3
+        gridRow: 4
       }
     },
     valid () {
@@ -133,7 +129,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.timeline-gap
+.restline-gap
   white-space nowrap
   overflow hidden
 </style>

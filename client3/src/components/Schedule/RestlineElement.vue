@@ -1,30 +1,26 @@
 <template>
-  <div :style="style" class="q-pa-xs round-borders timeline-element bg-green-4 row items-center no-wrap">
+  <div :style="style" class="q-pa-xs round-borders restline-element bg-amber-4 row items-center no-wrap">
     <div class="col-auto q-caption">
       {{$schedule.formatTime(value.startTime)}}
     </div>
+    <div class="col"></div>
     <div v-if="value.startEvent" class="col-auto">
-      <q-tooltip>Marcación de Entrada</q-tooltip>
+      <q-tooltip>Marcación de inicio</q-tooltip>
+      <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
+    </div>
+    <div class="col-auto q-caption">
+      {{$schedule.formatTime(value.duration)}}
+    </div>
+    <div v-if="value.endEvent" class="col-auto">
+      <q-tooltip>Marcación de fin</q-tooltip>
       <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
     </div>
     <div class="col"></div>
-    <div v-if="value.endEvent" class="col-auto">
-      <q-tooltip>Marcación de Salida</q-tooltip>
-      <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
-    </div>
     <div class="col-auto q-caption">
       {{$schedule.formatTime(value.endTime)}}
     </div>
     <q-popover self="top middle" anchor="bottom middle">
       <q-list>
-        <!-- <q-list-header>
-          Tipo de Elemento
-        </q-list-header>
-        <q-item>
-          <q-item-main>
-            {{value.category}}
-          </q-item-main>
-        </q-item> -->
         <q-list-header>
           Detalles del Elemento
         </q-list-header>
@@ -56,6 +52,13 @@
             </q-field>
           </q-item-main>
         </q-item>
+        <q-item>
+          <q-item-main>
+            <q-field label-width="6" label="Duracion">
+              <time-input align="right" hide-underline :min="0" :max="value.endTime - value.startTime" v-model="value.duration" />
+            </q-field>
+          </q-item-main>
+        </q-item>
         <q-list-header>
           Quitar Elemento
         </q-list-header>
@@ -70,9 +73,9 @@
 </template>
 
 <script>
-import TimeInput from 'components/TimeInput'
+import TimeInput from 'components/TimeInput.vue'
 export default {
-  name: 'TimelineElement',
+  name: 'ReslineElement',
   components: { TimeInput },
   props: {
     value: {
@@ -87,18 +90,26 @@ export default {
       const end = Math.floor((this.value.endTime - this.$schedule.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 3,
-        borderLeft: this.value.startEvent ? 'solid black 1px' : 'solid white 1px',
-        borderRight: this.value.endEvent ? 'solid black 1px' : 'solid white 1px'
+        gridRow: 4
       }
     },
+    valid () {
+      const ParentGroup = this.$schedule.timelineElementGroups.find(group => (group.start + 30) <= this.value.startTime && (group.end - 30) >= this.value.endTime)
+      if (ParentGroup === undefined) return false
+      return true
+    },
     innerBound () {
-      const previousGap = this.$schedule.timelineGaps.find(gap => gap.end === this.value.startTime)
+      const previousGap = this.$schedule.restlineGaps.find(gap => gap.end === this.value.startTime)
       return previousGap !== undefined ? previousGap.start : this.value.startTime
     },
     outerBound () {
-      const nextGap = this.$schedule.timelineGaps.find(gap => gap.start === this.value.endTime)
+      const nextGap = this.$schedule.restlineGaps.find(gap => gap.start === this.value.endTime)
       return nextGap !== undefined ? nextGap.end : this.value.endTime
+    }
+  },
+  watch: {
+    valid (valid) {
+      if (!valid) this.$emit('remove')
     }
   },
   methods: {
@@ -117,7 +128,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.timeline-element
+.restline-element
   white-space nowrap
   overflow hidden
 </style>

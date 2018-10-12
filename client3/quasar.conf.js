@@ -62,8 +62,11 @@ module.exports = function (ctx) {
         'QItemMain',
         'QItemSide',
         'QPopover',
+        'QModal',
+        'QModalLayout',
         'QTooltip',
         'QInput',
+        'QSelect',
         'QField',
         'QToggle',
         'QCheckbox'
@@ -74,7 +77,8 @@ module.exports = function (ctx) {
       ],
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language

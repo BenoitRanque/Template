@@ -1,1 +1,0 @@
-v-model components for pause item

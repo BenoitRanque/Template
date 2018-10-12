@@ -74,75 +74,84 @@ type ExceptionAuthorization {
 
 type Schedule {
   id: UUID! @unique
-  name: String
   description: String
-  uptime: [ScheduleUptime!]! @relation(name: "ScheduleToScheduleUptime" onDelete: CASCADE)
-  downtime: [ScheduleDowntime!]! @relation(name: "ScheduleToScheduleDowntime" onDelete: CASCADE)
-  breaktime: [ScheduleBreaktime!]! @relation(name: "ScheduleToScheduleBreaktime" onDelete: CASCADE)
+  basetime: Int!
+  reuseable: Boolean!
+  timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
+  restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
+  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOffline1" onDelete: CASCADE)
+  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOffline2" onDelete: CASCADE)
 }
 
-type ScheduleUptime {
+type ScheduleTimelineElement {
   id: UUID! @unique
-  class: UptimeClass!
-  startTime: DateTime!
-  startDelimiter: Boolean! @default(value: "true")
-  startSkipEvent: Boolean! @default(value: "false")
-  endTime: DateTime!
-  endDelimiter: Boolean! @default(value: "true")
-  endSkipEvent: Boolean! @default(value: "false")
-  value: Float!
+  category: ScheduleTimelineCategory!
+  startTime: Int!
+  startEvent: Boolean!
+  endTime: Int!
+  endEvent: Boolean!
 }
 
-type ScheduleDowntime {
+type ScheduleRestlineElement {
   id: UUID! @unique
-  class: DowntimeClass!
-  value: Float!
+  category: ScheduleRestlineCategory!
+  startTime: Int!
+  startEvent: Boolean!
+  endTime: Int!
+  endEvent: Boolean!
+  duration: Int!
 }
 
-type ScheduleBreaktime {
+type ScheduleOfflineElement {
   id: UUID! @unique
-  class: BreaktimeClass!
-  rangeStart: DateTime!
-  rangeEnd: DateTime!
-  duration: DateTime!
-  skipStartEvent: Boolean! @default(value: "false")
-  skipEndEvent: Boolean! @default(value: "false")
+  category: ScheduleOfflineCategory!
+  # TODO: add some way to justify the category here
+  # eg justify what holiday this is etc
 }
 
-type UptimeClass {
-  name: UptimeClassEnum! @unique
-  label: String!
-  color: String!
-  code: String!
+enum ScheduleCategory {
+  SCH_TIME_WORK         # standard work time
+  SCH_TIME_EXTRA        # extra work time
+
+  SCH_TIME_REST         # lunch time
+
+  SCH_TIME_MATERNAL    # autorized lactation hour
+  SCH_TIME_LEAVE        # authorized downtime
+
+  SCH_DAY_OFF
+  SCH_DAY_VACATION
+  SCH_DAY_HOLIDAY
+  SCH_DAY_SICK
+  SCH_DAY_PAID
+  SCH_DAY_UNPAID
 }
 
-enum UptimeClassEnum {
-  STANDARDWORK
-  EXTRAWORK
+enum ScheduleTimelineCategory {
+  SCH_TIME_WORK         # standard work time
+  SCH_TIME_EXTRA        # extra work time
+  SCH_TIME_MATERNAL    # autorized lactation hour
+  SCH_TIME_LEAVE
 }
 
-type DowntimeClass {
-  name: DowntimeClass! @unique
-  label: String!
-  color: String!
-  code: String!
+enum ScheduleRestlineCategory {
+  SCH_TIME_REST         # lunch time
 }
 
-enum DowntimeClassEnum {
-  TIMEOFF
-  VACATION
-  HOLIDAY
-  LEAVEPAID
-  LEAVEUNPAID
+enum ScheduleOfflineCategory {
+  SCH_DAY_OFF
+  SCH_DAY_VACATION
+  SCH_DAY_HOLIDAY
+  SCH_DAY_SICK
+  SCH_DAY_PAID
+  SCH_DAY_UNPAID
 }
 
-type BreaktimeClass {
-  name: BreaktimeClassEnum! @unique
-  label: String!
-  color: String!
-  code: String!
-}
-
-enum BreaktimeClassEnum {
-  LUNCHBREAK
+enum AttendanceCategory {
+  ATT_START_LATE
+  ATT_START_EARLY
+  ATT_END_LATE
+  ATT_END_EARLY
+  ATT_REST_LATE
+  ATT_ABSENT
+  ATT_ABSENT_DOUBLE
 }
