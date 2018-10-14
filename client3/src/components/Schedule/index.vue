@@ -23,6 +23,8 @@ import TimelineElement from './TimelineElement.vue'
 import RestlineGap from './RestlineGap.vue'
 import RestlineElement from './RestlineElement.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Schedule',
   components: {
@@ -40,52 +42,10 @@ export default {
         name: 'Schedule Name',
         baseTime: 8 * 60,
         standard: true,
-        restline: [
-          // {
-          //   superclass: 'PAUSE',
-          //   subclass: 'LUNCH',
-          //   startTime: 11.5 * 60,
-          //   startEvent: true,
-          //   endTime: 14.5 * 60,
-          //   endEvent: true,
-          //   duration: 30
-          // }
-        ],
+        restline: [],
         offline1: null,
         offline2: null,
-        timeline: [
-          // {
-          //   category: 'WORK',
-          //   startTime: 9.5 * 60,
-          //   startEvent: true,
-          //   endTime: 17.5 * 60,
-          //   endEvent: true
-          // }
-          // {
-          //   superclass: 'UPTIME',
-          //   subclass: 'WORK',
-          //   startTime: 8.5 * 60,
-          //   startEvent: true,
-          //   endTime: 12 * 60,
-          //   endEvent: true
-          // },
-          // {
-          //   superclass: 'UPTIME',
-          //   subclass: 'WORK',
-          //   startTime: 14 * 60,
-          //   startEvent: true,
-          //   endTime: 14.5 * 60,
-          //   endEvent: false
-          // },
-          // {
-          //   superclass: 'UPTIME',
-          //   subclass: 'EXTRA',
-          //   startTime: 14.5 * 60,
-          //   startEvent: false,
-          //   endTime: 18.5 * 60,
-          //   endEvent: true
-          // }
-        ]
+        timeline: []
       }
     }
   },
@@ -95,6 +55,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('schedule', [
+      'categoryCanRest',
+      'categoryCanEvent',
+      'categoryIsStandardTime',
+      'formatTime'
+    ]),
     gridStyle () {
       return {
         display: 'grid',
@@ -171,19 +137,18 @@ export default {
 
       let start = 0, end = 0
 
-      this.model.timeline
-        .forEach(element => {
-          end = element.startTime
+      this.model.timeline.forEach(element => {
+        end = element.startTime
 
-          if (end > start) {
-            gaps.push({
-              start,
-              end
-            })
-          }
+        if (end > start) {
+          gaps.push({
+            start,
+            end
+          })
+        }
 
-          start = element.endTime
-        })
+        start = element.endTime
+      })
 
       end = 48 * 60
 
@@ -196,56 +161,67 @@ export default {
 
       return gaps
     },
-    timelineElementGroups () {
+    timelineRestGroups () {
       // concatenate gaps from possibly multiple elements
-      const elements = []
+      const restGroups = []
 
-      if (!this.model.timeline.length) return elements
+      if (!this.model.timeline.length) return restGroups
 
-      let start = 0, end = 0, previousElement = null
+      for (let i = 0, l = this.model.timeline.length, start = null, end = null; i < l; i += 1) {
+        let currentElement = this.model.timeline[i]
+        let previousElement = i > 0 ? this.model.timeline[i - 1] : null
+        let nextElement = i < (l - 1) ? this.model.timeline[i + 1] : null
 
-      this.model.timeline.forEach((element, index) => {
-        if (element.startTime > end || element.startEvent || (previousElement && previousElement.endEvent)) {
-          if (end > start) {
-            elements.push({
-              start,
-              end
-            })
+        if (this.categoryCanRest(currentElement.category)) {
+          if (start === null) {
+            if (currentElement.startEvent || (previousElement &&
+              previousElement.endEvent &&
+              (previousElement.endTime + 30) > currentElement.startTime)) {
+              start = currentElement.startTime + 30
+            } else {
+              start = currentElement.startTime
+            }
           }
-          start = element.startTime
+
+          if (currentElement.endEvent ||
+            !nextElement ||
+            !this.categoryCanRest(nextElement.category) ||
+            nextElement.startTime > currentElement.endTime ||
+            nextElement.startEvent) {
+            if (currentElement.endEvent || (nextElement &&
+              nextElement.startEvent &&
+              (nextElement.startTime - 30) < currentElement.endTime)) {
+              end = currentElement.endTime - 30
+            } else {
+              end = currentElement.endTime
+            }
+          }
         }
-        end = element.endTime
-        previousElement = element
-      })
-      if (end > start) {
-        elements.push({
-          start,
-          end
-        })
+
+        if (start !== null && end !== null) {
+          restGroups.push({
+            start,
+            end
+          })
+
+          start = null
+          end = null
+        }
       }
 
-      return elements
+      return restGroups
     },
     restlineGaps () {
-      // filter gaps smaller than one hour and shrink by 30 minutes each end
-      const trimmedGaps = this.timelineElementGroups
-        .filter(({ start, end }) => (end - 60) > start)
-        .map(({ start, end }) => ({
-          start: start + 30,
-          end: end - 30
-        }))
+      const gaps = []
 
-      const availableGaps = []
-
-      // TODO: filter to remove occupied space
-      trimmedGaps.forEach(gap => {
+      this.timelineRestGroups.forEach(gap => {
         let start = gap.start, end = gap.end
 
         this.model.restline.forEach(rest => {
           if (rest.startTime <= end && rest.endTime >= start) {
             end = rest.startTime
             if (end > start) {
-              availableGaps.push({
+              gaps.push({
                 start,
                 end
               })
@@ -255,25 +231,37 @@ export default {
           }
         })
         if (end > start) {
-          availableGaps.push({
+          gaps.push({
             start,
             end
           })
         }
       })
 
-      return availableGaps
+      return gaps
+    },
+    usedStandardTime () {
+      return this.model.timeline.reduce((acc, val) => this.categoryIsStandardTime(val.category) ? acc + (val.endTime - val.startTime) : acc, 0)
+    },
+    availableStandardTime () {
+      const baseTime = this.model.baseTime
+      return baseTime - ((this.model.offline1 === null ? 0 : baseTime / 2) +
+        (this.model.offline2 === null ? 0 : baseTime / 2))
+    },
+    valid () {
+      if (this.usedStandardTime !== this.availableStandardTime) return false
+      return true
     }
   },
   methods: {
-    formatTime (minutes) {
-      return `0${Math.floor(minutes / 60)}:0${Math.floor(minutes % 60)}`.replace(/0(\d\d)/g, '$1')
-    },
-    parseTime (time) {
-      const [ , hours, minutes ] = time.match(/(\d?\d)?:?([0-5]\d)/)
+    // formatTime (minutes) {
+    //   return `0${Math.floor(minutes / 60)}:0${Math.floor(minutes % 60)}`.replace(/0(\d\d)/g, '$1')
+    // },
+    // parseTime (time) {
+    //   const [ , hours, minutes ] = time.match(/(\d?\d)?:?([0-5]\d)/)
 
-      return hours ? (Number(hours) * 60) + Number(minutes) : Number(minutes)
-    },
+    //   return hours ? (Number(hours) * 60) + Number(minutes) : Number(minutes)
+    // },
     addTimelineElement (element) {
       this.model.timeline = this.model.timeline
         .concat([element])

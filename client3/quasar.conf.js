@@ -66,6 +66,7 @@ module.exports = function (ctx) {
         'QModalLayout',
         'QTooltip',
         'QInput',
+        'QColor',
         'QSelect',
         'QField',
         'QToggle',

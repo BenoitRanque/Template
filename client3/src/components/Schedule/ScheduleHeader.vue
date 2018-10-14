@@ -3,6 +3,15 @@
     <div class="col">
       <q-input hide-underline v-model="$schedule.model.name"></q-input>
     </div>
+    <div class="col-auto q-caption text-bold q-px-xs" :class="{
+      'text-positive': $schedule.usedStandardTime === $schedule.availableStandardTime,
+      'text-negative': $schedule.usedStandardTime > $schedule.availableStandardTime
+    }">
+      {{$schedule.formatTime($schedule.usedStandardTime)}}
+      /
+      {{$schedule.formatTime($schedule.availableStandardTime)}}
+      <q-tooltip>Uso del tiempo</q-tooltip>
+    </div>
     <div class="col-auto">
       <q-btn flat dense color="primary" icon="more_vert">
         <q-popover anchor="bottom right" self="top right">

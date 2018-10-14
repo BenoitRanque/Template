@@ -30,7 +30,7 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item>
+          <q-item v-if="categoryCanEvent(model.category)">
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
                 <q-checkbox v-model="model.startEvent"></q-checkbox>
@@ -44,7 +44,7 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item>
+          <q-item v-if="categoryCanEvent(model.category)">
             <q-item-main>
               <q-field label-width="6" label="Marca Salida" class="text-right">
                 <q-checkbox v-model="model.endEvent"></q-checkbox>
@@ -62,6 +62,7 @@
 
 <script>
 import TimeInput from 'components/TimeInput.vue'
+import { mapGetters } from 'vuex'
 export default {
   name: 'TimelineGap',
   components: { TimeInput },
@@ -76,33 +77,19 @@ export default {
     return {
       modal: false,
       model: {
-        category: null,
+        category: 'SCH_TIME_WORK',
         startTime: 0,
         startEvent: true,
         endTime: 0,
         endEvent: true
-      },
-      categoryOptions: [
-        {
-          value: 'SCH_TIME_WORK',
-          label: 'Tiempo Laboral'
-        },
-        {
-          value: 'SCH_TIME_EXTRA',
-          label: 'Tiempo Extra'
-        },
-        {
-          value: 'SCH_TIME_LEAVE',
-          label: 'Permiso sin descuento'
-        },
-        {
-          value: 'SCH_TIME_MATERNAL',
-          label: 'Tiempo Lactancia'
-        }
-      ]
+      }
     }
   },
   computed: {
+    ...mapGetters('schedule', {
+      categoryOptions: 'timelineCategoryOptions',
+      categoryCanEvent: 'categoryCanEvent'
+    }),
     style () {
       const start = Math.floor(((this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start) - this.$schedule.innerBound) / 5) + 1
       const end = Math.floor(((this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end) - this.$schedule.innerBound) / 5) + 1
@@ -116,9 +103,20 @@ export default {
       return true
     }
   },
+  watch: {
+    'model.category' (value) {
+      if (this.categoryCanEvent(value)) {
+        this.model.startEvent = true
+        this.model.endEvent = true
+      } else {
+        this.model.startEvent = false
+        this.model.endEvent = false
+      }
+    }
+  },
   methods: {
     reset () {
-      this.model.category = null
+      this.model.category = 'SCH_TIME_WORK'
       this.model.startTime = this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start
       this.model.startEvent = true
       this.model.endTime = this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end

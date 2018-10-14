@@ -26,7 +26,7 @@
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Hora Inicio">
-                <time-input align="right" hide-underline :min="value.start" :max="model.endTime" v-model="model.startTime" />
+                <time-input align="right" hide-underline :min="value.start" :max="model.endTime - 30" v-model="model.startTime" />
               </q-field>
             </q-item-main>
           </q-item>
@@ -40,7 +40,7 @@
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Hora Fin">
-                <time-input align="right" hide-underline :min="model.startTime" :max="value.end" v-model="model.endTime" />
+                <time-input align="right" hide-underline :min="model.startTime + 30" :max="value.end" v-model="model.endTime" />
               </q-field>
             </q-item-main>
           </q-item>
@@ -69,6 +69,7 @@
 
 <script>
 import TimeInput from 'components/TimeInput.vue'
+import { mapGetters } from 'vuex'
 export default {
   name: 'RestlineGap',
   components: { TimeInput },
@@ -83,22 +84,19 @@ export default {
     return {
       modal: false,
       model: {
-        category: null,
-        startTime: 0,
+        category: 'SCH_REST_LUNCH',
+        startTime: 11 * 60,
         startEvent: true,
-        endTime: 0,
+        endTime: 14.5 * 60,
         endEvent: true,
-        duration: 0
-      },
-      categoryOptions: [
-        {
-          value: 'SCH_TIME_LUNCH',
-          label: 'Almuerzo'
-        }
-      ]
+        duration: 30
+      }
     }
   },
   computed: {
+    ...mapGetters('schedule', {
+      categoryOptions: 'restlineCategoryOptions'
+    }),
     style () {
       const start = Math.floor(((this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start) - this.$schedule.innerBound) / 5) + 1
       const end = Math.floor(((this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end) - this.$schedule.innerBound) / 5) + 1
@@ -109,16 +107,24 @@ export default {
     },
     valid () {
       if (!this.model.category) return false
+      if ((this.model.endTime - this.model.startTime) < 30) return false
+      if (this.model.duration < 5) return false
       return true
     }
   },
   methods: {
     reset () {
-      this.model.category = null
-      this.model.startTime = this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start
+      this.model.category = 'SCH_REST_LUNCH'
       this.model.startEvent = true
-      this.model.endTime = this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end
       this.model.endEvent = true
+      this.model.duration = 30
+      if (this.value.start <= 11 * 60 && this.value.end >= 14.5 * 60) {
+        this.model.startTime = 11 * 60
+        this.model.endTime = 14.5 * 60
+      } else {
+        this.model.startTime = this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start
+        this.model.endTime = this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end
+      }
     },
     add () {
       this.$emit('add', {...this.model})

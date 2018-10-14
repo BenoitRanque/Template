@@ -113,10 +113,10 @@ enum ScheduleCategory {
   SCH_TIME_WORK         # standard work time
   SCH_TIME_EXTRA        # extra work time
 
-  SCH_TIME_REST         # lunch time
-
   SCH_TIME_MATERNAL    # autorized lactation hour
   SCH_TIME_LEAVE        # authorized downtime
+
+  SCH_REST_LUNCH         # lunch time
 
   SCH_DAY_OFF
   SCH_DAY_VACATION
@@ -134,7 +134,7 @@ enum ScheduleTimelineCategory {
 }
 
 enum ScheduleRestlineCategory {
-  SCH_TIME_REST         # lunch time
+  SCH_REST_LUNCH         # lunch time
 }
 
 enum ScheduleOfflineCategory {

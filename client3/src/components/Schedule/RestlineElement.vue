@@ -1,24 +1,23 @@
 <template>
-  <div :style="style" class="q-pa-xs round-borders restline-element bg-amber-4 row items-center no-wrap">
+  <div :style="style" class="q-pa-xs round-borders restline-element row items-center no-wrap">
     <div class="col-auto q-caption">
-      {{$schedule.formatTime(value.startTime)}}
+      {{formatTime(value.startTime)}}
     </div>
     <div class="col"></div>
     <div v-if="value.startEvent" class="col-auto">
-      <q-tooltip>Marcación de inicio</q-tooltip>
       <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
     </div>
     <div class="col-auto q-caption">
-      {{$schedule.formatTime(value.duration)}}
+      {{formatTime(value.duration)}}
     </div>
     <div v-if="value.endEvent" class="col-auto">
-      <q-tooltip>Marcación de fin</q-tooltip>
       <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
     </div>
     <div class="col"></div>
     <div class="col-auto q-caption">
-      {{$schedule.formatTime(value.endTime)}}
+      {{formatTime(value.endTime)}}
     </div>
+    <q-tooltip>{{tooltip}}</q-tooltip>
     <q-popover self="top middle" anchor="bottom middle">
       <q-list>
         <q-list-header>
@@ -31,7 +30,7 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-item>
+        <q-item v-if="categoryCanEvent(value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Entrada" class="text-right">
               <q-checkbox v-model="value.startEvent"></q-checkbox>
@@ -45,7 +44,7 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-item>
+        <q-item v-if="categoryCanEvent(value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Salida" class="text-right">
               <q-checkbox v-model="value.endEvent"></q-checkbox>
@@ -74,6 +73,7 @@
 
 <script>
 import TimeInput from 'components/TimeInput.vue'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ReslineElement',
   components: { TimeInput },
@@ -85,16 +85,25 @@ export default {
   },
   inject: ['$schedule'],
   computed: {
+    ...mapGetters('schedule', [
+      'categoryCanEvent',
+      'categoryBackgroundColor',
+      'categoryForegroundColor',
+      'categoryDescription',
+      'formatTime'
+    ]),
     style () {
       const start = Math.floor((this.value.startTime - this.$schedule.innerBound) / 5) + 1
       const end = Math.floor((this.value.endTime - this.$schedule.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 4
+        gridRow: 4,
+        color: this.categoryForegroundColor(this.value.category),
+        backgroundColor: this.categoryBackgroundColor(this.value.category)
       }
     },
     valid () {
-      const ParentGroup = this.$schedule.timelineElementGroups.find(group => (group.start + 30) <= this.value.startTime && (group.end - 30) >= this.value.endTime)
+      const ParentGroup = this.$schedule.timelineRestGroups.find(group => (group.start + 30) <= this.value.startTime && (group.end - 30) >= this.value.endTime)
       if (ParentGroup === undefined) return false
       return true
     },
@@ -105,6 +114,9 @@ export default {
     outerBound () {
       const nextGap = this.$schedule.restlineGaps.find(gap => gap.start === this.value.endTime)
       return nextGap !== undefined ? nextGap.end : this.value.endTime
+    },
+    tooltip () {
+      return `${this.categoryDescription(this.value.category)}: ${this.formatTime(this.value.duration)} entre ${this.formatTime(this.value.startTime)} y ${this.formatTime(this.value.endTime)}`
     }
   },
   watch: {
