@@ -2,9 +2,9 @@
   <div class="" :style="gridStyle">
     <schedule-header :style="{ gridRow: 1, gridColumn: `1 / ${gridColumns + 1}`}"></schedule-header>
     <schedule-label v-for="(label, index) in labels" :key="`label_${index}`" :value="label"></schedule-label>
-    <div class="bg-green-2" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
-    <div class="bg-amber-2" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
-    <div class="bg-blue-2" :style="{ gridRow: 5, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <div class="bg-teal-3" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <div class="bg-amber-3" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <div class="bg-indigo-3" :style="{ gridRow: 5, gridColumn: `1 / ${gridColumns + 1}`}"></div>
     <timeline-gap v-for="(gap, index) in timelineGaps" :key="`timeline_gap_${index}`" :value="gap" @add="addTimelineElement"></timeline-gap>
     <timeline-element v-for="(element, index) in model.timeline" :key="`timeline_element_${index}`" :value="element" @remove="model.timeline.splice(index, 1)"></timeline-element>
     <restline-gap v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
@@ -65,7 +65,7 @@ export default {
       return {
         display: 'grid',
         gridTemplateColumns: `repeat(${this.gridColumns}, 1fr)`,
-        gridTemplateRows: 'auto auto repeat(3, 35px)'
+        gridTemplateRows: 'auto auto repeat(3, 30px)'
         // gridTemplateAreas: `
         //   "repeat(${this.gridColumns}, header)"
         //   "repeat(${this.gridColumns}, label)"
@@ -240,13 +240,11 @@ export default {
 
       return gaps
     },
-    usedStandardTime () {
-      return this.model.timeline.reduce((acc, val) => this.categoryIsStandardTime(val.category) ? acc + (val.endTime - val.startTime) : acc, 0)
-    },
-    availableStandardTime () {
-      const baseTime = this.model.baseTime
-      return baseTime - ((this.model.offline1 === null ? 0 : baseTime / 2) +
-        (this.model.offline2 === null ? 0 : baseTime / 2))
+    usedTime () {
+      return this.model.timeline
+        .reduce((acc, val) => this.categoryIsStandardTime(val.category) ? acc + (val.endTime - val.startTime) : acc, 0) +
+        ((this.model.offline1 === null ? 0 : this.model.baseTime / 2) +
+        (this.model.offline2 === null ? 0 : this.model.baseTime / 2))
     },
     valid () {
       if (this.usedStandardTime !== this.availableStandardTime) return false

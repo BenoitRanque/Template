@@ -70,7 +70,8 @@ module.exports = function (ctx) {
         'QSelect',
         'QField',
         'QToggle',
-        'QCheckbox'
+        'QCheckbox',
+        'QChip'
       ],
       directives: [
         'Ripple',

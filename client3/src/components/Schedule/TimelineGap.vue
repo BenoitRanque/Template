@@ -1,6 +1,6 @@
 <template>
   <div :style="style" class="timeline-gap">
-    <q-btn icon="add" color="green" outline dense class="fit" @click="modal = true">
+    <q-btn icon="add" color="teal" outline dense class="fit" @click="modal = true">
       <q-tooltip>Aggregar elemento laboral</q-tooltip>
     </q-btn>
     <q-modal v-model="modal" @show="reset">
@@ -30,10 +30,10 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item v-if="categoryCanEvent(model.category)">
+          <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
-                <q-checkbox v-model="model.startEvent"></q-checkbox>
+                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startEvent"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>
@@ -44,10 +44,10 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item v-if="categoryCanEvent(model.category)">
+          <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Salida" class="text-right">
-                <q-checkbox v-model="model.endEvent"></q-checkbox>
+                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.endEvent"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>

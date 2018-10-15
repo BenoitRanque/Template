@@ -1,6 +1,6 @@
 <template>
   <div
-    class="q-caption text-center q-pt-xs schedule-label"
+    class="q-caption text-center schedule-label"
     :style="`grid-row: 2; grid-column: ${value.col} / span 24`"
   >
     {{value.time}}
@@ -51,23 +51,23 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.schedule-label
-  border-right solid 0.5px black
-  border-left solid 0.5px black
+// .schedule-label
+//   border-right solid 0.5px black
+//   border-left solid 0.5px black
 
-.separator
-  &:nth-child(1)
-    height 3px
-    border-right solid black 1px
-  &:nth-child(2)
-    height 3px
-    border-right solid black 1px
-    border-left solid black 1px
-  &:nth-child(3)
-    height 3px
-    border-right solid black 1px
-    border-left solid black 1px
-  &:nth-child(4)
-    height 3px
-    border-left solid black 1px
+// .separator
+//   &:nth-child(1)
+//     height 3px
+//     border-right solid black 1px
+//   &:nth-child(2)
+//     height 3px
+//     border-right solid black 1px
+//     border-left solid black 1px
+//   &:nth-child(3)
+//     height 3px
+//     border-right solid black 1px
+//     border-left solid black 1px
+//   &:nth-child(4)
+//     height 3px
+//     border-left solid black 1px
 </style>
