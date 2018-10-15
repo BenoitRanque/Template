@@ -9,7 +9,7 @@
         ? 'negative' : $parent.usedTime < $parent.model.baseTime
         ? 'grey-6' : 'positive'"
         square pointing="right" small>
-        {{($parent.usedTime / $parent.model.baseTime) * 100}}%
+        {{Math.round(($parent.usedTime / $parent.model.baseTime) * 100)}}%
       <q-tooltip>Tiempo Utilizado</q-tooltip>
       </q-chip>
     </span>

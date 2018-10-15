@@ -1,5 +1,5 @@
 <template>
-  <q-input v-bind="$attrs" v-model="model" @blur="update" inputmode="numeric"></q-input>
+  <q-input v-bind="$attrs" ref="input" @focus="$refs.input.select()" v-model="model" @input="debounce" @blur="update" inputmode="numeric"></q-input>
 </template>
 
 <script>
@@ -22,6 +22,7 @@ export default {
   },
   data () {
     return {
+      timeout: null,
       model: this.formatTime(this.value)
     }
   },
@@ -47,6 +48,10 @@ export default {
     }
   },
   methods: {
+    debounce () {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(this.update, 1500)
+    },
     update () {
       if (this.valid) {
         this.$emit('input', this.parseTime(this.match))

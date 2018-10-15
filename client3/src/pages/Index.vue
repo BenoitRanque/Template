@@ -1,13 +1,24 @@
 <template>
   <q-page class="">
     <q-btn @click="modal = !modal">modal</q-btn>
-    <schedule v-for="n in 7" :key="n">
-      <div slot="header" class="q-title">Dia {{n}}</div>
+    <schedule v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid">
+      <div slot="header" class="q-title">Dia {{index + 1}}</div>
     </schedule>
+    <pre>{{days}}</pre>
     <q-modal v-model="modal" content-css="min-height: 60vh; min-width: 60vw;">
-      <schedule v-for="n in 7" :key="n">
-        <div slot="header" class="q-title">Dia {{n}}</div>
-      </schedule>
+      <q-modal-layout content-class="q-pa-md">
+        <q-toolbar slot="header" glossy class="col">
+          <q-toolbar-title>
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
+        </q-toolbar>
+        <schedule v-for="n in 7" :key="n">
+          <div slot="header" class="q-title">Dia {{n}}: fecha 12/34/5678</div>
+        </schedule>
+        <q-toolbar slot="footer" glossy class="justify-center">
+
+        </q-toolbar>
+      </q-modal-layout>
     </q-modal>
     <div class="q-pa-xl" :style="style">
       <div class="q-title">
@@ -31,7 +42,21 @@ export default {
   data () {
     return {
       category: null,
-      modal: false
+      modal: false,
+      days: [
+        {
+          schedule: {
+            name: '',
+            baseTime: 8 * 60,
+            standard: true,
+            restline: [],
+            offline1: null,
+            offline2: null,
+            timeline: []
+          },
+          valid: false
+        }
+      ]
     }
   },
   computed: {

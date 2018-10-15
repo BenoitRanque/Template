@@ -27,6 +27,17 @@ import RestlineElement from './RestlineElement.vue'
 
 import { mapGetters } from 'vuex'
 
+function defaultValue () {
+  return {
+    name: '',
+    baseTime: 8 * 60,
+    standard: true,
+    restline: [],
+    offline1: null,
+    offline2: null,
+    timeline: []
+  }
+}
 export default {
   name: 'Schedule',
   components: {
@@ -38,22 +49,36 @@ export default {
     RestlineGap,
     RestlineElement
   },
+  props: {
+    value: {
+      type: Object,
+      default: defaultValue
+    },
+    valid: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       headerRow: 1,
       labelRow: 2,
       offlineRow: 3,
       timelineRow: 4,
-      restlineRow: 5,
-      model: {
-        name: 'Schedule Name',
-        baseTime: 8 * 60,
-        standard: true,
-        restline: [],
-        offline1: null,
-        offline2: null,
-        timeline: []
-      }
+      restlineRow: 5
+      // model: {
+      //   name: '',
+      //   baseTime: 8 * 60,
+      //   standard: true,
+      //   restline: [],
+      //   offline1: null,
+      //   offline2: null,
+      //   timeline: []
+      // }
     }
   },
   provide () {
@@ -62,6 +87,14 @@ export default {
     }
   },
   computed: {
+    model: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        this.$emit('input', value)
+      }
+    },
     ...mapGetters('schedule', [
       'categoryCanRest',
       'categoryCanEvent',
@@ -253,9 +286,15 @@ export default {
         ((this.model.offline1 === null ? 0 : this.model.baseTime / 2) +
         (this.model.offline2 === null ? 0 : this.model.baseTime / 2))
     },
-    valid () {
-      if (this.usedStandardTime !== this.availableStandardTime) return false
+    isValid () {
+      if (this.usedTime !== this.model.baseTime) return false
       return true
+    }
+  },
+  watch: {
+    isValid (isValid) {
+      console.log('valid:', isValid)
+      this.$emit('update:valid', isValid)
     }
   },
   methods: {
@@ -276,6 +315,11 @@ export default {
       this.model.restline = this.model.restline
         .concat([element])
         .sort((a, b) => a.startTime - b.startTime)
+    }
+  },
+  created () {
+    if (this.value === null) {
+      this.$emit('input', defaultValue())
     }
   }
 }

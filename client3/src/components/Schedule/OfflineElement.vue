@@ -30,7 +30,7 @@
       </q-modal-layout>
     </q-modal>
   </div>
-  <div v-else :style="style" class="round-borders offline-element text-weight-bold row items-center justify-center no-wrap">
+  <div v-else :style="style" class="round-borders offline-element q-caption text-weight-bold row items-center justify-center no-wrap">
     {{categoryDescription(value.category)}}
     <q-tooltip>{{tooltip}}</q-tooltip>
     <q-popover self="top middle" anchor="bottom middle">

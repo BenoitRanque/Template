@@ -6,7 +6,7 @@
     <div v-if="value.startEvent" class="col-auto">
       <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
     </div>
-    <div class="col"></div>
+    <div class="col q-caption text-weight-bold text-center overflow-hidden q-px-xs">{{categoryDescription(value.category)}}</div>
     <div v-if="value.endEvent" class="col-auto">
       <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
     </div>
