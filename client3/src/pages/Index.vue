@@ -1,14 +1,14 @@
 <template>
   <q-page class="">
-    <div class="q-title">day </div>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
-    <schedule class=""/>
+    <q-btn @click="modal = !modal">modal</q-btn>
+    <schedule v-for="n in 7" :key="n">
+      <div slot="header" class="q-title">Dia {{n}}</div>
+    </schedule>
+    <q-modal v-model="modal" content-css="min-height: 60vh; min-width: 60vw;">
+      <schedule v-for="n in 7" :key="n">
+        <div slot="header" class="q-title">Dia {{n}}</div>
+      </schedule>
+    </q-modal>
     <div class="q-pa-xl" :style="style">
       <div class="q-title">
         Testing text
@@ -30,7 +30,8 @@ export default {
   components: { Schedule },
   data () {
     return {
-      category: null
+      category: null,
+      modal: false
     }
   },
   computed: {

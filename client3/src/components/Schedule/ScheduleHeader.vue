@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
     <div class="col">
-      <q-input hide-underline v-model="$parent.model.name"></q-input>
+      <slot name="header"></slot>
     </div>
     <span class="col-auto">
       <q-chip
@@ -36,14 +36,21 @@
             </q-list-header>
             <q-item>
               <q-item-main>
-                <q-field label-width="8" label="tiempo base">
-                  <time-input :readonly="!canEdit" align="right" label="hello" hide-underline v-model="$parent.model.baseTime"></time-input>
+                <q-field label-width="6" label="Nombre descriptivo">
+                  <q-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.name"></q-input>
                 </q-field>
               </q-item-main>
             </q-item>
             <q-item>
               <q-item-main>
-                <q-field label-width="8" label="horario standar" class="text-right">
+                <q-field label-width="6" label="tiempo base">
+                  <time-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.baseTime"></time-input>
+                </q-field>
+              </q-item-main>
+            </q-item>
+            <q-item>
+              <q-item-main>
+                <q-field label-width="6" label="horario standar" class="text-right">
                   <q-checkbox :readonly="!canEdit" v-model="$parent.model.standard"></q-checkbox>
                 </q-field>
               </q-item-main>

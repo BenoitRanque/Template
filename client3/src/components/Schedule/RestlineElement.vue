@@ -21,7 +21,7 @@
     <q-popover self="top middle" anchor="bottom middle">
       <q-list>
         <q-list-header>
-          Detalles del Elemento
+          {{categoryDescription(value.category)}}
         </q-list-header>
         <q-item>
           <q-item-main>
@@ -58,9 +58,10 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-list-header>
+        <!-- <q-list-header>
           Quitar Elemento
-        </q-list-header>
+        </q-list-header> -->
+        <q-item-separator></q-item-separator>
         <q-item>
           <q-item-main class="text-center">
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>

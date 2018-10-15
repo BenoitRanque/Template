@@ -1,6 +1,8 @@
 <template>
   <div v-if="value === null" class="offline-gap round-borders">
-    <q-btn class="fit bg-indigo-2" icon="add" color="indigo" outline dense @click="modal = true"></q-btn>
+    <q-btn class="fit bg-indigo-2" icon="add" color="indigo" outline dense @click="modal = true">
+      <q-tooltip>Aggregar elemento libre</q-tooltip>
+    </q-btn>
     <q-modal v-model="modal">
       <q-modal-layout>
         <!-- <q-toolbar slot="header" class="q-py-none q-pr-none">
@@ -42,18 +44,19 @@
           </q-item-main>
         </q-item> -->
         <q-list-header>
-          Detalles del Elemento
+          {{categoryDescription(value.category)}}
         </q-list-header>
         <q-item>
           <q-item-main>
             <q-field label-width="6" label="">
-
+              config goes here
             </q-field>
           </q-item-main>
         </q-item>
-        <q-list-header>
+        <!-- <q-list-header>
           Quitar Elemento
-        </q-list-header>
+        </q-list-header> -->
+        <q-item-separator></q-item-separator>
         <q-item>
           <q-item-main class="text-center">
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>
@@ -105,12 +108,13 @@ export default {
       }
     },
     tooltip () {
-      return ``
+      return this.categoryDescription(this.value.category)
     }
   },
   methods: {
     reset () {
       // reset model to default values here
+      this.model.category = 'SCH_DAY_OFF'
     },
     add () {
       this.$emit('input', {...this.model})

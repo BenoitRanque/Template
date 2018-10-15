@@ -1,6 +1,8 @@
 <template>
   <div class="" :style="gridStyle">
-    <schedule-header :style="{ gridRow: headerRow, gridColumn: `1 / ${gridColumns + 1}`}"></schedule-header>
+    <schedule-header :style="{ gridRow: headerRow, gridColumn: `1 / ${gridColumns + 1}`}">
+      <slot name="header" slot="header"></slot>
+    </schedule-header>
     <schedule-label v-for="(label, index) in labels" :key="`label_${index}`" :value="label"></schedule-label>
     <!-- <div class="bg-teal-2" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
     <div class="bg-amber-2" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
