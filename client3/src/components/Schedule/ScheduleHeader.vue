@@ -1,25 +1,25 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
     <div class="col">
-      <q-input hide-underline v-model="$schedule.model.name"></q-input>
+      <q-input hide-underline v-model="$parent.model.name"></q-input>
     </div>
     <span class="col-auto">
       <q-chip
-        :color="$schedule.usedTime > $schedule.model.baseTime
-        ? 'negative' : $schedule.usedTime < $schedule.model.baseTime
+        :color="$parent.usedTime > $parent.model.baseTime
+        ? 'negative' : $parent.usedTime < $parent.model.baseTime
         ? 'grey-6' : 'positive'"
         square pointing="right" small>
-        {{($schedule.usedTime / $schedule.model.baseTime) * 100}}%
+        {{($parent.usedTime / $parent.model.baseTime) * 100}}%
       <q-tooltip>Tiempo Utilizado</q-tooltip>
       </q-chip>
     </span>
     <span class="q-caption text-bold q-px-xs" :class="{
-      'text-positive': $schedule.usedTime === $schedule.model.baseTime,
-      'text-negative': $schedule.usedTime > $schedule.model.baseTime
+      'text-positive': $parent.usedTime === $parent.model.baseTime,
+      'text-negative': $parent.usedTime > $parent.model.baseTime
     }">
-      {{$schedule.formatTime($schedule.usedTime)}}
+      {{$parent.formatTime($parent.usedTime)}}
       /
-      {{$schedule.formatTime($schedule.model.baseTime)}}
+      {{$parent.formatTime($parent.model.baseTime)}}
     </span>
     <div class="col-auto">
       <q-btn flat dense color="primary" icon="more_vert">
@@ -37,14 +37,14 @@
             <q-item>
               <q-item-main>
                 <q-field label-width="8" label="tiempo base">
-                  <time-input :readonly="!canEdit" align="right" label="hello" hide-underline v-model="$schedule.model.baseTime"></time-input>
+                  <time-input :readonly="!canEdit" align="right" label="hello" hide-underline v-model="$parent.model.baseTime"></time-input>
                 </q-field>
               </q-item-main>
             </q-item>
             <q-item>
               <q-item-main>
                 <q-field label-width="8" label="horario standar" class="text-right">
-                  <q-checkbox :readonly="!canEdit" v-model="$schedule.model.standard"></q-checkbox>
+                  <q-checkbox :readonly="!canEdit" v-model="$parent.model.standard"></q-checkbox>
                 </q-field>
               </q-item-main>
             </q-item>
@@ -59,7 +59,7 @@
 import TimeInput from 'components/TimeInput'
 export default {
   name: 'ScheduleHeader',
-  inject: ['$schedule'],
+
   components: { TimeInput },
   data () {
     return {

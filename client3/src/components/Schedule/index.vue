@@ -1,16 +1,16 @@
 <template>
   <div class="" :style="gridStyle">
-    <schedule-header :style="{ gridRow: 1, gridColumn: `1 / ${gridColumns + 1}`}"></schedule-header>
+    <schedule-header :style="{ gridRow: headerRow, gridColumn: `1 / ${gridColumns + 1}`}"></schedule-header>
     <schedule-label v-for="(label, index) in labels" :key="`label_${index}`" :value="label"></schedule-label>
-    <div class="bg-teal-3" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
-    <div class="bg-amber-3" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
-    <div class="bg-indigo-3" :style="{ gridRow: 5, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <!-- <div class="bg-teal-2" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <div class="bg-amber-2" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
+    <div class="bg-indigo-2" :style="{ gridRow: 5, gridColumn: `1 / ${gridColumns + 1}`}"></div> -->
     <timeline-gap v-for="(gap, index) in timelineGaps" :key="`timeline_gap_${index}`" :value="gap" @add="addTimelineElement"></timeline-gap>
     <timeline-element v-for="(element, index) in model.timeline" :key="`timeline_element_${index}`" :value="element" @remove="model.timeline.splice(index, 1)"></timeline-element>
     <restline-gap v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
     <restline-element v-for="(element, index) in model.restline" :key="`restline_element_${index}`" :value="element" @remove="model.restline.splice(index, 1)"></restline-element>
-    <offline-element v-model="model.offline1" :style="{ gridRow: 5, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }"></offline-element>
-    <offline-element v-model="model.offline2" :style="{ gridRow: 5, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }"></offline-element>
+    <offline-element v-model="model.offline1" :style="{ gridRow: offlineRow, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }"></offline-element>
+    <offline-element v-model="model.offline2" :style="{ gridRow: offlineRow, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }"></offline-element>
   </div>
 </template>
 
@@ -38,6 +38,11 @@ export default {
   },
   data () {
     return {
+      headerRow: 1,
+      labelRow: 2,
+      offlineRow: 3,
+      timelineRow: 4,
+      restlineRow: 5,
       model: {
         name: 'Schedule Name',
         baseTime: 8 * 60,
@@ -51,7 +56,7 @@ export default {
   },
   provide () {
     return {
-      $schedule: this
+      $parent: this
     }
   },
   computed: {
@@ -65,7 +70,7 @@ export default {
       return {
         display: 'grid',
         gridTemplateColumns: `repeat(${this.gridColumns}, 1fr)`,
-        gridTemplateRows: 'auto auto repeat(3, 30px)'
+        gridTemplateRows: 'auto auto 30px 30px 30px'
         // gridTemplateAreas: `
         //   "repeat(${this.gridColumns}, header)"
         //   "repeat(${this.gridColumns}, label)"

@@ -1,7 +1,7 @@
 <template>
   <div
     class="q-caption text-center schedule-label"
-    :style="`grid-row: 2; grid-column: ${value.col} / span 24`"
+    :style="`grid-row: ${$parent.labelRow}; grid-column: ${value.col} / span 24`"
   >
     {{value.time}}
 
@@ -25,23 +25,23 @@ export default {
       required: true
     }
   // },
-  // inject: ['$schedule'],
+  //
   // computed: {
   //   gridStyle () {
   //     return {
   //       display: 'grid',
-  //       gridTemplateColumns: `repeat(${this.$schedule.gridColumns}, 1fr)`
+  //       gridTemplateColumns: `repeat(${this.$parent.gridColumns}, 1fr)`
   //     }
   //   },
   //   gridLabels () {
   //     const labels = []
-  //     const innerBound = this.$schedule.innerBound
-  //     const outerBound = this.$schedule.outerBound
+  //     const innerBound = this.$parent.innerBound
+  //     const outerBound = this.$parent.outerBound
 
   //     for (let time = Math.ceil(innerBound / 60) * 60; time + 120 <= outerBound; time += 120) {
   //       labels.push({
   //         col: ((time - innerBound) / 5) + 1,
-  //         time: this.$schedule.formatTime(time + 60)
+  //         time: this.$parent.formatTime(time + 60)
   //       })
   //     }
   //     return labels

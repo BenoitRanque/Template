@@ -1,6 +1,6 @@
 <template>
   <div :style="style" class="restline-gap">
-    <q-btn icon="add" color="amber" outline dense class="fit" @click="modal = true">
+    <q-btn icon="add" color="amber" outline dense class="fit bg-amber-2" @click="modal = true">
       <q-tooltip>Aggregar elemento de descanso</q-tooltip>
     </q-btn>
     <q-modal v-model="modal" @show="reset">
@@ -79,7 +79,7 @@ export default {
       type: Object
     }
   },
-  inject: ['$schedule'],
+
   data () {
     return {
       modal: false,
@@ -98,11 +98,11 @@ export default {
       categoryOptions: 'restlineCategoryOptions'
     }),
     style () {
-      const start = Math.floor(((this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start) - this.$schedule.innerBound) / 5) + 1
-      const end = Math.floor(((this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end) - this.$schedule.innerBound) / 5) + 1
+      const start = Math.floor(((this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start) - this.$parent.innerBound) / 5) + 1
+      const end = Math.floor(((this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end) - this.$parent.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 4
+        gridRow: this.$parent.restlineRow
       }
     },
     valid () {
@@ -122,8 +122,8 @@ export default {
         this.model.startTime = 11 * 60
         this.model.endTime = 14.5 * 60
       } else {
-        this.model.startTime = this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start
-        this.model.endTime = this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end
+        this.model.startTime = this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start
+        this.model.endTime = this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end
       }
     },
     add () {

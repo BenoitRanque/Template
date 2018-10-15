@@ -1,14 +1,14 @@
 <template>
   <q-page class="">
     <div class="q-title">day </div>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
-    <schedule class="q-my-md"/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
+    <schedule class=""/>
     <div class="q-pa-xl" :style="style">
       <div class="q-title">
         Testing text

@@ -1,6 +1,6 @@
 <template>
   <div v-if="value === null" class="offline-gap round-borders">
-    <q-btn class="fit" icon="add" color="indigo" outline dense @click="modal = true"></q-btn>
+    <q-btn class="fit bg-indigo-2" icon="add" color="indigo" outline dense @click="modal = true"></q-btn>
     <q-modal v-model="modal">
       <q-modal-layout>
         <!-- <q-toolbar slot="header" class="q-py-none q-pr-none">

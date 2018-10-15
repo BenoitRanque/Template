@@ -1,6 +1,6 @@
 <template>
   <div :style="style" class="timeline-gap">
-    <q-btn icon="add" color="teal" outline dense class="fit" @click="modal = true">
+    <q-btn icon="add" color="teal" outline dense class="fit bg-teal-2" @click="modal = true">
       <q-tooltip>Aggregar elemento laboral</q-tooltip>
     </q-btn>
     <q-modal v-model="modal" @show="reset">
@@ -72,7 +72,7 @@ export default {
       type: Object
     }
   },
-  inject: ['$schedule'],
+
   data () {
     return {
       modal: false,
@@ -91,11 +91,11 @@ export default {
       categoryCanEvent: 'categoryCanEvent'
     }),
     style () {
-      const start = Math.floor(((this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start) - this.$schedule.innerBound) / 5) + 1
-      const end = Math.floor(((this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end) - this.$schedule.innerBound) / 5) + 1
+      const start = Math.floor(((this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start) - this.$parent.innerBound) / 5) + 1
+      const end = Math.floor(((this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end) - this.$parent.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 3
+        gridRow: this.$parent.timelineRow
       }
     },
     valid () {
@@ -117,9 +117,9 @@ export default {
   methods: {
     reset () {
       this.model.category = 'SCH_TIME_WORK'
-      this.model.startTime = this.value.start < this.$schedule.innerBound ? this.$schedule.innerBound : this.value.start
+      this.model.startTime = this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start
       this.model.startEvent = true
-      this.model.endTime = this.value.end > this.$schedule.outerBound ? this.$schedule.outerBound : this.value.end
+      this.model.endTime = this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end
       this.model.endEvent = true
     },
     add () {

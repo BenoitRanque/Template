@@ -80,7 +80,7 @@ export default {
       type: Object
     }
   },
-  inject: ['$schedule'],
+
   computed: {
     ...mapGetters('schedule', [
       'categoryCanEvent',
@@ -90,11 +90,11 @@ export default {
       'formatTime'
     ]),
     style () {
-      const start = Math.floor((this.value.startTime - this.$schedule.innerBound) / 5) + 1
-      const end = Math.floor((this.value.endTime - this.$schedule.innerBound) / 5) + 1
+      const start = Math.floor((this.value.startTime - this.$parent.innerBound) / 5) + 1
+      const end = Math.floor((this.value.endTime - this.$parent.innerBound) / 5) + 1
       return {
         gridColumn: `${start} / ${end}`,
-        gridRow: 3,
+        gridRow: this.$parent.timelineRow,
         // borderLeft: this.value.startEvent ? 'solid black 1px' : 'solid white 1px',
         // borderRight: this.value.endEvent ? 'solid black 1px' : 'solid white 1px',
         color: this.categoryForegroundColor(this.value.category),
@@ -102,11 +102,11 @@ export default {
       }
     },
     innerBound () {
-      const previousGap = this.$schedule.timelineGaps.find(gap => gap.end === this.value.startTime)
+      const previousGap = this.$parent.timelineGaps.find(gap => gap.end === this.value.startTime)
       return previousGap !== undefined ? previousGap.start : this.value.startTime
     },
     outerBound () {
-      const nextGap = this.$schedule.timelineGaps.find(gap => gap.start === this.value.endTime)
+      const nextGap = this.$parent.timelineGaps.find(gap => gap.start === this.value.endTime)
       return nextGap !== undefined ? nextGap.end : this.value.endTime
     },
     tooltip () {
