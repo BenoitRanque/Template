@@ -1,6 +1,10 @@
 endpoint: ${env:PRISMA_ENDPOINT}
 datamodel: datamodel.graphql
 secret:  ${env:PRISMA_SECRET}
+seed:
+  # import: database/seed.graphql
+  run: node seed/index.js
 hooks:
   post-deploy:
     - graphql get-schema --project database
+    - prisma seed -r

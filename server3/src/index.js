@@ -12,7 +12,7 @@ const server = new GraphQLServer({
       fragmentReplacements,
       endpoint: process.env.PRISMA_ENDPOINT,
       secret: process.env.PRISMA_SECRET,
-      debug: true,
+      debug: true
     })
   })
 })

@@ -24,6 +24,7 @@
             </q-item-main>
           </q-item>
         </q-list>
+        <slot name="trace"></slot>
         <q-toolbar slot="footer" glossy class="justify-center">
           <q-btn rounded glossy color="positive" @click="add" :disable="!validModel">Aggregar</q-btn>
         </q-toolbar>
@@ -56,6 +57,7 @@
         <!-- <q-list-header>
           Quitar Elemento
         </q-list-header> -->
+        <slot name="trace"></slot>
         <q-item-separator></q-item-separator>
         <q-item>
           <q-item-main class="text-center">

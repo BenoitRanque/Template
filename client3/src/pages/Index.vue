@@ -46,7 +46,7 @@ export default {
       days: [
         {
           schedule: {
-            name: '',
+            description: '',
             baseTime: 8 * 60,
             standard: true,
             restline: [],

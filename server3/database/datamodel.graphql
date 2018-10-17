@@ -26,6 +26,7 @@ type User {
   id: UUID! @unique
   username: String! @unique
   password: String!
+  departments: [Employee!]!
 }
 
 type Employee {
@@ -36,15 +37,49 @@ type Employee {
   nameMiddle: String
   namePaternal: String
   nameMaternal: String
-  nameMarried: String
+  documentType: DocumentTypeEnum,
+  documentNumber: String,
+  sex: SexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Int
+  personaConDiscapacidad: Int
+  tutorPersonaConDiscapacidad: Int
+  cajaDeSalud: Int
+  aportaAFP: Int
+  AFP: Int
+  cargo: String
   zkTimePin: Int!
+  department: Department
+  shifts: [Shift!]!
+}
+
+type Department {
+  id: UUID! @unique
+  name: String!
+  subordinates: [Employee!]!
+  supervisors: [User!]!
+}
+
+enum SexEnum {
+  M
+  F
+}
+
+enum DocumentTypeEnum {
+  CI
+  PASSAPORTE
 }
 
 type Shift {
   id: UUID! @unique
+  description: String
   employee: Employee!
+  startDate: DateTime!
+  endDate: DateTime
+  startIndex: Int!
   slots: [ShiftSlot!]!
-  user: User! @relation(name: "ShiftToShiftCreator")
+  owner: User! @relation(name: "ShiftToShiftOwner")
 }
 
 type ShiftSlot {
@@ -75,8 +110,8 @@ type ExceptionAuthorization {
 type Schedule {
   id: UUID! @unique
   description: String
-  basetime: Int!
-  reuseable: Boolean!
+  baseTime: Int!
+  custom: Boolean! @default(value: "true")
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
   offline1: ScheduleOfflineElement @relation(name: "ScheduleToOffline1" onDelete: CASCADE)
@@ -87,18 +122,18 @@ type ScheduleTimelineElement {
   id: UUID! @unique
   category: ScheduleTimelineCategory!
   startTime: Int!
-  startEvent: Boolean!
+  startRequireEvent: Boolean!
   endTime: Int!
-  endEvent: Boolean!
+  endRequireEvent: Boolean!
 }
 
 type ScheduleRestlineElement {
   id: UUID! @unique
   category: ScheduleRestlineCategory!
   startTime: Int!
-  startEvent: Boolean!
+  startRequireEvent: Boolean!
   endTime: Int!
-  endEvent: Boolean!
+  endRequireEvent: Boolean!
   duration: Int!
 }
 

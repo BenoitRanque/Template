@@ -1,7 +1,9 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
     <div class="col">
-      <slot name="header"></slot>
+      <slot name="header">
+        <q-input hide-underline v-model="$parent.model.description"></q-input>
+      </slot>
     </div>
     <span class="col-auto">
       <q-chip
@@ -10,7 +12,7 @@
         ? 'grey-6' : 'positive'"
         square pointing="right" small>
         {{Math.round(($parent.usedTime / $parent.model.baseTime) * 100)}}%
-      <q-tooltip>Tiempo Utilizado</q-tooltip>
+        <q-tooltip>Tiempo Utilizado</q-tooltip>
       </q-chip>
     </span>
     <span class="q-caption text-bold q-px-xs" :class="{
@@ -37,7 +39,7 @@
             <q-item>
               <q-item-main>
                 <q-field label-width="6" label="Nombre descriptivo">
-                  <q-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.name"></q-input>
+                  <q-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.description"></q-input>
                 </q-field>
               </q-item-main>
             </q-item>

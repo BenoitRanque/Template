@@ -30,7 +30,7 @@ const knex = require('knex')({
 module.exports = {
   nameFull: {
     fragment: `fragment EmployeeNames on Employee { nameFirst nameMiddle namePaternal nameMaternal }`,
-    resolve: ({ nameFirst, nameMiddle, namePaternal, nameMaternal }, args, ctx, info) => [nameFirst, nameMiddle, namePaternal, nameMaternal].join(' ').trim()
+    resolve: ({ nameFirst, nameMiddle, namePaternal, nameMaternal }, args, ctx, info) => [nameFirst, nameMiddle, namePaternal, nameMaternal].join(' ').trim().replace(/  /, ' ')
   },
   attendance: {
     fragment: `fragment EmployeeIdzkTimePin on Employee { id zkTimePin }`, // fragment ensures requires parent object properties will be present

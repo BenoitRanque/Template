@@ -18,6 +18,7 @@ const { APP_SECRET, BCRYPT_SALT_ROUNDS, getUserId } = require('../utils')
 
 async function createUser(parent, args, ctx, info) {
   const password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
+  console.log(password)
   const user = await ctx.db.mutation.createUser({
     data: { ...args.data, password },
   }, `{ id }`)

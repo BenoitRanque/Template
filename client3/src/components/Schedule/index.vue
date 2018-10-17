@@ -11,8 +11,12 @@
     <timeline-element v-for="(element, index) in model.timeline" :key="`timeline_element_${index}`" :value="element" @remove="model.timeline.splice(index, 1)"></timeline-element>
     <restline-gap v-if="!readonly" v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
     <restline-element v-for="(element, index) in model.restline" :key="`restline_element_${index}`" :value="element" @remove="model.restline.splice(index, 1)"></restline-element>
-    <offline-element v-model="model.offline1" :style="{ gridRow: offlineRow, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }"></offline-element>
-    <offline-element v-model="model.offline2" :style="{ gridRow: offlineRow, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }"></offline-element>
+    <offline-element v-model="model.offline1" :style="{ gridRow: offlineRow, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }">
+      <slot name="trace1" slot="trace"></slot>
+    </offline-element>
+    <offline-element v-model="model.offline2" :style="{ gridRow: offlineRow, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }">
+      <slot name="trace2" slot="trace"></slot>
+    </offline-element>
   </div>
 </template>
 
@@ -56,10 +60,6 @@ export default {
         },
         timeline: []
       })
-    },
-    trace: {
-      type: Boolean,
-      default: false
     },
     valid: {
       type: Boolean,
