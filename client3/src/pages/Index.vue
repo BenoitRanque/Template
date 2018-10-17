@@ -1,8 +1,8 @@
 <template>
   <q-page class="">
     <q-btn @click="modal = !modal">modal</q-btn>
-    <schedule v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid">
-      <div slot="header" class="q-title">Dia {{index + 1}}</div>
+    <schedule v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid" :readonly="day.readonly">
+      <div slot="header" class="q-title">Dia {{index + 1}}<q-toggle v-model="day.readonly"></q-toggle></div>
     </schedule>
     <pre>{{days}}</pre>
     <q-modal v-model="modal" content-css="min-height: 60vh; min-width: 60vw;">
@@ -54,7 +54,8 @@ export default {
             offline2: null,
             timeline: []
           },
-          valid: false
+          valid: false,
+          readonly: false
         }
       ]
     }

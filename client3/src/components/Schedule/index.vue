@@ -7,9 +7,9 @@
     <!-- <div class="bg-teal-2" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
     <div class="bg-amber-2" :style="{ gridRow: 4, gridColumn: `1 / ${gridColumns + 1}`}"></div>
     <div class="bg-indigo-2" :style="{ gridRow: 5, gridColumn: `1 / ${gridColumns + 1}`}"></div> -->
-    <timeline-gap v-for="(gap, index) in timelineGaps" :key="`timeline_gap_${index}`" :value="gap" @add="addTimelineElement"></timeline-gap>
+    <timeline-gap v-if="!readonly" v-for="(gap, index) in timelineGaps" :key="`timeline_gap_${index}`" :value="gap" @add="addTimelineElement"></timeline-gap>
     <timeline-element v-for="(element, index) in model.timeline" :key="`timeline_element_${index}`" :value="element" @remove="model.timeline.splice(index, 1)"></timeline-element>
-    <restline-gap v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
+    <restline-gap v-if="!readonly" v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
     <restline-element v-for="(element, index) in model.restline" :key="`restline_element_${index}`" :value="element" @remove="model.restline.splice(index, 1)"></restline-element>
     <offline-element v-model="model.offline1" :style="{ gridRow: offlineRow, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }"></offline-element>
     <offline-element v-model="model.offline2" :style="{ gridRow: offlineRow, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }"></offline-element>
@@ -27,17 +27,6 @@ import RestlineElement from './RestlineElement.vue'
 
 import { mapGetters } from 'vuex'
 
-function defaultValue () {
-  return {
-    name: '',
-    baseTime: 8 * 60,
-    standard: true,
-    restline: [],
-    offline1: null,
-    offline2: null,
-    timeline: []
-  }
-}
 export default {
   name: 'Schedule',
   components: {
@@ -52,7 +41,25 @@ export default {
   props: {
     value: {
       type: Object,
-      default: defaultValue
+      default: () => ({
+        name: '',
+        preset: false,
+        baseTime: 8 * 60,
+        standard: true,
+        restline: [],
+        offline1: null,
+        offline2: {
+          category: 'SCH_DAY_OFF',
+          trace: true, // whether this day must be traced. True for eceptions
+          originType: '', // can be either same exception or another
+          origin: ''
+        },
+        timeline: []
+      })
+    },
+    trace: {
+      type: Boolean,
+      default: false
     },
     valid: {
       type: Boolean,
@@ -315,11 +322,6 @@ export default {
       this.model.restline = this.model.restline
         .concat([element])
         .sort((a, b) => a.startTime - b.startTime)
-    }
-  },
-  created () {
-    if (this.value === null) {
-      this.$emit('input', defaultValue())
     }
   }
 }
