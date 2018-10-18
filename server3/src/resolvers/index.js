@@ -5,7 +5,7 @@ const resolvers = {
   Mutation: require('./Mutation'),
   AuthPayload: require('./AuthPayload'),
   Employee: require('./Employee'),
-  AttendanceDate: require('./AttendanceDate'),
+  AttendanceDate: require('./AttendanceReportDate'),
   AttendanceReport: require('./AttendanceReport')
 }
 

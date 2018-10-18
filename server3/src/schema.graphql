@@ -1,6 +1,6 @@
 # import UUID from "./generated/prisma.graphql"
 # import UserCreateInput from "./generated/prisma.graphql"
-# import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput from "./generated/prisma.graphql"
+# import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput EmployeeWhereInput from "./generated/prisma.graphql"
 # import Schedule ScheduleCreateInput from "./generated/prisma.graphql"
 # import Shift ShiftCreateInput from "./generated/prisma.graphql"
 # import Exception ExceptionCreateInput from "./generated/prisma.graphql"
@@ -10,13 +10,15 @@ type Query {
   user(id: UUID!): User
   users: [User!]!
   employee(where: EmployeeWhereUniqueInput!): Employee
-  employees: [Employee!]!
+  employees(where: EmployeeWhereInput): [Employee!]!
   exception(id: UUID!): Exception
   exceptions: [Exception]!
   shift(id: UUID!): Shift
   shifts: [Shift]!
   schedule(id: UUID!): Schedule
   schedules: [Schedule]!
+  attendanceReport(where: EmployeeWhereUniqueInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
+  attendanceReports(where: EmployeeWhereInput from: DateTime! to: DateTime!): [AttendanceReport!]!
 }
 
 type Mutation {
@@ -69,6 +71,13 @@ type Employee {
   department: EmployeeDepartment
   shifts: [Shift!]!
   attendanceReport(from: DateTime! to: DateTime!): [AttendanceReportDate!]!
+}
+
+type AttendanceReport {
+  from: DateTime!
+  to: DateTime!
+  employee: Employee!
+  dates: [AttendanceReportDate!]!
 }
 
 type AttendanceReportDate {
