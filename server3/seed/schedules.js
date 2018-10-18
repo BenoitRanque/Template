@@ -18,16 +18,16 @@ const LUNCH = {
 module.exports = db => Promise.all([
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Libre',
+      description: 'Dia Libre',
       custom: false,
       baseTime: 8 * 60,
       offline1: DAYOFF,
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo 08:30 - 16:30',
+      description: 'Dia Laboral Continuo 08:30 - 16:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -41,10 +41,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo 09:30 - 17:30',
+      description: 'Dia Laboral Continuo 09:30 - 17:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -58,10 +58,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo 10:30 - 18:30',
+      description: 'Dia Laboral Continuo 10:30 - 18:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -75,10 +75,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo 07:00 - 15:00',
+      description: 'Dia Laboral Continuo 07:00 - 15:00',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -92,10 +92,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo Huerta 08:00 - 18:00',
+      description: 'Dia Laboral Continuo Huerta 08:00 - 18:00',
       custom: false,
       baseTime: 10 * 60,
       timeline: {
@@ -109,10 +109,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo Con Hora de Lactancia 09:30 - 16:30',
+      description: 'Dia Laboral Continuo Con Hora de Lactancia 09:30 - 16:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -135,10 +135,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo Con Hora de Lactancia 10:30 - 17:30',
+      description: 'Dia Laboral Continuo Con Hora de Lactancia 10:30 - 17:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -162,10 +162,10 @@ module.exports = db => Promise.all([
       restline: LUNCH,
 
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Discontinuo 08:30 - 12:00 14:00 - 18:30',
+      description: 'Dia Discontinuo 08:30 - 12:00 14:00 - 18:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -189,10 +189,10 @@ module.exports = db => Promise.all([
       restline: [],
 
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Laboral Continuo Bus 11:30 - 18:30',
+      description: 'Dia Laboral Continuo Bus 11:30 - 18:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -206,10 +206,10 @@ module.exports = db => Promise.all([
       },
       restline: LUNCH
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 08:30 - 12:30',
+      description: 'Medio Dia Laboral 08:30 - 12:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -223,10 +223,10 @@ module.exports = db => Promise.all([
       },
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 09:30 - 13:30',
+      description: 'Medio Dia Laboral 09:30 - 13:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -240,10 +240,10 @@ module.exports = db => Promise.all([
       },
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 10:30 - 14:30',
+      description: 'Medio Dia Laboral 10:30 - 14:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -257,10 +257,10 @@ module.exports = db => Promise.all([
       },
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 12:30 - 16:30',
+      description: 'Medio Dia Laboral 12:30 - 16:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -274,10 +274,10 @@ module.exports = db => Promise.all([
       },
       offline1: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 13:30 - 17:30',
+      description: 'Medio Dia Laboral 13:30 - 17:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -291,10 +291,10 @@ module.exports = db => Promise.all([
       },
       offline1: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 14:30 - 18:30',
+      description: 'Medio Dia Laboral 14:30 - 18:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -308,10 +308,10 @@ module.exports = db => Promise.all([
       },
       offline1: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 14:30 - 18:30',
+      description: 'Medio Dia Laboral 14:30 - 18:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -325,10 +325,10 @@ module.exports = db => Promise.all([
       },
       offline1: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 7:00 - 11:00',
+      description: 'Medio Dia Laboral 7:00 - 11:00',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -343,10 +343,10 @@ module.exports = db => Promise.all([
       restline: [],
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral 11:00 - 15:00',
+      description: 'Medio Dia Laboral 11:00 - 15:00',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -360,10 +360,10 @@ module.exports = db => Promise.all([
       },
       offline1: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral Con Hora de Lactancia 10:30 - 13:30',
+      description: 'Medio Dia Laboral Con Hora de Lactancia 10:30 - 13:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -386,10 +386,10 @@ module.exports = db => Promise.all([
       },
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Medio Dia Laboral Bus 07:30 - 11:30',
+      description: 'Medio Dia Laboral Bus 07:30 - 11:30',
       custom: false,
       baseTime: 8 * 60,
       timeline: {
@@ -403,10 +403,10 @@ module.exports = db => Promise.all([
       },
       offline2: DAYOFF
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Vacacion',
+      description: 'Dia Vacacion',
       custom: false,
       baseTime: 8 * 60,
       offline1: {
@@ -420,10 +420,10 @@ module.exports = db => Promise.all([
         }
       }
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      name: 'Dia Feriado',
+      description: 'Dia Feriado',
       custom: false,
       baseTime: 8 * 60,
       offline1: {
@@ -437,5 +437,5 @@ module.exports = db => Promise.all([
         }
       }
     }
-  }, `{ id name }`),
+  }, `{ id description }`),
 ])

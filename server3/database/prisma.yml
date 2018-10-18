@@ -4,7 +4,11 @@ secret:  ${env:PRISMA_SECRET}
 seed:
   # import: database/seed.graphql
   run: node seed/index.js
+generate:
+  - generator: javascript-client
+    output: ../src/generated/prisma-client/
 hooks:
   post-deploy:
     - graphql get-schema --project database
+    - prisma generate
     - prisma seed -r

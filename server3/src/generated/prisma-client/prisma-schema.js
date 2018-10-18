@@ -1,7 +1,5 @@
-# source: http://localhost:4466/wasp/dev
-# timestamp: Wed Oct 17 2018 20:11:04 GMT-0400 (SA Western Standard Time)
-
-type AggregateDepartment {
+module.exports = {
+        typeDefs: /* GraphQL */ `type AggregateDepartment {
   count: Int!
 }
 
@@ -50,7 +48,6 @@ type AggregateUser {
 }
 
 type BatchPayload {
-  """The number of nodes that have been affected by the Batch operation."""
   count: Long!
 }
 
@@ -63,12 +60,8 @@ type Department {
   supervisors(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
 }
 
-"""A connection to a list of items."""
 type DepartmentConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [DepartmentEdge]!
   aggregate: AggregateDepartment!
 }
@@ -89,12 +82,8 @@ input DepartmentCreateWithoutSubordinatesInput {
   supervisors: UserCreateManyInput
 }
 
-"""An edge in a connection."""
 type DepartmentEdge {
-  """The item at the end of the edge."""
   node: Department!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -103,10 +92,10 @@ enum DepartmentOrderByInput {
   id_DESC
   name_ASC
   name_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type DepartmentPreviousValues {
@@ -122,35 +111,14 @@ type DepartmentSubscriptionPayload {
 }
 
 input DepartmentSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [DepartmentSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [DepartmentSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [DepartmentSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: DepartmentWhereInput
+  AND: [DepartmentSubscriptionWhereInput!]
+  OR: [DepartmentSubscriptionWhereInput!]
+  NOT: [DepartmentSubscriptionWhereInput!]
 }
 
 input DepartmentUpdateInput {
@@ -161,11 +129,11 @@ input DepartmentUpdateInput {
 
 input DepartmentUpdateOneWithoutSubordinatesInput {
   create: DepartmentCreateWithoutSubordinatesInput
-  connect: DepartmentWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
   update: DepartmentUpdateWithoutSubordinatesDataInput
   upsert: DepartmentUpsertWithoutSubordinatesInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: DepartmentWhereUniqueInput
 }
 
 input DepartmentUpdateWithoutSubordinatesDataInput {
@@ -179,53 +147,33 @@ input DepartmentUpsertWithoutSubordinatesInput {
 }
 
 input DepartmentWhereInput {
-  """Logical AND on all given filters."""
-  AND: [DepartmentWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [DepartmentWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [DepartmentWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   name: String
-
-  """All values that are not equal to given value."""
   name_not: String
-
-  """All values that are contained in given list."""
   name_in: [String!]
-
-  """All values that are not contained in given list."""
   name_not_in: [String!]
-
-  """All values less than the given value."""
   name_lt: String
-
-  """All values less than or equal the given value."""
   name_lte: String
-
-  """All values greater than the given value."""
   name_gt: String
-
-  """All values greater than or equal the given value."""
   name_gte: String
-
-  """All values containing the given string."""
   name_contains: String
-
-  """All values not containing the given string."""
   name_not_contains: String
-
-  """All values starting with the given string."""
   name_starts_with: String
-
-  """All values not starting with the given string."""
   name_not_starts_with: String
-
-  """All values ending with the given string."""
   name_ends_with: String
-
-  """All values not ending with the given string."""
   name_not_ends_with: String
   subordinates_every: EmployeeWhereInput
   subordinates_some: EmployeeWhereInput
@@ -233,6 +181,9 @@ input DepartmentWhereInput {
   supervisors_every: UserWhereInput
   supervisors_some: UserWhereInput
   supervisors_none: UserWhereInput
+  AND: [DepartmentWhereInput!]
+  OR: [DepartmentWhereInput!]
+  NOT: [DepartmentWhereInput!]
 }
 
 input DepartmentWhereUniqueInput {
@@ -269,12 +220,8 @@ type Employee {
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift!]
 }
 
-"""A connection to a list of items."""
 type EmployeeConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [EmployeeEdge]!
   aggregate: AggregateEmployee!
 }
@@ -363,12 +310,8 @@ input EmployeeCreateWithoutShiftsInput {
   department: DepartmentCreateOneWithoutSubordinatesInput
 }
 
-"""An edge in a connection."""
 type EmployeeEdge {
-  """The item at the end of the edge."""
   node: Employee!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -446,35 +389,14 @@ type EmployeeSubscriptionPayload {
 }
 
 input EmployeeSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [EmployeeSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [EmployeeSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [EmployeeSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: EmployeeWhereInput
+  AND: [EmployeeSubscriptionWhereInput!]
+  OR: [EmployeeSubscriptionWhereInput!]
+  NOT: [EmployeeSubscriptionWhereInput!]
 }
 
 input EmployeeUpdateDataInput {
@@ -523,34 +445,34 @@ input EmployeeUpdateInput {
 
 input EmployeeUpdateManyInput {
   create: [EmployeeCreateInput!]
-  connect: [EmployeeWhereUniqueInput!]
-  disconnect: [EmployeeWhereUniqueInput!]
-  delete: [EmployeeWhereUniqueInput!]
   update: [EmployeeUpdateWithWhereUniqueNestedInput!]
   upsert: [EmployeeUpsertWithWhereUniqueNestedInput!]
+  delete: [EmployeeWhereUniqueInput!]
+  connect: [EmployeeWhereUniqueInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
 }
 
 input EmployeeUpdateManyWithoutDepartmentInput {
   create: [EmployeeCreateWithoutDepartmentInput!]
+  delete: [EmployeeWhereUniqueInput!]
   connect: [EmployeeWhereUniqueInput!]
   disconnect: [EmployeeWhereUniqueInput!]
-  delete: [EmployeeWhereUniqueInput!]
   update: [EmployeeUpdateWithWhereUniqueWithoutDepartmentInput!]
   upsert: [EmployeeUpsertWithWhereUniqueWithoutDepartmentInput!]
 }
 
 input EmployeeUpdateOneRequiredInput {
   create: EmployeeCreateInput
-  connect: EmployeeWhereUniqueInput
   update: EmployeeUpdateDataInput
   upsert: EmployeeUpsertNestedInput
+  connect: EmployeeWhereUniqueInput
 }
 
 input EmployeeUpdateOneRequiredWithoutShiftsInput {
   create: EmployeeCreateWithoutShiftsInput
-  connect: EmployeeWhereUniqueInput
   update: EmployeeUpdateWithoutShiftsDataInput
   upsert: EmployeeUpsertWithoutShiftsInput
+  connect: EmployeeWhereUniqueInput
 }
 
 input EmployeeUpdateWithoutDepartmentDataInput {
@@ -628,538 +550,213 @@ input EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
 }
 
 input EmployeeWhereInput {
-  """Logical AND on all given filters."""
-  AND: [EmployeeWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [EmployeeWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [EmployeeWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   createdAt: DateTime
-
-  """All values that are not equal to given value."""
   createdAt_not: DateTime
-
-  """All values that are contained in given list."""
   createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
   createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
   createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
   createdAt_lte: DateTime
-
-  """All values greater than the given value."""
   createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
   createdAt_gte: DateTime
   updatedAt: DateTime
-
-  """All values that are not equal to given value."""
   updatedAt_not: DateTime
-
-  """All values that are contained in given list."""
   updatedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
   updatedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
   updatedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
   updatedAt_lte: DateTime
-
-  """All values greater than the given value."""
   updatedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
   nameFirst: String
-
-  """All values that are not equal to given value."""
   nameFirst_not: String
-
-  """All values that are contained in given list."""
   nameFirst_in: [String!]
-
-  """All values that are not contained in given list."""
   nameFirst_not_in: [String!]
-
-  """All values less than the given value."""
   nameFirst_lt: String
-
-  """All values less than or equal the given value."""
   nameFirst_lte: String
-
-  """All values greater than the given value."""
   nameFirst_gt: String
-
-  """All values greater than or equal the given value."""
   nameFirst_gte: String
-
-  """All values containing the given string."""
   nameFirst_contains: String
-
-  """All values not containing the given string."""
   nameFirst_not_contains: String
-
-  """All values starting with the given string."""
   nameFirst_starts_with: String
-
-  """All values not starting with the given string."""
   nameFirst_not_starts_with: String
-
-  """All values ending with the given string."""
   nameFirst_ends_with: String
-
-  """All values not ending with the given string."""
   nameFirst_not_ends_with: String
   nameMiddle: String
-
-  """All values that are not equal to given value."""
   nameMiddle_not: String
-
-  """All values that are contained in given list."""
   nameMiddle_in: [String!]
-
-  """All values that are not contained in given list."""
   nameMiddle_not_in: [String!]
-
-  """All values less than the given value."""
   nameMiddle_lt: String
-
-  """All values less than or equal the given value."""
   nameMiddle_lte: String
-
-  """All values greater than the given value."""
   nameMiddle_gt: String
-
-  """All values greater than or equal the given value."""
   nameMiddle_gte: String
-
-  """All values containing the given string."""
   nameMiddle_contains: String
-
-  """All values not containing the given string."""
   nameMiddle_not_contains: String
-
-  """All values starting with the given string."""
   nameMiddle_starts_with: String
-
-  """All values not starting with the given string."""
   nameMiddle_not_starts_with: String
-
-  """All values ending with the given string."""
   nameMiddle_ends_with: String
-
-  """All values not ending with the given string."""
   nameMiddle_not_ends_with: String
   namePaternal: String
-
-  """All values that are not equal to given value."""
   namePaternal_not: String
-
-  """All values that are contained in given list."""
   namePaternal_in: [String!]
-
-  """All values that are not contained in given list."""
   namePaternal_not_in: [String!]
-
-  """All values less than the given value."""
   namePaternal_lt: String
-
-  """All values less than or equal the given value."""
   namePaternal_lte: String
-
-  """All values greater than the given value."""
   namePaternal_gt: String
-
-  """All values greater than or equal the given value."""
   namePaternal_gte: String
-
-  """All values containing the given string."""
   namePaternal_contains: String
-
-  """All values not containing the given string."""
   namePaternal_not_contains: String
-
-  """All values starting with the given string."""
   namePaternal_starts_with: String
-
-  """All values not starting with the given string."""
   namePaternal_not_starts_with: String
-
-  """All values ending with the given string."""
   namePaternal_ends_with: String
-
-  """All values not ending with the given string."""
   namePaternal_not_ends_with: String
   nameMaternal: String
-
-  """All values that are not equal to given value."""
   nameMaternal_not: String
-
-  """All values that are contained in given list."""
   nameMaternal_in: [String!]
-
-  """All values that are not contained in given list."""
   nameMaternal_not_in: [String!]
-
-  """All values less than the given value."""
   nameMaternal_lt: String
-
-  """All values less than or equal the given value."""
   nameMaternal_lte: String
-
-  """All values greater than the given value."""
   nameMaternal_gt: String
-
-  """All values greater than or equal the given value."""
   nameMaternal_gte: String
-
-  """All values containing the given string."""
   nameMaternal_contains: String
-
-  """All values not containing the given string."""
   nameMaternal_not_contains: String
-
-  """All values starting with the given string."""
   nameMaternal_starts_with: String
-
-  """All values not starting with the given string."""
   nameMaternal_not_starts_with: String
-
-  """All values ending with the given string."""
   nameMaternal_ends_with: String
-
-  """All values not ending with the given string."""
   nameMaternal_not_ends_with: String
   documentType: DocumentTypeEnum
-
-  """All values that are not equal to given value."""
   documentType_not: DocumentTypeEnum
-
-  """All values that are contained in given list."""
   documentType_in: [DocumentTypeEnum!]
-
-  """All values that are not contained in given list."""
   documentType_not_in: [DocumentTypeEnum!]
   documentNumber: String
-
-  """All values that are not equal to given value."""
   documentNumber_not: String
-
-  """All values that are contained in given list."""
   documentNumber_in: [String!]
-
-  """All values that are not contained in given list."""
   documentNumber_not_in: [String!]
-
-  """All values less than the given value."""
   documentNumber_lt: String
-
-  """All values less than or equal the given value."""
   documentNumber_lte: String
-
-  """All values greater than the given value."""
   documentNumber_gt: String
-
-  """All values greater than or equal the given value."""
   documentNumber_gte: String
-
-  """All values containing the given string."""
   documentNumber_contains: String
-
-  """All values not containing the given string."""
   documentNumber_not_contains: String
-
-  """All values starting with the given string."""
   documentNumber_starts_with: String
-
-  """All values not starting with the given string."""
   documentNumber_not_starts_with: String
-
-  """All values ending with the given string."""
   documentNumber_ends_with: String
-
-  """All values not ending with the given string."""
   documentNumber_not_ends_with: String
   sex: SexEnum
-
-  """All values that are not equal to given value."""
   sex_not: SexEnum
-
-  """All values that are contained in given list."""
   sex_in: [SexEnum!]
-
-  """All values that are not contained in given list."""
   sex_not_in: [SexEnum!]
   dateOfBirth: DateTime
-
-  """All values that are not equal to given value."""
   dateOfBirth_not: DateTime
-
-  """All values that are contained in given list."""
   dateOfBirth_in: [DateTime!]
-
-  """All values that are not contained in given list."""
   dateOfBirth_not_in: [DateTime!]
-
-  """All values less than the given value."""
   dateOfBirth_lt: DateTime
-
-  """All values less than or equal the given value."""
   dateOfBirth_lte: DateTime
-
-  """All values greater than the given value."""
   dateOfBirth_gt: DateTime
-
-  """All values greater than or equal the given value."""
   dateOfBirth_gte: DateTime
   nationality: String
-
-  """All values that are not equal to given value."""
   nationality_not: String
-
-  """All values that are contained in given list."""
   nationality_in: [String!]
-
-  """All values that are not contained in given list."""
   nationality_not_in: [String!]
-
-  """All values less than the given value."""
   nationality_lt: String
-
-  """All values less than or equal the given value."""
   nationality_lte: String
-
-  """All values greater than the given value."""
   nationality_gt: String
-
-  """All values greater than or equal the given value."""
   nationality_gte: String
-
-  """All values containing the given string."""
   nationality_contains: String
-
-  """All values not containing the given string."""
   nationality_not_contains: String
-
-  """All values starting with the given string."""
   nationality_starts_with: String
-
-  """All values not starting with the given string."""
   nationality_not_starts_with: String
-
-  """All values ending with the given string."""
   nationality_ends_with: String
-
-  """All values not ending with the given string."""
   nationality_not_ends_with: String
   jubilado: Int
-
-  """All values that are not equal to given value."""
   jubilado_not: Int
-
-  """All values that are contained in given list."""
   jubilado_in: [Int!]
-
-  """All values that are not contained in given list."""
   jubilado_not_in: [Int!]
-
-  """All values less than the given value."""
   jubilado_lt: Int
-
-  """All values less than or equal the given value."""
   jubilado_lte: Int
-
-  """All values greater than the given value."""
   jubilado_gt: Int
-
-  """All values greater than or equal the given value."""
   jubilado_gte: Int
   personaConDiscapacidad: Int
-
-  """All values that are not equal to given value."""
   personaConDiscapacidad_not: Int
-
-  """All values that are contained in given list."""
   personaConDiscapacidad_in: [Int!]
-
-  """All values that are not contained in given list."""
   personaConDiscapacidad_not_in: [Int!]
-
-  """All values less than the given value."""
   personaConDiscapacidad_lt: Int
-
-  """All values less than or equal the given value."""
   personaConDiscapacidad_lte: Int
-
-  """All values greater than the given value."""
   personaConDiscapacidad_gt: Int
-
-  """All values greater than or equal the given value."""
   personaConDiscapacidad_gte: Int
   tutorPersonaConDiscapacidad: Int
-
-  """All values that are not equal to given value."""
   tutorPersonaConDiscapacidad_not: Int
-
-  """All values that are contained in given list."""
   tutorPersonaConDiscapacidad_in: [Int!]
-
-  """All values that are not contained in given list."""
   tutorPersonaConDiscapacidad_not_in: [Int!]
-
-  """All values less than the given value."""
   tutorPersonaConDiscapacidad_lt: Int
-
-  """All values less than or equal the given value."""
   tutorPersonaConDiscapacidad_lte: Int
-
-  """All values greater than the given value."""
   tutorPersonaConDiscapacidad_gt: Int
-
-  """All values greater than or equal the given value."""
   tutorPersonaConDiscapacidad_gte: Int
   cajaDeSalud: Int
-
-  """All values that are not equal to given value."""
   cajaDeSalud_not: Int
-
-  """All values that are contained in given list."""
   cajaDeSalud_in: [Int!]
-
-  """All values that are not contained in given list."""
   cajaDeSalud_not_in: [Int!]
-
-  """All values less than the given value."""
   cajaDeSalud_lt: Int
-
-  """All values less than or equal the given value."""
   cajaDeSalud_lte: Int
-
-  """All values greater than the given value."""
   cajaDeSalud_gt: Int
-
-  """All values greater than or equal the given value."""
   cajaDeSalud_gte: Int
   aportaAFP: Int
-
-  """All values that are not equal to given value."""
   aportaAFP_not: Int
-
-  """All values that are contained in given list."""
   aportaAFP_in: [Int!]
-
-  """All values that are not contained in given list."""
   aportaAFP_not_in: [Int!]
-
-  """All values less than the given value."""
   aportaAFP_lt: Int
-
-  """All values less than or equal the given value."""
   aportaAFP_lte: Int
-
-  """All values greater than the given value."""
   aportaAFP_gt: Int
-
-  """All values greater than or equal the given value."""
   aportaAFP_gte: Int
   AFP: Int
-
-  """All values that are not equal to given value."""
   AFP_not: Int
-
-  """All values that are contained in given list."""
   AFP_in: [Int!]
-
-  """All values that are not contained in given list."""
   AFP_not_in: [Int!]
-
-  """All values less than the given value."""
   AFP_lt: Int
-
-  """All values less than or equal the given value."""
   AFP_lte: Int
-
-  """All values greater than the given value."""
   AFP_gt: Int
-
-  """All values greater than or equal the given value."""
   AFP_gte: Int
   cargo: String
-
-  """All values that are not equal to given value."""
   cargo_not: String
-
-  """All values that are contained in given list."""
   cargo_in: [String!]
-
-  """All values that are not contained in given list."""
   cargo_not_in: [String!]
-
-  """All values less than the given value."""
   cargo_lt: String
-
-  """All values less than or equal the given value."""
   cargo_lte: String
-
-  """All values greater than the given value."""
   cargo_gt: String
-
-  """All values greater than or equal the given value."""
   cargo_gte: String
-
-  """All values containing the given string."""
   cargo_contains: String
-
-  """All values not containing the given string."""
   cargo_not_contains: String
-
-  """All values starting with the given string."""
   cargo_starts_with: String
-
-  """All values not starting with the given string."""
   cargo_not_starts_with: String
-
-  """All values ending with the given string."""
   cargo_ends_with: String
-
-  """All values not ending with the given string."""
   cargo_not_ends_with: String
   zkTimePin: Int
-
-  """All values that are not equal to given value."""
   zkTimePin_not: Int
-
-  """All values that are contained in given list."""
   zkTimePin_in: [Int!]
-
-  """All values that are not contained in given list."""
   zkTimePin_not_in: [Int!]
-
-  """All values less than the given value."""
   zkTimePin_lt: Int
-
-  """All values less than or equal the given value."""
   zkTimePin_lte: Int
-
-  """All values greater than the given value."""
   zkTimePin_gt: Int
-
-  """All values greater than or equal the given value."""
   zkTimePin_gte: Int
   department: DepartmentWhereInput
   shifts_every: ShiftWhereInput
   shifts_some: ShiftWhereInput
   shifts_none: ShiftWhereInput
+  AND: [EmployeeWhereInput!]
+  OR: [EmployeeWhereInput!]
+  NOT: [EmployeeWhereInput!]
 }
 
 input EmployeeWhereUniqueInput {
@@ -1179,12 +776,8 @@ type ExceptionAuthorization {
   user: User!
 }
 
-"""A connection to a list of items."""
 type ExceptionAuthorizationConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ExceptionAuthorizationEdge]!
   aggregate: AggregateExceptionAuthorization!
 }
@@ -1194,12 +787,8 @@ input ExceptionAuthorizationCreateInput {
   user: UserCreateOneInput!
 }
 
-"""An edge in a connection."""
 type ExceptionAuthorizationEdge {
-  """The item at the end of the edge."""
   node: ExceptionAuthorization!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -1208,10 +797,10 @@ enum ExceptionAuthorizationOrderByInput {
   id_DESC
   granted_ASC
   granted_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ExceptionAuthorizationPreviousValues {
@@ -1227,35 +816,14 @@ type ExceptionAuthorizationSubscriptionPayload {
 }
 
 input ExceptionAuthorizationSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionAuthorizationSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionAuthorizationSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionAuthorizationSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ExceptionAuthorizationWhereInput
+  AND: [ExceptionAuthorizationSubscriptionWhereInput!]
+  OR: [ExceptionAuthorizationSubscriptionWhereInput!]
+  NOT: [ExceptionAuthorizationSubscriptionWhereInput!]
 }
 
 input ExceptionAuthorizationUpdateInput {
@@ -1264,31 +832,34 @@ input ExceptionAuthorizationUpdateInput {
 }
 
 input ExceptionAuthorizationWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionAuthorizationWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionAuthorizationWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionAuthorizationWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   granted: Boolean
-
-  """All values that are not equal to given value."""
   granted_not: Boolean
   user: UserWhereInput
+  AND: [ExceptionAuthorizationWhereInput!]
+  OR: [ExceptionAuthorizationWhereInput!]
+  NOT: [ExceptionAuthorizationWhereInput!]
 }
 
 input ExceptionAuthorizationWhereUniqueInput {
   id: UUID
 }
 
-"""A connection to a list of items."""
 type ExceptionConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ExceptionEdge]!
   aggregate: AggregateException!
 }
@@ -1299,22 +870,18 @@ input ExceptionCreateInput {
   owner: UserCreateOneInput!
 }
 
-"""An edge in a connection."""
 type ExceptionEdge {
-  """The item at the end of the edge."""
   node: Exception!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
 enum ExceptionOrderByInput {
   id_ASC
   id_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ExceptionPreviousValues {
@@ -1327,19 +894,15 @@ type ExceptionSlot {
   date: DateTime!
 }
 
-"""A connection to a list of items."""
 type ExceptionSlotConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ExceptionSlotEdge]!
   aggregate: AggregateExceptionSlot!
 }
 
 input ExceptionSlotCreateInput {
-  date: DateTime!
   schedule: ScheduleCreateOneInput!
+  date: DateTime!
 }
 
 input ExceptionSlotCreateManyInput {
@@ -1347,12 +910,8 @@ input ExceptionSlotCreateManyInput {
   connect: [ExceptionSlotWhereUniqueInput!]
 }
 
-"""An edge in a connection."""
 type ExceptionSlotEdge {
-  """The item at the end of the edge."""
   node: ExceptionSlot!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -1361,10 +920,10 @@ enum ExceptionSlotOrderByInput {
   id_DESC
   date_ASC
   date_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ExceptionSlotPreviousValues {
@@ -1380,54 +939,33 @@ type ExceptionSlotSubscriptionPayload {
 }
 
 input ExceptionSlotSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionSlotSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionSlotSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionSlotSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ExceptionSlotWhereInput
+  AND: [ExceptionSlotSubscriptionWhereInput!]
+  OR: [ExceptionSlotSubscriptionWhereInput!]
+  NOT: [ExceptionSlotSubscriptionWhereInput!]
 }
 
 input ExceptionSlotUpdateDataInput {
-  date: DateTime
   schedule: ScheduleUpdateOneRequiredInput
+  date: DateTime
 }
 
 input ExceptionSlotUpdateInput {
-  date: DateTime
   schedule: ScheduleUpdateOneRequiredInput
+  date: DateTime
 }
 
 input ExceptionSlotUpdateManyInput {
   create: [ExceptionSlotCreateInput!]
-  connect: [ExceptionSlotWhereUniqueInput!]
-  disconnect: [ExceptionSlotWhereUniqueInput!]
-  delete: [ExceptionSlotWhereUniqueInput!]
   update: [ExceptionSlotUpdateWithWhereUniqueNestedInput!]
   upsert: [ExceptionSlotUpsertWithWhereUniqueNestedInput!]
+  delete: [ExceptionSlotWhereUniqueInput!]
+  connect: [ExceptionSlotWhereUniqueInput!]
+  disconnect: [ExceptionSlotWhereUniqueInput!]
 }
 
 input ExceptionSlotUpdateWithWhereUniqueNestedInput {
@@ -1442,37 +980,32 @@ input ExceptionSlotUpsertWithWhereUniqueNestedInput {
 }
 
 input ExceptionSlotWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionSlotWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionSlotWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionSlotWhereInput!]
-  date: DateTime
-
-  """All values that are not equal to given value."""
-  date_not: DateTime
-
-  """All values that are contained in given list."""
-  date_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  date_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  date_lt: DateTime
-
-  """All values less than or equal the given value."""
-  date_lte: DateTime
-
-  """All values greater than the given value."""
-  date_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  date_gte: DateTime
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   schedule: ScheduleWhereInput
+  date: DateTime
+  date_not: DateTime
+  date_in: [DateTime!]
+  date_not_in: [DateTime!]
+  date_lt: DateTime
+  date_lte: DateTime
+  date_gt: DateTime
+  date_gte: DateTime
+  AND: [ExceptionSlotWhereInput!]
+  OR: [ExceptionSlotWhereInput!]
+  NOT: [ExceptionSlotWhereInput!]
 }
 
 input ExceptionSlotWhereUniqueInput {
@@ -1487,35 +1020,14 @@ type ExceptionSubscriptionPayload {
 }
 
 input ExceptionSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ExceptionWhereInput
+  AND: [ExceptionSubscriptionWhereInput!]
+  OR: [ExceptionSubscriptionWhereInput!]
+  NOT: [ExceptionSubscriptionWhereInput!]
 }
 
 input ExceptionUpdateInput {
@@ -1525,103 +1037,108 @@ input ExceptionUpdateInput {
 }
 
 input ExceptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExceptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExceptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExceptionWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   employee: EmployeeWhereInput
   slots_every: ExceptionSlotWhereInput
   slots_some: ExceptionSlotWhereInput
   slots_none: ExceptionSlotWhereInput
   owner: UserWhereInput
+  AND: [ExceptionWhereInput!]
+  OR: [ExceptionWhereInput!]
+  NOT: [ExceptionWhereInput!]
 }
 
 input ExceptionWhereUniqueInput {
   id: UUID
 }
 
-"""
-The `Long` scalar type represents non-fractional signed whole numeric values.
-Long can represent values between -(2^63) and 2^63 - 1.
-"""
 scalar Long
 
 type Mutation {
   createDepartment(data: DepartmentCreateInput!): Department!
-  createShift(data: ShiftCreateInput!): Shift!
-  createException(data: ExceptionCreateInput!): Exception!
-  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
-  createSchedule(data: ScheduleCreateInput!): Schedule!
-  createScheduleOfflineElement(data: ScheduleOfflineElementCreateInput!): ScheduleOfflineElement!
-  createScheduleTimelineElement(data: ScheduleTimelineElementCreateInput!): ScheduleTimelineElement!
-  createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
-  createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
-  createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
-  createEmployee(data: EmployeeCreateInput!): Employee!
-  createUser(data: UserCreateInput!): User!
   updateDepartment(data: DepartmentUpdateInput!, where: DepartmentWhereUniqueInput!): Department
-  updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
-  updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
-  updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
-  updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
-  updateScheduleOfflineElement(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  updateScheduleTimelineElement(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  updateScheduleRestlineElement(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  deleteDepartment(where: DepartmentWhereUniqueInput!): Department
-  deleteShift(where: ShiftWhereUniqueInput!): Shift
-  deleteException(where: ExceptionWhereUniqueInput!): Exception
-  deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
-  deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
-  deleteScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  deleteScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  deleteScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
-  deleteUser(where: UserWhereUniqueInput!): User
-  upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
-  upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
-  upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
-  upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
-  upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
-  upsertScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!, create: ScheduleOfflineElementCreateInput!, update: ScheduleOfflineElementUpdateInput!): ScheduleOfflineElement!
-  upsertScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!, create: ScheduleTimelineElementCreateInput!, update: ScheduleTimelineElementUpdateInput!): ScheduleTimelineElement!
-  upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
-  upsertScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!, create: ScheduleRestlineElementCreateInput!, update: ScheduleRestlineElementUpdateInput!): ScheduleRestlineElement!
-  upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
-  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
-  updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
-  updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
-  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
-  updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
-  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
-  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
-  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
-  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
-  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
-  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
+  deleteDepartment(where: DepartmentWhereUniqueInput!): Department
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
-  deleteManyShifts(where: ShiftWhereInput): BatchPayload!
-  deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
-  deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
-  deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
-  deleteManyScheduleOfflineElements(where: ScheduleOfflineElementWhereInput): BatchPayload!
-  deleteManyScheduleTimelineElements(where: ScheduleTimelineElementWhereInput): BatchPayload!
-  deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
-  deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
-  deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
+  createEmployee(data: EmployeeCreateInput!): Employee!
+  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
+  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
+  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
+  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
+  createException(data: ExceptionCreateInput!): Exception!
+  updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
+  updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
+  upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
+  deleteException(where: ExceptionWhereUniqueInput!): Exception
+  deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
+  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
+  updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
+  upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
+  deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
+  createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
+  updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
+  upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
+  deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
+  createSchedule(data: ScheduleCreateInput!): Schedule!
+  updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
+  updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
+  upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
+  deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
+  deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
+  createScheduleOfflineElement(data: ScheduleOfflineElementCreateInput!): ScheduleOfflineElement!
+  updateScheduleOfflineElement(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
+  upsertScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!, create: ScheduleOfflineElementCreateInput!, update: ScheduleOfflineElementUpdateInput!): ScheduleOfflineElement!
+  deleteScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  deleteManyScheduleOfflineElements(where: ScheduleOfflineElementWhereInput): BatchPayload!
+  createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
+  updateScheduleRestlineElement(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
+  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
+  upsertScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!, create: ScheduleRestlineElementCreateInput!, update: ScheduleRestlineElementUpdateInput!): ScheduleRestlineElement!
+  deleteScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
+  deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
+  createScheduleTimelineElement(data: ScheduleTimelineElementCreateInput!): ScheduleTimelineElement!
+  updateScheduleTimelineElement(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
+  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
+  upsertScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!, create: ScheduleTimelineElementCreateInput!, update: ScheduleTimelineElementUpdateInput!): ScheduleTimelineElement!
+  deleteScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
+  deleteManyScheduleTimelineElements(where: ScheduleTimelineElementWhereInput): BatchPayload!
+  createShift(data: ShiftCreateInput!): Shift!
+  updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
+  updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
+  upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
+  deleteShift(where: ShiftWhereUniqueInput!): Shift
+  deleteManyShifts(where: ShiftWhereInput): BatchPayload!
+  createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
+  updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
+  upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
+  deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
+  createUser(data: UserCreateInput!): User!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -1631,70 +1148,55 @@ enum MutationType {
   DELETED
 }
 
-"""An object with an ID"""
 interface Node {
-  """The id of the object."""
   id: ID!
 }
 
-"""Information about pagination in a connection."""
 type PageInfo {
-  """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
   hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
   startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
   endCursor: String
 }
 
 type Query {
-  departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
-  shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
-  exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
-  exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
-  schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
-  scheduleOfflineElements(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleOfflineElement]!
-  scheduleTimelineElements(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement]!
-  exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
-  scheduleRestlineElements(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement]!
-  shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
-  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   department(where: DepartmentWhereUniqueInput!): Department
-  shift(where: ShiftWhereUniqueInput!): Shift
-  exception(where: ExceptionWhereUniqueInput!): Exception
-  exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
-  schedule(where: ScheduleWhereUniqueInput!): Schedule
-  scheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  scheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  scheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  employee(where: EmployeeWhereUniqueInput!): Employee
-  user(where: UserWhereUniqueInput!): User
+  departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
   departmentsConnection(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DepartmentConnection!
-  shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
-  exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
-  exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
-  schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
-  scheduleOfflineElementsConnection(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleOfflineElementConnection!
-  scheduleTimelineElementsConnection(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleTimelineElementConnection!
-  exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
-  scheduleRestlineElementsConnection(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleRestlineElementConnection!
-  shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
+  employee(where: EmployeeWhereUniqueInput!): Employee
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
+  exception(where: ExceptionWhereUniqueInput!): Exception
+  exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
+  exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
+  exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
+  exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
+  exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
+  exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
+  exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
+  schedule(where: ScheduleWhereUniqueInput!): Schedule
+  schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
+  schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
+  scheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  scheduleOfflineElements(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleOfflineElement]!
+  scheduleOfflineElementsConnection(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleOfflineElementConnection!
+  scheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
+  scheduleRestlineElements(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement]!
+  scheduleRestlineElementsConnection(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleRestlineElementConnection!
+  scheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
+  scheduleTimelineElements(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement]!
+  scheduleTimelineElementsConnection(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleTimelineElementConnection!
+  shift(where: ShiftWhereUniqueInput!): Shift
+  shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
+  shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
+  shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
+  shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
+  shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
+  user(where: UserWhereUniqueInput!): User
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-
-  """Fetches an object given its ID"""
-  node(
-    """The ID of an object"""
-    id: ID!
-  ): Node
+  node(id: ID!): Node
 }
 
 type Schedule {
@@ -1708,12 +1210,8 @@ type Schedule {
   offline2: ScheduleOfflineElement
 }
 
-"""A connection to a list of items."""
 type ScheduleConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ScheduleEdge]!
   aggregate: AggregateSchedule!
 }
@@ -1733,12 +1231,8 @@ input ScheduleCreateOneInput {
   connect: ScheduleWhereUniqueInput
 }
 
-"""An edge in a connection."""
 type ScheduleEdge {
-  """The item at the end of the edge."""
   node: Schedule!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -1756,12 +1250,8 @@ type ScheduleOfflineElement {
   category: ScheduleOfflineCategory!
 }
 
-"""A connection to a list of items."""
 type ScheduleOfflineElementConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ScheduleOfflineElementEdge]!
   aggregate: AggregateScheduleOfflineElement!
 }
@@ -1775,12 +1265,8 @@ input ScheduleOfflineElementCreateOneInput {
   connect: ScheduleOfflineElementWhereUniqueInput
 }
 
-"""An edge in a connection."""
 type ScheduleOfflineElementEdge {
-  """The item at the end of the edge."""
   node: ScheduleOfflineElement!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -1789,10 +1275,10 @@ enum ScheduleOfflineElementOrderByInput {
   id_DESC
   category_ASC
   category_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ScheduleOfflineElementPreviousValues {
@@ -1808,35 +1294,14 @@ type ScheduleOfflineElementSubscriptionPayload {
 }
 
 input ScheduleOfflineElementSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleOfflineElementSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleOfflineElementSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleOfflineElementSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ScheduleOfflineElementWhereInput
+  AND: [ScheduleOfflineElementSubscriptionWhereInput!]
+  OR: [ScheduleOfflineElementSubscriptionWhereInput!]
+  NOT: [ScheduleOfflineElementSubscriptionWhereInput!]
 }
 
 input ScheduleOfflineElementUpdateDataInput {
@@ -1849,11 +1314,11 @@ input ScheduleOfflineElementUpdateInput {
 
 input ScheduleOfflineElementUpdateOneInput {
   create: ScheduleOfflineElementCreateInput
-  connect: ScheduleOfflineElementWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
   update: ScheduleOfflineElementUpdateDataInput
   upsert: ScheduleOfflineElementUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ScheduleOfflineElementWhereUniqueInput
 }
 
 input ScheduleOfflineElementUpsertNestedInput {
@@ -1862,24 +1327,27 @@ input ScheduleOfflineElementUpsertNestedInput {
 }
 
 input ScheduleOfflineElementWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleOfflineElementWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleOfflineElementWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleOfflineElementWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   category: ScheduleOfflineCategory
-
-  """All values that are not equal to given value."""
   category_not: ScheduleOfflineCategory
-
-  """All values that are contained in given list."""
   category_in: [ScheduleOfflineCategory!]
-
-  """All values that are not contained in given list."""
   category_not_in: [ScheduleOfflineCategory!]
+  AND: [ScheduleOfflineElementWhereInput!]
+  OR: [ScheduleOfflineElementWhereInput!]
+  NOT: [ScheduleOfflineElementWhereInput!]
 }
 
 input ScheduleOfflineElementWhereUniqueInput {
@@ -1895,10 +1363,10 @@ enum ScheduleOrderByInput {
   baseTime_DESC
   custom_ASC
   custom_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type SchedulePreviousValues {
@@ -1922,12 +1390,8 @@ type ScheduleRestlineElement {
   duration: Int!
 }
 
-"""A connection to a list of items."""
 type ScheduleRestlineElementConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ScheduleRestlineElementEdge]!
   aggregate: AggregateScheduleRestlineElement!
 }
@@ -1946,12 +1410,8 @@ input ScheduleRestlineElementCreateManyInput {
   connect: [ScheduleRestlineElementWhereUniqueInput!]
 }
 
-"""An edge in a connection."""
 type ScheduleRestlineElementEdge {
-  """The item at the end of the edge."""
   node: ScheduleRestlineElement!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -1970,10 +1430,10 @@ enum ScheduleRestlineElementOrderByInput {
   endRequireEvent_DESC
   duration_ASC
   duration_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ScheduleRestlineElementPreviousValues {
@@ -1994,35 +1454,14 @@ type ScheduleRestlineElementSubscriptionPayload {
 }
 
 input ScheduleRestlineElementSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleRestlineElementSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleRestlineElementSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleRestlineElementSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ScheduleRestlineElementWhereInput
+  AND: [ScheduleRestlineElementSubscriptionWhereInput!]
+  OR: [ScheduleRestlineElementSubscriptionWhereInput!]
+  NOT: [ScheduleRestlineElementSubscriptionWhereInput!]
 }
 
 input ScheduleRestlineElementUpdateDataInput {
@@ -2045,11 +1484,11 @@ input ScheduleRestlineElementUpdateInput {
 
 input ScheduleRestlineElementUpdateManyInput {
   create: [ScheduleRestlineElementCreateInput!]
-  connect: [ScheduleRestlineElementWhereUniqueInput!]
-  disconnect: [ScheduleRestlineElementWhereUniqueInput!]
-  delete: [ScheduleRestlineElementWhereUniqueInput!]
   update: [ScheduleRestlineElementUpdateWithWhereUniqueNestedInput!]
   upsert: [ScheduleRestlineElementUpsertWithWhereUniqueNestedInput!]
+  delete: [ScheduleRestlineElementWhereUniqueInput!]
+  connect: [ScheduleRestlineElementWhereUniqueInput!]
+  disconnect: [ScheduleRestlineElementWhereUniqueInput!]
 }
 
 input ScheduleRestlineElementUpdateWithWhereUniqueNestedInput {
@@ -2064,98 +1503,55 @@ input ScheduleRestlineElementUpsertWithWhereUniqueNestedInput {
 }
 
 input ScheduleRestlineElementWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleRestlineElementWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleRestlineElementWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleRestlineElementWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   category: ScheduleRestlineCategory
-
-  """All values that are not equal to given value."""
   category_not: ScheduleRestlineCategory
-
-  """All values that are contained in given list."""
   category_in: [ScheduleRestlineCategory!]
-
-  """All values that are not contained in given list."""
   category_not_in: [ScheduleRestlineCategory!]
   startTime: Int
-
-  """All values that are not equal to given value."""
   startTime_not: Int
-
-  """All values that are contained in given list."""
   startTime_in: [Int!]
-
-  """All values that are not contained in given list."""
   startTime_not_in: [Int!]
-
-  """All values less than the given value."""
   startTime_lt: Int
-
-  """All values less than or equal the given value."""
   startTime_lte: Int
-
-  """All values greater than the given value."""
   startTime_gt: Int
-
-  """All values greater than or equal the given value."""
   startTime_gte: Int
   startRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
   startRequireEvent_not: Boolean
   endTime: Int
-
-  """All values that are not equal to given value."""
   endTime_not: Int
-
-  """All values that are contained in given list."""
   endTime_in: [Int!]
-
-  """All values that are not contained in given list."""
   endTime_not_in: [Int!]
-
-  """All values less than the given value."""
   endTime_lt: Int
-
-  """All values less than or equal the given value."""
   endTime_lte: Int
-
-  """All values greater than the given value."""
   endTime_gt: Int
-
-  """All values greater than or equal the given value."""
   endTime_gte: Int
   endRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
   endRequireEvent_not: Boolean
   duration: Int
-
-  """All values that are not equal to given value."""
   duration_not: Int
-
-  """All values that are contained in given list."""
   duration_in: [Int!]
-
-  """All values that are not contained in given list."""
   duration_not_in: [Int!]
-
-  """All values less than the given value."""
   duration_lt: Int
-
-  """All values less than or equal the given value."""
   duration_lte: Int
-
-  """All values greater than the given value."""
   duration_gt: Int
-
-  """All values greater than or equal the given value."""
   duration_gte: Int
+  AND: [ScheduleRestlineElementWhereInput!]
+  OR: [ScheduleRestlineElementWhereInput!]
+  NOT: [ScheduleRestlineElementWhereInput!]
 }
 
 input ScheduleRestlineElementWhereUniqueInput {
@@ -2170,35 +1566,14 @@ type ScheduleSubscriptionPayload {
 }
 
 input ScheduleSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ScheduleWhereInput
+  AND: [ScheduleSubscriptionWhereInput!]
+  OR: [ScheduleSubscriptionWhereInput!]
+  NOT: [ScheduleSubscriptionWhereInput!]
 }
 
 enum ScheduleTimelineCategory {
@@ -2217,12 +1592,8 @@ type ScheduleTimelineElement {
   endRequireEvent: Boolean!
 }
 
-"""A connection to a list of items."""
 type ScheduleTimelineElementConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ScheduleTimelineElementEdge]!
   aggregate: AggregateScheduleTimelineElement!
 }
@@ -2240,12 +1611,8 @@ input ScheduleTimelineElementCreateManyInput {
   connect: [ScheduleTimelineElementWhereUniqueInput!]
 }
 
-"""An edge in a connection."""
 type ScheduleTimelineElementEdge {
-  """The item at the end of the edge."""
   node: ScheduleTimelineElement!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -2262,10 +1629,10 @@ enum ScheduleTimelineElementOrderByInput {
   endTime_DESC
   endRequireEvent_ASC
   endRequireEvent_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ScheduleTimelineElementPreviousValues {
@@ -2285,35 +1652,14 @@ type ScheduleTimelineElementSubscriptionPayload {
 }
 
 input ScheduleTimelineElementSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleTimelineElementSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleTimelineElementSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleTimelineElementSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ScheduleTimelineElementWhereInput
+  AND: [ScheduleTimelineElementSubscriptionWhereInput!]
+  OR: [ScheduleTimelineElementSubscriptionWhereInput!]
+  NOT: [ScheduleTimelineElementSubscriptionWhereInput!]
 }
 
 input ScheduleTimelineElementUpdateDataInput {
@@ -2334,11 +1680,11 @@ input ScheduleTimelineElementUpdateInput {
 
 input ScheduleTimelineElementUpdateManyInput {
   create: [ScheduleTimelineElementCreateInput!]
-  connect: [ScheduleTimelineElementWhereUniqueInput!]
-  disconnect: [ScheduleTimelineElementWhereUniqueInput!]
-  delete: [ScheduleTimelineElementWhereUniqueInput!]
   update: [ScheduleTimelineElementUpdateWithWhereUniqueNestedInput!]
   upsert: [ScheduleTimelineElementUpsertWithWhereUniqueNestedInput!]
+  delete: [ScheduleTimelineElementWhereUniqueInput!]
+  connect: [ScheduleTimelineElementWhereUniqueInput!]
+  disconnect: [ScheduleTimelineElementWhereUniqueInput!]
 }
 
 input ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
@@ -2353,76 +1699,47 @@ input ScheduleTimelineElementUpsertWithWhereUniqueNestedInput {
 }
 
 input ScheduleTimelineElementWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleTimelineElementWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleTimelineElementWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleTimelineElementWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   category: ScheduleTimelineCategory
-
-  """All values that are not equal to given value."""
   category_not: ScheduleTimelineCategory
-
-  """All values that are contained in given list."""
   category_in: [ScheduleTimelineCategory!]
-
-  """All values that are not contained in given list."""
   category_not_in: [ScheduleTimelineCategory!]
   startTime: Int
-
-  """All values that are not equal to given value."""
   startTime_not: Int
-
-  """All values that are contained in given list."""
   startTime_in: [Int!]
-
-  """All values that are not contained in given list."""
   startTime_not_in: [Int!]
-
-  """All values less than the given value."""
   startTime_lt: Int
-
-  """All values less than or equal the given value."""
   startTime_lte: Int
-
-  """All values greater than the given value."""
   startTime_gt: Int
-
-  """All values greater than or equal the given value."""
   startTime_gte: Int
   startRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
   startRequireEvent_not: Boolean
   endTime: Int
-
-  """All values that are not equal to given value."""
   endTime_not: Int
-
-  """All values that are contained in given list."""
   endTime_in: [Int!]
-
-  """All values that are not contained in given list."""
   endTime_not_in: [Int!]
-
-  """All values less than the given value."""
   endTime_lt: Int
-
-  """All values less than or equal the given value."""
   endTime_lte: Int
-
-  """All values greater than the given value."""
   endTime_gt: Int
-
-  """All values greater than or equal the given value."""
   endTime_gte: Int
   endRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
   endRequireEvent_not: Boolean
+  AND: [ScheduleTimelineElementWhereInput!]
+  OR: [ScheduleTimelineElementWhereInput!]
+  NOT: [ScheduleTimelineElementWhereInput!]
 }
 
 input ScheduleTimelineElementWhereUniqueInput {
@@ -2451,9 +1768,9 @@ input ScheduleUpdateInput {
 
 input ScheduleUpdateOneRequiredInput {
   create: ScheduleCreateInput
-  connect: ScheduleWhereUniqueInput
   update: ScheduleUpdateDataInput
   upsert: ScheduleUpsertNestedInput
+  connect: ScheduleWhereUniqueInput
 }
 
 input ScheduleUpsertNestedInput {
@@ -2462,79 +1779,43 @@ input ScheduleUpsertNestedInput {
 }
 
 input ScheduleWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ScheduleWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ScheduleWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ScheduleWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   description: String
-
-  """All values that are not equal to given value."""
   description_not: String
-
-  """All values that are contained in given list."""
   description_in: [String!]
-
-  """All values that are not contained in given list."""
   description_not_in: [String!]
-
-  """All values less than the given value."""
   description_lt: String
-
-  """All values less than or equal the given value."""
   description_lte: String
-
-  """All values greater than the given value."""
   description_gt: String
-
-  """All values greater than or equal the given value."""
   description_gte: String
-
-  """All values containing the given string."""
   description_contains: String
-
-  """All values not containing the given string."""
   description_not_contains: String
-
-  """All values starting with the given string."""
   description_starts_with: String
-
-  """All values not starting with the given string."""
   description_not_starts_with: String
-
-  """All values ending with the given string."""
   description_ends_with: String
-
-  """All values not ending with the given string."""
   description_not_ends_with: String
   baseTime: Int
-
-  """All values that are not equal to given value."""
   baseTime_not: Int
-
-  """All values that are contained in given list."""
   baseTime_in: [Int!]
-
-  """All values that are not contained in given list."""
   baseTime_not_in: [Int!]
-
-  """All values less than the given value."""
   baseTime_lt: Int
-
-  """All values less than or equal the given value."""
   baseTime_lte: Int
-
-  """All values greater than the given value."""
   baseTime_gt: Int
-
-  """All values greater than or equal the given value."""
   baseTime_gte: Int
   custom: Boolean
-
-  """All values that are not equal to given value."""
   custom_not: Boolean
   timeline_every: ScheduleTimelineElementWhereInput
   timeline_some: ScheduleTimelineElementWhereInput
@@ -2544,6 +1825,9 @@ input ScheduleWhereInput {
   restline_none: ScheduleRestlineElementWhereInput
   offline1: ScheduleOfflineElementWhereInput
   offline2: ScheduleOfflineElementWhereInput
+  AND: [ScheduleWhereInput!]
+  OR: [ScheduleWhereInput!]
+  NOT: [ScheduleWhereInput!]
 }
 
 input ScheduleWhereUniqueInput {
@@ -2566,22 +1850,18 @@ type Shift {
   owner: User!
 }
 
-"""A connection to a list of items."""
 type ShiftConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ShiftEdge]!
   aggregate: AggregateShift!
 }
 
 input ShiftCreateInput {
   description: String
+  employee: EmployeeCreateOneWithoutShiftsInput!
   startDate: DateTime!
   endDate: DateTime
   startIndex: Int!
-  employee: EmployeeCreateOneWithoutShiftsInput!
   slots: ShiftSlotCreateManyInput
   owner: UserCreateOneInput!
 }
@@ -2600,12 +1880,8 @@ input ShiftCreateWithoutEmployeeInput {
   owner: UserCreateOneInput!
 }
 
-"""An edge in a connection."""
 type ShiftEdge {
-  """The item at the end of the edge."""
   node: Shift!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -2620,10 +1896,10 @@ enum ShiftOrderByInput {
   endDate_DESC
   startIndex_ASC
   startIndex_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ShiftPreviousValues {
@@ -2640,19 +1916,15 @@ type ShiftSlot {
   index: Int!
 }
 
-"""A connection to a list of items."""
 type ShiftSlotConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [ShiftSlotEdge]!
   aggregate: AggregateShiftSlot!
 }
 
 input ShiftSlotCreateInput {
-  index: Int!
   schedule: ScheduleCreateOneInput!
+  index: Int!
 }
 
 input ShiftSlotCreateManyInput {
@@ -2660,12 +1932,8 @@ input ShiftSlotCreateManyInput {
   connect: [ShiftSlotWhereUniqueInput!]
 }
 
-"""An edge in a connection."""
 type ShiftSlotEdge {
-  """The item at the end of the edge."""
   node: ShiftSlot!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -2674,10 +1942,10 @@ enum ShiftSlotOrderByInput {
   id_DESC
   index_ASC
   index_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ShiftSlotPreviousValues {
@@ -2693,54 +1961,33 @@ type ShiftSlotSubscriptionPayload {
 }
 
 input ShiftSlotSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ShiftSlotSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ShiftSlotSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ShiftSlotSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ShiftSlotWhereInput
+  AND: [ShiftSlotSubscriptionWhereInput!]
+  OR: [ShiftSlotSubscriptionWhereInput!]
+  NOT: [ShiftSlotSubscriptionWhereInput!]
 }
 
 input ShiftSlotUpdateDataInput {
-  index: Int
   schedule: ScheduleUpdateOneRequiredInput
+  index: Int
 }
 
 input ShiftSlotUpdateInput {
-  index: Int
   schedule: ScheduleUpdateOneRequiredInput
+  index: Int
 }
 
 input ShiftSlotUpdateManyInput {
   create: [ShiftSlotCreateInput!]
-  connect: [ShiftSlotWhereUniqueInput!]
-  disconnect: [ShiftSlotWhereUniqueInput!]
-  delete: [ShiftSlotWhereUniqueInput!]
   update: [ShiftSlotUpdateWithWhereUniqueNestedInput!]
   upsert: [ShiftSlotUpsertWithWhereUniqueNestedInput!]
+  delete: [ShiftSlotWhereUniqueInput!]
+  connect: [ShiftSlotWhereUniqueInput!]
+  disconnect: [ShiftSlotWhereUniqueInput!]
 }
 
 input ShiftSlotUpdateWithWhereUniqueNestedInput {
@@ -2755,37 +2002,32 @@ input ShiftSlotUpsertWithWhereUniqueNestedInput {
 }
 
 input ShiftSlotWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ShiftSlotWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ShiftSlotWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ShiftSlotWhereInput!]
-  index: Int
-
-  """All values that are not equal to given value."""
-  index_not: Int
-
-  """All values that are contained in given list."""
-  index_in: [Int!]
-
-  """All values that are not contained in given list."""
-  index_not_in: [Int!]
-
-  """All values less than the given value."""
-  index_lt: Int
-
-  """All values less than or equal the given value."""
-  index_lte: Int
-
-  """All values greater than the given value."""
-  index_gt: Int
-
-  """All values greater than or equal the given value."""
-  index_gte: Int
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   schedule: ScheduleWhereInput
+  index: Int
+  index_not: Int
+  index_in: [Int!]
+  index_not_in: [Int!]
+  index_lt: Int
+  index_lte: Int
+  index_gt: Int
+  index_gte: Int
+  AND: [ShiftSlotWhereInput!]
+  OR: [ShiftSlotWhereInput!]
+  NOT: [ShiftSlotWhereInput!]
 }
 
 input ShiftSlotWhereUniqueInput {
@@ -2800,52 +2042,31 @@ type ShiftSubscriptionPayload {
 }
 
 input ShiftSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ShiftSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ShiftSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ShiftSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: ShiftWhereInput
+  AND: [ShiftSubscriptionWhereInput!]
+  OR: [ShiftSubscriptionWhereInput!]
+  NOT: [ShiftSubscriptionWhereInput!]
 }
 
 input ShiftUpdateInput {
   description: String
+  employee: EmployeeUpdateOneRequiredWithoutShiftsInput
   startDate: DateTime
   endDate: DateTime
   startIndex: Int
-  employee: EmployeeUpdateOneRequiredWithoutShiftsInput
   slots: ShiftSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
 }
 
 input ShiftUpdateManyWithoutEmployeeInput {
   create: [ShiftCreateWithoutEmployeeInput!]
+  delete: [ShiftWhereUniqueInput!]
   connect: [ShiftWhereUniqueInput!]
   disconnect: [ShiftWhereUniqueInput!]
-  delete: [ShiftWhereUniqueInput!]
   update: [ShiftUpdateWithWhereUniqueWithoutEmployeeInput!]
   upsert: [ShiftUpsertWithWhereUniqueWithoutEmployeeInput!]
 }
@@ -2871,125 +2092,66 @@ input ShiftUpsertWithWhereUniqueWithoutEmployeeInput {
 }
 
 input ShiftWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ShiftWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ShiftWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ShiftWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   description: String
-
-  """All values that are not equal to given value."""
   description_not: String
-
-  """All values that are contained in given list."""
   description_in: [String!]
-
-  """All values that are not contained in given list."""
   description_not_in: [String!]
-
-  """All values less than the given value."""
   description_lt: String
-
-  """All values less than or equal the given value."""
   description_lte: String
-
-  """All values greater than the given value."""
   description_gt: String
-
-  """All values greater than or equal the given value."""
   description_gte: String
-
-  """All values containing the given string."""
   description_contains: String
-
-  """All values not containing the given string."""
   description_not_contains: String
-
-  """All values starting with the given string."""
   description_starts_with: String
-
-  """All values not starting with the given string."""
   description_not_starts_with: String
-
-  """All values ending with the given string."""
   description_ends_with: String
-
-  """All values not ending with the given string."""
   description_not_ends_with: String
+  employee: EmployeeWhereInput
   startDate: DateTime
-
-  """All values that are not equal to given value."""
   startDate_not: DateTime
-
-  """All values that are contained in given list."""
   startDate_in: [DateTime!]
-
-  """All values that are not contained in given list."""
   startDate_not_in: [DateTime!]
-
-  """All values less than the given value."""
   startDate_lt: DateTime
-
-  """All values less than or equal the given value."""
   startDate_lte: DateTime
-
-  """All values greater than the given value."""
   startDate_gt: DateTime
-
-  """All values greater than or equal the given value."""
   startDate_gte: DateTime
   endDate: DateTime
-
-  """All values that are not equal to given value."""
   endDate_not: DateTime
-
-  """All values that are contained in given list."""
   endDate_in: [DateTime!]
-
-  """All values that are not contained in given list."""
   endDate_not_in: [DateTime!]
-
-  """All values less than the given value."""
   endDate_lt: DateTime
-
-  """All values less than or equal the given value."""
   endDate_lte: DateTime
-
-  """All values greater than the given value."""
   endDate_gt: DateTime
-
-  """All values greater than or equal the given value."""
   endDate_gte: DateTime
   startIndex: Int
-
-  """All values that are not equal to given value."""
   startIndex_not: Int
-
-  """All values that are contained in given list."""
   startIndex_in: [Int!]
-
-  """All values that are not contained in given list."""
   startIndex_not_in: [Int!]
-
-  """All values less than the given value."""
   startIndex_lt: Int
-
-  """All values less than or equal the given value."""
   startIndex_lte: Int
-
-  """All values greater than the given value."""
   startIndex_gt: Int
-
-  """All values greater than or equal the given value."""
   startIndex_gte: Int
-  employee: EmployeeWhereInput
   slots_every: ShiftSlotWhereInput
   slots_some: ShiftSlotWhereInput
   slots_none: ShiftSlotWhereInput
   owner: UserWhereInput
+  AND: [ShiftWhereInput!]
+  OR: [ShiftWhereInput!]
+  NOT: [ShiftWhereInput!]
 }
 
 input ShiftWhereUniqueInput {
@@ -2998,16 +2160,16 @@ input ShiftWhereUniqueInput {
 
 type Subscription {
   department(where: DepartmentSubscriptionWhereInput): DepartmentSubscriptionPayload
-  shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
+  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
+  exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   schedule(where: ScheduleSubscriptionWhereInput): ScheduleSubscriptionPayload
   scheduleOfflineElement(where: ScheduleOfflineElementSubscriptionWhereInput): ScheduleOfflineElementSubscriptionPayload
-  scheduleTimelineElement(where: ScheduleTimelineElementSubscriptionWhereInput): ScheduleTimelineElementSubscriptionPayload
-  exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   scheduleRestlineElement(where: ScheduleRestlineElementSubscriptionWhereInput): ScheduleRestlineElementSubscriptionPayload
+  scheduleTimelineElement(where: ScheduleTimelineElementSubscriptionWhereInput): ScheduleTimelineElementSubscriptionPayload
+  shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
   shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
-  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -3018,12 +2180,8 @@ type User {
   departments(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee!]
 }
 
-"""A connection to a list of items."""
 type UserConnection {
-  """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """A list of edges."""
   edges: [UserEdge]!
   aggregate: AggregateUser!
 }
@@ -3044,12 +2202,8 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
-"""An edge in a connection."""
 type UserEdge {
-  """The item at the end of the edge."""
   node: User!
-
-  """A cursor for use in pagination."""
   cursor: String!
 }
 
@@ -3060,10 +2214,10 @@ enum UserOrderByInput {
   username_DESC
   password_ASC
   password_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type UserPreviousValues {
@@ -3080,35 +2234,14 @@ type UserSubscriptionPayload {
 }
 
 input UserSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [UserSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [UserSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [UserSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
   mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
   updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
   updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
   updatedFields_contains_some: [String!]
   node: UserWhereInput
+  AND: [UserSubscriptionWhereInput!]
+  OR: [UserSubscriptionWhereInput!]
+  NOT: [UserSubscriptionWhereInput!]
 }
 
 input UserUpdateDataInput {
@@ -3125,18 +2258,18 @@ input UserUpdateInput {
 
 input UserUpdateManyInput {
   create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  delete: [UserWhereUniqueInput!]
   update: [UserUpdateWithWhereUniqueNestedInput!]
   upsert: [UserUpsertWithWhereUniqueNestedInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
 }
 
 input UserUpdateOneRequiredInput {
   create: UserCreateInput
-  connect: UserWhereUniqueInput
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateWithWhereUniqueNestedInput {
@@ -3156,97 +2289,54 @@ input UserUpsertWithWhereUniqueNestedInput {
 }
 
 input UserWhereInput {
-  """Logical AND on all given filters."""
-  AND: [UserWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [UserWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [UserWhereInput!]
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
   username: String
-
-  """All values that are not equal to given value."""
   username_not: String
-
-  """All values that are contained in given list."""
   username_in: [String!]
-
-  """All values that are not contained in given list."""
   username_not_in: [String!]
-
-  """All values less than the given value."""
   username_lt: String
-
-  """All values less than or equal the given value."""
   username_lte: String
-
-  """All values greater than the given value."""
   username_gt: String
-
-  """All values greater than or equal the given value."""
   username_gte: String
-
-  """All values containing the given string."""
   username_contains: String
-
-  """All values not containing the given string."""
   username_not_contains: String
-
-  """All values starting with the given string."""
   username_starts_with: String
-
-  """All values not starting with the given string."""
   username_not_starts_with: String
-
-  """All values ending with the given string."""
   username_ends_with: String
-
-  """All values not ending with the given string."""
   username_not_ends_with: String
   password: String
-
-  """All values that are not equal to given value."""
   password_not: String
-
-  """All values that are contained in given list."""
   password_in: [String!]
-
-  """All values that are not contained in given list."""
   password_not_in: [String!]
-
-  """All values less than the given value."""
   password_lt: String
-
-  """All values less than or equal the given value."""
   password_lte: String
-
-  """All values greater than the given value."""
   password_gt: String
-
-  """All values greater than or equal the given value."""
   password_gte: String
-
-  """All values containing the given string."""
   password_contains: String
-
-  """All values not containing the given string."""
   password_not_contains: String
-
-  """All values starting with the given string."""
   password_starts_with: String
-
-  """All values not starting with the given string."""
   password_not_starts_with: String
-
-  """All values ending with the given string."""
   password_ends_with: String
-
-  """All values not ending with the given string."""
   password_not_ends_with: String
   departments_every: EmployeeWhereInput
   departments_some: EmployeeWhereInput
   departments_none: EmployeeWhereInput
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: [UserWhereInput!]
 }
 
 input UserWhereUniqueInput {
@@ -3254,5 +2344,7 @@ input UserWhereUniqueInput {
   username: String
 }
 
-"""A type 4 UUID according to IETF RFC 4122."""
 scalar UUID
+`
+      }
+    

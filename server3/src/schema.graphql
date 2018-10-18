@@ -9,7 +9,7 @@ type Query {
   sessionUser: User
   user(id: UUID!): User
   users: [User!]!
-  employee(id: UUID!): Employee
+  employee(where: EmployeeWhereUniqueInput!): Employee
   employees: [Employee!]!
   exception(id: UUID!): Exception
   exceptions: [Exception]!
