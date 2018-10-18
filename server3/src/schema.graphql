@@ -68,9 +68,23 @@ type Employee {
   zkTimePin: Int!
   department: EmployeeDepartment
   shifts: [Shift!]!
+  attendanceReport(from: DateTime! to: DateTime!): [AttendanceReportDate!]!
+}
+
+type AttendanceReportDate {
+  date: DateTime!
+  innerBound: DateTime!
+  outerBound: DateTime!
+  events: [DateTime!]!
+  schedule: Schedule!
+  shift: Shift
+  exception: Exception
+}
+
+type EmployeeReport {
   attendance(from: DateTime! to: DateTime!): [AttendanceDate!]!
-  scheduleForDate(date: DateTime!): Schedule!
-  scheduleForDateRange(from: DateTime! to: DateTime!): [Schedule!]!
+  exceptions(status: ExceptionStatusEnum! from: DateTime! to: DateTime!): [Exception!]!
+  schedule(date: !):
 }
 
 type EmployeeDepartment {
@@ -80,15 +94,17 @@ type EmployeeDepartment {
 
 type AttendanceDate {
   date: DateTime!
-  events: [DateTime!]!
+  innerBound: DateTime!
+  outerBound: DateTime!
   schedule: Schedule!
-  shift: Shift!
-  exception: Exception!
+  shift: Shift
+  exception: Exception
   report: AttendanceReport!
 }
 
 type AttendanceReport {
-  sumary: AttendanceSummary!
+  events: [DateTime!]!
+  summary: AttendanceSummary!
   timeline: [AttendanceReportTimelineElement!]!
   restline: [AttendanceReportRestlineElement!]!
   offline1: AttendanceReportOfflineElement!

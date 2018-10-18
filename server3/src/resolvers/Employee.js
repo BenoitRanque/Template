@@ -34,52 +34,135 @@ module.exports = {
     fragment: `fragment EmployeeNames on Employee { nameFirst nameMiddle namePaternal nameMaternal }`,
     resolve: ({ nameFirst, nameMiddle, namePaternal, nameMaternal }, args, ctx, info) => [nameFirst, nameMiddle, namePaternal, nameMaternal].join(' ').trim().replace(/  /, ' ')
   },
+  // scheduleForDate: {
+  //   fragment: `fragment EmployeeID on Employee { id }`,
+  //   resolve: async ({ id }, { date }, ctx, info) => {
+  //     const shifts = await loadEmployeeShiftsForDateRange(ctx.db, id, date, date)
+  //     const exceptions = await loadEmployeeExceptionsForDateRange(ctx.db, id, date, date)
+
+  //     const dates = getDatesWithScheduleShiftException(date, date, shifts, exceptions)
+
+  //     return dates.length ? dates[0] : null
+  //   }
+  // },
+  // scheduleForDateRange: {
+  //   fragment: `fragment EmployeeID on Employee { id }`,
+  //   resolve: async ({ id }, { from, to }, ctx, info) => {
+  //     const shifts = await loadEmployeeShiftsForDateRange(ctx.db, id, from, to)
+  //     const exceptions = await loadEmployeeExceptionsForDateRange(ctx.db, id, from, to)
+
+  //     const dates = getDatesWithScheduleShiftException(from, to, shifts, exceptions)
+
+  //     return dates
+  //   }
+  // },
   attendance: {
-    fragment: `fragment EmployeeIdzkTimePin on Employee { id zkTimePin }`, // fragment ensures requires parent object properties will be present
+    fragment: `fragment EmployeeId on Employee { id zkTimePin }`, // fragment ensures requires parent object properties will be present
     resolve: async ({ id, zkTimePin }, { from, to }, ctx, info) => {
-      const shifts = await loadEmployeeShiftsForDateRange(ctx.db, id, from, to)
-      const exceptions = await loadEmployeeExceptionsForDateRange(ctx.db, id, from, to)
-        // TODO
-        // fetch exceptions (can wait)
 
-      // map dates to  array. expand on day back en two forwards, we will use this array to determine outer and inner bounds
-      const dates = eachDay(from, to).map(date => {
-        const {
-          schedule,
-          shift,
-          exception
-        } = getScheduleForDate(date, shifts, exceptions)
-        return {
-          date,
-          schedule,
-          shift,
-          exception
-        }
-      })
+      const dates = await loadDatesWithScheduleShiftExceptionsBounds(ctx.db, id, from, to)
 
-      return await Promise.all(eachDay(from, to).map(async date => {
-
-        // important: needs support for 24 hours + schedules
-        // todo: add dynamic value for "between": expand using outer bounds of schedule
-        const between = [format(date, 'YYYY-MM-DD'), format(addDays(date, 1), 'YYYY-MM-DD')]
-        const events = await knex('att_punches')
-          .innerJoin('hr_employee', 'hr_employee.id', 'att_punches.emp_id')
-          .select(['punch_time']) // posssibly inteeresting fields: 'punch_time', 'terminal_id', 'emp_pin'
-          .where({ 'emp_pin': zkTimePin })
-          .whereBetween('punch_time', between)
-
-        return {
-          date,
-          shift: '',
-          // exception: '',
-          schedule: '',
-          events: events.map(({ punch_time }) => punch_time).sort(compareAsc)
-        }
+      return dates.map(date => ({
+        ...date,
+        zkTimePin
       }))
+
     }
   }
 }
 
+      // const shifts = await loadEmployeeShiftsForDateRange(ctx.db, id, dayBefore, )
+      // const exceptions = await loadEmployeeExceptionsForDateRange(ctx.db, id, dayBefore, to)
+
+      // const dates = getDatesWithScheduleShiftException(from, to, shifts, exceptions)
+
+      // return await Promise.all(dates.map(async (day) => {
+      //   const date = day.date
+
+      //   // important: needs support for 24 hours + schedules
+      //   // todo: add dynamic value for "between": expand using outer bounds of schedule
+      //   const between = [format(date, 'YYYY-MM-DD'), format(addDays(date, 1), 'YYYY-MM-DD')]
+      //   const events = await knex('att_punches')
+      //     .innerJoin('hr_employee', 'hr_employee.id', 'att_punches.emp_id')
+      //     .select(['punch_time']) // posssibly interesting fields: 'punch_time', 'terminal_id', 'emp_pin'
+      //     .where({ 'emp_pin': zkTimePin })
+      //     .whereBetween('punch_time', between)
+
+      //   return {
+      //     ...day,
+      //     events: events.map(({ punch_time }) => punch_time).sort(compareAsc)
+      //   }
+      // }))
+
+function getDateBounds(dates, dateBefore) {
+  const firstBound = getScheduleOuterBound(dateBefore.schedule)
+  return dates
+    .map(date => ({
+      ...date,
+      outerBound: getScheduleOuterBound(date.schedule)
+    })).map((date, index, arr) => ({
+      ...date,
+      innerBound: (index === 0 ? firstBound : arr[index - 1].outerBound) - (24 * 60)
+    }))
+    .map(date => ({
+      ...date,
+      outerBound: addMinutes(date.date, date.outerBound).toISOString(),
+      innerBound: addMinutes(date.date, date.innerBound).toISOString()
+    }))
+}
+
+async function loadDatesWithScheduleShiftExceptionsBounds(db, employeeID, from, to) {
+
+  const shifts = await loadEmployeeShiftsForDateRange(db, employeeID, subDays(from, 1), to)
+  const exceptions = await loadEmployeeExceptionsForDateRange(db, employeeID, subDays(from, 1), to)
+
+  const dates =  eachDay(from, to).map(date => ({ date, employee: { id: employeeID } }))
+
+  const datesWithScheduleShiftException = dates.map(date => ({
+    ...date,
+    ...getScheduleForDate(date.date, shifts, exceptions)
+  }))
+
+  const datesWithScheduleShiftExceptionBounds = getDateBounds(datesWithScheduleShiftException, getScheduleOuterBound(getScheduleForDate(subDays(from, 1), shifts, exceptions)))
+
+  return datesWithScheduleShiftExceptionBounds
+}
+
+// function getBoundsFromSchedules(current, previous, next) {
+//   const currentRefs = geScheduleRefs(current)
+//   const previousRefs = geScheduleRefs(previous)
+//   const nextRefs = geScheduleRefs(next)
+
+
+//   return { innerBound, outerBound }
+// }
+
+// function geScheduleRefs (schedule) {
+//   const MINTHRESHOLD = 6 * 60 // minimum threhsold.
+//   return schedule.timeline.reduce((acc, val) =>{
+//     acc.push(val.startTime + MINTHRESHOLD)
+//     acc.push(val.endTime + MINTHRESHOLD)
+//     return acc
+//   }, [0, 24 * 60])
+//   .sort((a, b) => a - b)
+// }
+
+
+// function getDatesWithScheduleShiftException(from, to, shifts, exceptions) {
+//   return eachDay(from, to).map(date => {
+//     const {
+//       schedule,
+//       shift,
+//       exception
+//     } = getScheduleForDate(date, shifts, exceptions)
+//     return {
+//       date,
+//       schedule,
+//       shift,
+//       exception
+//     }
+//   })
+// }
 
 // async getEmployeeEvents (from, to) {
 //   const knextlite = require('@db/knexlite')
@@ -95,12 +178,12 @@ module.exports = {
 //   return events.map(e => new Date(e.punch_time)).sort(compareAsc)
 // }
 
-async function loadEmployeeShiftsForDateRange(db, employeeID, from, to) {
+async function loadEmployeeExceptionsForDateRange(db, employeeID, from, to) {
   return []
 }
 
 async function loadEmployeeShiftsForDateRange(db, employeeID, from, to) {
-  const employee = await db.request(`
+  const response = await db.request(`
     query ($id: UUID! $from: DateTime! $to: DateTime!){
       employee (where: { id: $id }) {
         shifts (where: {
@@ -110,6 +193,10 @@ async function loadEmployeeShiftsForDateRange(db, employeeID, from, to) {
             endDate_lt: $from
           }
         }) {
+          id
+          startDate
+          endDate
+          startIndex
           slots (orderBy: index_ASC) {
             index
             schedule {
@@ -121,7 +208,7 @@ async function loadEmployeeShiftsForDateRange(db, employeeID, from, to) {
     }
   `, { id: employeeID, from, to })
 
-  return employee.shifts
+  return (response && response.data && response.data.employee && response.data.employee.shifts) ? response.data.employee.shifts : []
 }
 
 function getScheduleForDate(date, shifts, exceptions) {
@@ -140,8 +227,7 @@ function getScheduleForDate(date, shifts, exceptions) {
   const shiftForDate = candidateShiftsForDate[0] ? candidateShiftsForDate[0] : null
 
   const shiftScheduleForDate = (shiftForDate &&  shiftForDate.slots)
-    ? shiftForDate.slots[(differenceInCalendarDays(date, shiftForDate.startDate) +
-      shiftForDate.startIndex) % shiftForDate.slots.length].schedule : null
+    ? shiftForDate.slots[(differenceInCalendarDays(date, shiftForDate.startDate) + shiftForDate.startIndex)% shiftForDate.slots.length].schedule : null
 
   const scheduleForDate = exceptionScheduleForDate ? exceptionScheduleForDate : shiftScheduleForDate
 
@@ -152,6 +238,15 @@ function getScheduleForDate(date, shifts, exceptions) {
   }
 }
 
+function getScheduleOuterBound(schedule) {
+  const MINTHRESHOLD = 6 * 60
 
+  if (!schedule || !schedule.timeline) return 24 * 60
 
+  return Math.max(...schedule.timeline.reduce((acc, val) => {
+    acc.push(val.startTime + MINTHRESHOLD)
+    acc.push(val.endTime + MINTHRESHOLD)
+    return acc
+  }, [0, 24 * 60]))
+}
 

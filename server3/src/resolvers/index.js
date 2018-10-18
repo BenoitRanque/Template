@@ -4,7 +4,9 @@ const resolvers = {
   Query: require('./Query'),
   Mutation: require('./Mutation'),
   AuthPayload: require('./AuthPayload'),
-  Employee: require('./Employee')
+  Employee: require('./Employee'),
+  AttendanceDate: require('./AttendanceDate'),
+  AttendanceReport: require('./AttendanceReport')
 }
 
 module.exports = {

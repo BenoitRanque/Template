@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Wed Oct 17 2018 20:11:04 GMT-0400 (SA Western Standard Time)
+# timestamp: Thu Oct 18 2018 14:08:58 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateDepartment {
   count: Int!

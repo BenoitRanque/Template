@@ -174,7 +174,7 @@ export default {
       for (let time = Math.ceil(innerBound / 60) * 60; time + 120 <= outerBound; time += 120) {
         labels.push({
           col: ((time - innerBound) / 5) + 1,
-          time: this.formatTime(time + 60)
+          time: this.formatTime(time >= (23 * 60) ? time - (23 * 60) : time + 60)
         })
       }
       return labels
