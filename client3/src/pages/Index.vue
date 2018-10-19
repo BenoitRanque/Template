@@ -1,5 +1,6 @@
 <template>
   <q-page class="">
+    <q-btn @click="$router.push('/Employees')">Employees</q-btn>
     <q-btn @click="modal = !modal">modal</q-btn>
     <schedule v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid" :readonly="day.readonly">
       <div slot="header" class="q-title">Dia {{index + 1}}<q-toggle v-model="day.readonly"></q-toggle></div>

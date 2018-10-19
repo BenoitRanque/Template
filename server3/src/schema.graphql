@@ -1,31 +1,28 @@
 # import UUID from "./generated/prisma.graphql"
 # import UserCreateInput from "./generated/prisma.graphql"
-# import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput EmployeeWhereInput from "./generated/prisma.graphql"
+# import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput EmployeeWhereInput EmployeeOrderByInput EmployeeConnection from "./generated/prisma.graphql"
 # import Schedule ScheduleCreateInput from "./generated/prisma.graphql"
 # import Shift ShiftCreateInput from "./generated/prisma.graphql"
 # import Exception ExceptionCreateInput from "./generated/prisma.graphql"
+# import Department DepartmentWhereInput DepartmentWhereUniqueInput DepartmentCreateInput DepartmentUpdateInput from "./generated/prisma.graphql"
 
 type Query {
   sessionUser: User
   user(id: UUID!): User
   users: [User!]!
   employee(where: EmployeeWhereUniqueInput!): Employee
-  employees(where: EmployeeWhereInput): [Employee!]!
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
+  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   exception(id: UUID!): Exception
   exceptions: [Exception]!
   shift(id: UUID!): Shift
   shifts: [Shift]!
   schedule(id: UUID!): Schedule
   schedules: [Schedule]!
+  department(where: DepartmentWhereUniqueInput!): Department!
+  departments(where: DepartmentWhereInput): [Department]!
   attendanceReport(employee: AttendanceReportEmployeeUniqueInput! from: DateTime! to: DateTime!): AttendanceReport!
   attendanceReports(employees: AttendanceReportEmployeeInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
-}
-
-input AttendanceReportEmployeeInput {
-  where: EmployeeWhereInput
-}
-input AttendanceReportEmployeeUniqueInput {
-  where: EmployeeWhereUniqueInput!
 }
 
 type Mutation {
@@ -36,7 +33,46 @@ type Mutation {
   createException(data: ExceptionCreateInput!): Exception
   createSchedule(data: ScheduleCreateInput!): Schedule!
   authenticate(username: String!, password: String!): AuthPayload
+  createDepartment(data: DepartmentCreateInput!): Department!
+  updateDepartment(data: DepartmentUpdateInput! where: DepartmentWhereUniqueInput!): Department!
+  deleteDepartment(where: DepartmentWhereUniqueInput!): Department!
 }
+
+input AttendanceReportEmployeeInput {
+  where: EmployeeWhereInput
+  where: EmployeeWhereInput
+  orderBy: EmployeeOrderByInput
+  skip: Int
+  after: String
+  before: String
+  first: Int
+  last: Int
+}
+
+input AttendanceReportEmployeeUniqueInput {
+  where: EmployeeWhereUniqueInput!
+}
+
+type AttendanceReport {
+  info: String
+  from: DateTime!
+  to: DateTime!
+  employee: Employee
+  shifts: [Shift!]!
+  exceptions: [Exception!]!
+  dates: [AttendanceReportDate!]!
+}
+
+type AttendanceReportDate {
+  date: DateTime!
+  innerBound: DateTime!
+  outerBound: DateTime!
+  events: [DateTime!]!
+  schedule: Schedule!
+  shift: Shift
+  exception: Exception
+}
+
 # type Subscription {
 #   newLink: LinkSubscriptionPayload
 #   newVote: VoteSubscriptionPayload
@@ -77,26 +113,6 @@ type Employee {
   zkTimePin: Int!
   department: EmployeeDepartment
   shifts: [Shift!]!
-}
-
-type AttendanceReport {
-  info: String
-  from: DateTime!
-  to: DateTime!
-  employee: Employee
-  shifts: [Shift!]!
-  exceptions: [Exception!]!
-  dates: [AttendanceReportDate!]!
-}
-
-type AttendanceReportDate {
-  date: DateTime!
-  innerBound: DateTime!
-  outerBound: DateTime!
-  events: [DateTime!]!
-  schedule: Schedule!
-  shift: Shift
-  exception: Exception
 }
 
 type EmployeeReport {

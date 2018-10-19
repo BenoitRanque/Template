@@ -52,6 +52,7 @@ type Employee {
   zkTimePin: Int!
   department: Department
   shifts: [Shift!]!
+  exceptions: [Exception!]!
 }
 
 type Department {
@@ -92,6 +93,7 @@ type Exception {
   id: UUID! @unique
   employee: Employee!
   slots: [ExceptionSlot!]!
+  autorization: ExceptionAuthorization
   owner: User! @relation(name: "ExceptionToExceptionOwner")
 }
 
@@ -104,6 +106,7 @@ type ExceptionSlot {
 type ExceptionAuthorization {
   id: UUID! @unique
   granted: Boolean!
+  exception: Exception!
   user: User! @relation(name: "ExceptionToExceptionGrantor")
 }
 

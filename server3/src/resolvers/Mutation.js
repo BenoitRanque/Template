@@ -18,7 +18,6 @@ const { APP_SECRET, BCRYPT_SALT_ROUNDS, getUserId } = require('../utils')
 
 async function createUser(parent, args, ctx, info) {
   const password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
-  console.log(password)
   const user = await ctx.db.mutation.createUser({
     data: { ...args.data, password },
   }, `{ id }`)
@@ -54,7 +53,10 @@ module.exports = {
   updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),
   createShift: (parent, args, ctx, info) => ctx.db.mutation.createShift(args, info),
-  createException: (parent, args, ctx, info) => ctx.db.mutation.createException(args, info)
+  createException: (parent, args, ctx, info) => ctx.db.mutation.createException(args, info),
+  createDepartment: (parent, args, ctx, info) => ctx.db.mutation.createDepartment(args, info),
+  updateDepartment: (parent, args, ctx, info) => ctx.db.mutation.updateDepartment(args, info),
+  deleteDepartment: (parent, args, ctx, info) => ctx.db.mutation.deleteDepartment(args, info)
 }
 
 // vote

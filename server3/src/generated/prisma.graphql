@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Thu Oct 18 2018 14:08:58 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Fri Oct 19 2018 11:36:44 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateDepartment {
   count: Int!
@@ -267,6 +267,7 @@ type Employee {
   zkTimePin: Int!
   department: Department
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift!]
+  exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception!]
 }
 
 """A connection to a list of items."""
@@ -299,6 +300,7 @@ input EmployeeCreateInput {
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
   shifts: ShiftCreateManyWithoutEmployeeInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateManyInput {
@@ -311,8 +313,8 @@ input EmployeeCreateManyWithoutDepartmentInput {
   connect: [EmployeeWhereUniqueInput!]
 }
 
-input EmployeeCreateOneInput {
-  create: EmployeeCreateInput
+input EmployeeCreateOneWithoutExceptionsInput {
+  create: EmployeeCreateWithoutExceptionsInput
   connect: EmployeeWhereUniqueInput
 }
 
@@ -340,6 +342,29 @@ input EmployeeCreateWithoutDepartmentInput {
   cargo: String
   zkTimePin: Int!
   shifts: ShiftCreateManyWithoutEmployeeInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
+}
+
+input EmployeeCreateWithoutExceptionsInput {
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: DocumentTypeEnum
+  documentNumber: String
+  sex: SexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Int
+  personaConDiscapacidad: Int
+  tutorPersonaConDiscapacidad: Int
+  cajaDeSalud: Int
+  aportaAFP: Int
+  AFP: Int
+  cargo: String
+  zkTimePin: Int!
+  department: DepartmentCreateOneWithoutSubordinatesInput
+  shifts: ShiftCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateWithoutShiftsInput {
@@ -361,6 +386,7 @@ input EmployeeCreateWithoutShiftsInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
 }
 
 """An edge in a connection."""
@@ -497,6 +523,7 @@ input EmployeeUpdateDataInput {
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateInput {
@@ -519,6 +546,7 @@ input EmployeeUpdateInput {
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateManyInput {
@@ -539,11 +567,11 @@ input EmployeeUpdateManyWithoutDepartmentInput {
   upsert: [EmployeeUpsertWithWhereUniqueWithoutDepartmentInput!]
 }
 
-input EmployeeUpdateOneRequiredInput {
-  create: EmployeeCreateInput
+input EmployeeUpdateOneRequiredWithoutExceptionsInput {
+  create: EmployeeCreateWithoutExceptionsInput
   connect: EmployeeWhereUniqueInput
-  update: EmployeeUpdateDataInput
-  upsert: EmployeeUpsertNestedInput
+  update: EmployeeUpdateWithoutExceptionsDataInput
+  upsert: EmployeeUpsertWithoutExceptionsInput
 }
 
 input EmployeeUpdateOneRequiredWithoutShiftsInput {
@@ -572,6 +600,29 @@ input EmployeeUpdateWithoutDepartmentDataInput {
   cargo: String
   zkTimePin: Int
   shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
+}
+
+input EmployeeUpdateWithoutExceptionsDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: DocumentTypeEnum
+  documentNumber: String
+  sex: SexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Int
+  personaConDiscapacidad: Int
+  tutorPersonaConDiscapacidad: Int
+  cajaDeSalud: Int
+  aportaAFP: Int
+  AFP: Int
+  cargo: String
+  zkTimePin: Int
+  department: DepartmentUpdateOneWithoutSubordinatesInput
+  shifts: ShiftUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithoutShiftsDataInput {
@@ -593,6 +644,7 @@ input EmployeeUpdateWithoutShiftsDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithWhereUniqueNestedInput {
@@ -605,9 +657,9 @@ input EmployeeUpdateWithWhereUniqueWithoutDepartmentInput {
   data: EmployeeUpdateWithoutDepartmentDataInput!
 }
 
-input EmployeeUpsertNestedInput {
-  update: EmployeeUpdateDataInput!
-  create: EmployeeCreateInput!
+input EmployeeUpsertWithoutExceptionsInput {
+  update: EmployeeUpdateWithoutExceptionsDataInput!
+  create: EmployeeCreateWithoutExceptionsInput!
 }
 
 input EmployeeUpsertWithoutShiftsInput {
@@ -1160,6 +1212,9 @@ input EmployeeWhereInput {
   shifts_every: ShiftWhereInput
   shifts_some: ShiftWhereInput
   shifts_none: ShiftWhereInput
+  exceptions_every: ExceptionWhereInput
+  exceptions_some: ExceptionWhereInput
+  exceptions_none: ExceptionWhereInput
 }
 
 input EmployeeWhereUniqueInput {
@@ -1170,12 +1225,14 @@ type Exception {
   id: UUID!
   employee: Employee!
   slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
+  autorization: ExceptionAuthorization
   owner: User!
 }
 
 type ExceptionAuthorization {
   id: UUID!
   granted: Boolean!
+  exception: Exception!
   user: User!
 }
 
@@ -1190,6 +1247,17 @@ type ExceptionAuthorizationConnection {
 }
 
 input ExceptionAuthorizationCreateInput {
+  granted: Boolean!
+  exception: ExceptionCreateOneWithoutAutorizationInput!
+  user: UserCreateOneInput!
+}
+
+input ExceptionAuthorizationCreateOneWithoutExceptionInput {
+  create: ExceptionAuthorizationCreateWithoutExceptionInput
+  connect: ExceptionAuthorizationWhereUniqueInput
+}
+
+input ExceptionAuthorizationCreateWithoutExceptionInput {
   granted: Boolean!
   user: UserCreateOneInput!
 }
@@ -1260,7 +1328,27 @@ input ExceptionAuthorizationSubscriptionWhereInput {
 
 input ExceptionAuthorizationUpdateInput {
   granted: Boolean
+  exception: ExceptionUpdateOneRequiredWithoutAutorizationInput
   user: UserUpdateOneRequiredInput
+}
+
+input ExceptionAuthorizationUpdateOneWithoutExceptionInput {
+  create: ExceptionAuthorizationCreateWithoutExceptionInput
+  connect: ExceptionAuthorizationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput
+  upsert: ExceptionAuthorizationUpsertWithoutExceptionInput
+}
+
+input ExceptionAuthorizationUpdateWithoutExceptionDataInput {
+  granted: Boolean
+  user: UserUpdateOneRequiredInput
+}
+
+input ExceptionAuthorizationUpsertWithoutExceptionInput {
+  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput!
+  create: ExceptionAuthorizationCreateWithoutExceptionInput!
 }
 
 input ExceptionAuthorizationWhereInput {
@@ -1276,6 +1364,7 @@ input ExceptionAuthorizationWhereInput {
 
   """All values that are not equal to given value."""
   granted_not: Boolean
+  exception: ExceptionWhereInput
   user: UserWhereInput
 }
 
@@ -1294,8 +1383,31 @@ type ExceptionConnection {
 }
 
 input ExceptionCreateInput {
-  employee: EmployeeCreateOneInput!
+  employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
+  autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  owner: UserCreateOneInput!
+}
+
+input ExceptionCreateManyWithoutEmployeeInput {
+  create: [ExceptionCreateWithoutEmployeeInput!]
+  connect: [ExceptionWhereUniqueInput!]
+}
+
+input ExceptionCreateOneWithoutAutorizationInput {
+  create: ExceptionCreateWithoutAutorizationInput
+  connect: ExceptionWhereUniqueInput
+}
+
+input ExceptionCreateWithoutAutorizationInput {
+  employee: EmployeeCreateOneWithoutExceptionsInput!
+  slots: ExceptionSlotCreateManyInput
+  owner: UserCreateOneInput!
+}
+
+input ExceptionCreateWithoutEmployeeInput {
+  slots: ExceptionSlotCreateManyInput
+  autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
 }
 
@@ -1519,9 +1631,54 @@ input ExceptionSubscriptionWhereInput {
 }
 
 input ExceptionUpdateInput {
-  employee: EmployeeUpdateOneRequiredInput
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
+  slots: ExceptionSlotUpdateManyInput
+  autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+}
+
+input ExceptionUpdateManyWithoutEmployeeInput {
+  create: [ExceptionCreateWithoutEmployeeInput!]
+  connect: [ExceptionWhereUniqueInput!]
+  disconnect: [ExceptionWhereUniqueInput!]
+  delete: [ExceptionWhereUniqueInput!]
+  update: [ExceptionUpdateWithWhereUniqueWithoutEmployeeInput!]
+  upsert: [ExceptionUpsertWithWhereUniqueWithoutEmployeeInput!]
+}
+
+input ExceptionUpdateOneRequiredWithoutAutorizationInput {
+  create: ExceptionCreateWithoutAutorizationInput
+  connect: ExceptionWhereUniqueInput
+  update: ExceptionUpdateWithoutAutorizationDataInput
+  upsert: ExceptionUpsertWithoutAutorizationInput
+}
+
+input ExceptionUpdateWithoutAutorizationDataInput {
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
+}
+
+input ExceptionUpdateWithoutEmployeeDataInput {
+  slots: ExceptionSlotUpdateManyInput
+  autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+}
+
+input ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ExceptionWhereUniqueInput!
+  data: ExceptionUpdateWithoutEmployeeDataInput!
+}
+
+input ExceptionUpsertWithoutAutorizationInput {
+  update: ExceptionUpdateWithoutAutorizationDataInput!
+  create: ExceptionCreateWithoutAutorizationInput!
+}
+
+input ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ExceptionWhereUniqueInput!
+  update: ExceptionUpdateWithoutEmployeeDataInput!
+  create: ExceptionCreateWithoutEmployeeInput!
 }
 
 input ExceptionWhereInput {
@@ -1537,6 +1694,7 @@ input ExceptionWhereInput {
   slots_every: ExceptionSlotWhereInput
   slots_some: ExceptionSlotWhereInput
   slots_none: ExceptionSlotWhereInput
+  autorization: ExceptionAuthorizationWhereInput
   owner: UserWhereInput
 }
 
