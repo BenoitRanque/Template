@@ -5,8 +5,8 @@ const resolvers = {
   Mutation: require('./Mutation'),
   AuthPayload: require('./AuthPayload'),
   Employee: require('./Employee'),
-  AttendanceDate: require('./AttendanceReportDate'),
-  AttendanceReport: require('./AttendanceReport')
+  AttendanceReport: require('./AttendanceReport'),
+  AttendanceReportDate: require('./AttendanceReportDate')
 }
 
 module.exports = {

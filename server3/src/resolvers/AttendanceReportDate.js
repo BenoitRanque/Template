@@ -22,19 +22,19 @@ module.exports = {
   exception: {
     resolve: async (obj, args, ctx, info) => !obj.exception || !obj.exception.id ? null : ctx.db.query.exception({ where: { id: obj.exception.id } }, info)
   },
-  report: {
-    fragment: `fragment reportData on AttendanceDate { zkTimePin shift { description } }`,
-    resolve: async (obj, args, ctx, info) => {
+  // report: {
+  //   fragment: `fragment reportData on AttendanceDate { zkTimePin shift { description } }`,
+  //   resolve: async (obj, args, ctx, info) => {
 
-      const events = await loadEvents(obj)
-      console.log('report body', obj)
+  //     const events = await loadEvents(obj)
+  //     console.log('report body', obj)
 
 
-      return {
-        events
-      }
-    }
-  }
+  //     return {
+  //       events
+  //     }
+  //   }
+  // }
 }
 
 

@@ -17,8 +17,15 @@ type Query {
   shifts: [Shift]!
   schedule(id: UUID!): Schedule
   schedules: [Schedule]!
-  attendanceReport(where: EmployeeWhereUniqueInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
-  attendanceReports(where: EmployeeWhereInput from: DateTime! to: DateTime!): [AttendanceReport!]!
+  attendanceReport(employee: AttendanceReportEmployeeUniqueInput! from: DateTime! to: DateTime!): AttendanceReport!
+  attendanceReports(employees: AttendanceReportEmployeeInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
+}
+
+input AttendanceReportEmployeeInput {
+  where: EmployeeWhereInput
+}
+input AttendanceReportEmployeeUniqueInput {
+  where: EmployeeWhereUniqueInput!
 }
 
 type Mutation {
@@ -70,13 +77,15 @@ type Employee {
   zkTimePin: Int!
   department: EmployeeDepartment
   shifts: [Shift!]!
-  attendanceReport(from: DateTime! to: DateTime!): [AttendanceReportDate!]!
 }
 
 type AttendanceReport {
+  info: String
   from: DateTime!
   to: DateTime!
-  employee: Employee!
+  employee: Employee
+  shifts: [Shift!]!
+  exceptions: [Exception!]!
   dates: [AttendanceReportDate!]!
 }
 
@@ -93,7 +102,13 @@ type AttendanceReportDate {
 type EmployeeReport {
   attendance(from: DateTime! to: DateTime!): [AttendanceDate!]!
   exceptions(status: ExceptionStatusEnum! from: DateTime! to: DateTime!): [Exception!]!
-  schedule(date: !):
+  schedule(date: DateTime!): Schedule
+}
+
+enum ExceptionStatusEnum {
+  PENDING
+  AUTHORIZED
+  DENIED
 }
 
 type EmployeeDepartment {
