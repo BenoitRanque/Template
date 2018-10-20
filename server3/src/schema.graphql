@@ -1,10 +1,10 @@
 # import UUID from "./generated/prisma.graphql"
 # import UserCreateInput from "./generated/prisma.graphql"
 # import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput EmployeeWhereInput EmployeeOrderByInput EmployeeConnection from "./generated/prisma.graphql"
-# import Schedule ScheduleCreateInput from "./generated/prisma.graphql"
-# import Shift ShiftCreateInput from "./generated/prisma.graphql"
-# import Exception ExceptionCreateInput from "./generated/prisma.graphql"
-# import Department DepartmentWhereInput DepartmentWhereUniqueInput DepartmentCreateInput DepartmentUpdateInput from "./generated/prisma.graphql"
+# import Schedule ScheduleWhereUniqueInput ScheduleWhereInput ScheduleOrderByInput ScheduleCreateInput ScheduleConnection from "./generated/prisma.graphql"
+# import Shift ShiftWhereUniqueInput ShiftWhereInput ShiftOrderByInput ShiftCreateInput from "./generated/prisma.graphql"
+# import Exception ExceptionWhereUniqueInput ExceptionWhereInput ExceptionOrderByInput ExceptionCreateInput from "./generated/prisma.graphql"
+# import Department DepartmentWhereInput DepartmentWhereUniqueInput DepartmentOrderByInput DepartmentCreateInput DepartmentUpdateInput from "./generated/prisma.graphql"
 
 type Query {
   sessionUser: User
@@ -13,14 +13,15 @@ type Query {
   employee(where: EmployeeWhereUniqueInput!): Employee
   employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
-  exception(id: UUID!): Exception
-  exceptions: [Exception]!
-  shift(id: UUID!): Shift
-  shifts: [Shift]!
-  schedule(id: UUID!): Schedule
-  schedules: [Schedule]!
+  schedule(where: ScheduleWhereUniqueInput!): Schedule
+  schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
+  schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
+  shift(where: ShiftWhereUniqueInput!): Shift
+  shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
+  exception(where: ExceptionWhereUniqueInput!): Exception
+  exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
   department(where: DepartmentWhereUniqueInput!): Department!
-  departments(where: DepartmentWhereInput): [Department]!
+  departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
   attendanceReport(employee: AttendanceReportEmployeeUniqueInput! from: DateTime! to: DateTime!): AttendanceReport!
   attendanceReports(employees: AttendanceReportEmployeeInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
 }

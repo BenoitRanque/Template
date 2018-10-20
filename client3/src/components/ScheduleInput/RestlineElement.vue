@@ -5,13 +5,13 @@
     </div>
     <div class="col"></div>
     <div v-if="value.startRequireEvent" class="col-auto">
-      <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
+      <q-icon style="font-size: 22px" name="fingerprint"></q-icon>
     </div>
     <div class="col-auto q-caption">
       {{formatTime(value.duration)}}
     </div>
     <div v-if="value.endRequireEvent" class="col-auto">
-      <q-icon style="font-size: 24px" name="fingerprint"></q-icon>
+      <q-icon style="font-size: 22px" name="fingerprint"></q-icon>
     </div>
     <div class="col"></div>
     <div class="col-auto q-caption">
@@ -76,7 +76,7 @@
 import TimeInput from 'components/TimeInput.vue'
 import { mapGetters } from 'vuex'
 export default {
-  name: 'ReslineElement',
+  name: 'RestlineElement',
   components: { TimeInput },
   props: {
     value: {

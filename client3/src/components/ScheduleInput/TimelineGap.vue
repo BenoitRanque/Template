@@ -11,7 +11,7 @@
           </q-toolbar-title>
           <q-btn icon="close" class="no-shadow no-border" flat color="" size="lg" @click="modal = false"></q-btn>
         </q-toolbar> -->
-        <q-toolbar slot="header" glossy class="col">
+        <q-toolbar slot="header" class="col">
           <q-toolbar-title>
             Aggregar Elemento
           </q-toolbar-title>
@@ -33,7 +33,7 @@
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
-                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startEvent"></q-checkbox>
+                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startRequireEvent"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>
@@ -47,13 +47,13 @@
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Salida" class="text-right">
-                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.endEvent"></q-checkbox>
+                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.endRequireEvent"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>
         </q-list>
-        <q-toolbar slot="footer" glossy class="justify-center">
-          <q-btn rounded glossy color="positive" @click="add" :disable="!valid">Aggregar</q-btn>
+        <q-toolbar slot="footer" class="justify-center">
+          <q-btn rounded color="positive" @click="add" :disable="!valid">Aggregar</q-btn>
         </q-toolbar>
       </q-modal-layout>
     </q-modal>
@@ -79,9 +79,9 @@ export default {
       model: {
         category: 'SCH_TIME_WORK',
         startTime: 0,
-        startEvent: true,
+        startRequireEvent: true,
         endTime: 0,
-        endEvent: true
+        endRequireEvent: true
       }
     }
   },

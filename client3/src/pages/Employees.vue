@@ -32,6 +32,7 @@
       </q-td>
     </q-table>
     <employee-select multiple v-model="employee"></employee-select>
+    <q-select placeholder="hello" :value="null" :options="[]"></q-select>
     <pre>
       {{employee}}
       {{table}}

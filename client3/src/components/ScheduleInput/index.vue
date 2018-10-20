@@ -1,7 +1,8 @@
 <template>
   <div class="" :style="gridStyle">
     <schedule-header :style="{ gridRow: headerRow, gridColumn: `1 / ${gridColumns + 1}`}">
-      <slot name="header" slot="header"></slot>
+      <slot name="top-left" slot="top-left"></slot>
+      <slot name="top-right" slot="top-right"></slot>
     </schedule-header>
     <schedule-label v-for="(label, index) in labels" :key="`label_${index}`" :value="label"></schedule-label>
     <!-- <div class="bg-teal-2" :style="{ gridRow: 3, gridColumn: `1 / ${gridColumns + 1}`}"></div>
@@ -32,7 +33,7 @@ import RestlineElement from './RestlineElement.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Schedule',
+  name: 'ScheduleInput',
   components: {
     ScheduleHeader,
     ScheduleLabel,
@@ -112,7 +113,7 @@ export default {
       return {
         display: 'grid',
         gridTemplateColumns: `repeat(${this.gridColumns}, 1fr)`,
-        gridTemplateRows: 'auto auto 30px 30px 30px'
+        gridTemplateRows: 'auto auto 28px 28px 28px'
         // gridTemplateAreas: `
         //   "repeat(${this.gridColumns}, header)"
         //   "repeat(${this.gridColumns}, label)"

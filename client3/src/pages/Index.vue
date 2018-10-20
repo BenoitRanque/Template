@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import Schedule from 'components/schedule'
+import ScheduleInput from 'components/ScheduleInput'
 export default {
   name: 'PageIndex',
-  components: { Schedule },
+  components: { ScheduleInput },
   data () {
     return {
       category: null,

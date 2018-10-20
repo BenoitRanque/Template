@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
     <div class="col">
-      <slot name="header">
+      <slot name="top-left">
         <q-input hide-underline v-model="$parent.model.description"></q-input>
       </slot>
     </div>
@@ -12,19 +12,22 @@
         ? 'grey-6' : 'positive'"
         square pointing="right" small>
         {{Math.round(($parent.usedTime / $parent.model.baseTime) * 100)}}%
-        <q-tooltip>Tiempo Utilizado</q-tooltip>
+        <q-tooltip>Porcentaje Utilizado</q-tooltip>
       </q-chip>
     </span>
-    <span class="q-caption text-bold q-px-xs" :class="{
-      'text-positive': $parent.usedTime === $parent.model.baseTime,
-      'text-negative': $parent.usedTime > $parent.model.baseTime
-    }">
-      {{$parent.formatTime($parent.usedTime)}}
+    <span class="q-caption text-bold q-px-xs">
+      <span>
+        {{$parent.formatTime($parent.usedTime)}}
+        <q-tooltip>Tiempo Utilizado</q-tooltip>
+      </span>
       /
-      {{$parent.formatTime($parent.model.baseTime)}}
+      <span>
+        {{$parent.formatTime($parent.model.baseTime)}}
+        <q-tooltip>Tiempo Total Disponible</q-tooltip>
+      </span>
     </span>
     <div class="col-auto">
-      <q-btn flat dense color="primary" icon="more_vert">
+      <q-btn flat dense icon="more_vert">
         <q-popover anchor="bottom right" self="top right">
           <q-list>
             <q-list-header class="row items-center">
@@ -60,6 +63,9 @@
           </q-list>
         </q-popover>
       </q-btn>
+    </div>
+    <div class="col-auto">
+      <slot name="top-right"></slot>
     </div>
   </div>
 </template>

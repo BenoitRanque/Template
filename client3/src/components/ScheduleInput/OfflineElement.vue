@@ -11,7 +11,7 @@
           </q-toolbar-title>
           <q-btn icon="close" class="no-shadow no-border" flat color="" size="lg" @click="modal = false"></q-btn>
         </q-toolbar> -->
-        <q-toolbar slot="header" glossy class="col">
+        <q-toolbar slot="header" class="col">
           <q-toolbar-title>
             Aggregar Elemento
           </q-toolbar-title>
@@ -25,8 +25,8 @@
           </q-item>
         </q-list>
         <slot name="trace"></slot>
-        <q-toolbar slot="footer" glossy class="justify-center">
-          <q-btn rounded glossy color="positive" @click="add" :disable="!validModel">Aggregar</q-btn>
+        <q-toolbar slot="footer" class="justify-center">
+          <q-btn rounded color="positive" @click="add" :disable="!validModel">Aggregar</q-btn>
         </q-toolbar>
       </q-modal-layout>
     </q-modal>

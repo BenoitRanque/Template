@@ -50,6 +50,7 @@ module.exports = function (ctx) {
       components: [
         'QLayout',
         'QLayoutHeader',
+        'QLayoutFooter',
         'QLayoutDrawer',
         'QPageContainer',
         'QPage',
@@ -63,6 +64,7 @@ module.exports = function (ctx) {
         'QItem',
         'QItemMain',
         'QItemSide',
+        'QItemTile',
         'QPopover',
         'QModal',
         'QModalLayout',
@@ -76,7 +78,19 @@ module.exports = function (ctx) {
         'QChip',
         'QTable',
         'QTd',
-        'QSearch'
+        'QSearch',
+        'QInputFrame',
+        'QTabs',
+        'QRouteTab',
+        'QScrollArea',
+        'QPageSticky',
+        'QDatetime',
+        'QCard',
+        'QCardTitle',
+        'QCardMain',
+        'QCardMedia',
+        'QCardSeparator',
+        'QCardActions'
       ],
       directives: [
         'Ripple',

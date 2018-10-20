@@ -1,6 +1,13 @@
 <template>
-  <div>
-    <q-modal v-model="modal">
+  <q-input-frame @click.native="modal = !modal" v-bind="$attrs" class="q-select">
+
+    <div class="col q-input-target ellipsis" :class="{ 'q-input-target-placeholder': !selectedEmployees.length }">
+      {{selectedEmployees.length ? label : placeholder}}
+    </div>
+
+    <q-icon slot="after" :name="this.$q.icon.input.dropdown" class="q-if-control"></q-icon>
+
+    <q-modal v-model="modal" minimized>
       <q-modal-layout header-class="no-shadow" footer-class="no-shadow">
         <q-toolbar slot="header" color="white" class="q-px-lg">
           <q-search class="col" hide-underline v-model="table.filter" />
@@ -36,9 +43,7 @@
         </q-table>
       </q-modal-layout>
     </q-modal>
-    <q-btn @click="modal = !modal">{{label}}</q-btn>
-    <pre>{{selectedEmployees}}</pre>
-  </div>
+  </q-input-frame>
 </template>
 
 <script>
@@ -47,6 +52,10 @@ import gql from 'graphql-tag'
 export default {
   name: 'EmployeeSelect',
   props: {
+    placeholder: {
+      type: String,
+      default: 'Seleccionar Empleado...'
+    },
     value: {
       type: [String, Array],
       default: null
@@ -119,7 +128,8 @@ export default {
     setLabel () {
       // this.$q.notify('setting label')
       if (this.selectedEmployees.length === 0) {
-        this.label = `Nigun empleado seleccionado`
+        this.label = ''
+        // this.label = `Nigun empleado seleccionado`
         return
       }
 

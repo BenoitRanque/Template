@@ -44,6 +44,7 @@ module.exports = {
   employeesConnection: (obj, args, ctx, info) => ctx.db.query.employeesConnection(args, info),
   schedule: (obj, args, ctx, info) => ctx.db.query.schedule(args, info),
   schedules: (obj, args, ctx, info) => ctx.db.query.schedules(args, info),
+  schedulesConnection: (obj, args, ctx, info) => ctx.db.query.schedulesConnection(args, info),
   shift: (obj, args, ctx, info) => ctx.db.query.shift(args, info),
   shifts: (obj, args, ctx, info) => ctx.db.query.shifts(args, info),
   exception: (obj, args, ctx, info) => ctx.db.query.exception(args, info),
