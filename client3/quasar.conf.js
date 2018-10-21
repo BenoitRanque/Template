@@ -4,7 +4,6 @@ module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
-      'i18n',
       'GraphQL'
     ],
     css: [
@@ -57,6 +56,7 @@ module.exports = function (ctx) {
         'QToolbar',
         'QToolbarTitle',
         'QBtn',
+        'QBtnGroup',
         'QIcon',
         'QList',
         'QListHeader',

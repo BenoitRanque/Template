@@ -104,42 +104,46 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
 
 async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to, withExceptions, withScheduleData = false) {
   const response = await db.request(`
-    query ($id: UUID! $from: DateTime! $to: DateTime! $withExceptions: Boolean! $withScheduleData: Boolean!) {
-      employee (where: { id: $id }) {
-        shifts (where: {
-          startDate_lte: $to
-          OR: [
-            { endDate: null },
-            { endDate_gte: $from }
-          ]
-        }) {
-          id
-          startDate
-          endDate
-          startIndex
-          slots (orderBy: index_ASC) {
-            index
-            schedule {
-              id
-              ...AllScheduleData @include(if: $withScheduleData)
-            }
+    query ($id: ID! $from: DateTime! $to: DateTime! $withExceptions: Boolean! $withScheduleData: Boolean!) {
+      shifts (where: {
+        employee: {
+          id: $id
+        }
+        startDate_lte: $to
+        OR: [
+          { endDate: null },
+          { endDate_gte: $from }
+        ]
+      }) {
+        id
+        startDate
+        endDate
+        startIndex
+        slots (orderBy: index_ASC) {
+          index
+          schedule {
+            id
+            ...AllScheduleData @include(if: $withScheduleData)
           }
         }
-        exceptions (where: {
-          autorization: {
-            granted: true
-          }
-          slots_some: {
-            date_lte: $to
-            date_gte: $from
-          }
-        }) @include(if: $withExceptions) {
-          slots (orderBy: date_ASC) {
-            date
-            schedule {
-              id
-              ...AllScheduleData @include(if: $withScheduleData)
-            }
+      }
+      exceptions (where: {
+        employee: {
+          id: $id
+        }
+        autorization: {
+          granted: true
+        }
+        slots_some: {
+          date_lte: $to
+          date_gte: $from
+        }
+      }) @include(if: $withExceptions) {
+        slots (orderBy: date_ASC) {
+          date
+          schedule {
+            id
+            ...AllScheduleData @include(if: $withScheduleData)
           }
         }
       }
@@ -172,8 +176,8 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
   `, { id: employeeID, from, to, withExceptions, withScheduleData })
 
   return {
-    shifts: (response && response.data && response.data.employee && response.data.employee.shifts) ? response.data.employee.shifts : [],
-    exceptions: (response && response.data && response.data.employee && response.data.employee.exceptions) ? response.data.employee.exceptions : [],
+    shifts: (response && response.data && response.data.shifts) ? response.data.shifts : [],
+    exceptions: (response && response.data && response.data.exceptions) ? response.data.exceptions : [],
   }
 }
 

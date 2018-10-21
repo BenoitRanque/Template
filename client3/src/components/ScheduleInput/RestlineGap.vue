@@ -25,8 +25,22 @@
           </q-item>
           <q-item>
             <q-item-main>
-              <q-field label-width="6" label="Hora Inicio">
+              <q-field label-width="6" label="Duración">
+                <time-input align="right" hide-underline v-model="model.duration" :min="0" :max="model.endTime - model.startTime"></time-input>
+              </q-field>
+            </q-item-main>
+          </q-item>
+          <q-item>
+            <q-item-main>
+              <q-field label-width="6" label="Desde">
                 <time-input align="right" hide-underline :min="value.start" :max="model.endTime - 30" v-model="model.startTime" />
+              </q-field>
+            </q-item-main>
+          </q-item>
+          <q-item>
+            <q-item-main>
+              <q-field label-width="6" label="Hasta">
+                <time-input align="right" hide-underline :min="model.startTime + 30" :max="value.end" v-model="model.endTime" />
               </q-field>
             </q-item-main>
           </q-item>
@@ -39,22 +53,8 @@
           </q-item>
           <q-item>
             <q-item-main>
-              <q-field label-width="6" label="Hora Fin">
-                <time-input align="right" hide-underline :min="model.startTime + 30" :max="value.end" v-model="model.endTime" />
-              </q-field>
-            </q-item-main>
-          </q-item>
-          <q-item>
-            <q-item-main>
               <q-field label-width="6" label="Marca Salida" class="text-right">
                 <q-checkbox v-model="model.endRequireEvent"></q-checkbox>
-              </q-field>
-            </q-item-main>
-          </q-item>
-          <q-item>
-            <q-item-main>
-              <q-field label-width="6" label="Duracion">
-                <time-input align="right" hide-underline v-model="model.duration" :min="0" :max="model.endTime - model.startTime"></time-input>
               </q-field>
             </q-item-main>
           </q-item>

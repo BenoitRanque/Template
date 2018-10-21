@@ -26,7 +26,7 @@
         <q-tooltip>Tiempo Total Disponible</q-tooltip>
       </span>
     </span>
-    <div class="col-auto">
+    <div class="col-auto q-ml-xs" v-if="$parent.advanced">
       <q-btn flat dense icon="more_vert">
         <q-popover anchor="bottom right" self="top right">
           <q-list>
@@ -35,7 +35,7 @@
                 Ajustes Avanzados
               </div>
               <div class="col-auto">
-                <q-tooltip>Editar</q-tooltip>
+                <q-tooltip>Habilitar Edición</q-tooltip>
                 <q-toggle v-model="canEdit"></q-toggle>
               </div>
             </q-list-header>
@@ -48,15 +48,15 @@
             </q-item>
             <q-item>
               <q-item-main>
-                <q-field label-width="6" label="tiempo base">
+                <q-field label-width="6" label="Tiempo base">
                   <time-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.baseTime"></time-input>
                 </q-field>
               </q-item-main>
             </q-item>
             <q-item>
               <q-item-main>
-                <q-field label-width="6" label="horario standar" class="text-right">
-                  <q-checkbox :readonly="!canEdit" v-model="$parent.model.standard"></q-checkbox>
+                <q-field label-width="6" label="Horario Preestablecido" class="text-right">
+                  <q-checkbox :readonly="!canEdit" v-model="$parent.model.custom"></q-checkbox>
                 </q-field>
               </q-item-main>
             </q-item>
@@ -64,7 +64,7 @@
         </q-popover>
       </q-btn>
     </div>
-    <div class="col-auto">
+    <div class="col-auto q-ml-xs">
       <slot name="top-right"></slot>
     </div>
   </div>

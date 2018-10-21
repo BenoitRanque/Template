@@ -3,6 +3,10 @@ export function someGetter (state) {
 }
 */
 
-export function isAuthenticated (state) {
-  return !!state.user
+export function isAuthenticated ({ user }) {
+  return !!user
+}
+
+export function username ({ user }, { isAuthenticated }) {
+  return isAuthenticated ? user.username : ''
 }

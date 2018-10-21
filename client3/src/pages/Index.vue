@@ -2,9 +2,9 @@
   <q-page class="">
     <q-btn @click="$router.push('/Employees')">Employees</q-btn>
     <q-btn @click="modal = !modal">modal</q-btn>
-    <schedule v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid" :readonly="day.readonly">
+    <schedule-input v-for="(day, index) in days" :key="index" v-model="day.schedule" :valid.sync="day.valid" :readonly="day.readonly">
       <div slot="header" class="q-title">Dia {{index + 1}}<q-toggle v-model="day.readonly"></q-toggle></div>
-    </schedule>
+    </schedule-input>
     <pre>{{days}}</pre>
     <q-modal v-model="modal" content-css="min-height: 60vh; min-width: 60vw;">
       <q-modal-layout content-class="q-pa-md">
@@ -13,9 +13,9 @@
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
-        <schedule v-for="n in 7" :key="n">
+        <schedule-input v-for="n in 7" :key="n">
           <div slot="header" class="q-title">Dia {{n}}: fecha 12/34/5678</div>
-        </schedule>
+        </schedule-input>
         <q-toolbar slot="footer" glossy class="justify-center">
 
         </q-toolbar>

@@ -25,8 +25,22 @@
         </q-list-header>
         <q-item>
           <q-item-main>
-            <q-field label-width="6" label="Hora Inicio">
+            <q-field label-width="6" label="Duración">
+              <time-input align="right" hide-underline :min="0" :max="value.endTime - value.startTime" v-model="value.duration" />
+            </q-field>
+          </q-item-main>
+        </q-item>
+        <q-item>
+          <q-item-main>
+            <q-field label-width="6" label="Desde">
               <time-input align="right" hide-underline :min="innerBound" :max="value.endTime" v-model="value.startTime" />
+            </q-field>
+          </q-item-main>
+        </q-item>
+        <q-item>
+          <q-item-main>
+            <q-field label-width="6" label="Hasta">
+              <time-input align="right" hide-underline :min="value.startTime" :max="outerBound" v-model="value.endTime" />
             </q-field>
           </q-item-main>
         </q-item>
@@ -37,13 +51,6 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-item>
-          <q-item-main>
-            <q-field label-width="6" label="Hora Fin">
-              <time-input align="right" hide-underline :min="value.startTime" :max="outerBound" v-model="value.endTime" />
-            </q-field>
-          </q-item-main>
-        </q-item>
         <q-item v-if="categoryCanEvent(value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Salida" class="text-right">
@@ -51,21 +58,15 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-item>
-          <q-item-main>
-            <q-field label-width="6" label="Duracion">
-              <time-input align="right" hide-underline :min="0" :max="value.endTime - value.startTime" v-model="value.duration" />
-            </q-field>
-          </q-item-main>
-        </q-item>
-        <!-- <q-list-header>
-          Quitar Elemento
-        </q-list-header> -->
         <q-item-separator></q-item-separator>
         <q-item>
-          <q-item-main class="text-center">
+          <q-item-side>
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>
-          </q-item-main>
+          </q-item-side>
+          <q-item-main></q-item-main>
+          <q-item-side>
+            <q-btn rounded flat v-close-overlay color="primary">Ok</q-btn>
+          </q-item-side>
         </q-item>
       </q-list>
     </q-popover>

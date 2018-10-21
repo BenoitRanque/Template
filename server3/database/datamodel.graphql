@@ -23,14 +23,14 @@
 # }
 
 type User {
-  id: UUID! @unique
+  id: ID! @unique
   username: String! @unique
   password: String!
-  departments: [Employee!]!
+  departments: [Department!]!
 }
 
 type Employee {
-  id: UUID! @unique
+  id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
   nameFirst: String!
@@ -56,7 +56,7 @@ type Employee {
 }
 
 type Department {
-  id: UUID! @unique
+  id: ID! @unique
   name: String!
   subordinates: [Employee!]!
   supervisors: [User!]!
@@ -73,7 +73,7 @@ enum DocumentTypeEnum {
 }
 
 type Shift {
-  id: UUID! @unique
+  id: ID! @unique
   description: String
   employee: Employee!
   startDate: DateTime!
@@ -84,13 +84,12 @@ type Shift {
 }
 
 type ShiftSlot {
-  id: UUID! @unique
-  schedule: Schedule!
   index: Int!
+  schedule: Schedule!
 }
 
 type Exception {
-  id: UUID! @unique
+  id: ID! @unique
   employee: Employee!
   slots: [ExceptionSlot!]!
   autorization: ExceptionAuthorization
@@ -98,20 +97,19 @@ type Exception {
 }
 
 type ExceptionSlot {
-  id: UUID! @unique
   schedule: Schedule!
   date: DateTime!
 }
 
 type ExceptionAuthorization {
-  id: UUID! @unique
+  id: ID! @unique
   granted: Boolean!
   exception: Exception!
   user: User! @relation(name: "ExceptionToExceptionGrantor")
 }
 
 type Schedule {
-  id: UUID! @unique
+  id: ID! @unique
   description: String
   baseTime: Int!
   custom: Boolean! @default(value: "true")
@@ -122,26 +120,23 @@ type Schedule {
 }
 
 type ScheduleTimelineElement {
-  id: UUID! @unique
   category: ScheduleTimelineCategory!
   startTime: Int!
-  startRequireEvent: Boolean!
   endTime: Int!
+  startRequireEvent: Boolean!
   endRequireEvent: Boolean!
 }
 
 type ScheduleRestlineElement {
-  id: UUID! @unique
   category: ScheduleRestlineCategory!
-  startTime: Int!
-  startRequireEvent: Boolean!
-  endTime: Int!
-  endRequireEvent: Boolean!
   duration: Int!
+  startTime: Int!
+  endTime: Int!
+  startRequireEvent: Boolean!
+  endRequireEvent: Boolean!
 }
 
 type ScheduleOfflineElement {
-  id: UUID! @unique
   category: ScheduleOfflineCategory!
   # TODO: add some way to justify the category here
   # eg justify what holiday this is etc

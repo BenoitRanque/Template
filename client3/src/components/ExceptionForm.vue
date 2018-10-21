@@ -8,7 +8,7 @@
       {{validationHelper}}
     </div>
     <employee-select v-model="exception.employee.id"></employee-select>
-    <div class="flex flex-center q-my-sm" v-if="validationCode !== 1">
+    <div class="flex flex-center q-my-sm">
       <div>
         <q-btn @click="$refs.schedulePresets.show()" :disable="!exception.employee.id" dense color="primary" icon="search" class="q-mr-sm">
           <q-tooltip>Aggregar dia en base a horario preestablecido</q-tooltip>
@@ -43,7 +43,7 @@
         </q-card>
       </div>
       <div class="text-center q-py-md">
-        <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
+        <q-btn @click="createException" :loading="loadingExceptionCreation" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
       </div>
     </template>
     <q-modal v-model="calendarDateModal" content-classes="q-pa-lg group">
@@ -86,6 +86,7 @@ export default {
       loadingCalendarDate: false,
       calendarRangeModal: false,
       loadingCalendarRange: false,
+      loadingExceptionCreation: false,
       exception: {
         employee: {
           id: null
@@ -169,7 +170,7 @@ export default {
       if (!this.dateA || !this.exception.employee.id) throw new Error(`dateA and exception.employee.id are requires fields for this function`)
 
       const query = gql`
-        query ($employeeID: UUID! $date: DateTime!) {
+        query ($employeeID: ID! $date: DateTime!) {
           employee (where: { id: $employeeID }) {
             calendarDate(date: $date withExceptions: true) {
               date
@@ -226,7 +227,7 @@ export default {
       if (!this.dateB || !this.dateC || !this.exception.employee.id) throw new Error(`dateB dateC and exception.employee.id are requires fields for this function`)
 
       const query = gql`
-        query ($employeeID: UUID! $from: DateTime! $to: DateTime!) {
+        query ($employeeID: ID! $from: DateTime! $to: DateTime!) {
           employee (where: { id: $employeeID }) {
             calendarRange(from: $from to: $to withExceptions: true) {
               date
@@ -281,29 +282,6 @@ export default {
           this.dateC = null
         })
     },
-        mapExceptionToExceptionInput (exception) {
-      return {
-        employee: {
-          connect: {
-            id: exception.employee.id
-          }
-        },
-        slots: exception.slots.map(({ date, schedule }) => ({
-          date,
-          schedule: {
-            create: {
-              ...schedule,
-              restline: {
-                create: schedule.restline
-              },
-              timeline: {
-                create: schedule.timeline
-              }
-            }
-          }
-        }))
-      }
-    },
     createException () {
       // create exception
       const query = gql`
@@ -312,20 +290,37 @@ export default {
             employee {
               nameFull
             }
+            owner {
+              username
+            }
           }
         }
       `
       const parameters = {
-        data: this.mapExceptionToExceptionInput(this.exception)
+        data: {
+          employee: {
+            id: this.exception.employee.id
+          },
+          slots: this.exception.slots.map(({ date, schedule }) => ({ date, schedule }))
+        }
       }
-
+      this.loadingExceptionCreation = true
       this.$gql.request(query, parameters)
         .then(response => {
-          this.$q.notify(`Boleta para empleado ${response.exception.employee.nameFull} creada por usuario ${response.exception.owner.username}`)
+          this.$q.notify({
+            type: 'positive',
+            message: `Boleta para empleado ${response.exception.employee.nameFull} creada por usuario ${response.exception.owner.username}`
+          })
           // reset model
         })
-        .catch(error => console.log(error))
-        .finally(() => {})
+        .catch(error => {
+          console.log(error)
+          this.$q.notify({
+            type: 'negative',
+            message: `Error Creado boleta`
+          })
+        })
+        .finally(() => { this.loadingExceptionCreation = false })
     }
   }
 }

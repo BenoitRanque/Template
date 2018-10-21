@@ -1,6 +1,8 @@
 <template>
   <q-page>
-
+    <pre>
+      {{$store.state.session}}
+    </pre>
   </q-page>
 </template>
 

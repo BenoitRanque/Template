@@ -47,22 +47,26 @@
         <q-list-header>
           {{categoryDescription(value.category)}}
         </q-list-header>
-        <q-item>
+        <!-- <q-item>
           <q-item-main>
             <q-field label-width="6" label="">
               config goes here
             </q-field>
           </q-item-main>
-        </q-item>
+        </q-item> -->
         <!-- <q-list-header>
           Quitar Elemento
         </q-list-header> -->
         <slot name="trace"></slot>
         <q-item-separator></q-item-separator>
         <q-item>
-          <q-item-main class="text-center">
+          <q-item-side>
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>
-          </q-item-main>
+          </q-item-side>
+          <q-item-main></q-item-main>
+          <q-item-side>
+            <q-btn rounded flat v-close-overlay color="primary">Ok</q-btn>
+          </q-item-side>
         </q-item>
       </q-list>
     </q-popover>

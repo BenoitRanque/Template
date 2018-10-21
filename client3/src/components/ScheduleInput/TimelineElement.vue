@@ -34,17 +34,17 @@
             </q-field>
           </q-item-main>
         </q-item>
-        <q-item v-if="categoryCanEvent(this.value.category)">
-          <q-item-main>
-            <q-field label-width="6" label="Marca Entrada" class="text-right">
-              <q-checkbox v-model="value.startRequireEvent"></q-checkbox>
-            </q-field>
-          </q-item-main>
-        </q-item>
         <q-item>
           <q-item-main>
             <q-field label-width="6" label="Hora Fin">
               <time-input align="right" hide-underline :min="value.startTime" :max="outerBound" v-model="value.endTime" />
+            </q-field>
+          </q-item-main>
+        </q-item>
+        <q-item v-if="categoryCanEvent(this.value.category)">
+          <q-item-main>
+            <q-field label-width="6" label="Marca Entrada" class="text-right">
+              <q-checkbox v-model="value.startRequireEvent"></q-checkbox>
             </q-field>
           </q-item-main>
         </q-item>
@@ -60,9 +60,13 @@
         </q-list-header> -->
         <q-item-separator></q-item-separator>
         <q-item>
-          <q-item-main class="text-center">
+          <q-item-side>
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>
-          </q-item-main>
+          </q-item-side>
+          <q-item-main></q-item-main>
+          <q-item-side>
+            <q-btn rounded flat v-close-overlay color="primary">Ok</q-btn>
+          </q-item-side>
         </q-item>
       </q-list>
     </q-popover>

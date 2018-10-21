@@ -53,14 +53,13 @@ export default {
         standard: true,
         restline: [],
         offline1: null,
-        offline2: {
-          category: 'SCH_DAY_OFF',
-          trace: true, // whether this day must be traced. True for eceptions
-          originType: '', // can be either same exception or another
-          origin: ''
-        },
+        offline2: null,
         timeline: []
       })
+    },
+    advanced: {
+      type: Boolean,
+      default: false
     },
     valid: {
       type: Boolean,

@@ -2,19 +2,19 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MyLayout.vue'),
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: 'Employees', component: () => import('pages/Employees.vue') },
-      { path: 'Shifts', component: () => import('pages/Shifts.vue') },
-      { path: 'Exceptions', component: () => import('pages/Exceptions.vue') }
+      { path: '', component: () => import('pages/Index.vue'), meta: { label: 'Inicio' } },
+      { path: 'Employees', component: () => import('pages/Employees.vue'), meta: { label: 'Empleados' } },
+      { path: 'Shifts', component: () => import('pages/Shifts.vue'), meta: { label: 'Horarios' } },
+      { path: 'Exceptions', component: () => import('pages/Exceptions.vue'), meta: { label: 'Boletas' } }
     ]
   },
   {
     path: '/',
     component: () => import('layouts/ReportLayout.vue'),
     children: [
-      { path: 'Reports', component: () => import('pages/Reports.vue') }
+      { path: 'Reports', component: () => import('pages/Reports.vue'), meta: { label: 'Reportes' } }
     ]
   }
 ]
@@ -23,7 +23,10 @@ const routes = [
 if (process.env.MODE !== 'ssr') {
   routes.push({
     path: '*',
-    component: () => import('pages/Error404.vue')
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Error404.vue'), meta: { label: 'Error 404' } }
+    ]
   })
 }
 

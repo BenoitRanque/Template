@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Fri Oct 19 2018 11:36:44 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Sun Oct 21 2018 14:31:19 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateDepartment {
   count: Int!
@@ -56,8 +56,8 @@ type BatchPayload {
 
 scalar DateTime
 
-type Department {
-  id: UUID!
+type Department implements Node {
+  id: ID!
   name: String!
   subordinates(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee!]
   supervisors(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
@@ -76,7 +76,12 @@ type DepartmentConnection {
 input DepartmentCreateInput {
   name: String!
   subordinates: EmployeeCreateManyWithoutDepartmentInput
-  supervisors: UserCreateManyInput
+  supervisors: UserCreateManyWithoutDepartmentsInput
+}
+
+input DepartmentCreateManyWithoutSupervisorsInput {
+  create: [DepartmentCreateWithoutSupervisorsInput!]
+  connect: [DepartmentWhereUniqueInput!]
 }
 
 input DepartmentCreateOneWithoutSubordinatesInput {
@@ -86,7 +91,12 @@ input DepartmentCreateOneWithoutSubordinatesInput {
 
 input DepartmentCreateWithoutSubordinatesInput {
   name: String!
-  supervisors: UserCreateManyInput
+  supervisors: UserCreateManyWithoutDepartmentsInput
+}
+
+input DepartmentCreateWithoutSupervisorsInput {
+  name: String!
+  subordinates: EmployeeCreateManyWithoutDepartmentInput
 }
 
 """An edge in a connection."""
@@ -110,7 +120,7 @@ enum DepartmentOrderByInput {
 }
 
 type DepartmentPreviousValues {
-  id: UUID!
+  id: ID!
   name: String!
 }
 
@@ -156,7 +166,16 @@ input DepartmentSubscriptionWhereInput {
 input DepartmentUpdateInput {
   name: String
   subordinates: EmployeeUpdateManyWithoutDepartmentInput
-  supervisors: UserUpdateManyInput
+  supervisors: UserUpdateManyWithoutDepartmentsInput
+}
+
+input DepartmentUpdateManyWithoutSupervisorsInput {
+  create: [DepartmentCreateWithoutSupervisorsInput!]
+  connect: [DepartmentWhereUniqueInput!]
+  disconnect: [DepartmentWhereUniqueInput!]
+  delete: [DepartmentWhereUniqueInput!]
+  update: [DepartmentUpdateWithWhereUniqueWithoutSupervisorsInput!]
+  upsert: [DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput!]
 }
 
 input DepartmentUpdateOneWithoutSubordinatesInput {
@@ -170,12 +189,28 @@ input DepartmentUpdateOneWithoutSubordinatesInput {
 
 input DepartmentUpdateWithoutSubordinatesDataInput {
   name: String
-  supervisors: UserUpdateManyInput
+  supervisors: UserUpdateManyWithoutDepartmentsInput
+}
+
+input DepartmentUpdateWithoutSupervisorsDataInput {
+  name: String
+  subordinates: EmployeeUpdateManyWithoutDepartmentInput
+}
+
+input DepartmentUpdateWithWhereUniqueWithoutSupervisorsInput {
+  where: DepartmentWhereUniqueInput!
+  data: DepartmentUpdateWithoutSupervisorsDataInput!
 }
 
 input DepartmentUpsertWithoutSubordinatesInput {
   update: DepartmentUpdateWithoutSubordinatesDataInput!
   create: DepartmentCreateWithoutSubordinatesInput!
+}
+
+input DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput {
+  where: DepartmentWhereUniqueInput!
+  update: DepartmentUpdateWithoutSupervisorsDataInput!
+  create: DepartmentCreateWithoutSupervisorsInput!
 }
 
 input DepartmentWhereInput {
@@ -187,6 +222,46 @@ input DepartmentWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [DepartmentWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   name: String
 
   """All values that are not equal to given value."""
@@ -236,7 +311,7 @@ input DepartmentWhereInput {
 }
 
 input DepartmentWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
 enum DocumentTypeEnum {
@@ -244,8 +319,8 @@ enum DocumentTypeEnum {
   PASSAPORTE
 }
 
-type Employee {
-  id: UUID!
+type Employee implements Node {
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   nameFirst: String!
@@ -301,11 +376,6 @@ input EmployeeCreateInput {
   department: DepartmentCreateOneWithoutSubordinatesInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
-}
-
-input EmployeeCreateManyInput {
-  create: [EmployeeCreateInput!]
-  connect: [EmployeeWhereUniqueInput!]
 }
 
 input EmployeeCreateManyWithoutDepartmentInput {
@@ -442,7 +512,7 @@ enum EmployeeOrderByInput {
 }
 
 type EmployeePreviousValues {
-  id: UUID!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   nameFirst: String!
@@ -503,29 +573,6 @@ input EmployeeSubscriptionWhereInput {
   node: EmployeeWhereInput
 }
 
-input EmployeeUpdateDataInput {
-  nameFirst: String
-  nameMiddle: String
-  namePaternal: String
-  nameMaternal: String
-  documentType: DocumentTypeEnum
-  documentNumber: String
-  sex: SexEnum
-  dateOfBirth: DateTime
-  nationality: String
-  jubilado: Int
-  personaConDiscapacidad: Int
-  tutorPersonaConDiscapacidad: Int
-  cajaDeSalud: Int
-  aportaAFP: Int
-  AFP: Int
-  cargo: String
-  zkTimePin: Int
-  department: DepartmentUpdateOneWithoutSubordinatesInput
-  shifts: ShiftUpdateManyWithoutEmployeeInput
-  exceptions: ExceptionUpdateManyWithoutEmployeeInput
-}
-
 input EmployeeUpdateInput {
   nameFirst: String
   nameMiddle: String
@@ -547,15 +594,6 @@ input EmployeeUpdateInput {
   department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
-}
-
-input EmployeeUpdateManyInput {
-  create: [EmployeeCreateInput!]
-  connect: [EmployeeWhereUniqueInput!]
-  disconnect: [EmployeeWhereUniqueInput!]
-  delete: [EmployeeWhereUniqueInput!]
-  update: [EmployeeUpdateWithWhereUniqueNestedInput!]
-  upsert: [EmployeeUpsertWithWhereUniqueNestedInput!]
 }
 
 input EmployeeUpdateManyWithoutDepartmentInput {
@@ -647,11 +685,6 @@ input EmployeeUpdateWithoutShiftsDataInput {
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
 }
 
-input EmployeeUpdateWithWhereUniqueNestedInput {
-  where: EmployeeWhereUniqueInput!
-  data: EmployeeUpdateDataInput!
-}
-
 input EmployeeUpdateWithWhereUniqueWithoutDepartmentInput {
   where: EmployeeWhereUniqueInput!
   data: EmployeeUpdateWithoutDepartmentDataInput!
@@ -665,12 +698,6 @@ input EmployeeUpsertWithoutExceptionsInput {
 input EmployeeUpsertWithoutShiftsInput {
   update: EmployeeUpdateWithoutShiftsDataInput!
   create: EmployeeCreateWithoutShiftsInput!
-}
-
-input EmployeeUpsertWithWhereUniqueNestedInput {
-  where: EmployeeWhereUniqueInput!
-  update: EmployeeUpdateDataInput!
-  create: EmployeeCreateInput!
 }
 
 input EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
@@ -688,6 +715,46 @@ input EmployeeWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [EmployeeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -1218,19 +1285,19 @@ input EmployeeWhereInput {
 }
 
 input EmployeeWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
-type Exception {
-  id: UUID!
+type Exception implements Node {
+  id: ID!
   employee: Employee!
   slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
   autorization: ExceptionAuthorization
   owner: User!
 }
 
-type ExceptionAuthorization {
-  id: UUID!
+type ExceptionAuthorization implements Node {
+  id: ID!
   granted: Boolean!
   exception: Exception!
   user: User!
@@ -1283,7 +1350,7 @@ enum ExceptionAuthorizationOrderByInput {
 }
 
 type ExceptionAuthorizationPreviousValues {
-  id: UUID!
+  id: ID!
   granted: Boolean!
 }
 
@@ -1360,6 +1427,46 @@ input ExceptionAuthorizationWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ExceptionAuthorizationWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   granted: Boolean
 
   """All values that are not equal to given value."""
@@ -1369,7 +1476,7 @@ input ExceptionAuthorizationWhereInput {
 }
 
 input ExceptionAuthorizationWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -1430,11 +1537,10 @@ enum ExceptionOrderByInput {
 }
 
 type ExceptionPreviousValues {
-  id: UUID!
+  id: ID!
 }
 
 type ExceptionSlot {
-  id: UUID!
   schedule: Schedule!
   date: DateTime!
 }
@@ -1456,7 +1562,6 @@ input ExceptionSlotCreateInput {
 
 input ExceptionSlotCreateManyInput {
   create: [ExceptionSlotCreateInput!]
-  connect: [ExceptionSlotWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -1469,10 +1574,10 @@ type ExceptionSlotEdge {
 }
 
 enum ExceptionSlotOrderByInput {
-  id_ASC
-  id_DESC
   date_ASC
   date_DESC
+  id_ASC
+  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1480,7 +1585,6 @@ enum ExceptionSlotOrderByInput {
 }
 
 type ExceptionSlotPreviousValues {
-  id: UUID!
   date: DateTime!
 }
 
@@ -1523,11 +1627,6 @@ input ExceptionSlotSubscriptionWhereInput {
   node: ExceptionSlotWhereInput
 }
 
-input ExceptionSlotUpdateDataInput {
-  date: DateTime
-  schedule: ScheduleUpdateOneRequiredInput
-}
-
 input ExceptionSlotUpdateInput {
   date: DateTime
   schedule: ScheduleUpdateOneRequiredInput
@@ -1535,22 +1634,6 @@ input ExceptionSlotUpdateInput {
 
 input ExceptionSlotUpdateManyInput {
   create: [ExceptionSlotCreateInput!]
-  connect: [ExceptionSlotWhereUniqueInput!]
-  disconnect: [ExceptionSlotWhereUniqueInput!]
-  delete: [ExceptionSlotWhereUniqueInput!]
-  update: [ExceptionSlotUpdateWithWhereUniqueNestedInput!]
-  upsert: [ExceptionSlotUpsertWithWhereUniqueNestedInput!]
-}
-
-input ExceptionSlotUpdateWithWhereUniqueNestedInput {
-  where: ExceptionSlotWhereUniqueInput!
-  data: ExceptionSlotUpdateDataInput!
-}
-
-input ExceptionSlotUpsertWithWhereUniqueNestedInput {
-  where: ExceptionSlotWhereUniqueInput!
-  update: ExceptionSlotUpdateDataInput!
-  create: ExceptionSlotCreateInput!
 }
 
 input ExceptionSlotWhereInput {
@@ -1585,10 +1668,6 @@ input ExceptionSlotWhereInput {
   """All values greater than or equal the given value."""
   date_gte: DateTime
   schedule: ScheduleWhereInput
-}
-
-input ExceptionSlotWhereUniqueInput {
-  id: UUID
 }
 
 type ExceptionSubscriptionPayload {
@@ -1690,6 +1769,46 @@ input ExceptionWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ExceptionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   employee: EmployeeWhereInput
   slots_every: ExceptionSlotWhereInput
   slots_some: ExceptionSlotWhereInput
@@ -1699,7 +1818,7 @@ input ExceptionWhereInput {
 }
 
 input ExceptionWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
 """
@@ -1709,6 +1828,7 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createEmployee(data: EmployeeCreateInput!): Employee!
   createDepartment(data: DepartmentCreateInput!): Department!
   createShift(data: ShiftCreateInput!): Shift!
   createException(data: ExceptionCreateInput!): Exception!
@@ -1719,44 +1839,29 @@ type Mutation {
   createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
   createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
   createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
-  createEmployee(data: EmployeeCreateInput!): Employee!
   createUser(data: UserCreateInput!): User!
+  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
   updateDepartment(data: DepartmentUpdateInput!, where: DepartmentWhereUniqueInput!): Department
   updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
   updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
   updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
-  updateScheduleOfflineElement(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  updateScheduleTimelineElement(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  updateScheduleRestlineElement(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department
   deleteShift(where: ShiftWhereUniqueInput!): Shift
   deleteException(where: ExceptionWhereUniqueInput!): Exception
   deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
-  deleteScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  deleteScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  deleteScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteUser(where: UserWhereUniqueInput!): User
+  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
   upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
   upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
   upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
   upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
-  upsertScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!, create: ScheduleOfflineElementCreateInput!, update: ScheduleOfflineElementUpdateInput!): ScheduleOfflineElement!
-  upsertScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!, create: ScheduleTimelineElementCreateInput!, update: ScheduleTimelineElementUpdateInput!): ScheduleTimelineElement!
-  upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
-  upsertScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!, create: ScheduleRestlineElementCreateInput!, update: ScheduleRestlineElementUpdateInput!): ScheduleRestlineElement!
-  upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
-  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
   updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
   updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
   updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
@@ -1767,8 +1872,8 @@ type Mutation {
   updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
   updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
   updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
-  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
   deleteManyShifts(where: ShiftWhereInput): BatchPayload!
   deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
@@ -1779,7 +1884,6 @@ type Mutation {
   deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
   deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
   deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
-  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -1811,6 +1915,7 @@ type PageInfo {
 }
 
 type Query {
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
@@ -1821,20 +1926,15 @@ type Query {
   exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
   scheduleRestlineElements(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement]!
   shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
-  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  employee(where: EmployeeWhereUniqueInput!): Employee
   department(where: DepartmentWhereUniqueInput!): Department
   shift(where: ShiftWhereUniqueInput!): Shift
   exception(where: ExceptionWhereUniqueInput!): Exception
   exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   schedule(where: ScheduleWhereUniqueInput!): Schedule
-  scheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  scheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  scheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  employee(where: EmployeeWhereUniqueInput!): Employee
   user(where: UserWhereUniqueInput!): User
+  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   departmentsConnection(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DepartmentConnection!
   shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
   exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
@@ -1845,7 +1945,6 @@ type Query {
   exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
   scheduleRestlineElementsConnection(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleRestlineElementConnection!
   shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
-  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -1855,8 +1954,8 @@ type Query {
   ): Node
 }
 
-type Schedule {
-  id: UUID!
+type Schedule implements Node {
+  id: ID!
   description: String
   baseTime: Int!
   custom: Boolean!
@@ -1910,7 +2009,6 @@ enum ScheduleOfflineCategory {
 }
 
 type ScheduleOfflineElement {
-  id: UUID!
   category: ScheduleOfflineCategory!
 }
 
@@ -1930,7 +2028,6 @@ input ScheduleOfflineElementCreateInput {
 
 input ScheduleOfflineElementCreateOneInput {
   create: ScheduleOfflineElementCreateInput
-  connect: ScheduleOfflineElementWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -1943,10 +2040,10 @@ type ScheduleOfflineElementEdge {
 }
 
 enum ScheduleOfflineElementOrderByInput {
-  id_ASC
-  id_DESC
   category_ASC
   category_DESC
+  id_ASC
+  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1954,7 +2051,6 @@ enum ScheduleOfflineElementOrderByInput {
 }
 
 type ScheduleOfflineElementPreviousValues {
-  id: UUID!
   category: ScheduleOfflineCategory!
 }
 
@@ -2007,7 +2103,6 @@ input ScheduleOfflineElementUpdateInput {
 
 input ScheduleOfflineElementUpdateOneInput {
   create: ScheduleOfflineElementCreateInput
-  connect: ScheduleOfflineElementWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
   update: ScheduleOfflineElementUpdateDataInput
@@ -2040,10 +2135,6 @@ input ScheduleOfflineElementWhereInput {
   category_not_in: [ScheduleOfflineCategory!]
 }
 
-input ScheduleOfflineElementWhereUniqueInput {
-  id: UUID
-}
-
 enum ScheduleOrderByInput {
   id_ASC
   id_DESC
@@ -2060,7 +2151,7 @@ enum ScheduleOrderByInput {
 }
 
 type SchedulePreviousValues {
-  id: UUID!
+  id: ID!
   description: String
   baseTime: Int!
   custom: Boolean!
@@ -2071,7 +2162,6 @@ enum ScheduleRestlineCategory {
 }
 
 type ScheduleRestlineElement {
-  id: UUID!
   category: ScheduleRestlineCategory!
   startTime: Int!
   startRequireEvent: Boolean!
@@ -2101,7 +2191,6 @@ input ScheduleRestlineElementCreateInput {
 
 input ScheduleRestlineElementCreateManyInput {
   create: [ScheduleRestlineElementCreateInput!]
-  connect: [ScheduleRestlineElementWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -2114,8 +2203,6 @@ type ScheduleRestlineElementEdge {
 }
 
 enum ScheduleRestlineElementOrderByInput {
-  id_ASC
-  id_DESC
   category_ASC
   category_DESC
   startTime_ASC
@@ -2128,6 +2215,8 @@ enum ScheduleRestlineElementOrderByInput {
   endRequireEvent_DESC
   duration_ASC
   duration_DESC
+  id_ASC
+  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2135,7 +2224,6 @@ enum ScheduleRestlineElementOrderByInput {
 }
 
 type ScheduleRestlineElementPreviousValues {
-  id: UUID!
   category: ScheduleRestlineCategory!
   startTime: Int!
   startRequireEvent: Boolean!
@@ -2183,15 +2271,6 @@ input ScheduleRestlineElementSubscriptionWhereInput {
   node: ScheduleRestlineElementWhereInput
 }
 
-input ScheduleRestlineElementUpdateDataInput {
-  category: ScheduleRestlineCategory
-  startTime: Int
-  startRequireEvent: Boolean
-  endTime: Int
-  endRequireEvent: Boolean
-  duration: Int
-}
-
 input ScheduleRestlineElementUpdateInput {
   category: ScheduleRestlineCategory
   startTime: Int
@@ -2203,22 +2282,6 @@ input ScheduleRestlineElementUpdateInput {
 
 input ScheduleRestlineElementUpdateManyInput {
   create: [ScheduleRestlineElementCreateInput!]
-  connect: [ScheduleRestlineElementWhereUniqueInput!]
-  disconnect: [ScheduleRestlineElementWhereUniqueInput!]
-  delete: [ScheduleRestlineElementWhereUniqueInput!]
-  update: [ScheduleRestlineElementUpdateWithWhereUniqueNestedInput!]
-  upsert: [ScheduleRestlineElementUpsertWithWhereUniqueNestedInput!]
-}
-
-input ScheduleRestlineElementUpdateWithWhereUniqueNestedInput {
-  where: ScheduleRestlineElementWhereUniqueInput!
-  data: ScheduleRestlineElementUpdateDataInput!
-}
-
-input ScheduleRestlineElementUpsertWithWhereUniqueNestedInput {
-  where: ScheduleRestlineElementWhereUniqueInput!
-  update: ScheduleRestlineElementUpdateDataInput!
-  create: ScheduleRestlineElementCreateInput!
 }
 
 input ScheduleRestlineElementWhereInput {
@@ -2316,10 +2379,6 @@ input ScheduleRestlineElementWhereInput {
   duration_gte: Int
 }
 
-input ScheduleRestlineElementWhereUniqueInput {
-  id: UUID
-}
-
 type ScheduleSubscriptionPayload {
   mutation: MutationType!
   node: Schedule
@@ -2367,7 +2426,6 @@ enum ScheduleTimelineCategory {
 }
 
 type ScheduleTimelineElement {
-  id: UUID!
   category: ScheduleTimelineCategory!
   startTime: Int!
   startRequireEvent: Boolean!
@@ -2395,7 +2453,6 @@ input ScheduleTimelineElementCreateInput {
 
 input ScheduleTimelineElementCreateManyInput {
   create: [ScheduleTimelineElementCreateInput!]
-  connect: [ScheduleTimelineElementWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -2408,8 +2465,6 @@ type ScheduleTimelineElementEdge {
 }
 
 enum ScheduleTimelineElementOrderByInput {
-  id_ASC
-  id_DESC
   category_ASC
   category_DESC
   startTime_ASC
@@ -2420,6 +2475,8 @@ enum ScheduleTimelineElementOrderByInput {
   endTime_DESC
   endRequireEvent_ASC
   endRequireEvent_DESC
+  id_ASC
+  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2427,7 +2484,6 @@ enum ScheduleTimelineElementOrderByInput {
 }
 
 type ScheduleTimelineElementPreviousValues {
-  id: UUID!
   category: ScheduleTimelineCategory!
   startTime: Int!
   startRequireEvent: Boolean!
@@ -2474,14 +2530,6 @@ input ScheduleTimelineElementSubscriptionWhereInput {
   node: ScheduleTimelineElementWhereInput
 }
 
-input ScheduleTimelineElementUpdateDataInput {
-  category: ScheduleTimelineCategory
-  startTime: Int
-  startRequireEvent: Boolean
-  endTime: Int
-  endRequireEvent: Boolean
-}
-
 input ScheduleTimelineElementUpdateInput {
   category: ScheduleTimelineCategory
   startTime: Int
@@ -2492,22 +2540,6 @@ input ScheduleTimelineElementUpdateInput {
 
 input ScheduleTimelineElementUpdateManyInput {
   create: [ScheduleTimelineElementCreateInput!]
-  connect: [ScheduleTimelineElementWhereUniqueInput!]
-  disconnect: [ScheduleTimelineElementWhereUniqueInput!]
-  delete: [ScheduleTimelineElementWhereUniqueInput!]
-  update: [ScheduleTimelineElementUpdateWithWhereUniqueNestedInput!]
-  upsert: [ScheduleTimelineElementUpsertWithWhereUniqueNestedInput!]
-}
-
-input ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
-  where: ScheduleTimelineElementWhereUniqueInput!
-  data: ScheduleTimelineElementUpdateDataInput!
-}
-
-input ScheduleTimelineElementUpsertWithWhereUniqueNestedInput {
-  where: ScheduleTimelineElementWhereUniqueInput!
-  update: ScheduleTimelineElementUpdateDataInput!
-  create: ScheduleTimelineElementCreateInput!
 }
 
 input ScheduleTimelineElementWhereInput {
@@ -2583,10 +2615,6 @@ input ScheduleTimelineElementWhereInput {
   endRequireEvent_not: Boolean
 }
 
-input ScheduleTimelineElementWhereUniqueInput {
-  id: UUID
-}
-
 input ScheduleUpdateDataInput {
   description: String
   baseTime: Int
@@ -2628,6 +2656,46 @@ input ScheduleWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   description: String
 
   """All values that are not equal to given value."""
@@ -2705,7 +2773,7 @@ input ScheduleWhereInput {
 }
 
 input ScheduleWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
 enum SexEnum {
@@ -2713,8 +2781,8 @@ enum SexEnum {
   F
 }
 
-type Shift {
-  id: UUID!
+type Shift implements Node {
+  id: ID!
   description: String
   employee: Employee!
   startDate: DateTime!
@@ -2785,7 +2853,7 @@ enum ShiftOrderByInput {
 }
 
 type ShiftPreviousValues {
-  id: UUID!
+  id: ID!
   description: String
   startDate: DateTime!
   endDate: DateTime
@@ -2793,9 +2861,8 @@ type ShiftPreviousValues {
 }
 
 type ShiftSlot {
-  id: UUID!
-  schedule: Schedule!
   index: Int!
+  schedule: Schedule!
 }
 
 """A connection to a list of items."""
@@ -2815,7 +2882,6 @@ input ShiftSlotCreateInput {
 
 input ShiftSlotCreateManyInput {
   create: [ShiftSlotCreateInput!]
-  connect: [ShiftSlotWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -2828,10 +2894,10 @@ type ShiftSlotEdge {
 }
 
 enum ShiftSlotOrderByInput {
-  id_ASC
-  id_DESC
   index_ASC
   index_DESC
+  id_ASC
+  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2839,7 +2905,6 @@ enum ShiftSlotOrderByInput {
 }
 
 type ShiftSlotPreviousValues {
-  id: UUID!
   index: Int!
 }
 
@@ -2882,11 +2947,6 @@ input ShiftSlotSubscriptionWhereInput {
   node: ShiftSlotWhereInput
 }
 
-input ShiftSlotUpdateDataInput {
-  index: Int
-  schedule: ScheduleUpdateOneRequiredInput
-}
-
 input ShiftSlotUpdateInput {
   index: Int
   schedule: ScheduleUpdateOneRequiredInput
@@ -2894,22 +2954,6 @@ input ShiftSlotUpdateInput {
 
 input ShiftSlotUpdateManyInput {
   create: [ShiftSlotCreateInput!]
-  connect: [ShiftSlotWhereUniqueInput!]
-  disconnect: [ShiftSlotWhereUniqueInput!]
-  delete: [ShiftSlotWhereUniqueInput!]
-  update: [ShiftSlotUpdateWithWhereUniqueNestedInput!]
-  upsert: [ShiftSlotUpsertWithWhereUniqueNestedInput!]
-}
-
-input ShiftSlotUpdateWithWhereUniqueNestedInput {
-  where: ShiftSlotWhereUniqueInput!
-  data: ShiftSlotUpdateDataInput!
-}
-
-input ShiftSlotUpsertWithWhereUniqueNestedInput {
-  where: ShiftSlotWhereUniqueInput!
-  update: ShiftSlotUpdateDataInput!
-  create: ShiftSlotCreateInput!
 }
 
 input ShiftSlotWhereInput {
@@ -2944,10 +2988,6 @@ input ShiftSlotWhereInput {
   """All values greater than or equal the given value."""
   index_gte: Int
   schedule: ScheduleWhereInput
-}
-
-input ShiftSlotWhereUniqueInput {
-  id: UUID
 }
 
 type ShiftSubscriptionPayload {
@@ -3037,6 +3077,46 @@ input ShiftWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ShiftWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   description: String
 
   """All values that are not equal to given value."""
@@ -3151,10 +3231,11 @@ input ShiftWhereInput {
 }
 
 input ShiftWhereUniqueInput {
-  id: UUID
+  id: ID
 }
 
 type Subscription {
+  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   department(where: DepartmentSubscriptionWhereInput): DepartmentSubscriptionPayload
   shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
@@ -3165,15 +3246,14 @@ type Subscription {
   exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   scheduleRestlineElement(where: ScheduleRestlineElementSubscriptionWhereInput): ScheduleRestlineElementSubscriptionPayload
   shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
-  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
-type User {
-  id: UUID!
+type User implements Node {
+  id: ID!
   username: String!
   password: String!
-  departments(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee!]
+  departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department!]
 }
 
 """A connection to a list of items."""
@@ -3189,17 +3269,22 @@ type UserConnection {
 input UserCreateInput {
   username: String!
   password: String!
-  departments: EmployeeCreateManyInput
+  departments: DepartmentCreateManyWithoutSupervisorsInput
 }
 
-input UserCreateManyInput {
-  create: [UserCreateInput!]
+input UserCreateManyWithoutDepartmentsInput {
+  create: [UserCreateWithoutDepartmentsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutDepartmentsInput {
+  username: String!
+  password: String!
 }
 
 """An edge in a connection."""
@@ -3225,7 +3310,7 @@ enum UserOrderByInput {
 }
 
 type UserPreviousValues {
-  id: UUID!
+  id: ID!
   username: String!
   password: String!
 }
@@ -3272,22 +3357,22 @@ input UserSubscriptionWhereInput {
 input UserUpdateDataInput {
   username: String
   password: String
-  departments: EmployeeUpdateManyInput
+  departments: DepartmentUpdateManyWithoutSupervisorsInput
 }
 
 input UserUpdateInput {
   username: String
   password: String
-  departments: EmployeeUpdateManyInput
+  departments: DepartmentUpdateManyWithoutSupervisorsInput
 }
 
-input UserUpdateManyInput {
-  create: [UserCreateInput!]
+input UserUpdateManyWithoutDepartmentsInput {
+  create: [UserCreateWithoutDepartmentsInput!]
   connect: [UserWhereUniqueInput!]
   disconnect: [UserWhereUniqueInput!]
   delete: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueNestedInput!]
-  upsert: [UserUpsertWithWhereUniqueNestedInput!]
+  update: [UserUpdateWithWhereUniqueWithoutDepartmentsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutDepartmentsInput!]
 }
 
 input UserUpdateOneRequiredInput {
@@ -3297,9 +3382,14 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
-input UserUpdateWithWhereUniqueNestedInput {
+input UserUpdateWithoutDepartmentsDataInput {
+  username: String
+  password: String
+}
+
+input UserUpdateWithWhereUniqueWithoutDepartmentsInput {
   where: UserWhereUniqueInput!
-  data: UserUpdateDataInput!
+  data: UserUpdateWithoutDepartmentsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -3307,10 +3397,10 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithWhereUniqueNestedInput {
+input UserUpsertWithWhereUniqueWithoutDepartmentsInput {
   where: UserWhereUniqueInput!
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+  update: UserUpdateWithoutDepartmentsDataInput!
+  create: UserCreateWithoutDepartmentsInput!
 }
 
 input UserWhereInput {
@@ -3322,6 +3412,46 @@ input UserWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   username: String
 
   """All values that are not equal to given value."""
@@ -3402,15 +3532,12 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
-  departments_every: EmployeeWhereInput
-  departments_some: EmployeeWhereInput
-  departments_none: EmployeeWhereInput
+  departments_every: DepartmentWhereInput
+  departments_some: DepartmentWhereInput
+  departments_none: DepartmentWhereInput
 }
 
 input UserWhereUniqueInput {
-  id: UUID
+  id: ID
   username: String
 }
-
-"""A type 4 UUID according to IETF RFC 4122."""
-scalar UUID

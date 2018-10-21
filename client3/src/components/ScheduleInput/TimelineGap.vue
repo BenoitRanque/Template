@@ -32,15 +32,15 @@
           </q-item>
           <q-item>
             <q-item-main>
-              <q-field label-width="6" label="Marca Entrada" class="text-right">
-                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startRequireEvent"></q-checkbox>
+              <q-field label-width="6" label="Hora Fin">
+                <time-input align="right" hide-underline :min="model.startTime" :max="value.end" v-model="model.endTime" />
               </q-field>
             </q-item-main>
           </q-item>
           <q-item>
             <q-item-main>
-              <q-field label-width="6" label="Hora Fin">
-                <time-input align="right" hide-underline :min="model.startTime" :max="value.end" v-model="model.endTime" />
+              <q-field label-width="6" label="Marca Entrada" class="text-right">
+                <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startRequireEvent"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>

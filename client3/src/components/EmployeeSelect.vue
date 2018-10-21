@@ -134,35 +134,25 @@ export default {
       }
 
       const query = gql`
-        query ($includeEmployee1: Boolean! $Employee1: UUID $includeEmployee2: Boolean! $Employee2: UUID $includeEmployee3: Boolean! $Employee3: UUID) {
-          employee1: employee (where: { id: $Employee1 }) @include(if: $includeEmployee1) {
-            nameFull
-          }
-          employee2: employee (where: { id: $Employee2 }) @include(if: $includeEmployee2) {
-            nameFull
-          }
-          employee3: employee (where: { id: $Employee3 }) @include(if: $includeEmployee3) {
+        query ($employees: [ID!]! $count: Int!) {
+          employees (first: $count where: {
+            id_in: $employees
+          }) {
             nameFull
           }
         }
       `
       const parameters = {
-        includeEmployee1: this.selectedEmployees.length >= 1,
-        Employee1: this.selectedEmployees.length >= 1 ? this.selectedEmployees[0].id : null,
-        includeEmployee2: this.selectedEmployees.length >= 2,
-        Employee2: this.selectedEmployees.length >= 2 ? this.selectedEmployees[1].id : null,
-        includeEmployee3: this.selectedEmployees.length >= 3,
-        Employee3: this.selectedEmployees.length >= 3 ? this.selectedEmployees[2].id : null
+        count: 3,
+        employees: this.selectedEmployees.map(({ id }) => id)
       }
 
       this.$gql.request(query, parameters)
         .then(response => {
-          const names = []
-          if (response.employee1) names.push(response.employee1.nameFull)
-          if (response.employee2) names.push(response.employee2.nameFull)
-          if (response.employee3) names.push(response.employee3.nameFull)
-
-          this.label = names.join(', ') + (this.selectedEmployees.length > names.length ? `, & ${this.selectedEmployees.length - names.length} mas...` : '')
+          this.label = response.employees
+            .map(({ nameFull }) => nameFull)
+            .join(', ') +
+              (this.selectedEmployees.length > response.employees.length ? `, & ${this.selectedEmployees.length - response.employees.length} mas...` : '')
         })
         .catch(error => {
           console.log(error)

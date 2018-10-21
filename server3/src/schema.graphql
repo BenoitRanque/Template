@@ -1,14 +1,14 @@
-# import UUID from "./generated/prisma.graphql"
+# import ID from "./generated/prisma.graphql"
 # import UserCreateInput from "./generated/prisma.graphql"
 # import Employee EmployeeCreateInput EmployeeUpdateInput EmployeeWhereUniqueInput EmployeeWhereInput EmployeeOrderByInput EmployeeConnection from "./generated/prisma.graphql"
 # import Schedule ScheduleWhereUniqueInput ScheduleWhereInput ScheduleOrderByInput ScheduleCreateInput ScheduleConnection from "./generated/prisma.graphql"
 # import Shift ShiftWhereUniqueInput ShiftWhereInput ShiftOrderByInput ShiftCreateInput from "./generated/prisma.graphql"
-# import Exception ExceptionWhereUniqueInput ExceptionWhereInput ExceptionOrderByInput ExceptionCreateInput from "./generated/prisma.graphql"
+# import Exception ExceptionWhereUniqueInput ExceptionWhereInput ExceptionOrderByInput ExceptionSlotCreateInput from "./generated/prisma.graphql"
 # import Department DepartmentWhereInput DepartmentWhereUniqueInput DepartmentOrderByInput DepartmentCreateInput DepartmentUpdateInput from "./generated/prisma.graphql"
 
 type Query {
   sessionUser: User
-  user(id: UUID!): User
+  user(id: ID!): User
   users: [User!]!
   employee(where: EmployeeWhereUniqueInput!): Employee
   employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
@@ -37,10 +37,46 @@ type Mutation {
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department!
 }
 
-# type Subscription {
-#   newLink: LinkSubscriptionPayload
-#   newVote: VoteSubscriptionPayload
-# }
+input ExceptionCreateInput {
+  employee: EmployeeWhereUniqueInput!
+  slots: [ExceptionSlotCreateInput!]!
+}
+
+input ExceptionSlotCreateInput {
+  date: DateTime!
+  schedule: ScheduleCreateInput!
+}
+
+input ScheduleCreateInput {
+  description: String
+  baseTime: Int!
+  custom: Boolean
+  timeline: [ScheduleTimelineElementCreateInput]!
+  restline: [ScheduleRestlineElementCreateInput]!
+  offline1: ScheduleOfflineElementCreateInput
+  offline2: ScheduleOfflineElementCreateInput
+}
+
+input ScheduleTimelineElementCreateInput {
+  category: ScheduleTimelineCategory!
+  startTime: Int!
+  startRequireEvent: Boolean!
+  endTime: Int!
+  endRequireEvent: Boolean!
+}
+
+input ScheduleRestlineElementCreateInput {
+  category: ScheduleRestlineCategory!
+  startTime: Int!
+  startRequireEvent: Boolean!
+  endTime: Int!
+  endRequireEvent: Boolean!
+  duration: Int!
+}
+
+input ScheduleOfflineElementCreateInput {
+  category: ScheduleOfflineCategory!
+}
 
 type AuthPayload {
   token: String!
@@ -48,13 +84,13 @@ type AuthPayload {
 }
 
 type User {
-  id: UUID!
+  id: ID!
   username: String!
   departments: [Department]!
 }
 
 type Employee {
-  id: UUID!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   nameFirst: String!

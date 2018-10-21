@@ -14,15 +14,15 @@ services:
           default:
             connector: postgres
             # host: host.docker.internal
-            host: postgres
+            host: postgres-db
             port: '5432'
             database: ${PG_DATABASE}
             # schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
             user: ${PG_USERNAME}
             password: ${PG_PASSWORD}
             migrations: true
-  postgres:
-    image: postgres:10.5
+  postgres-db:
+    image: postgres
     restart: always
     ports:
     - "6543:5432"

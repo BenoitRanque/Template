@@ -44,16 +44,82 @@ async function authenticate(parent, args, ctx, info) {
   }
 }
 
+async function createException(parent, { data }, ctx, info) {
+
+  const userId = getUserId(ctx)
+  const employeeId = data.employee.id
+  const exceptionDates = data.slots.map(({ date }) => date)
+
+  console.log('UserId', userId)
+  console.log('EmployeeId', data)
+
+  const userIsSupervisor = await ctx.db.query.employees({
+    where: {
+      id: employeeId,
+      department: {
+        supervisors_some: {
+          id: userId
+        }
+      }
+    }
+  }, `{ id }`)
+  console.log('Hello', userIsSupervisor)
+  if (!userIsSupervisor.length) throw new Error('User is not an authorized supervisor of employee')
+
+  const exceptionsWithDuplicateDates = await ctx.db.query.exceptions({
+    where: {
+      employee: {
+        id: employeeId
+      },
+      slots_some: {
+        date_in: exceptionDates
+      }
+    }
+  }, `{ id }`)
+  if (exceptionsWithDuplicateDates.length > 0) throw new Error('Conflict with other exceptions: dates already exist')
+
+  return ctx.db.mutation.createException({
+    data: {
+      owner: {
+        connect: {
+          id: userId
+        }
+      },
+      employee: {
+        connect: {
+          id: employeeId
+        }
+      },
+      slots: {
+        create: data.slots.map(({ date, schedule }) => ({
+          date,
+          schedule: {
+            create: {
+              ...schedule,
+              restline: {
+                create: schedule.restline
+              },
+              timeline: {
+                create: schedule.timeline
+              }
+            }
+          }
+        }))
+      }
+    }
+  }, info)
+}
+
 
 module.exports = {
   // post,
   createUser,
   authenticate,
+  createException,
   createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
   updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),
   createShift: (parent, args, ctx, info) => ctx.db.mutation.createShift(args, info),
-  createException: (parent, args, ctx, info) => ctx.db.mutation.createException(args, info),
   createDepartment: (parent, args, ctx, info) => ctx.db.mutation.createDepartment(args, info),
   updateDepartment: (parent, args, ctx, info) => ctx.db.mutation.updateDepartment(args, info),
   deleteDepartment: (parent, args, ctx, info) => ctx.db.mutation.deleteDepartment(args, info)
