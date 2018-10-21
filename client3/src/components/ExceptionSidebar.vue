@@ -281,10 +281,7 @@ export default {
           this.dateC = null
         })
     },
-    createException () {
-      // create exception
-    },
-    mapExceptionToExceptionInput (exception) {
+        mapExceptionToExceptionInput (exception) {
       return {
         employee: {
           connect: {
@@ -306,6 +303,29 @@ export default {
           }
         }))
       }
+    },
+    createException () {
+      // create exception
+      const query = gql`
+        mutation ($data: ExceptionCreateInput!) {
+          exception: createException (data: $data) {
+            employee {
+              nameFull
+            }
+          }
+        }
+      `
+      const parameters = {
+        data: this.mapExceptionToExceptionInput(this.exception)
+      }
+
+      this.$gql.request(query, parameters)
+        .then(response => {
+          this.$q.notify(`Boleta para empleado ${response.exception.employee.nameFull} creada por usuario ${response.exception.owner.username}`)
+          // reset model
+        })
+        .catch(error => console.log(error))
+        .finally(() => {})
     }
   }
 }
