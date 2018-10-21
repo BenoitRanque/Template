@@ -22,8 +22,6 @@ type Query {
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
   department(where: DepartmentWhereUniqueInput!): Department!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
-  attendanceReport(employee: AttendanceReportEmployeeUniqueInput! from: DateTime! to: DateTime!): AttendanceReport!
-  attendanceReports(employees: AttendanceReportEmployeeInput! from: DateTime! to: DateTime!): [AttendanceReport!]!
 }
 
 type Mutation {
@@ -37,41 +35,6 @@ type Mutation {
   createDepartment(data: DepartmentCreateInput!): Department!
   updateDepartment(data: DepartmentUpdateInput! where: DepartmentWhereUniqueInput!): Department!
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department!
-}
-
-input AttendanceReportEmployeeInput {
-  where: EmployeeWhereInput
-  where: EmployeeWhereInput
-  orderBy: EmployeeOrderByInput
-  skip: Int
-  after: String
-  before: String
-  first: Int
-  last: Int
-}
-
-input AttendanceReportEmployeeUniqueInput {
-  where: EmployeeWhereUniqueInput!
-}
-
-type AttendanceReport {
-  info: String
-  from: DateTime!
-  to: DateTime!
-  employee: Employee
-  shifts: [Shift!]!
-  exceptions: [Exception!]!
-  dates: [AttendanceReportDate!]!
-}
-
-type AttendanceReportDate {
-  date: DateTime!
-  innerBound: DateTime!
-  outerBound: DateTime!
-  events: [DateTime!]!
-  schedule: Schedule!
-  shift: Shift
-  exception: Exception
 }
 
 # type Subscription {
@@ -112,58 +75,38 @@ type Employee {
   AFP: Int
   cargo: String
   zkTimePin: Int!
-  department: EmployeeDepartment
+  department: Department
   shifts: [Shift!]!
+  attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean!): AttendanceReport!
+  calendarDate(date: DateTime! withExceptions: Boolean!): CalendarDate!
+  calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
 }
 
-type EmployeeReport {
-  attendance(from: DateTime! to: DateTime!): [AttendanceDate!]!
-  exceptions(status: ExceptionStatusEnum! from: DateTime! to: DateTime!): [Exception!]!
-  schedule(date: DateTime!): Schedule
-}
-
-enum ExceptionStatusEnum {
-  PENDING
-  AUTHORIZED
-  DENIED
-}
-
-type EmployeeDepartment {
-  id: UUID!
-  name: String!
-}
-
-type AttendanceDate {
+type CalendarDate {
   date: DateTime!
-  innerBound: DateTime!
-  outerBound: DateTime!
-  schedule: Schedule!
+  schedule: Schedule
   shift: Shift
   exception: Exception
-  report: AttendanceReport!
 }
 
 type AttendanceReport {
+  info: String
+  from: DateTime!
+  to: DateTime!
   events: [DateTime!]!
-  summary: AttendanceSummary!
-  timeline: [AttendanceReportTimelineElement!]!
-  restline: [AttendanceReportRestlineElement!]!
-  offline1: AttendanceReportOfflineElement!
-  offline2: AttendanceReportOfflineElement!
+  eventCount: Int!
+  shifts: [Shift!]!
+  exceptions: [Exception!]!
+  dates: [AttendanceReportDate!]!
 }
 
-type AttendanceSummary {
-  eventCount: Int
-}
-
-type AttendanceReportTimelineElement {
-  eventCount: Int
-}
-
-type AttendanceReportRestlineElement {
-  eventCount: Int
-}
-
-type AttendanceReportOfflineElement {
-  eventCount: Int
+type AttendanceReportDate {
+  date: DateTime!
+  innerBound: DateTime!
+  outerBound: DateTime!
+  events: [DateTime!]!
+  eventCount: Int!
+  schedule: Schedule!
+  shift: Shift
+  exception: Exception
 }

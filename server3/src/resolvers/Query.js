@@ -50,20 +50,5 @@ module.exports = {
   exception: (obj, args, ctx, info) => ctx.db.query.exception(args, info),
   exceptions: (obj, args, ctx, info) => ctx.db.query.exceptions(args, info),
   department: (obj, args, ctx, info) => ctx.db.query.department(args, info),
-  departments: (obj, args, ctx, info) => ctx.db.query.departments(args, info),
-  attendanceReport: async (obj, { from, to, employee }, ctx, info) => {
-    return loadAttendanceReport({
-      from,
-      to,
-      employee: await ctx.db.query.employee(employee, `{ id zkTimePin }`)
-    }, ctx)
-  },
-  attendanceReports: async (obj, args, ctx, info) => {
-    const employees = await ctx.db.query.employees(args.employees, `{ id zkTimePin }`)
-    return Promise.all(employees.map(employee => loadAttendanceReport({
-      from: args.from,
-      to: args.to,
-      employee
-    }, ctx)))
-  }
+  departments: (obj, args, ctx, info) => ctx.db.query.departments(args, info)
 }

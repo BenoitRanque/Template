@@ -7,8 +7,5 @@ module.exports = {
   },
   exception: {
     resolve: async (obj, args, ctx, info) => !obj.exception || !obj.exception.id ? null : ctx.db.query.exception({ where: { id: obj.exception.id } }, info)
-  },
-  eventCount: {
-    resolve: async (obj, args, ctx, info) => obj.events.length
   }
 }

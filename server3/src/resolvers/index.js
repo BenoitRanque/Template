@@ -6,7 +6,8 @@ const resolvers = {
   AuthPayload: require('./AuthPayload'),
   Employee: require('./Employee'),
   AttendanceReport: require('./AttendanceReport'),
-  AttendanceReportDate: require('./AttendanceReportDate')
+  AttendanceReportDate: require('./AttendanceReportDate'),
+  CalendarDate: require('./CalendarDate')
 }
 
 module.exports = {

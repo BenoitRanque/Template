@@ -7,10 +7,10 @@
 
     <q-icon slot="after" :name="this.$q.icon.input.dropdown" class="q-if-control"></q-icon>
 
-    <q-modal v-model="modal" minimized>
+    <q-modal v-model="modal" minimized @show="() => $refs.search.focus()">
       <q-modal-layout header-class="no-shadow" footer-class="no-shadow">
         <q-toolbar slot="header" color="white" class="q-px-lg">
-          <q-search class="col" hide-underline v-model="table.filter" />
+          <q-search ref="search" class="col" hide-underline v-model="table.filter" />
           <q-btn color="primary" v-close-overlay flat>ok</q-btn>
         </q-toolbar>
         <!-- <div class="row q-pl-lg q-py-md q-pr-md" slot="header">
@@ -91,7 +91,7 @@ export default {
         loading: false,
         selected: this.multiple ? this.value : [this.value],
         pagination: {
-          sortBy: null,
+          sortBy: 'nameFull',
           descending: false,
           page: 1,
           rowsPerPage: 5, // current rows per page being displayed
