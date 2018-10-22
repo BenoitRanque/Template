@@ -1,65 +1,66 @@
--# hackernews-graphql-js
-
-This repository contains the final project for the [**GraphQL.js tutorial**](https://www.howtographql.com/graphql-js/0-introduction/) on [How to GraphQL](https://www.howtographql.com/). Note that it also serves as foundation for all frontend tutorials on the site.
 
 ## Usage
 
-### 1. Clone repository & install dependencies
+### 1. Create  a .env file
+
+This file should be placed in the project root folder
+
+```.env
+
+# Postgres Database configuation. Only used during setup
+PG_USERNAME=
+PG_PASSWORD=
+PG_DATABASE=
+
+# Managment Secret: used to deploy service. Only used during setup and deployment
+PRISMA_MANAGEMENT_API_SECRET=
+
+# Enpoint where Prisma is deployed. Example http://localhost:4466/project/dev
+PRISMA_ENDPOINT=
+# Used to access the Prisma API
+PRISMA_SECRET=
+
+# Used to validate user sessions
+APP_SECRET=
+
+# See BYCRYPT docs
+BCRYPT_SALT_ROUNDS=
+
+# Location of ZKTime database file, used to load employee events
+ZKTIME_DB_PATH=
+
+```
+
+### 2. Install dependencies
 
 ```sh
-git clone https://github.com/howtographql/graphql-js	
-cd graphql-js
-yarn install # or `npm install`
+npm install
 ```
 
-### 2. Deploy the Prisma database service
+### 3. Deploy the Prisma database service
+
+Docker must be installed and running
 
 ```sh
-yarn prisma deploy
+docker-compose -f database/docker-compose.yml up -d
+# or
+npm run docker-compose
 ```
 
-When prompted where (i.e. to which Prisma server) you want to deploy your service, choose the Demo server which can be used for free in Prisma Cloud. If you haven't done so already, you will be asked to register with Prisma Cloud (which you can do via GitHub). For the following prompts in the terminal you can select the suggested values by hitting Enter. (If you have Docker installed, you can also choose to deploy Prisma locally by Creating a new database.)
+### 4. Deploy the Prisma database service
 
-### 3. Set the Prisma service endpoint
-
-From the output of the previous command, copy the `HTTP` endpoint and paste it into `src/index.js` where it's used to instantiate the `Prisma` binding. You need to replace the current placeholder `__PRISMA_ENDPOINT__`:
-
-```js
-const server = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
-  resolvers,
-  context: req => ({
-    ...req,
-    db: new Prisma({
-      typeDefs: 'src/generated/prisma.graphql',
-      endpoint: "__PRISMA_ENDPOINT__",
-      debug: true
-    }),
-  }),
-})
-```
-
-For example:
-
-```js
-const server = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
-  resolvers,
-  context: req => ({
-    ...req,
-    db: new Prisma({
-      typeDefs: 'src/generated/prisma.graphql',
-      endpoint: "https://eu1.prisma.sh/john-dpe/hackernews-graphql-js/dev",
-      debug: true,
-    }),
-  }),
-})
-```
-
-### 4. Start the server & open Playground
-
-To interact with the API in a GraphQL Playground, all you need to do is execute the `dev` script defined in `package.json`:
+The prisma CLI must be installed globally
 
 ```sh
-yarn dev
+prisma deploy
+# or
+npm run prisma-deploy
+```
+
+### 5. Start the server
+
+```sh
+npm run dev # start dev server & open playground
+# or
+npm run start # start production server
 ```

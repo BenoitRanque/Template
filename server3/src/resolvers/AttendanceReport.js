@@ -1,12 +1,12 @@
 module.exports = {
   shifts: {
     resolve: async ({ shifts }, args, { db }, info) => {
-      return Promise.all(shifts.map(shift => db.query.shift({ where: { id: shift.id } }, info)))
+      return shifts && shifts.length ? db.query.shifts({ where: { id_in: shifts.map(({ id }) => id) } }, info) : []
     }
   },
   exceptions: {
-    resolve: async ({ exceptions }, args, ctx, info) => {
-      return Promise.all(exceptions.map(shift => db.query.exception({ where: { id: shift.id } }, info)))
+    resolve: async ({ exceptions }, args, { db }, info) => {
+      return exceptions && exceptions.length ? db.query.exceptions({ where: { id_in: exceptions.map(({ id }) => id) } }, info) : []
     }
   },
   eventCount: {

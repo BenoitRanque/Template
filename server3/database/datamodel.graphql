@@ -112,7 +112,7 @@ type Schedule {
   id: ID! @unique
   description: String
   baseTime: Int!
-  custom: Boolean! @default(value: "true")
+  isPreset: Boolean @default(value: "false")
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
   offline1: ScheduleOfflineElement @relation(name: "ScheduleToOffline1" onDelete: CASCADE)

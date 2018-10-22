@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Sun Oct 21 2018 14:31:19 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Sun Oct 21 2018 21:44:22 GMT-0400 (SA Western Standard Time)
 
 type AggregateDepartment {
   count: Int!
@@ -1958,7 +1958,7 @@ type Schedule implements Node {
   id: ID!
   description: String
   baseTime: Int!
-  custom: Boolean!
+  isPreset: Boolean
   timeline(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement!]
   restline(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement!]
   offline1: ScheduleOfflineElement
@@ -1978,7 +1978,7 @@ type ScheduleConnection {
 input ScheduleCreateInput {
   description: String
   baseTime: Int!
-  custom: Boolean
+  isPreset: Boolean
   timeline: ScheduleTimelineElementCreateManyInput
   restline: ScheduleRestlineElementCreateManyInput
   offline1: ScheduleOfflineElementCreateOneInput
@@ -2142,8 +2142,8 @@ enum ScheduleOrderByInput {
   description_DESC
   baseTime_ASC
   baseTime_DESC
-  custom_ASC
-  custom_DESC
+  isPreset_ASC
+  isPreset_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -2154,7 +2154,7 @@ type SchedulePreviousValues {
   id: ID!
   description: String
   baseTime: Int!
-  custom: Boolean!
+  isPreset: Boolean
 }
 
 enum ScheduleRestlineCategory {
@@ -2163,11 +2163,11 @@ enum ScheduleRestlineCategory {
 
 type ScheduleRestlineElement {
   category: ScheduleRestlineCategory!
-  startTime: Int!
-  startRequireEvent: Boolean!
-  endTime: Int!
-  endRequireEvent: Boolean!
   duration: Int!
+  startTime: Int!
+  endTime: Int!
+  startRequireEvent: Boolean!
+  endRequireEvent: Boolean!
 }
 
 """A connection to a list of items."""
@@ -2182,11 +2182,11 @@ type ScheduleRestlineElementConnection {
 
 input ScheduleRestlineElementCreateInput {
   category: ScheduleRestlineCategory!
-  startTime: Int!
-  startRequireEvent: Boolean!
-  endTime: Int!
-  endRequireEvent: Boolean!
   duration: Int!
+  startTime: Int!
+  endTime: Int!
+  startRequireEvent: Boolean!
+  endRequireEvent: Boolean!
 }
 
 input ScheduleRestlineElementCreateManyInput {
@@ -2205,16 +2205,16 @@ type ScheduleRestlineElementEdge {
 enum ScheduleRestlineElementOrderByInput {
   category_ASC
   category_DESC
-  startTime_ASC
-  startTime_DESC
-  startRequireEvent_ASC
-  startRequireEvent_DESC
-  endTime_ASC
-  endTime_DESC
-  endRequireEvent_ASC
-  endRequireEvent_DESC
   duration_ASC
   duration_DESC
+  startTime_ASC
+  startTime_DESC
+  endTime_ASC
+  endTime_DESC
+  startRequireEvent_ASC
+  startRequireEvent_DESC
+  endRequireEvent_ASC
+  endRequireEvent_DESC
   id_ASC
   id_DESC
   updatedAt_ASC
@@ -2225,11 +2225,11 @@ enum ScheduleRestlineElementOrderByInput {
 
 type ScheduleRestlineElementPreviousValues {
   category: ScheduleRestlineCategory!
-  startTime: Int!
-  startRequireEvent: Boolean!
-  endTime: Int!
-  endRequireEvent: Boolean!
   duration: Int!
+  startTime: Int!
+  endTime: Int!
+  startRequireEvent: Boolean!
+  endRequireEvent: Boolean!
 }
 
 type ScheduleRestlineElementSubscriptionPayload {
@@ -2273,11 +2273,11 @@ input ScheduleRestlineElementSubscriptionWhereInput {
 
 input ScheduleRestlineElementUpdateInput {
   category: ScheduleRestlineCategory
-  startTime: Int
-  startRequireEvent: Boolean
-  endTime: Int
-  endRequireEvent: Boolean
   duration: Int
+  startTime: Int
+  endTime: Int
+  startRequireEvent: Boolean
+  endRequireEvent: Boolean
 }
 
 input ScheduleRestlineElementUpdateManyInput {
@@ -2303,58 +2303,6 @@ input ScheduleRestlineElementWhereInput {
 
   """All values that are not contained in given list."""
   category_not_in: [ScheduleRestlineCategory!]
-  startTime: Int
-
-  """All values that are not equal to given value."""
-  startTime_not: Int
-
-  """All values that are contained in given list."""
-  startTime_in: [Int!]
-
-  """All values that are not contained in given list."""
-  startTime_not_in: [Int!]
-
-  """All values less than the given value."""
-  startTime_lt: Int
-
-  """All values less than or equal the given value."""
-  startTime_lte: Int
-
-  """All values greater than the given value."""
-  startTime_gt: Int
-
-  """All values greater than or equal the given value."""
-  startTime_gte: Int
-  startRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
-  startRequireEvent_not: Boolean
-  endTime: Int
-
-  """All values that are not equal to given value."""
-  endTime_not: Int
-
-  """All values that are contained in given list."""
-  endTime_in: [Int!]
-
-  """All values that are not contained in given list."""
-  endTime_not_in: [Int!]
-
-  """All values less than the given value."""
-  endTime_lt: Int
-
-  """All values less than or equal the given value."""
-  endTime_lte: Int
-
-  """All values greater than the given value."""
-  endTime_gt: Int
-
-  """All values greater than or equal the given value."""
-  endTime_gte: Int
-  endRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
-  endRequireEvent_not: Boolean
   duration: Int
 
   """All values that are not equal to given value."""
@@ -2377,6 +2325,58 @@ input ScheduleRestlineElementWhereInput {
 
   """All values greater than or equal the given value."""
   duration_gte: Int
+  startTime: Int
+
+  """All values that are not equal to given value."""
+  startTime_not: Int
+
+  """All values that are contained in given list."""
+  startTime_in: [Int!]
+
+  """All values that are not contained in given list."""
+  startTime_not_in: [Int!]
+
+  """All values less than the given value."""
+  startTime_lt: Int
+
+  """All values less than or equal the given value."""
+  startTime_lte: Int
+
+  """All values greater than the given value."""
+  startTime_gt: Int
+
+  """All values greater than or equal the given value."""
+  startTime_gte: Int
+  endTime: Int
+
+  """All values that are not equal to given value."""
+  endTime_not: Int
+
+  """All values that are contained in given list."""
+  endTime_in: [Int!]
+
+  """All values that are not contained in given list."""
+  endTime_not_in: [Int!]
+
+  """All values less than the given value."""
+  endTime_lt: Int
+
+  """All values less than or equal the given value."""
+  endTime_lte: Int
+
+  """All values greater than the given value."""
+  endTime_gt: Int
+
+  """All values greater than or equal the given value."""
+  endTime_gte: Int
+  startRequireEvent: Boolean
+
+  """All values that are not equal to given value."""
+  startRequireEvent_not: Boolean
+  endRequireEvent: Boolean
+
+  """All values that are not equal to given value."""
+  endRequireEvent_not: Boolean
 }
 
 type ScheduleSubscriptionPayload {
@@ -2428,8 +2428,8 @@ enum ScheduleTimelineCategory {
 type ScheduleTimelineElement {
   category: ScheduleTimelineCategory!
   startTime: Int!
-  startRequireEvent: Boolean!
   endTime: Int!
+  startRequireEvent: Boolean!
   endRequireEvent: Boolean!
 }
 
@@ -2446,8 +2446,8 @@ type ScheduleTimelineElementConnection {
 input ScheduleTimelineElementCreateInput {
   category: ScheduleTimelineCategory!
   startTime: Int!
-  startRequireEvent: Boolean!
   endTime: Int!
+  startRequireEvent: Boolean!
   endRequireEvent: Boolean!
 }
 
@@ -2469,10 +2469,10 @@ enum ScheduleTimelineElementOrderByInput {
   category_DESC
   startTime_ASC
   startTime_DESC
-  startRequireEvent_ASC
-  startRequireEvent_DESC
   endTime_ASC
   endTime_DESC
+  startRequireEvent_ASC
+  startRequireEvent_DESC
   endRequireEvent_ASC
   endRequireEvent_DESC
   id_ASC
@@ -2486,8 +2486,8 @@ enum ScheduleTimelineElementOrderByInput {
 type ScheduleTimelineElementPreviousValues {
   category: ScheduleTimelineCategory!
   startTime: Int!
-  startRequireEvent: Boolean!
   endTime: Int!
+  startRequireEvent: Boolean!
   endRequireEvent: Boolean!
 }
 
@@ -2533,8 +2533,8 @@ input ScheduleTimelineElementSubscriptionWhereInput {
 input ScheduleTimelineElementUpdateInput {
   category: ScheduleTimelineCategory
   startTime: Int
-  startRequireEvent: Boolean
   endTime: Int
+  startRequireEvent: Boolean
   endRequireEvent: Boolean
 }
 
@@ -2583,10 +2583,6 @@ input ScheduleTimelineElementWhereInput {
 
   """All values greater than or equal the given value."""
   startTime_gte: Int
-  startRequireEvent: Boolean
-
-  """All values that are not equal to given value."""
-  startRequireEvent_not: Boolean
   endTime: Int
 
   """All values that are not equal to given value."""
@@ -2609,6 +2605,10 @@ input ScheduleTimelineElementWhereInput {
 
   """All values greater than or equal the given value."""
   endTime_gte: Int
+  startRequireEvent: Boolean
+
+  """All values that are not equal to given value."""
+  startRequireEvent_not: Boolean
   endRequireEvent: Boolean
 
   """All values that are not equal to given value."""
@@ -2618,7 +2618,7 @@ input ScheduleTimelineElementWhereInput {
 input ScheduleUpdateDataInput {
   description: String
   baseTime: Int
-  custom: Boolean
+  isPreset: Boolean
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
@@ -2628,7 +2628,7 @@ input ScheduleUpdateDataInput {
 input ScheduleUpdateInput {
   description: String
   baseTime: Int
-  custom: Boolean
+  isPreset: Boolean
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
@@ -2758,10 +2758,10 @@ input ScheduleWhereInput {
 
   """All values greater than or equal the given value."""
   baseTime_gte: Int
-  custom: Boolean
+  isPreset: Boolean
 
   """All values that are not equal to given value."""
-  custom_not: Boolean
+  isPreset_not: Boolean
   timeline_every: ScheduleTimelineElementWhereInput
   timeline_some: ScheduleTimelineElementWhereInput
   timeline_none: ScheduleTimelineElementWhereInput

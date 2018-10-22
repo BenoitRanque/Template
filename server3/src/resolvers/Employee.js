@@ -52,7 +52,6 @@ module.exports = {
 
 async function loadCalendarDate({ id }, { date, withExceptions }, { db }) {
   const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, date, date, withExceptions)
-
   return {
     date,
     ...getReferencesForDate(date, shifts, exceptions)
@@ -176,8 +175,8 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
   `, { id: employeeID, from, to, withExceptions, withScheduleData })
 
   return {
-    shifts: (response && response.data && response.data.shifts) ? response.data.shifts : [],
-    exceptions: (response && response.data && response.data.exceptions) ? response.data.exceptions : [],
+    shifts: (response && response.shifts) ? response.shifts : [],
+    exceptions: (response && response.exceptions) ? response.exceptions : [],
   }
 }
 

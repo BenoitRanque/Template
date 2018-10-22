@@ -4,12 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "dev": "npm-run-all --parallel start-dev playground",
     "start": "node --require dotenv/config src/index.js",
     "start-dev": "nodemon --require dotenv/config src/index.js",
-    "dev": "npm-run-all --parallel start-dev playground",
     "playground": "graphql playground",
-    "prisma": "prisma --env-file .env",
-    "graphql": "graphql",
     "docker-compose": "docker-compose -f database/docker-compose.yml up -d",
     "prisma-deploy": "prisma deploy --env-file .env",
     "prisma-token": "prisma token --env-file .env"

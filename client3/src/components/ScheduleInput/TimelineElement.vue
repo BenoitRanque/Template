@@ -14,7 +14,7 @@
       {{formatTime(value.endTime)}}
     </div>
     <q-tooltip>{{tooltip}}</q-tooltip>
-    <q-popover self="top middle" anchor="bottom middle">
+    <q-popover self="top middle" anchor="bottom middle" :disable="$parent.readonly">
       <q-list>
         <!-- <q-list-header>
           Tipo de Elemento

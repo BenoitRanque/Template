@@ -1,6 +1,6 @@
 <template>
   <div v-if="value === null" class="offline-gap round-borders">
-    <q-btn class="fit bg-indigo-2" icon="add" color="indigo" outline dense @click="modal = true">
+    <q-btn class="fit bg-indigo-2" icon="add" color="indigo" outline dense @click="modal = true" v-if="!$parent.readonly">
       <q-tooltip>Aggregar elemento libre</q-tooltip>
     </q-btn>
     <q-modal v-model="modal">
@@ -34,7 +34,7 @@
   <div v-else :style="style" class="round-borders offline-element q-caption text-weight-bold row items-center justify-center no-wrap">
     {{categoryDescription(value.category)}}
     <q-tooltip>{{tooltip}}</q-tooltip>
-    <q-popover self="top middle" anchor="bottom middle">
+    <q-popover self="top middle" anchor="bottom middle" :disable="$parent.readonly">
       <q-list>
         <!-- <q-list-header>
           Tipo de Elemento

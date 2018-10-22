@@ -44,7 +44,12 @@ input ExceptionCreateInput {
 
 input ExceptionSlotCreateInput {
   date: DateTime!
-  schedule: ScheduleCreateInput!
+  schedule: ScheduleCreateOneInput!
+}
+
+input ScheduleCreateOneInput {
+  create: ScheduleCreateInput
+  connect: ScheduleWhereUniqueInput
 }
 
 input ScheduleCreateInput {

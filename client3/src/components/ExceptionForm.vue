@@ -30,11 +30,14 @@
       <div class="group">
         <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in exception.slots" :key="`slot_card_${index}`">
           <q-card-main>
-            <schedule-input v-model="slot.schedule" :valid.sync="slot.valid">
+            <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
               <q-datetime
                 color="teal-8"
                 :display-value="slot.date ? `${formatDate(slot.date, 'dddd')} ${formatDate(slot.date, 'D')} de ${formatDate(slot.date, 'MMMM YYYY')}` : ''"
                 placeholder="Seleccionar Fecha..." slot="top-left" hide-underline v-model="slot.date"></q-datetime>
+              <q-btn v-if="!!slot.schedule.id" @click="$delete(slot.schedule, 'id')" class="q-mr-xs" slot="top-right" dense color="secondary" icon="edit">
+                <q-tooltip>editar</q-tooltip>
+              </q-btn>
               <q-btn @click="removeSlot(index)" slot="top-right" dense color="negative" icon="close">
                 <q-tooltip>Quitar</q-tooltip>
               </q-btn>
@@ -158,7 +161,7 @@ export default {
         schedule: {
           description: '',
           baseTime: 8 * 60,
-          custom: true,
+          // isPreset: false,
           restline: [],
           offline1: null,
           offline2: null,
@@ -175,6 +178,7 @@ export default {
             calendarDate(date: $date withExceptions: true) {
               date
               schedule {
+                id
                 ...AllScheduleData
               }
             }
@@ -182,6 +186,7 @@ export default {
         }
 
         fragment AllScheduleData on Schedule {
+          description
           baseTime
           timeline {
             category
@@ -214,7 +219,13 @@ export default {
       this.loadingCalendarDate = true
       this.$gql.request(query, parameters)
         .then(response => {
-          this.exception.slots.push({ valid: true, ...response.employee.calendarDate })
+          if (response.employee.calendarDate.schedule) {
+            this.exception.slots.push({
+              valid: true,
+              date: response.employee.calendarDate.date,
+              schedule: response.employee.calendarDate.schedule
+            })
+          }
         })
         .catch(error => console.log(error))
         .finally(() => {
@@ -232,6 +243,7 @@ export default {
             calendarRange(from: $from to: $to withExceptions: true) {
               date
               schedule {
+                id
                 ...AllScheduleData
               }
             }
@@ -239,6 +251,7 @@ export default {
         }
 
         fragment AllScheduleData on Schedule {
+          description
           baseTime
           timeline {
             category
@@ -301,7 +314,19 @@ export default {
           employee: {
             id: this.exception.employee.id
           },
-          slots: this.exception.slots.map(({ date, schedule }) => ({ date, schedule }))
+          slots: this.exception.slots.map(({ date, schedule }) => ({
+            date,
+            schedule: schedule.id ? { connect: { id: schedule.id } } : {
+              create: {
+                description: schedule.description,
+                baseTime: schedule.baseTime,
+                timeline: schedule.timeline,
+                restline: schedule.restline,
+                offline1: schedule.offline1,
+                offline2: schedule.offline2
+              }
+            }
+          }))
         }
       }
       this.loadingExceptionCreation = true

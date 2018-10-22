@@ -76,6 +76,7 @@ export default {
             }
           }
           data: schedules (first: $first skip: $skip where: $where orderBy: createdAt_ASC) {
+            id
             description
             baseTime
             timeline {
@@ -106,7 +107,7 @@ export default {
       const parameters = {
         first: pagination.rowsPerPage,
         skip: pagination.rowsPerPage * (pagination.page - 1),
-        where: { custom: false }
+        where: { isPreset: true }
       }
 
       if (filter.length > 0) {

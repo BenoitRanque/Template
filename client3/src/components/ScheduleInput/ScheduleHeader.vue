@@ -5,7 +5,7 @@
         <q-input hide-underline v-model="$parent.model.description"></q-input>
       </slot>
     </div>
-    <span class="col-auto">
+    <span v-if="!$parent.readonly" class="col-auto">
       <q-chip
         :color="$parent.usedTime > $parent.model.baseTime
         ? 'negative' : $parent.usedTime < $parent.model.baseTime
@@ -15,7 +15,7 @@
         <q-tooltip>Porcentaje Utilizado</q-tooltip>
       </q-chip>
     </span>
-    <span class="q-caption text-bold q-px-xs">
+    <span v-if="!$parent.readonly" class="col-auto q-caption text-bold q-px-xs">
       <span>
         {{$parent.formatTime($parent.usedTime)}}
         <q-tooltip>Tiempo Utilizado</q-tooltip>
@@ -53,13 +53,13 @@
                 </q-field>
               </q-item-main>
             </q-item>
-            <q-item>
+            <!-- <q-item>
               <q-item-main>
                 <q-field label-width="6" label="Horario Preestablecido" class="text-right">
-                  <q-checkbox :readonly="!canEdit" v-model="$parent.model.custom"></q-checkbox>
+                  <q-checkbox :readonly="!canEdit" v-model="$parent.model.isPreset"></q-checkbox>
                 </q-field>
               </q-item-main>
-            </q-item>
+            </q-item> -->
           </q-list>
         </q-popover>
       </q-btn>
