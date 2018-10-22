@@ -208,7 +208,7 @@ export default {
         parameters.orderBy = `${pagination.sortBy === 'nameFull' ? 'nameFirst' : pagination.sortBy}_${pagination.descending ? 'DESC' : 'ASC'}`
       }
 
-      this.loading = true
+      this.table.loading = true
       this.$gql.request(query, parameters)
         .then(response => {
           this.table.pagination = pagination
@@ -219,7 +219,7 @@ export default {
           console.log(error)
         })
         .finally(() => {
-          this.loading = false
+          this.table.loading = false
         })
     }
   },

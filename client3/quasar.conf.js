@@ -78,6 +78,7 @@ module.exports = function (ctx) {
         'QChip',
         'QTable',
         'QTd',
+        'QTableColumns',
         'QSearch',
         'QInputFrame',
         'QTabs',
