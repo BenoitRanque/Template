@@ -22,5 +22,6 @@ module.exports = {
   exception: (obj, args, ctx, info) => ctx.db.query.exception(args, info),
   exceptions: (obj, args, ctx, info) => ctx.db.query.exceptions(args, info),
   department: (obj, args, ctx, info) => ctx.db.query.department(args, info),
-  departments: (obj, args, ctx, info) => ctx.db.query.departments(args, info)
+  departments: (obj, args, ctx, info) => ctx.db.query.departments(args, info),
+  fieldOptionLabels: (obj, args, ctx, info) => ctx.db.query.fieldOptionLabels(args, info)
 }

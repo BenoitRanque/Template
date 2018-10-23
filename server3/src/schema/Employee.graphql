@@ -3,26 +3,27 @@ type Employee {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  nameFull: String!
   nameFirst: String!
   nameMiddle: String
   namePaternal: String
   nameMaternal: String
-  nameFull: String
-  documentType: DocumentTypeEnum,
-  documentNumber: String,
-  sex: SexEnum
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
   dateOfBirth: DateTime
   nationality: String
-  jubilado: Int
-  personaConDiscapacidad: Int
-  tutorPersonaConDiscapacidad: Int
-  cajaDeSalud: Int
-  aportaAFP: Int
-  AFP: Int
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
   cargo: String
   zkTimePin: Int!
   department: Department
   shifts: [Shift!]!
+  exceptions: [Exception!]!
   attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean!): AttendanceReport!
   calendarDate(date: DateTime! withExceptions: Boolean!): CalendarDate!
   calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!

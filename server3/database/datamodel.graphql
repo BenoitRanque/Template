@@ -37,17 +37,17 @@ type Employee {
   nameMiddle: String
   namePaternal: String
   nameMaternal: String
-  documentType: DocumentTypeEnum,
-  documentNumber: String,
-  sex: SexEnum
+  documentType: EmployeeDocumentTypeEnum @default(value: "CI")
+  documentNumber: String @default(value: "CI")
+  sex: EmployeeSexEnum
   dateOfBirth: DateTime
-  nationality: String
-  jubilado: Int
-  personaConDiscapacidad: Int
-  tutorPersonaConDiscapacidad: Int
-  cajaDeSalud: Int
-  aportaAFP: Int
-  AFP: Int
+  nationality: String @default(value: "Boliviana")
+  jubilado: Boolean! @default(value: "false")
+  personaConDiscapacidad: Boolean! @default(value: "false")
+  tutorPersonaConDiscapacidad: Boolean! @default(value: "false")
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean! @default(value: "false")
+  AFP: EmployeeAFPEnum
   cargo: String
   zkTimePin: Int!
   department: Department
@@ -60,16 +60,6 @@ type Department {
   name: String!
   subordinates: [Employee!]!
   supervisors: [User!]!
-}
-
-enum SexEnum {
-  M
-  F
-}
-
-enum DocumentTypeEnum {
-  CI
-  PASSAPORTE
 }
 
 type Shift {
@@ -115,8 +105,8 @@ type Schedule {
   isPreset: Boolean @default(value: "false")
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
-  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOffline1" onDelete: CASCADE)
-  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOffline2" onDelete: CASCADE)
+  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflinOPTION_1" onDelete: CASCADE)
+  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOfflinOPTION_2" onDelete: CASCADE)
 }
 
 type ScheduleTimelineElement {
@@ -189,8 +179,74 @@ enum AttendanceCategory {
   ATT_ABSENT_DOUBLE
 }
 
-type FieldValueLabel {
+type ScheduleCategoryConfig {
+  category: ScheduleCategory
+  color: String! @default(value: "#FFF")
+  label: String
+}
+
+type FieldOptionLabel {
+  id: ID! @unique
   field: String!
   value: String!
   label: String
+}
+
+enum EmployeeSexEnum {
+  F # Feminino
+  M # Masculino
+}
+enum EmployeeDocumentTypeEnum {
+  CI # Carnet de Identidad
+  PASSAPORTE # Passaporte
+}
+enum EmployeeCajaDeSaludEnum {
+  OPTION_1 # 'Caja Nacional de Salud (C.N.S.)'
+  OPTION_2 # 'Caja Petrolera de Salud (C.P.S.)'
+  OPTION_3 # 'Caja de Salud de Caminos'
+  OPTION_4 # 'Caja Bancaria Estatal de Salud (C.B.E.S.)'
+  OPTION_5 # 'Caja de Salud de la Banca Privada (C.S.B.P.)'
+  OPTION_6 # 'Caja de Salud Cordes'
+  OPTION_7 # 'Seguro Social Universitario (S.I.S.S.U.B.)'
+  OPTION_8 # 'Corporación del Seguro Social Militar (COOSMIL)'
+  OPTION_9 # 'Seguro Integral de Salud (SINEC)'
+}
+enum EmployeeAFPEnum {
+  OPTION_1 # 'AFP Previsión'
+  OPTION_2 # 'AFP Futuro'
+}
+enum ContractWorkClassEnum {
+  OPTION_1 # 'Ocupaciones de dirección en la administración pública y empresas'
+  OPTION_2 # 'Ocupaciones de profesionales científicos e intelectuales'
+  OPTION_3 # 'Ocupaciones de técnicos y profesionales de apoyo'
+  OPTION_4 # 'Empleados de oficina'
+  OPTION_5 # 'Trabajadores de los servicios y vendedores del comercio'
+  OPTION_6 # 'Productores y trabajadores en la agricultura, pecuaria, agropecuaria y pesca'
+  OPTION_7 # 'Trabajadores de la industria extractiva, construcción, industria manufacturera y otros oficios'
+  OPTION_8 # 'Operadores de instalaciones y maquinarias'
+  OPTION_9 # 'Trabajadores no calificados'
+  OPTION_10 #  'Fuerzas armada'
+}
+enum ContractModalityEnum {
+  OPTION_1 # 'Tiempo indefinido'
+  OPTION_2 # 'A plazo fijo'
+  OPTION_3 # 'Por temporada'
+  OPTION_4 # 'Por realización de obra o servicio'
+  OPTION_5 # 'Condicional o eventual'
+}
+enum ContractTypeEnum {
+  OPTION_1 # 'Escrito'
+  OPTION_2 # 'Verbal'
+}
+enum ContractCancelMotiveEnum {
+  OPTION_1 # 'Retiro voluntario del trabajador'
+  OPTION_2 # 'Vencimiento de contrato'
+  OPTION_3 # 'Conclusión de obra'
+  OPTION_4 # 'Perjuicio material causado con intención en los instrumentos de trabajo'
+  OPTION_5 # 'Revelación de secretos industriales'
+  OPTION_7 # 'Inasistencia injustificada de más de seis días continuos'
+  OPTION_6 # 'Omisiones o imprudencias que afecten a la seguridad o higiene industrial'
+  OPTION_8 # 'Incumplimiento total o parcial del convenio'
+  OPTION_9 # 'Robo o hurto por el trabajador'
+  OPTION_10 # 'Retiro forzoso'
 }

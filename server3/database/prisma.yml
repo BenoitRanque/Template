@@ -10,5 +10,5 @@ seed:
 hooks:
   post-deploy:
     - graphql get-schema --project database
-    # - prisma generate
     # - prisma seed -r
+    # - prisma generate

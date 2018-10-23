@@ -4,10 +4,10 @@
   try {
     const { Prisma } = require('prisma-binding')
     const db = new Prisma({
-      typeDefs: 'src/generated/prisma.graphql',
+      typeDefs: 'src/schema/generated/prisma.graphql',
       endpoint: process.env.PRISMA_ENDPOINT,
       secret: process.env.PRISMA_SECRET,
-      debug: true
+      debug: false
     })
 
     const admin = await db.mutation.createUser({
@@ -20,6 +20,8 @@
     const schedules = await require('./schedules')(db)
 
     const employees = await require('./employees')(db, schedules, admin)
+
+    const options = await require('./options')(db)
 
   } catch (error) {
     console.error(error)

@@ -86,6 +86,7 @@ module.exports = function (ctx) {
         'QScrollArea',
         'QPageSticky',
         'QDatetime',
+        'QDatetimePicker',
         'QCard',
         'QCardTitle',
         'QCardMain',
