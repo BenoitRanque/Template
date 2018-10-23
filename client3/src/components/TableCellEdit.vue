@@ -13,7 +13,7 @@
           </q-item-main>
         </q-item>
       </q-list>
-      <q-datetime-picker minimal class="q-ma-sm" v-else-if="type === 'date'" v-model="model"></q-datetime-picker>
+      <q-datetime-picker class="q-ma-sm" v-else-if="type === 'date'" v-model="model"></q-datetime-picker>
       <q-checkbox class="q-ma-sm" v-else-if="type === 'boolean'" v-model="model" :label="formatBoolean(model)"></q-checkbox>
       <q-input class="q-ma-sm" v-else ref="input" :type="type" v-model="model"></q-input>
       <div class="group q-mt-sm flex justify-around">
@@ -28,7 +28,7 @@
 <script>
 import { date } from 'quasar'
 export default {
-  name: 'EmployeeTableCell',
+  name: 'TableCellEdit',
   props: {
     props: {
       required: true,

@@ -1,10 +1,11 @@
 <template>
   <q-input-frame @click.native="modal = !modal" v-bind="$attrs" class="q-select">
 
-    <div class="col q-input-target ellipsis" :class="{ 'q-input-target-placeholder': !selectedEmployees.length }">
+    <div class="col q-input-target ellipsis text-truncate" :class="{ 'q-input-target-placeholder': !selectedEmployees.length }">
       {{selectedEmployees.length ? label : placeholder}}
     </div>
 
+    <q-icon v-if="this.selectedEmployees.length" slot="after" :name="this.$q.icon.input.clear" @click.native="clear" class="q-if-control"></q-icon>
     <q-icon slot="after" :name="this.$q.icon.input.dropdown" class="q-if-control"></q-icon>
 
     <q-modal v-model="modal" minimized @show="() => $refs.search.focus()">
@@ -48,6 +49,8 @@
 
 <script>
 import gql from 'graphql-tag'
+import { event } from 'quasar'
+const { stopAndPrevent } = event
 
 export default {
   name: 'EmployeeSelect',
@@ -73,16 +76,44 @@ export default {
         data: [],
         columns: [
           {
-            name: 'zkTimePin',
-            field: 'zkTimePin',
-            label: 'PIN ZKTime',
+            name: 'nameFirst',
+            field: 'nameFirst',
+            label: 'Primer Nombre',
             align: 'left',
             sortable: true
           },
           {
-            name: 'nameFull',
-            field: 'nameFull',
-            label: 'Nombre Completo',
+            name: 'nameMiddle',
+            field: 'nameMiddle',
+            label: 'Segundo Nombre',
+            align: 'left',
+            sortable: true
+          },
+          {
+            name: 'namePaternal',
+            field: 'namePaternal',
+            label: 'Apellido Paternl',
+            align: 'left',
+            sortable: true
+          },
+          {
+            name: 'nameMaternal',
+            field: 'nameMaternal',
+            label: 'Apellido Materno',
+            align: 'left',
+            sortable: true
+          },
+          {
+            name: 'cargo',
+            field: 'cargo',
+            label: 'Cargo',
+            align: 'left',
+            sortable: true
+          },
+          {
+            name: 'zkTimePin',
+            field: 'zkTimePin',
+            label: 'PIN ZKTime',
             align: 'left',
             sortable: true
           }
@@ -91,7 +122,7 @@ export default {
         loading: false,
         selected: this.multiple ? this.value : [this.value],
         pagination: {
-          sortBy: 'nameFull',
+          sortBy: 'nameFirst',
           descending: false,
           page: 1,
           rowsPerPage: 5, // current rows per page being displayed
@@ -125,6 +156,10 @@ export default {
     // }
   },
   methods: {
+    clear (event) {
+      stopAndPrevent(event)
+      this.updatedSelectedEmployees([])
+    },
     setLabel () {
       // this.$q.notify('setting label')
       if (this.selectedEmployees.length === 0) {
@@ -133,21 +168,21 @@ export default {
         return
       }
 
-      const query = gql`
-        query ($employees: [ID!]! $count: Int!) {
-          employees (first: $count where: {
-            id_in: $employees
-          }) {
+      const QUERY = gql`
+        query ($where: EmployeeWhereInput! $first: Int!) {
+          employees (first: $first where: $where) {
             nameFull
           }
         }
       `
-      const parameters = {
-        count: 3,
-        employees: this.selectedEmployees.map(({ id }) => id)
+      const PARAMETERS = {
+        first: 3,
+        where: {
+          id_in: this.selectedEmployees.map(({ id }) => id)
+        }
       }
 
-      this.$gql.request(query, parameters)
+      this.$gql.request(QUERY, PARAMETERS)
         .then(response => {
           this.label = response.employees
             .map(({ nameFull }) => nameFull)
@@ -167,8 +202,13 @@ export default {
         this.$emit('input', selected[0].id)
       }
     },
-    request ({ pagination, filter }) {
-      const query = gql`
+    request (criteria) {
+      const { pagination, filter } = {
+        pagination: this.table.pagination,
+        filter: this.table.filter,
+        ...criteria
+      }
+      const QUERY = gql`
         query ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInput $where: EmployeeWhereInput) {
           meta: employeesConnection (where: $where) {
             aggregate {
@@ -177,39 +217,41 @@ export default {
           }
           data: employees (first: $first skip: $skip orderBy: $orderBy where: $where) {
             id
-            nameFull
+            nameFirst
+            nameMiddle
+            namePaternal
+            nameMaternal
+            cargo
             zkTimePin
           }
         }
       `
 
-      const parameters = {
+      const PARAMETERS = {
         first: pagination.rowsPerPage,
         skip: pagination.rowsPerPage * (pagination.page - 1),
-        selectedEmployeeExists: this.selectedEmployees.length > 0,
-        selectedEmployeeID: this.selectedEmployees.length > 0 ? this.selectedEmployees[0].id : null
+        where: {}
       }
 
       if (filter.length > 0) {
-        parameters.where = {
-          OR: [
-            { nameFirst_contains: filter },
-            { nameMiddle_contains: filter },
-            { namePaternal_contains: filter },
-            { nameMaternal_contains: filter }
-          ]
-        }
+        PARAMETERS.where.OR = [
+          { nameFirst_contains: filter },
+          { nameMiddle_contains: filter },
+          { namePaternal_contains: filter },
+          { nameMaternal_contains: filter },
+          { cargo_contains: filter }
+        ]
         if (!isNaN(Number(filter))) {
-          parameters.where.OR.push({ zkTimePin: Number(filter) })
+          PARAMETERS.where.OR.push({ zkTimePin: Number(filter) })
         }
       }
 
       if (pagination.sortBy !== null) {
-        parameters.orderBy = `${pagination.sortBy === 'nameFull' ? 'nameFirst' : pagination.sortBy}_${pagination.descending ? 'DESC' : 'ASC'}`
+        PARAMETERS.orderBy = `${pagination.sortBy}_${pagination.descending ? 'DESC' : 'ASC'}`
       }
 
       this.table.loading = true
-      this.$gql.request(query, parameters)
+      this.$gql.request(QUERY, PARAMETERS)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
@@ -224,10 +266,7 @@ export default {
     }
   },
   mounted () {
-    this.request({
-      pagination: this.table.pagination,
-      filter: this.table.filter
-    })
+    this.request()
     this.setLabel()
   }
 }

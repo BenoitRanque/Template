@@ -24,7 +24,7 @@
         />
       </template>
 
-      <employee-table-cell v-for="field in editableFields"
+      <table-cell-edit v-for="field in editableFields"
         :key="field.name"
         :slot="`body-cell-${field.name}`"
         slot-scope="props"
@@ -34,7 +34,7 @@
         :options="field.type === 'select' ? options[field.name] : options.boolean"
         @update="$set(props.row.update, field.name, $event)"
         @revert="$delete(props.row.update, field.name)"
-      ></employee-table-cell>
+      ></table-cell-edit>
 
       <q-td slot="body-cell-links" class="group" slot-scope="props" :props="props">
         <q-btn
@@ -78,15 +78,12 @@
         </q-btn>
       </q-td>
     </q-table>
-    <pre>
-      {{table}}
-    </pre>
   </q-page>
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import EmployeeTableCell from 'components/EmployeeTableCell'
+import TableCellEdit from 'components/TableCellEdit'
 
 const tableFields = [
   {
@@ -173,7 +170,7 @@ const tableFields = [
 
 export default {
   name: 'Employees',
-  components: { EmployeeTableCell },
+  components: { TableCellEdit },
   data () {
     return {
       options: {
@@ -201,7 +198,7 @@ export default {
           {
             name: 'links',
             required: true,
-            label: 'Vínculos Externos',
+            // label: 'Vínculos Externos',
             align: 'center'
           },
           {
@@ -266,7 +263,7 @@ export default {
           }
         }
       `
-
+      if (!criteria) criteria = {}
       const { pagination, filter } = {
         pagination: this.table.pagination,
         filter: this.table.filter,
@@ -281,11 +278,13 @@ export default {
       if (filter.length > 0) {
         PARAMETERS.where = {
           OR: [
+            { id: filter },
             { nameFirst_contains: filter },
             { nameMiddle_contains: filter },
             { namePaternal_contains: filter },
             { nameMaternal_contains: filter },
-            { cargo_contains: filter }
+            { cargo_contains: filter },
+            { department: { name_contains: filter } }
           ]
         }
         if (!isNaN(Number(filter))) {
@@ -380,7 +379,7 @@ export default {
   },
   mounted () {
     this.loadFieldOptionLabels()
-    this.request()
+    this.request(this.$route.query && this.$route.query.employeeId ? { filter: this.$route.query.employeeId } : {})
   }
 }
 </script>

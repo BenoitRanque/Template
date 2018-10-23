@@ -174,9 +174,10 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
     }
   `, { id: employeeID, from, to, withExceptions, withScheduleData })
 
+  console.log('shiftsAndSchedules', response)
   return {
-    shifts: (response && response.shifts) ? response.shifts : [],
-    exceptions: (response && response.exceptions) ? response.exceptions : [],
+    shifts: (response.data && response.data.shifts) ? response.data.shifts : [],
+    exceptions: (response.data && response.data.exceptions) ? response.data.exceptions : [],
   }
 }
 
@@ -187,6 +188,7 @@ function getAttendanceDates (from, to, shifts, exceptions, events) {
     date,
     ...getReferencesForDate(date, shifts, exceptions)
   }))
+  console.log('datesWithReferences', datesWithReferences)
 
   const referencesForDateBeforeRange = getReferencesForDate(subDays(from, 1), shifts, exceptions)
 

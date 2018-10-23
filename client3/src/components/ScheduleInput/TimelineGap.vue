@@ -106,11 +106,11 @@ export default {
   watch: {
     'model.category' (value) {
       if (this.categoryCanEvent(value)) {
-        this.model.startEvent = true
-        this.model.endEvent = true
+        this.model.startRequireEvent = true
+        this.model.endRequireEvent = true
       } else {
-        this.model.startEvent = false
-        this.model.endEvent = false
+        this.model.startRequireEvent = false
+        this.model.endRequireEvent = false
       }
     }
   },
@@ -118,9 +118,9 @@ export default {
     reset () {
       this.model.category = 'SCH_TIME_WORK'
       this.model.startTime = this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start
-      this.model.startEvent = true
+      this.model.startRequireEvent = true
       this.model.endTime = this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end
-      this.model.endEvent = true
+      this.model.endRequireEvent = true
     },
     add () {
       this.$emit('add', {...this.model})

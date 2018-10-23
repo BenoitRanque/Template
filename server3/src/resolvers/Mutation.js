@@ -32,7 +32,7 @@ async function createException(parent, { data }, ctx, info) {
   const employeeId = data.employee.id
   const exceptionDates = data.slots.map(({ date }) => date)
 
-  const userIsSupervisor = await ctx.db.$exists.employee({
+  const userIsSupervisor = await ctx.db.exists.Employee({
     id: employeeId,
     department: {
       supervisors_some: {
@@ -42,7 +42,7 @@ async function createException(parent, { data }, ctx, info) {
   })
   if (!userIsSupervisor) throw new Error('User is not an authorized supervisor of employee')
 
-  const exceptionsWithDuplicateDates = await ctx.db.$exists.exception({
+  const exceptionsWithDuplicateDates = await ctx.db.exists.Exception({
     employee: {
       id: employeeId
     },
@@ -68,13 +68,14 @@ async function createException(parent, { data }, ctx, info) {
         create: data.slots.map(({ date, schedule }) => ({
           date,
           schedule: {
-            create: {
-              ...schedule,
+            connect: !schedule.connect ? null : schedule.connect,
+            create: !schedule.create ? null : {
+              ...schedule.create,
               restline: {
-                create: schedule.restline
+                create: schedule.create.restline
               },
               timeline: {
-                create: schedule.timeline
+                create: schedule.create.timeline
               }
             }
           }
