@@ -31,7 +31,9 @@ const { getUserId } = require('../utils')
 const loadAttendanceReport = require('../loadAttendanceReport')
 
 module.exports = {
-  // feed,
+  // node (parent, { id }, ctx, info) {
+  //   return ctx.db.query.node({ id }, info)
+  // },
   sessionUser:  (obj, args, ctx, info) => {
     // will throw if no session jwt exists
     const userId = getUserId(ctx)

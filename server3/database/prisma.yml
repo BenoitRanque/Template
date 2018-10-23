@@ -2,11 +2,11 @@ endpoint: ${env:PRISMA_ENDPOINT}
 datamodel: datamodel.graphql
 secret:  ${env:PRISMA_SECRET}
 seed:
-  # import: database/seed.graphql
-  run: node seed/index.js
+  # import: database/seed/seed.graphql
+  run: node database/seed/index.js
 # generate:
 #   - generator: javascript-client
-#     output: ../src/generated/prisma-client/
+#     output: ../src/schema/generated/prisma-client/
 hooks:
   post-deploy:
     - graphql get-schema --project database

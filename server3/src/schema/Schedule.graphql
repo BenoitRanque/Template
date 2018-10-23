@@ -1,0 +1,35 @@
+input ScheduleCreateOneInput {
+  create: ScheduleCreateInput
+  connect: ScheduleWhereUniqueInput
+}
+
+input ScheduleCreateInput {
+  description: String
+  baseTime: Int!
+  custom: Boolean
+  timeline: [ScheduleTimelineElementCreateInput]!
+  restline: [ScheduleRestlineElementCreateInput]!
+  offline1: ScheduleOfflineElementCreateInput
+  offline2: ScheduleOfflineElementCreateInput
+}
+
+input ScheduleTimelineElementCreateInput {
+  category: ScheduleTimelineCategory!
+  startTime: Int!
+  startRequireEvent: Boolean!
+  endTime: Int!
+  endRequireEvent: Boolean!
+}
+
+input ScheduleRestlineElementCreateInput {
+  category: ScheduleRestlineCategory!
+  startTime: Int!
+  startRequireEvent: Boolean!
+  endTime: Int!
+  endRequireEvent: Boolean!
+  duration: Int!
+}
+
+input ScheduleOfflineElementCreateInput {
+  category: ScheduleOfflineCategory!
+}

@@ -188,3 +188,9 @@ enum AttendanceCategory {
   ATT_ABSENT
   ATT_ABSENT_DOUBLE
 }
+
+type FieldValueLabel {
+  field: String!
+  value: String!
+  label: String
+}
