@@ -13,7 +13,8 @@
     const admin = await db.mutation.createUser({
       data: {
         username: 'admin',
-        password: '$2a$10$8yYqN2d1j/OgdX6uIuoZm.pM90xBG7PmcY7CLi2fxN41vdnviovVC' // password is 'admin'
+        password: '$2a$10$8yYqN2d1j/OgdX6uIuoZm.pM90xBG7PmcY7CLi2fxN41vdnviovVC', // password is 'admin'
+        role: 'ADMIN'
       }
     }, `{ id username }`)
 

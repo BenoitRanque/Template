@@ -316,16 +316,18 @@ export default {
           },
           slots: this.exception.slots.map(({ date, schedule }) => ({
             date,
-            schedule: schedule.id ? { connect: { id: schedule.id } } : {
-              create: {
-                description: schedule.description,
-                baseTime: schedule.baseTime,
-                timeline: schedule.timeline,
-                restline: schedule.restline,
-                offline1: schedule.offline1,
-                offline2: schedule.offline2
+            schedule: schedule.id
+              ? { connect: { id: schedule.id } }
+              : {
+                create: {
+                  description: schedule.description,
+                  baseTime: schedule.baseTime,
+                  timeline: schedule.timeline,
+                  restline: schedule.restline,
+                  offline1: schedule.offline1,
+                  offline2: schedule.offline2
+                }
               }
-            }
           }))
         }
       }

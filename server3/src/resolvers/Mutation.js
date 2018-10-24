@@ -1,34 +1,31 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, BCRYPT_SALT_ROUNDS, getUserId } = require('../utils')
+const { APP_SECRET, BCRYPT_SALT_ROUNDS } = require('../utils')
 
-async function createUser(parent, args, ctx, info) {
+async function createUser(obj, args, ctx, info) {
   const password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
   return ctx.db.mutation.createUser({
     data: { ...args.data, password },
   }, info)
 }
 
-async function authenticate(parent, args, ctx, info) {
-  const user = await ctx.db.query.user({ where: { username: args.username } }, `{ id password }`)
-  if (!user) {
-    throw new Error('No such user found')
+async function authenticate(obj, args, ctx, info) {
+  const user = await ctx.db.query.user({ where: { username: args.username } }, `{ id password role }`)
+  if (user) {
+    const valid = await bcrypt.compare(args.password, user.password)
+    if (valid) {
+      return {
+        user,
+        token: jwt.sign({ user: { id: user.id, role: user.role } }, APP_SECRET)
+      }
+    }
   }
-
-  const valid = await bcrypt.compare(args.password, user.password)
-  if (!valid) {
-    throw new Error('Invalid password')
-  }
-
-  return {
-    token: jwt.sign({ userId: user.id }, APP_SECRET),
-    user,
-  }
+  throw new Error('No se pudo Iniciar Session')
 }
 
 async function createException(parent, { data }, ctx, info) {
 
-  const userId = getUserId(ctx)
+  const userId = ctx.session.user.id
   const employeeId = data.employee.id
   const exceptionDates = data.slots.map(({ date }) => date)
 

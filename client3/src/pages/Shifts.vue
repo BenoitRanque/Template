@@ -48,7 +48,7 @@
 
       <q-td slot="body-cell-actions" class="group" slot-scope="props" :props="props">
         <q-btn
-          icon="more_vert"
+          icon="info_outline"
           color="secondary" size="md" flat dense
         >
           <q-tooltip>Ver detalles de horario</q-tooltip>
@@ -144,17 +144,6 @@ export default {
             startDate
             endDate
             startIndex
-            slots (orderBy: index_ASC) {
-              index
-              schedule {
-                id
-                description
-              }
-            }
-            owner {
-              id
-              username
-            }
           }
         }
       `

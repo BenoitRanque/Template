@@ -57,6 +57,7 @@ export default {
             token
             user {
               username
+              role
             }
           }
         }
@@ -65,8 +66,6 @@ export default {
         password: this.password
       })
         .then(response => {
-          // handle successfule login
-          console.log(response.session)
           this.loginMutation(response.session)
 
           this.$gql.setHeaders({

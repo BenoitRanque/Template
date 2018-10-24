@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Tue Oct 23 2018 11:41:28 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Wed Oct 24 2018 02:11:29 GMT-0400 (SA Western Standard Time)
 
 type AggregateDepartment {
   count: Int!
@@ -3685,6 +3685,7 @@ type User implements Node {
   username: String!
   password: String!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department!]
+  role: UserRoleEnum!
 }
 
 """A connection to a list of items."""
@@ -3700,6 +3701,7 @@ type UserConnection {
 input UserCreateInput {
   username: String!
   password: String!
+  role: UserRoleEnum!
   departments: DepartmentCreateManyWithoutSupervisorsInput
 }
 
@@ -3716,6 +3718,7 @@ input UserCreateOneInput {
 input UserCreateWithoutDepartmentsInput {
   username: String!
   password: String!
+  role: UserRoleEnum!
 }
 
 """An edge in a connection."""
@@ -3734,6 +3737,8 @@ enum UserOrderByInput {
   username_DESC
   password_ASC
   password_DESC
+  role_ASC
+  role_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3744,6 +3749,14 @@ type UserPreviousValues {
   id: ID!
   username: String!
   password: String!
+  role: UserRoleEnum!
+}
+
+enum UserRoleEnum {
+  ADMIN
+  MANAGER
+  SUPERVISOR
+  HR
 }
 
 type UserSubscriptionPayload {
@@ -3788,12 +3801,14 @@ input UserSubscriptionWhereInput {
 input UserUpdateDataInput {
   username: String
   password: String
+  role: UserRoleEnum
   departments: DepartmentUpdateManyWithoutSupervisorsInput
 }
 
 input UserUpdateInput {
   username: String
   password: String
+  role: UserRoleEnum
   departments: DepartmentUpdateManyWithoutSupervisorsInput
 }
 
@@ -3816,6 +3831,7 @@ input UserUpdateOneRequiredInput {
 input UserUpdateWithoutDepartmentsDataInput {
   username: String
   password: String
+  role: UserRoleEnum
 }
 
 input UserUpdateWithWhereUniqueWithoutDepartmentsInput {
@@ -3963,6 +3979,16 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
+  role: UserRoleEnum
+
+  """All values that are not equal to given value."""
+  role_not: UserRoleEnum
+
+  """All values that are contained in given list."""
+  role_in: [UserRoleEnum!]
+
+  """All values that are not contained in given list."""
+  role_not_in: [UserRoleEnum!]
   departments_every: DepartmentWhereInput
   departments_some: DepartmentWhereInput
   departments_none: DepartmentWhereInput

@@ -1,4 +1,9 @@
 module.exports = db => Promise.all([
+  db.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'ADMIN', label: 'Administrador' } }, `{ id }`),
+  db.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'MANAGER', label: 'Manager' } }, `{ id }`),
+  db.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'SUPERVISOR', label: 'Supervisor' } }, `{ id }`),
+  db.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'HR', label: 'Recursos Humanos' } }, `{ id }`),
+
   db.mutation.createFieldOptionLabel({ data: { field: 'Boolean', value: 'true', label: 'Si' } }, `{ id }`),
   db.mutation.createFieldOptionLabel({ data: { field: 'Boolean', value: 'false', label: 'No' } }, `{ id }`),
   db.mutation.createFieldOptionLabel({ data: { field: 'EmployeeSex', value: 'F', label: 'Feminino' } }, `{ id }`),

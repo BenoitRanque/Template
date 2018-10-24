@@ -27,6 +27,14 @@ type User {
   username: String! @unique
   password: String!
   departments: [Department!]!
+  role: UserRoleEnum!
+}
+
+enum UserRoleEnum {
+  ADMIN
+  MANAGER
+  SUPERVISOR
+  HR
 }
 
 type Employee {
