@@ -48,13 +48,27 @@
 
       <q-td slot="body-cell-actions" class="group" slot-scope="props" :props="props">
         <q-btn
-          icon="info_outline"
+          icon="schedule"
           color="secondary" size="md" flat dense
+          @click="viewShift(props.row)"
         >
           <q-tooltip>Ver detalles de horario</q-tooltip>
         </q-btn>
       </q-td>
     </q-table>
+    <q-modal v-model="activeShiftModal" @hide="activeShiftId = null">
+      <q-modal-layout>
+        <q-toolbar slot="header" class="col">
+          <q-toolbar-title>
+            Detalles de Horario
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
+        </q-toolbar>
+        <div class="q-pa-md">
+          <shift-form :shift-id="activeShiftId"></shift-form>
+        </div>
+      </q-modal-layout>
+    </q-modal>
   </q-page>
 </template>
 
@@ -62,13 +76,16 @@
 import gql from 'graphql-tag'
 import TableCellEdit from 'components/TableCellEdit'
 import EmployeeSelect from 'components/EmployeeSelect'
+import ShiftForm from 'components/ShiftForm'
 import { date } from 'quasar'
 
 export default {
   name: 'Shifts',
-  components: { TableCellEdit, EmployeeSelect },
+  components: { TableCellEdit, EmployeeSelect, ShiftForm },
   data () {
     return {
+      activeShiftId: null,
+      activeShiftModal: false,
       employeeFilter: [],
       table: {
         data: [],
@@ -125,6 +142,10 @@ export default {
     }
   },
   methods: {
+    viewShift (row) {
+      this.activeShiftId = row.id
+      this.activeShiftModal = true
+    },
     formatDate: date.formatDate,
     request (criteria) {
       const QUERY = gql`
@@ -143,7 +164,6 @@ export default {
             }
             startDate
             endDate
-            startIndex
           }
         }
       `
@@ -187,7 +207,7 @@ export default {
           this.table.pagination.rowsNumber = response.meta.aggregate.count
           this.table.data = response.data
         })
-        .catch(error => console.log(error))
+        .catch(this.$defaultErrorHandler)
         .finally(() => {
           this.table.loading = false
         })

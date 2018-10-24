@@ -117,7 +117,6 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
         id
         startDate
         endDate
-        startIndex
         slots (orderBy: index_ASC) {
           index
           schedule {
@@ -216,7 +215,7 @@ function getReferencesForDate(date, shifts, exceptions) {
   const shiftForDate = candidateShiftsForDate[0] ? candidateShiftsForDate[0] : null
 
   const shiftScheduleForDate = (shiftForDate &&  shiftForDate.slots)
-    ? shiftForDate.slots[(differenceInCalendarDays(date, shiftForDate.startDate) + shiftForDate.startIndex)% shiftForDate.slots.length].schedule : null
+    ? shiftForDate.slots[differenceInCalendarDays(date, shiftForDate.startDate) % shiftForDate.slots.length].schedule : null
 
   const scheduleForDate = exceptionScheduleForDate ? exceptionScheduleForDate : shiftScheduleForDate
 

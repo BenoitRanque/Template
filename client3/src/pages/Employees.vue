@@ -24,17 +24,17 @@
         />
       </template>
 
-      <table-cell-edit v-for="field in editableFields"
-        :key="field.name"
-        :slot="`body-cell-${field.name}`"
-        slot-scope="props"
-        :props="props"
-        :type="field.type"
-        :field="field.name"
-        :options="field.type === 'select' ? options[field.name] : options.boolean"
-        @update="$set(props.row.update, field.name, $event)"
-        @revert="$delete(props.row.update, field.name)"
-      ></table-cell-edit>
+      <template v-for="field in editableFields" :slot="`body-cell-${field.name}`" slot-scope="props">
+        <table-cell-edit
+          :key="field.name"
+          :props="props"
+          :type="field.type"
+          :field="field.name"
+          :options="field.type === 'select' ? options[field.name] : options.boolean"
+          @update="$set(props.row.update, field.name, $event)"
+          @revert="$delete(props.row.update, field.name)"
+        ></table-cell-edit>
+      </template>
 
       <q-td slot="body-cell-links" class="group" slot-scope="props" :props="props">
         <q-btn
@@ -308,7 +308,7 @@ export default {
             updating: false
           }))
         })
-        .catch(error => console.log(error))
+        .catch(this.$defaultErrorHandler)
         .finally(() => {
           this.table.loading = false
         })
@@ -330,7 +330,7 @@ export default {
           this.$q.notify({ type: 'positive', message: `Empleado ${response.employee.nameFull} actualizado` })
           this.request()
         })
-        .catch(error => console.log(error))
+        .catch(this.$defaultErrorHandler)
         .finally(() => {
           employee.updating = false
         })
@@ -374,7 +374,7 @@ export default {
         .then(response => {
           this.options = response
         })
-        .catch(error => console.log(error))
+        .catch(this.$defaultErrorHandler)
     }
   },
   mounted () {

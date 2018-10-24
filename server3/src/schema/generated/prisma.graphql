@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Wed Oct 24 2018 02:11:29 GMT-0400 (SA Western Standard Time)
+# timestamp: Wed Oct 24 2018 10:07:25 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateDepartment {
   count: Int!
@@ -3216,7 +3216,6 @@ type Shift implements Node {
   employee: Employee!
   startDate: DateTime!
   endDate: DateTime
-  startIndex: Int!
   slots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot!]
   owner: User!
 }
@@ -3235,7 +3234,6 @@ input ShiftCreateInput {
   description: String
   startDate: DateTime!
   endDate: DateTime
-  startIndex: Int!
   employee: EmployeeCreateOneWithoutShiftsInput!
   slots: ShiftSlotCreateManyInput
   owner: UserCreateOneInput!
@@ -3250,7 +3248,6 @@ input ShiftCreateWithoutEmployeeInput {
   description: String
   startDate: DateTime!
   endDate: DateTime
-  startIndex: Int!
   slots: ShiftSlotCreateManyInput
   owner: UserCreateOneInput!
 }
@@ -3273,8 +3270,6 @@ enum ShiftOrderByInput {
   startDate_DESC
   endDate_ASC
   endDate_DESC
-  startIndex_ASC
-  startIndex_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3286,7 +3281,6 @@ type ShiftPreviousValues {
   description: String
   startDate: DateTime!
   endDate: DateTime
-  startIndex: Int!
 }
 
 type ShiftSlot {
@@ -3462,7 +3456,6 @@ input ShiftUpdateInput {
   description: String
   startDate: DateTime
   endDate: DateTime
-  startIndex: Int
   employee: EmployeeUpdateOneRequiredWithoutShiftsInput
   slots: ShiftSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
@@ -3481,7 +3474,6 @@ input ShiftUpdateWithoutEmployeeDataInput {
   description: String
   startDate: DateTime
   endDate: DateTime
-  startIndex: Int
   slots: ShiftSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
 }
@@ -3630,28 +3622,6 @@ input ShiftWhereInput {
 
   """All values greater than or equal the given value."""
   endDate_gte: DateTime
-  startIndex: Int
-
-  """All values that are not equal to given value."""
-  startIndex_not: Int
-
-  """All values that are contained in given list."""
-  startIndex_in: [Int!]
-
-  """All values that are not contained in given list."""
-  startIndex_not_in: [Int!]
-
-  """All values less than the given value."""
-  startIndex_lt: Int
-
-  """All values less than or equal the given value."""
-  startIndex_lte: Int
-
-  """All values greater than the given value."""
-  startIndex_gt: Int
-
-  """All values greater than or equal the given value."""
-  startIndex_gte: Int
   employee: EmployeeWhereInput
   slots_every: ShiftSlotWhereInput
   slots_some: ShiftSlotWhereInput

@@ -1,0 +1,10 @@
+mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
+  exception: createException (data: $data) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}

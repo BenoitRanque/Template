@@ -58,10 +58,12 @@
               </q-field>
             </q-item-main>
           </q-item>
+          <q-item>
+            <q-item-main class="text-center">
+              <q-btn rounded color="primary" @click="add" :disable="!valid">Aggregar</q-btn>
+            </q-item-main>
+          </q-item>
         </q-list>
-        <q-toolbar slot="footer" class="justify-center">
-          <q-btn rounded color="positive" @click="add" :disable="!valid">Aggregar</q-btn>
-        </q-toolbar>
       </q-modal-layout>
     </q-modal>
   </div>

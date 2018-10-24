@@ -7,90 +7,62 @@
     }">
       {{validationHelper}}
     </div>
-    <employee-select v-model="exception.employee.id"></employee-select>
-    <div class="flex flex-center q-my-sm">
-      <div>
-        <q-btn @click="$refs.schedulePresets.show()" :disable="!exception.employee.id" dense color="primary" icon="search" class="q-mr-sm">
-          <q-tooltip>Aggregar dia en base a horario preestablecido</q-tooltip>
-          <schedule-preset-select @selected="$event => exception.slots.push({ date: null, schedule: $event, valid: true })" ref="schedulePresets"></schedule-preset-select>
-        </q-btn>
-        <q-btn @click="calendarRangeModal = true" :disable="!exception.employee.id" dense color="primary" icon="date_range" class="q-mr-sm">
-          <q-tooltip>Aggregar dias en base a rangos de fechas</q-tooltip>
-        </q-btn>
-        <q-btn @click="calendarDateModal = true" :disable="!exception.employee.id" dense color="primary" icon="event" class="q-mr-sm">
-          <q-tooltip>Aggregar dia en base a fecha</q-tooltip>
-        </q-btn>
-        <q-btn @click="addBlankDate" :disable="!exception.employee.id" dense color="primary" icon="add" class="q-mr-sm">
-          <q-tooltip>Aggregar dia en blanco</q-tooltip>
-        </q-btn>
-      </div>
+    <employee-select v-model="model.employee.id"></employee-select>
+    <div class="text-center group">
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ schedule: $event.schedule, valid: false })"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: null, schedule: $event.schedule, valid: true })" mode="preset"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: $event.date, schedule: $event.schedule, valid: true })" :employee-id="model.employee.id" mode="date"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="range"></schedule-select>
     </div>
-    <template v-if="validationCode !== 1 && validationCode !== 2">
-      <!-- Show if an employee has been selected and at least one day has been added -->
-      <div class="group">
-        <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in exception.slots" :key="`slot_card_${index}`">
-          <q-card-main>
-            <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
+
+    <div class="group">
+      <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in model.slots" :key="`slot_card_${index}`">
+        <q-card-main>
+          <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
+            <div class="col" slot="top-left">
               <q-datetime
                 color="teal-8"
-                :display-value="slot.date ? `${formatDate(slot.date, 'dddd')} ${formatDate(slot.date, 'D')} de ${formatDate(slot.date, 'MMMM YYYY')}` : ''"
-                placeholder="Seleccionar Fecha..." slot="top-left" hide-underline v-model="slot.date"></q-datetime>
-              <q-btn v-if="!!slot.schedule.id" @click="$delete(slot.schedule, 'id')" class="q-mr-xs" slot="top-right" dense color="secondary" icon="edit">
-                <q-tooltip>editar</q-tooltip>
+                :display-value="slotLabel(slot)"
+                placeholder="Seleccionar Fecha..."
+                slot="top-left"
+                hide-underline
+                v-model="slot.date"
+              ></q-datetime>
+            </div>
+            <div class="col-auto" slot="top-right">
+              <q-btn v-if="!!slot.schedule.id" @click="$delete(slot.schedule, 'id')" class="q-mr-xs" dense color="secondary" icon="edit">
+                <q-tooltip>Modificar Horario</q-tooltip>
               </q-btn>
-              <q-btn @click="removeSlot(index)" slot="top-right" dense color="negative" icon="close">
+              <q-btn @click="removeSlot(index)" dense color="negative" icon="close">
                 <q-tooltip>Quitar</q-tooltip>
               </q-btn>
-            </schedule-input>
-          </q-card-main>
-        </q-card>
-      </div>
-      <div class="text-center q-py-md">
-        <q-btn @click="createException" :loading="loadingExceptionCreation" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
-      </div>
-    </template>
-    <q-modal v-model="calendarDateModal" content-classes="q-pa-lg group">
-      <div class="q-title">
-        Aggregar dia en base a fecha
-      </div>
-      <q-datetime float-label="Fecha" v-model="dateA"></q-datetime>
-      <div class="text-center q-pt-md">
-        <q-btn :loading="loadingCalendarDate" @click="addCalendarDate" :disable="!dateA || !exception.employee.id" color="secondary" size="md">Aggregar</q-btn>
-      </div>
-    </q-modal>
-    <q-modal v-model="calendarRangeModal" content-classes="q-pa-lg group">
-      <div class="q-title">
-        Aggregar dias en base a rango de fechas
-      </div>
-      <q-datetime float-label="Desde" :max="dateC" v-model="dateB"></q-datetime>
-      <q-datetime float-label="Hasta" :min="dateB" v-model="dateC"></q-datetime>
-      <div class="text-center q-pt-md">
-        <q-btn :loading="loadingCalendarRange" @click="addCalendarRange" :disable="!dateB || !dateC || !exception.employee.id" color="secondary" size="md">Aggregar</q-btn>
-      </div>
-    </q-modal>
+            </div>
+          </schedule-input>
+        </q-card-main>
+      </q-card>
+    </div>
+    <div class="text-center q-py-md">
+      <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
+    </div>
+    <q-inner-loading :visible="loading">
+      <q-spinner size="36px" color="primary"/>
+    </q-inner-loading>
   </div>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import { CreateExceptionMutation } from 'assets/queries/Exception.graphql'
 import { date } from 'quasar'
 import ScheduleInput from 'components/ScheduleInput/index'
 import EmployeeSelect from 'components/EmployeeSelect'
-import SchedulePresetSelect from 'components/SchedulePresetSelect'
+import ScheduleSelect from 'components/ScheduleSelect'
 export default {
   name: 'ExceptionSidebar',
-  components: { EmployeeSelect, SchedulePresetSelect, ScheduleInput },
+  components: { EmployeeSelect, ScheduleSelect, ScheduleInput },
   data () {
     return {
-      dateA: null,
-      dateB: null,
-      dateC: null,
-      calendarDateModal: false,
-      loadingCalendarDate: false,
-      calendarRangeModal: false,
-      loadingCalendarRange: false,
-      loadingExceptionCreation: false,
-      exception: {
+      loading: false,
+      model: {
         employee: {
           id: null
         },
@@ -100,15 +72,15 @@ export default {
   },
   computed: {
     validationCode () {
-      const duplicateDates = this.exception.slots
+      const duplicateDates = this.model.slots
         .map(({ date }) => date ? new Date(date).getTime() : null)
         .some((date, index, dates) => date && dates.indexOf(date) !== index)
       if (duplicateDates) return 12
-      if (this.exception.slots.some(slot => !slot.valid)) return 10
+      if (this.model.slots.some(slot => !slot.valid)) return 10
 
-      if (!this.exception.employee.id) return 1
-      if (this.exception.slots.length < 1) return 2
-      if (this.exception.slots.some(slot => slot.date === null)) return 3
+      if (!this.model.employee.id) return 1
+      if (this.model.slots.length < 1) return 2
+      if (this.model.slots.some(slot => slot.date === null)) return 3
 
       return 0
     },
@@ -120,10 +92,10 @@ export default {
         case 0: return 'Boleta valida'
         case 1: return `Bienvenido. Por favor escoja un empleado`
         case 2: return `Ahora puede empezar aggregar dias`
-        case 3: return `Se requiere fecha para dia ${this.exception.slots.findIndex(slot => slot.date === null) + 1}`
-        case 10: return `Horario invalido para dia ${this.exception.slots.findIndex(slot => !slot.valid) + 1}`
+        case 3: return `Se requiere fecha para dia ${this.model.slots.findIndex(slot => slot.date === null) + 1}`
+        case 10: return `Horario invalido para dia ${this.model.slots.findIndex(slot => !slot.valid) + 1}`
         case 12:
-          const dateSrings = this.exception.slots
+          const dateSrings = this.model.slots
             .map(({ date }) => date ? new Date(date).getTime() : null)
 
           const duplicateDate = dateSrings
@@ -141,6 +113,10 @@ export default {
     }
   },
   methods: {
+    slotLabel (slot) {
+      if (!slot.date) return ''
+      return `${this.formatDate(slot.date, 'dddd')} ${this.formatDate(slot.date, 'D')} de ${this.formatDate(slot.date, 'MMMM YYYY')}`
+    },
     formatDate: date.formatDate,
     differenceInDays: (a, b) => date.getDateDiff(a, b, 'days'),
     removeSlot (index) {
@@ -150,171 +126,16 @@ export default {
         ok: true,
         cancel: true
       })
-        .then(() => this.$delete(this.exception.slots, index))
+        .then(() => this.$delete(this.model.slots, index))
         .catch(() => {})
     },
-    addBlankDate () {
-      // generate vacations, appent to slot
-      this.exception.slots.push({
-        date: null,
-        valid: false,
-        schedule: {
-          description: '',
-          baseTime: 8 * 60,
-          // isPreset: false,
-          restline: [],
-          offline1: null,
-          offline2: null,
-          timeline: []
-        }
-      })
-    },
-    addCalendarDate () {
-      if (!this.dateA || !this.exception.employee.id) throw new Error(`dateA and exception.employee.id are requires fields for this function`)
-
-      const query = gql`
-        query ($employeeID: ID! $date: DateTime!) {
-          employee (where: { id: $employeeID }) {
-            calendarDate(date: $date withExceptions: true) {
-              date
-              schedule {
-                id
-                ...AllScheduleData
-              }
-            }
-          }
-        }
-
-        fragment AllScheduleData on Schedule {
-          description
-          baseTime
-          timeline {
-            category
-            startTime
-            startRequireEvent
-            endTime
-            endRequireEvent
-          }
-          restline {
-            category
-            startTime
-            startRequireEvent
-            endTime
-            endRequireEvent
-            duration
-          }
-          offline1 {
-            category
-          }
-          offline2 {
-            category
-          }
-        }
-      `
-      const parameters = {
-        employeeID: this.exception.employee.id,
-        date: this.dateA
-      }
-
-      this.loadingCalendarDate = true
-      this.$gql.request(query, parameters)
-        .then(response => {
-          if (response.employee.calendarDate.schedule) {
-            this.exception.slots.push({
-              valid: true,
-              date: response.employee.calendarDate.date,
-              schedule: response.employee.calendarDate.schedule
-            })
-          }
-        })
-        .catch(error => console.log(error))
-        .finally(() => {
-          this.calendarDateModal = false
-          this.loadingCalendarDate = false
-          this.dateA = null
-        })
-    },
-    addCalendarRange () {
-      if (!this.dateB || !this.dateC || !this.exception.employee.id) throw new Error(`dateB dateC and exception.employee.id are requires fields for this function`)
-
-      const query = gql`
-        query ($employeeID: ID! $from: DateTime! $to: DateTime!) {
-          employee (where: { id: $employeeID }) {
-            calendarRange(from: $from to: $to withExceptions: true) {
-              date
-              schedule {
-                id
-                ...AllScheduleData
-              }
-            }
-          }
-        }
-
-        fragment AllScheduleData on Schedule {
-          description
-          baseTime
-          timeline {
-            category
-            startTime
-            startRequireEvent
-            endTime
-            endRequireEvent
-          }
-          restline {
-            category
-            startTime
-            startRequireEvent
-            endTime
-            endRequireEvent
-            duration
-          }
-          offline1 {
-            category
-          }
-          offline2 {
-            category
-          }
-        }
-      `
-      const parameters = {
-        employeeID: this.exception.employee.id,
-        from: this.dateB,
-        to: this.dateC
-      }
-
-      this.loadingCalendarRange = true
-      this.$gql.request(query, parameters)
-        .then(response => {
-          this.exception.slots.push(...response.employee.calendarRange.map(slot => ({ valid: true, ...slot })))
-        })
-        .catch(error => console.log(error))
-        .finally(() => {
-          this.calendarRangeModal = false
-          this.loadingCalendarRange = false
-          this.dateB = null
-          this.dateC = null
-        })
-    },
     createException () {
-      // create exception
-      const query = gql`
-        mutation ($data: ExceptionCreateInput!) {
-          exception: createException (data: $data) {
-            employee {
-              nameFull
-            }
-            owner {
-              username
-            }
-          }
-        }
-      `
       const parameters = {
         data: {
           employee: {
-            id: this.exception.employee.id
+            id: this.model.employee.id
           },
-          slots: this.exception.slots.map(({ date, schedule }) => ({
+          slots: this.model.slots.map(({ date, schedule }) => ({
             date,
             schedule: schedule.id
               ? { connect: { id: schedule.id } }
@@ -331,8 +152,8 @@ export default {
           }))
         }
       }
-      this.loadingExceptionCreation = true
-      this.$gql.request(query, parameters)
+      this.loading = true
+      this.$gql.request(CreateExceptionMutation, parameters)
         .then(response => {
           this.$q.notify({
             type: 'positive',
@@ -342,12 +163,9 @@ export default {
         })
         .catch(error => {
           console.log(error)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error Creado boleta`
-          })
+          this.$defaultErrorHandler(error)
         })
-        .finally(() => { this.loadingExceptionCreation = false })
+        .finally(() => { this.loading = false })
     }
   }
 }

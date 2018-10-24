@@ -76,7 +76,6 @@ type Shift {
   employee: Employee!
   startDate: DateTime!
   endDate: DateTime
-  startIndex: Int!
   slots: [ShiftSlot!]!
   owner: User! @relation(name: "ShiftToShiftOwner")
 }

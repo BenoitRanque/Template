@@ -1,0 +1,63 @@
+
+query SchedulesPagination ($first: Int! $skip: Int! $where: ScheduleWhereInput) {
+  meta: schedulesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: schedules (first: $first skip: $skip where: $where orderBy: createdAt_ASC) {
+    id
+    ...AllScheduleData
+  }
+}
+
+
+query EmployeeCalendarRangeSchedules ($employeeId: ID! $from: DateTime! $to: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    calendarRange(from: $from to: $to withExceptions: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+query EmployeeCalendarDateSchedule ($employeeId: ID! $date: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    calendarDate(date: $date withExceptions: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  description
+  baseTime
+  timeline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+  }
+  restline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

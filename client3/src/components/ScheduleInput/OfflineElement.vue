@@ -23,11 +23,13 @@
               <q-select hide-underline placeholder="Tipo de tiempo" v-model="model.category" :options="offlineCategoryOptions"></q-select>
             </q-item-main>
           </q-item>
+          <q-item>
+            <q-item-main class="text-center">
+              <q-btn rounded color="primary" @click="add" :disable="!validModel">Aggregar</q-btn>
+            </q-item-main>
+          </q-item>
         </q-list>
         <slot name="trace"></slot>
-        <q-toolbar slot="footer" class="justify-center">
-          <q-btn rounded color="positive" @click="add" :disable="!validModel">Aggregar</q-btn>
-        </q-toolbar>
       </q-modal-layout>
     </q-modal>
   </div>

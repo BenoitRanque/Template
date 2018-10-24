@@ -1,27 +1,21 @@
 <template>
-  <q-input-frame @click.native="modal = !modal" v-bind="$attrs" class="q-select">
+  <q-input-frame @click.native="showModal" v-bind="$attrs" class="q-select">
 
     <div class="col q-input-target ellipsis text-truncate" :class="{ 'q-input-target-placeholder': !selectedEmployees.length }">
       {{selectedEmployees.length ? label : placeholder}}
     </div>
 
-    <q-icon v-if="this.selectedEmployees.length" slot="after" :name="this.$q.icon.input.clear" @click.native="clear" class="q-if-control"></q-icon>
-    <q-icon slot="after" :name="this.$q.icon.input.dropdown" class="q-if-control"></q-icon>
+    <q-icon v-if="!readonly && selectedEmployees.length" slot="after" :name="$q.icon.input.clear" @click.native="clear" class="q-if-control"></q-icon>
+    <q-icon slot="after" :name="$q.icon.input.dropdown" class="q-if-control"></q-icon>
 
     <q-modal v-model="modal" minimized @show="() => $refs.search.focus()">
-      <q-modal-layout header-class="no-shadow" footer-class="no-shadow">
-        <q-toolbar slot="header" color="white" class="q-px-lg">
-          <q-search ref="search" class="col" hide-underline v-model="table.filter" />
-          <q-btn color="primary" v-close-overlay flat>ok</q-btn>
+      <q-modal-layout>
+        <q-toolbar slot="header" class="col">
+          <q-toolbar-title>
+            Seleccionar Empleado
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
-        <!-- <div class="row q-pl-lg q-py-md q-pr-md" slot="header">
-          <q-search class="col" hide-underline v-model="table.filter" />
-          <q-icon class="col-auto cursor-pointer" color="primary" v-close-overlay size="1.6em" name="close"></q-icon>
-        </div> -->
-        <!-- <q-toolbar slot="header" class="row" color="white"> -->
-          <!-- <q-toolbar-title>
-          </q-toolbar-title> -->
-        <!-- </q-toolbar> -->
         <q-table
           ref="table"
           :data="table.data"
@@ -35,12 +29,13 @@
           :loading="table.loading"
           @request="request"
         >
-          <!-- <template slot="top-left" slot-scope="props">
-            <q-search hide-underline v-model="table.filter" />
+
+          <template slot="top-left" slot-scope="props">
+            <q-search slot="top-left" ref="search" class="col" hide-underline v-model="table.filter" />
           </template>
           <template slot="top-right" slot-scope="props">
-            <q-icon class="cursor-pointer" color="primary" v-close-overlay size="1.6em" name="close"></q-icon>
-          </template> -->
+            <q-btn slot="top-right" color="primary" v-close-overlay flat>ok</q-btn>
+          </template>
         </q-table>
       </q-modal-layout>
     </q-modal>
@@ -55,6 +50,10 @@ const { stopAndPrevent } = event
 export default {
   name: 'EmployeeSelect',
   props: {
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     placeholder: {
       type: String,
       default: 'Seleccionar Empleado...'
@@ -156,7 +155,12 @@ export default {
     // }
   },
   methods: {
+    showModal () {
+      if (this.readonly) return
+      this.modal = true
+    },
     clear (event) {
+      if (this.readonly) return
       stopAndPrevent(event)
       this.updatedSelectedEmployees([])
     },

@@ -1,10 +1,10 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
-    <div class="col">
-      <slot name="top-left">
+    <slot name="top-left">
+      <div class="col q-mr-xs">
         <q-input hide-underline v-model="$parent.model.description"></q-input>
-      </slot>
-    </div>
+      </div>
+    </slot>
     <span v-if="!$parent.readonly" class="col-auto">
       <q-chip
         :color="$parent.usedTime > $parent.model.baseTime
@@ -64,9 +64,7 @@
         </q-popover>
       </q-btn>
     </div>
-    <div class="col-auto q-ml-xs">
-      <slot name="top-right"></slot>
-    </div>
+    <slot name="top-right"></slot>
   </div>
 </template>
 

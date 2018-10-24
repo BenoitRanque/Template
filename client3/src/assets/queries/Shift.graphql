@@ -1,0 +1,45 @@
+query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
+  shift (where: $where) {
+    id
+    description
+    employee {
+      id
+    }
+    startDate
+    endDate
+    slots (orderBy: index_ASC){
+      index
+      schedule {
+        id
+        description
+        ...AllScheduleData
+      }
+    }
+
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  baseTime
+  timeline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+  }
+  restline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

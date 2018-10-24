@@ -49,6 +49,8 @@
             @click="$router.push('/')"
           ></q-btn>
 
+          <theme-settings></theme-settings>
+
           <user-session></user-session>
 
         </q-btn-group>
@@ -59,12 +61,14 @@
 
 <script>
 import UserSession from 'components/UserSession'
+import ThemeSettings from 'components/ThemeSettings'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'MainHeader',
   components: {
-    UserSession
+    UserSession,
+    ThemeSettings
   },
   computed: {
     ...mapGetters('session', {
