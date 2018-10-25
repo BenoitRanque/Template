@@ -23,7 +23,7 @@
     <div class="group">
       <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in model.slots" :key="`slot_card_${index}`">
         <q-card-main>
-          <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
+          <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id" advanced>
             <template slot="top-left">
               <div class="col">
                 {{slotLabel(index)}}
@@ -85,6 +85,7 @@ export default {
     return {
       loading: false,
       modified: false,
+      modelCopy: null,
       model: {
         employee: {
           id: null
@@ -99,7 +100,7 @@ export default {
   computed: {
     employeeChanged () {
       // shift with an id but an employee diferent from the original should be created not updated
-      return this.model.employee.id && this.originalEmployeeId && this.model.employee.id !== this.originalEmployeeId
+      return this.model.employee.id && this.modelCopy && this.modelCopy.employee && this.modelCopy.employee.id !== this.model.employee.id
     },
     canCreate () {
       return this.valid && (!this.model.id || this.employeeChanged)
@@ -112,6 +113,7 @@ export default {
     },
     valid () {
       if (!this.model.employee.id) return false
+      if (!this.model.startDate) return false
       if (this.model.slots.length < 1) return false
       if (this.model.slots.some(slot => !slot.valid)) return false
       return true
@@ -176,8 +178,7 @@ export default {
       this.loading = true
       this.$gql.request(ShiftWithScheduleData, { where: { id: this.shiftId } })
         .then(response => {
-          this.originalEmployeeId = response.shift.employee.id
-          this.model = {
+          const model = {
             ...response.shift,
             slots: response.shift.slots
               .sort((a, b) => a.index - b.index)
@@ -186,6 +187,8 @@ export default {
                 valid: true
               }))
           }
+          this.model = model
+          this.modelCopy = JSON.parse(JSON.stringify(model))
           this.modified = false
         })
         .catch(this.$defaulErrorHandler)

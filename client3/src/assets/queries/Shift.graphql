@@ -19,6 +19,12 @@ query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
   }
 }
 
+mutation CreateShift ($data: ShiftCreateInput!) {
+  createShift(data: $data) {
+    
+  }
+}
+
 fragment AllScheduleData on Schedule {
   baseTime
   timeline {
