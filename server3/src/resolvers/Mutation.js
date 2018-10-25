@@ -1,3 +1,4 @@
+const isBefore = require('date-fns/is_before')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, BCRYPT_SALT_ROUNDS } = require('../utils')
@@ -82,15 +83,117 @@ async function createException(parent, { data }, ctx, info) {
   }, info)
 }
 
+async function createShift(obj, { data }, ctx, info) {
+  const userId = ctx.session.user.id
+  const employeeId = data.employee.id
+
+  if (data.endDate && isBefore(data.endDate, data.startDate)) throw new Error('Fecha final debe ser nula o posterior a fecha inicial')
+
+  return ctx.db.mutation.createShift({
+    data: {
+      owner: {
+        connect: {
+          id: userId
+        }
+      },
+      employee: {
+        connect: {
+          id: employeeId
+        }
+      },
+      startDate: data.startDate,
+      endDate: data.endDate ? data.endDate : null,
+      slots: {
+        create: data.slots.map(({ index, schedule }) => ({
+          index,
+          schedule: {
+            connect: !schedule.connect ? null : schedule.connect,
+            create: !schedule.create ? null : {
+              ...schedule.create,
+              restline: {
+                create: schedule.create.restline
+              },
+              timeline: {
+                create: schedule.create.timeline
+              }
+            }
+          }
+        }))
+      }
+    }
+  }, info)
+}
+
+async function updateShift (obj, { where, data }, ctx, info) {
+  const userId = ctx.session.user.id
+  const employeeId = data.employee.id
+
+  const oldShift = await ctx.db.query.shift({ where }, `
+    {
+      startDate
+      endDate
+      slots {
+        id
+        index
+        schedule {
+          id
+        }
+      }
+    }
+  `)
+
+  const newStartDate = data.startDate !== undefined ? data.startDate : oldShift.startDate
+  const newEndDate = data.endDate !== undefined ? data.endDate : oldShift.endDate
+
+  if (newEndDate && isBefore(newEndDate, newStartDate)) throw new Error('Fecha final debe ser nula o posterior a fecha inicial')
+
+  const newShift = {
+    owner: {
+      connect: {
+        id: userID
+      }
+    }
+  }
+
+  if (data.employee !== undefined) newShift.employee = { connect: data.employee }
+  if (data.description !== undefined) newShift.description = data.description
+  if (data.startDate !== undefined) newShift.startDate = data.startDate
+  if (data.endDate !== undefined) newShift.endDate = data.endDate
+
+  if (data.slots !== undefined) {
+    newShift.slots = {
+      delete: oldShift.slots.map(({ id }) => ({ id })),
+      create: data.slots.map(({ index, schedule }) => ({
+        index,
+        schedule: {
+          connect: !schedule.connect ? null : schedule.connect,
+          create: !schedule.create ? null : {
+            ...schedule.create,
+            restline: {
+              create: schedule.create.restline
+            },
+            timeline: {
+              create: schedule.create.timeline
+            }
+          }
+        }
+      }))
+    }
+  }
+
+  return ctx.db.mutation.updateShift(newShift, info)
+}
 
 module.exports = {
   createUser,
   authenticate,
   createException,
+  createShift,
+  updateShift,
+  deleteShift: (parent, args, ctx, info) => ctx.db.mutation.deleteShift(args, info),
   createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
   updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),
-  createShift: (parent, args, ctx, info) => ctx.db.mutation.createShift(args, info),
   createDepartment: (parent, args, ctx, info) => ctx.db.mutation.createDepartment(args, info),
   updateDepartment: (parent, args, ctx, info) => ctx.db.mutation.updateDepartment(args, info),
   deleteDepartment: (parent, args, ctx, info) => ctx.db.mutation.deleteDepartment(args, info)

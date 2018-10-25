@@ -18,7 +18,6 @@
           <q-color color="warning" inverted modal v-model="warning"></q-color>
           <q-color color="info" inverted modal v-model="info"></q-color>
         </div>
-        <pre>{{allValues()}}</pre>
       </q-modal-layout>
     </q-modal>
   </q-btn>

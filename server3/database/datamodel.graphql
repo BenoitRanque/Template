@@ -76,11 +76,13 @@ type Shift {
   employee: Employee!
   startDate: DateTime!
   endDate: DateTime
-  slots: [ShiftSlot!]!
+  slots: [ShiftSlot!]! @relation(name: "ShiftToShiftSlot" onDelete: CASCADE)
   owner: User! @relation(name: "ShiftToShiftOwner")
 }
 
 type ShiftSlot {
+  id: ID! @unique
+  shift: Shift! @relation(name: "ShiftToShiftSlot")
   index: Int!
   schedule: Schedule!
 }
@@ -88,12 +90,14 @@ type ShiftSlot {
 type Exception {
   id: ID! @unique
   employee: Employee!
-  slots: [ExceptionSlot!]!
+  slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
   autorization: ExceptionAuthorization
   owner: User! @relation(name: "ExceptionToExceptionOwner")
 }
 
 type ExceptionSlot {
+  id: ID! @unique
+  exception: Exception! @relation(name: "ExceptionToExceptionSlot")
   schedule: Schedule!
   date: DateTime!
 }

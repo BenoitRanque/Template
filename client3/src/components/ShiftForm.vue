@@ -54,9 +54,9 @@
       </q-card>
     </div>
     <div class="q-py-md flex justify-around">
-      <q-btn v-if="canDelete" color="negative" size="md" rounded>Eliminar</q-btn>
-      <q-btn v-if="canCreate" :disable="!valid" color="positive" size="md" rounded>Crear</q-btn>
-      <q-btn v-if="canUpdate" :disable="!valid" color="positive" size="md" rounded>Guardar</q-btn>
+      <q-btn @click="deleteShift" v-if="canDelete" color="negative" size="md" rounded>Eliminar</q-btn>
+      <q-btn @click="createShift" v-if="canCreate" :disable="!valid" color="positive" size="md" rounded>Crear</q-btn>
+      <q-btn @click="updateShift" v-if="canUpdate" :disable="!valid" color="positive" size="md" rounded>Guardar</q-btn>
     </div>
     <!-- <pre>{{model}}</pre> -->
     <q-inner-loading :visible="loading">
@@ -67,7 +67,7 @@
 
 <script>
 import { date } from 'quasar'
-import { ShiftWithScheduleData } from 'assets/queries/Shift.graphql'
+import { ShiftWithScheduleData, CreateShiftMutation, UpdateShiftMutation, DeleteShiftMutation } from 'assets/queries/Shift.graphql'
 import ScheduleInput from 'components/ScheduleInput'
 import ScheduleSelect from 'components/ScheduleSelect'
 import EmployeeSelect from 'components/EmployeeSelect'
@@ -192,13 +192,113 @@ export default {
         .finally(() => { this.loading = false })
     },
     createShift () {
+      const parameters = {
+        data: {
+          employee: {
+            id: this.model.employee.id
+          },
+          startDate: this.model.startDate,
+          endDate: this.model.endDate,
+          description: this.model.description,
+          slots: this.model.slots.map(({ schedule }, index) => ({
+            index,
+            schedule: schedule.id
+              ? { connect: { id: schedule.id } }
+              : {
+                create: {
+                  description: schedule.description,
+                  baseTime: schedule.baseTime,
+                  timeline: schedule.timeline,
+                  restline: schedule.restline,
+                  offline1: schedule.offline1,
+                  offline2: schedule.offline2
+                }
+              }
+          }))
+        }
+      }
 
+      this.loading = true
+      this.$gql.request(CreateShiftMutation, parameters)
+        .then(response => {
+          this.$q.notify({
+            type: 'positive',
+            message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} creado`
+          })
+          this.$emit('created')
+        })
+        .catch(error => {
+          console.log(error)
+          this.$defaultErrorHandler(error)
+        })
+        .finally(() => { this.loading = false })
     },
     updateShift () {
+      const parameters = {
+        where: {
+          id: this.model.id
+        },
+        data: {
+          employee: {
+            id: this.model.employee.id
+          },
+          startDate: this.model.startDate,
+          endDate: this.model.endDate,
+          description: this.model.description,
+          slots: this.model.slots.map(({ schedule }, index) => ({
+            index,
+            schedule: schedule.id
+              ? { connect: { id: schedule.id } }
+              : {
+                create: {
+                  description: schedule.description,
+                  baseTime: schedule.baseTime,
+                  timeline: schedule.timeline,
+                  restline: schedule.restline,
+                  offline1: schedule.offline1,
+                  offline2: schedule.offline2
+                }
+              }
+          }))
+        }
+      }
 
+      this.loading = true
+      this.$gql.request(UpdateShiftMutation, parameters)
+        .then(response => {
+          this.$q.notify({
+            type: 'positive',
+            message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} modificado`
+          })
+          this.$emit('updated')
+        })
+        .catch(error => {
+          console.log(error)
+          this.$defaultErrorHandler(error)
+        })
+        .finally(() => { this.loading = false })
     },
     deleteShift () {
+      const parameters = {
+        where: {
+          id: this.model.id
+        }
+      }
 
+      this.loading = true
+      this.$gql.request(DeleteShiftMutation, parameters)
+        .then(response => {
+          this.$q.notify({
+            type: 'positive',
+            message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} eliminado`
+          })
+          this.$emit('updated')
+        })
+        .catch(error => {
+          console.log(error)
+          this.$defaultErrorHandler(error)
+        })
+        .finally(() => { this.loading = false })
     }
   },
   mounted () {

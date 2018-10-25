@@ -4,6 +4,8 @@ type Mutation {
   createEmployee(data: EmployeeCreateInput!): Employee
   updateEmployee(data: EmployeeUpdateInput! where: EmployeeWhereUniqueInput!): Employee
   createShift(data: ShiftCreateInput!): Shift
+  updateShift(data: ShiftUpdateInput! where: ShiftWhereUniqueInput!): Shift
+  deleteShift(where: ShiftWhereUniqueInput!): Shift
   createException(data: ExceptionCreateInput!): Exception
   createSchedule(data: ScheduleCreateInput!): Schedule!
   authenticate(username: String!, password: String!): AuthPayload

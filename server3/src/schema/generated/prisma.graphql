@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Wed Oct 24 2018 10:07:25 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Thu Oct 25 2018 10:30:50 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateDepartment {
   count: Int!
@@ -1425,7 +1425,7 @@ type ExceptionConnection {
 
 input ExceptionCreateInput {
   employee: EmployeeCreateOneWithoutExceptionsInput!
-  slots: ExceptionSlotCreateManyInput
+  slots: ExceptionSlotCreateManyWithoutExceptionInput
   autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
 }
@@ -1440,14 +1440,25 @@ input ExceptionCreateOneWithoutAutorizationInput {
   connect: ExceptionWhereUniqueInput
 }
 
+input ExceptionCreateOneWithoutSlotsInput {
+  create: ExceptionCreateWithoutSlotsInput
+  connect: ExceptionWhereUniqueInput
+}
+
 input ExceptionCreateWithoutAutorizationInput {
   employee: EmployeeCreateOneWithoutExceptionsInput!
-  slots: ExceptionSlotCreateManyInput
+  slots: ExceptionSlotCreateManyWithoutExceptionInput
   owner: UserCreateOneInput!
 }
 
 input ExceptionCreateWithoutEmployeeInput {
-  slots: ExceptionSlotCreateManyInput
+  slots: ExceptionSlotCreateManyWithoutExceptionInput
+  autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  owner: UserCreateOneInput!
+}
+
+input ExceptionCreateWithoutSlotsInput {
+  employee: EmployeeCreateOneWithoutExceptionsInput!
   autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
 }
@@ -1474,7 +1485,9 @@ type ExceptionPreviousValues {
   id: ID!
 }
 
-type ExceptionSlot {
+type ExceptionSlot implements Node {
+  id: ID!
+  exception: Exception!
   schedule: Schedule!
   date: DateTime!
 }
@@ -1491,11 +1504,18 @@ type ExceptionSlotConnection {
 
 input ExceptionSlotCreateInput {
   date: DateTime!
+  exception: ExceptionCreateOneWithoutSlotsInput!
   schedule: ScheduleCreateOneInput!
 }
 
-input ExceptionSlotCreateManyInput {
-  create: [ExceptionSlotCreateInput!]
+input ExceptionSlotCreateManyWithoutExceptionInput {
+  create: [ExceptionSlotCreateWithoutExceptionInput!]
+  connect: [ExceptionSlotWhereUniqueInput!]
+}
+
+input ExceptionSlotCreateWithoutExceptionInput {
+  date: DateTime!
+  schedule: ScheduleCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -1508,10 +1528,10 @@ type ExceptionSlotEdge {
 }
 
 enum ExceptionSlotOrderByInput {
-  date_ASC
-  date_DESC
   id_ASC
   id_DESC
+  date_ASC
+  date_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1519,6 +1539,7 @@ enum ExceptionSlotOrderByInput {
 }
 
 type ExceptionSlotPreviousValues {
+  id: ID!
   date: DateTime!
 }
 
@@ -1563,11 +1584,33 @@ input ExceptionSlotSubscriptionWhereInput {
 
 input ExceptionSlotUpdateInput {
   date: DateTime
+  exception: ExceptionUpdateOneRequiredWithoutSlotsInput
   schedule: ScheduleUpdateOneRequiredInput
 }
 
-input ExceptionSlotUpdateManyInput {
-  create: [ExceptionSlotCreateInput!]
+input ExceptionSlotUpdateManyWithoutExceptionInput {
+  create: [ExceptionSlotCreateWithoutExceptionInput!]
+  connect: [ExceptionSlotWhereUniqueInput!]
+  disconnect: [ExceptionSlotWhereUniqueInput!]
+  delete: [ExceptionSlotWhereUniqueInput!]
+  update: [ExceptionSlotUpdateWithWhereUniqueWithoutExceptionInput!]
+  upsert: [ExceptionSlotUpsertWithWhereUniqueWithoutExceptionInput!]
+}
+
+input ExceptionSlotUpdateWithoutExceptionDataInput {
+  date: DateTime
+  schedule: ScheduleUpdateOneRequiredInput
+}
+
+input ExceptionSlotUpdateWithWhereUniqueWithoutExceptionInput {
+  where: ExceptionSlotWhereUniqueInput!
+  data: ExceptionSlotUpdateWithoutExceptionDataInput!
+}
+
+input ExceptionSlotUpsertWithWhereUniqueWithoutExceptionInput {
+  where: ExceptionSlotWhereUniqueInput!
+  update: ExceptionSlotUpdateWithoutExceptionDataInput!
+  create: ExceptionSlotCreateWithoutExceptionInput!
 }
 
 input ExceptionSlotWhereInput {
@@ -1579,6 +1622,46 @@ input ExceptionSlotWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ExceptionSlotWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   date: DateTime
 
   """All values that are not equal to given value."""
@@ -1601,7 +1684,12 @@ input ExceptionSlotWhereInput {
 
   """All values greater than or equal the given value."""
   date_gte: DateTime
+  exception: ExceptionWhereInput
   schedule: ScheduleWhereInput
+}
+
+input ExceptionSlotWhereUniqueInput {
+  id: ID
 }
 
 type ExceptionSubscriptionPayload {
@@ -1645,7 +1733,7 @@ input ExceptionSubscriptionWhereInput {
 
 input ExceptionUpdateInput {
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
-  slots: ExceptionSlotUpdateManyInput
+  slots: ExceptionSlotUpdateManyWithoutExceptionInput
   autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
 }
@@ -1666,14 +1754,27 @@ input ExceptionUpdateOneRequiredWithoutAutorizationInput {
   upsert: ExceptionUpsertWithoutAutorizationInput
 }
 
+input ExceptionUpdateOneRequiredWithoutSlotsInput {
+  create: ExceptionCreateWithoutSlotsInput
+  connect: ExceptionWhereUniqueInput
+  update: ExceptionUpdateWithoutSlotsDataInput
+  upsert: ExceptionUpsertWithoutSlotsInput
+}
+
 input ExceptionUpdateWithoutAutorizationDataInput {
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
-  slots: ExceptionSlotUpdateManyInput
+  slots: ExceptionSlotUpdateManyWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
 }
 
 input ExceptionUpdateWithoutEmployeeDataInput {
-  slots: ExceptionSlotUpdateManyInput
+  slots: ExceptionSlotUpdateManyWithoutExceptionInput
+  autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+}
+
+input ExceptionUpdateWithoutSlotsDataInput {
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
 }
@@ -1686,6 +1787,11 @@ input ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
 input ExceptionUpsertWithoutAutorizationInput {
   update: ExceptionUpdateWithoutAutorizationDataInput!
   create: ExceptionCreateWithoutAutorizationInput!
+}
+
+input ExceptionUpsertWithoutSlotsInput {
+  update: ExceptionUpdateWithoutSlotsDataInput!
+  create: ExceptionCreateWithoutSlotsInput!
 }
 
 input ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
@@ -2039,21 +2145,23 @@ type Mutation {
   createEmployee(data: EmployeeCreateInput!): Employee!
   createDepartment(data: DepartmentCreateInput!): Department!
   createShift(data: ShiftCreateInput!): Shift!
+  createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
   createException(data: ExceptionCreateInput!): Exception!
+  createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
   createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
   createScheduleCategoryConfig(data: ScheduleCategoryConfigCreateInput!): ScheduleCategoryConfig!
   createFieldOptionLabel(data: FieldOptionLabelCreateInput!): FieldOptionLabel!
   createSchedule(data: ScheduleCreateInput!): Schedule!
   createScheduleTimelineElement(data: ScheduleTimelineElementCreateInput!): ScheduleTimelineElement!
-  createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
   createScheduleOfflineElement(data: ScheduleOfflineElementCreateInput!): ScheduleOfflineElement!
   createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
-  createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
   createUser(data: UserCreateInput!): User!
   updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
   updateDepartment(data: DepartmentUpdateInput!, where: DepartmentWhereUniqueInput!): Department
   updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
+  updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
   updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
+  updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   updateFieldOptionLabel(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
@@ -2061,7 +2169,9 @@ type Mutation {
   deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department
   deleteShift(where: ShiftWhereUniqueInput!): Shift
+  deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   deleteException(where: ExceptionWhereUniqueInput!): Exception
+  deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   deleteFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
@@ -2069,7 +2179,9 @@ type Mutation {
   upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
   upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
+  upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
   upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
+  upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
   upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
   upsertFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!, create: FieldOptionLabelCreateInput!, update: FieldOptionLabelUpdateInput!): FieldOptionLabel!
   upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
@@ -2077,30 +2189,30 @@ type Mutation {
   updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
   updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
   updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
+  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
   updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
+  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
   updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
   updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
   updateManyFieldOptionLabels(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereInput): BatchPayload!
   updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
   updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
-  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
   updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
   updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
-  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
   deleteManyShifts(where: ShiftWhereInput): BatchPayload!
+  deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
   deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
+  deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
   deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
   deleteManyScheduleCategoryConfigs(where: ScheduleCategoryConfigWhereInput): BatchPayload!
   deleteManyFieldOptionLabels(where: FieldOptionLabelWhereInput): BatchPayload!
   deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
   deleteManyScheduleTimelineElements(where: ScheduleTimelineElementWhereInput): BatchPayload!
-  deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
   deleteManyScheduleOfflineElements(where: ScheduleOfflineElementWhereInput): BatchPayload!
   deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
-  deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -2135,21 +2247,23 @@ type Query {
   employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
+  shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
+  exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
   exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
   scheduleCategoryConfigs(where: ScheduleCategoryConfigWhereInput, orderBy: ScheduleCategoryConfigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCategoryConfig]!
   fieldOptionLabels(where: FieldOptionLabelWhereInput, orderBy: FieldOptionLabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldOptionLabel]!
   schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
   scheduleTimelineElements(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement]!
-  exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
   scheduleOfflineElements(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleOfflineElement]!
   scheduleRestlineElements(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement]!
-  shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   employee(where: EmployeeWhereUniqueInput!): Employee
   department(where: DepartmentWhereUniqueInput!): Department
   shift(where: ShiftWhereUniqueInput!): Shift
+  shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   exception(where: ExceptionWhereUniqueInput!): Exception
+  exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   fieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   schedule(where: ScheduleWhereUniqueInput!): Schedule
@@ -2157,16 +2271,16 @@ type Query {
   employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   departmentsConnection(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DepartmentConnection!
   shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
+  shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
   exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
+  exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
   exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
   scheduleCategoryConfigsConnection(where: ScheduleCategoryConfigWhereInput, orderBy: ScheduleCategoryConfigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleCategoryConfigConnection!
   fieldOptionLabelsConnection(where: FieldOptionLabelWhereInput, orderBy: FieldOptionLabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FieldOptionLabelConnection!
   schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
   scheduleTimelineElementsConnection(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleTimelineElementConnection!
-  exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
   scheduleOfflineElementsConnection(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleOfflineElementConnection!
   scheduleRestlineElementsConnection(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleRestlineElementConnection!
-  shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -3235,7 +3349,7 @@ input ShiftCreateInput {
   startDate: DateTime!
   endDate: DateTime
   employee: EmployeeCreateOneWithoutShiftsInput!
-  slots: ShiftSlotCreateManyInput
+  slots: ShiftSlotCreateManyWithoutShiftInput
   owner: UserCreateOneInput!
 }
 
@@ -3244,11 +3358,24 @@ input ShiftCreateManyWithoutEmployeeInput {
   connect: [ShiftWhereUniqueInput!]
 }
 
+input ShiftCreateOneWithoutSlotsInput {
+  create: ShiftCreateWithoutSlotsInput
+  connect: ShiftWhereUniqueInput
+}
+
 input ShiftCreateWithoutEmployeeInput {
   description: String
   startDate: DateTime!
   endDate: DateTime
-  slots: ShiftSlotCreateManyInput
+  slots: ShiftSlotCreateManyWithoutShiftInput
+  owner: UserCreateOneInput!
+}
+
+input ShiftCreateWithoutSlotsInput {
+  description: String
+  startDate: DateTime!
+  endDate: DateTime
+  employee: EmployeeCreateOneWithoutShiftsInput!
   owner: UserCreateOneInput!
 }
 
@@ -3283,7 +3410,9 @@ type ShiftPreviousValues {
   endDate: DateTime
 }
 
-type ShiftSlot {
+type ShiftSlot implements Node {
+  id: ID!
+  shift: Shift!
   index: Int!
   schedule: Schedule!
 }
@@ -3300,11 +3429,18 @@ type ShiftSlotConnection {
 
 input ShiftSlotCreateInput {
   index: Int!
+  shift: ShiftCreateOneWithoutSlotsInput!
   schedule: ScheduleCreateOneInput!
 }
 
-input ShiftSlotCreateManyInput {
-  create: [ShiftSlotCreateInput!]
+input ShiftSlotCreateManyWithoutShiftInput {
+  create: [ShiftSlotCreateWithoutShiftInput!]
+  connect: [ShiftSlotWhereUniqueInput!]
+}
+
+input ShiftSlotCreateWithoutShiftInput {
+  index: Int!
+  schedule: ScheduleCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -3317,10 +3453,10 @@ type ShiftSlotEdge {
 }
 
 enum ShiftSlotOrderByInput {
-  index_ASC
-  index_DESC
   id_ASC
   id_DESC
+  index_ASC
+  index_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3328,6 +3464,7 @@ enum ShiftSlotOrderByInput {
 }
 
 type ShiftSlotPreviousValues {
+  id: ID!
   index: Int!
 }
 
@@ -3372,11 +3509,33 @@ input ShiftSlotSubscriptionWhereInput {
 
 input ShiftSlotUpdateInput {
   index: Int
+  shift: ShiftUpdateOneRequiredWithoutSlotsInput
   schedule: ScheduleUpdateOneRequiredInput
 }
 
-input ShiftSlotUpdateManyInput {
-  create: [ShiftSlotCreateInput!]
+input ShiftSlotUpdateManyWithoutShiftInput {
+  create: [ShiftSlotCreateWithoutShiftInput!]
+  connect: [ShiftSlotWhereUniqueInput!]
+  disconnect: [ShiftSlotWhereUniqueInput!]
+  delete: [ShiftSlotWhereUniqueInput!]
+  update: [ShiftSlotUpdateWithWhereUniqueWithoutShiftInput!]
+  upsert: [ShiftSlotUpsertWithWhereUniqueWithoutShiftInput!]
+}
+
+input ShiftSlotUpdateWithoutShiftDataInput {
+  index: Int
+  schedule: ScheduleUpdateOneRequiredInput
+}
+
+input ShiftSlotUpdateWithWhereUniqueWithoutShiftInput {
+  where: ShiftSlotWhereUniqueInput!
+  data: ShiftSlotUpdateWithoutShiftDataInput!
+}
+
+input ShiftSlotUpsertWithWhereUniqueWithoutShiftInput {
+  where: ShiftSlotWhereUniqueInput!
+  update: ShiftSlotUpdateWithoutShiftDataInput!
+  create: ShiftSlotCreateWithoutShiftInput!
 }
 
 input ShiftSlotWhereInput {
@@ -3388,6 +3547,46 @@ input ShiftSlotWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ShiftSlotWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   index: Int
 
   """All values that are not equal to given value."""
@@ -3410,7 +3609,12 @@ input ShiftSlotWhereInput {
 
   """All values greater than or equal the given value."""
   index_gte: Int
+  shift: ShiftWhereInput
   schedule: ScheduleWhereInput
+}
+
+input ShiftSlotWhereUniqueInput {
+  id: ID
 }
 
 type ShiftSubscriptionPayload {
@@ -3457,7 +3661,7 @@ input ShiftUpdateInput {
   startDate: DateTime
   endDate: DateTime
   employee: EmployeeUpdateOneRequiredWithoutShiftsInput
-  slots: ShiftSlotUpdateManyInput
+  slots: ShiftSlotUpdateManyWithoutShiftInput
   owner: UserUpdateOneRequiredInput
 }
 
@@ -3470,17 +3674,37 @@ input ShiftUpdateManyWithoutEmployeeInput {
   upsert: [ShiftUpsertWithWhereUniqueWithoutEmployeeInput!]
 }
 
+input ShiftUpdateOneRequiredWithoutSlotsInput {
+  create: ShiftCreateWithoutSlotsInput
+  connect: ShiftWhereUniqueInput
+  update: ShiftUpdateWithoutSlotsDataInput
+  upsert: ShiftUpsertWithoutSlotsInput
+}
+
 input ShiftUpdateWithoutEmployeeDataInput {
   description: String
   startDate: DateTime
   endDate: DateTime
-  slots: ShiftSlotUpdateManyInput
+  slots: ShiftSlotUpdateManyWithoutShiftInput
+  owner: UserUpdateOneRequiredInput
+}
+
+input ShiftUpdateWithoutSlotsDataInput {
+  description: String
+  startDate: DateTime
+  endDate: DateTime
+  employee: EmployeeUpdateOneRequiredWithoutShiftsInput
   owner: UserUpdateOneRequiredInput
 }
 
 input ShiftUpdateWithWhereUniqueWithoutEmployeeInput {
   where: ShiftWhereUniqueInput!
   data: ShiftUpdateWithoutEmployeeDataInput!
+}
+
+input ShiftUpsertWithoutSlotsInput {
+  update: ShiftUpdateWithoutSlotsDataInput!
+  create: ShiftCreateWithoutSlotsInput!
 }
 
 input ShiftUpsertWithWhereUniqueWithoutEmployeeInput {
@@ -3637,16 +3861,16 @@ type Subscription {
   employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   department(where: DepartmentSubscriptionWhereInput): DepartmentSubscriptionPayload
   shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
+  shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
+  exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
   scheduleCategoryConfig(where: ScheduleCategoryConfigSubscriptionWhereInput): ScheduleCategoryConfigSubscriptionPayload
   fieldOptionLabel(where: FieldOptionLabelSubscriptionWhereInput): FieldOptionLabelSubscriptionPayload
   schedule(where: ScheduleSubscriptionWhereInput): ScheduleSubscriptionPayload
   scheduleTimelineElement(where: ScheduleTimelineElementSubscriptionWhereInput): ScheduleTimelineElementSubscriptionPayload
-  exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   scheduleOfflineElement(where: ScheduleOfflineElementSubscriptionWhereInput): ScheduleOfflineElementSubscriptionPayload
   scheduleRestlineElement(where: ScheduleRestlineElementSubscriptionWhereInput): ScheduleRestlineElementSubscriptionPayload
-  shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 

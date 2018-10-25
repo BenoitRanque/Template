@@ -19,6 +19,36 @@ query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
   }
 }
 
+mutation CreateShiftMutation ($data: ShiftCreateInput!) {
+  shift: createShift(data: $data) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
+mutation UpdateShiftMutation ($data: ShiftUpdateInput! $where: ShiftWhereUniqueInput!) {
+  shift: updateShift(where: $where data: $data) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
+mutation DeleteShiftMutation ($where: ShiftWhereUniqueInput!) {
+  deleteShift(where: $where) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
 fragment AllScheduleData on Schedule {
   baseTime
   timeline {

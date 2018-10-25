@@ -2,8 +2,3 @@ input ExceptionCreateInput {
   employee: EmployeeWhereUniqueInput!
   slots: [ExceptionSlotCreateInput!]!
 }
-
-input ExceptionSlotCreateInput {
-  date: DateTime!
-  schedule: ScheduleCreateOneInput!
-}
