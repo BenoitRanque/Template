@@ -4,10 +4,15 @@ const jwt = require('jsonwebtoken')
 const { APP_SECRET, BCRYPT_SALT_ROUNDS } = require('../utils')
 
 async function createUser(obj, args, ctx, info) {
-  const password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
-  return ctx.db.mutation.createUser({
-    data: { ...args.data, password },
-  }, info)
+  args.data.password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
+  return ctx.db.mutation.createUser(args, info)
+}
+
+async function updateUser(obj, args, ctx, info) {
+  if (args.data && args.data.password !== undefined) {
+    args.data.password = await bcrypt.hash(args.data.password === null ? '' : args.data.password, BCRYPT_SALT_ROUNDS)
+  }
+  return ctx.db.mutation.updateUser(args, info)
 }
 
 async function authenticate(obj, args, ctx, info) {
@@ -126,7 +131,6 @@ async function createShift(obj, { data }, ctx, info) {
 
 async function updateShift (obj, { where, data }, ctx, info) {
   const userId = ctx.session.user.id
-  const employeeId = data.employee.id
 
   const oldShift = await ctx.db.query.shift({ where }, `
     {
@@ -150,7 +154,7 @@ async function updateShift (obj, { where, data }, ctx, info) {
   const newShift = {
     owner: {
       connect: {
-        id: userID
+        id: userId
       }
     }
   }
@@ -181,16 +185,22 @@ async function updateShift (obj, { where, data }, ctx, info) {
     }
   }
 
-  return ctx.db.mutation.updateShift(newShift, info)
+  return ctx.db.mutation.updateShift({ where, data: newShift }, info)
 }
 
 module.exports = {
   createUser,
+  updateUser,
   authenticate,
   createException,
   createShift,
   updateShift,
-  deleteShift: (parent, args, ctx, info) => ctx.db.mutation.deleteShift(args, info),
+  deleteShift: async (parent, args, ctx, info) => {
+    // workaround: cannot return relations on delete mutation
+    const response = await ctx.db.query.shift(args, info)
+    await ctx.db.mutation.deleteShift(args, `{ id }`)
+    return response
+  },
   createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
   updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),

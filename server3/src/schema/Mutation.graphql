@@ -1,6 +1,7 @@
 
 type Mutation {
   createUser(data: UserCreateInput!): User
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   createEmployee(data: EmployeeCreateInput!): Employee
   updateEmployee(data: EmployeeUpdateInput! where: EmployeeWhereUniqueInput!): Employee
   createShift(data: ShiftCreateInput!): Shift

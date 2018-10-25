@@ -26,7 +26,7 @@
         <q-tooltip>Tiempo Total Disponible</q-tooltip>
       </span>
     </span>
-    <div class="col-auto q-ml-xs" v-if="$parent.advanced">
+    <div class="col-auto q-ml-xs" v-if="!$parent.readonly && $parent.advanced">
       <q-btn flat dense icon="more_vert">
         <q-popover anchor="bottom right" self="top right">
           <q-list>

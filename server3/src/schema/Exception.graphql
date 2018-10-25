@@ -1,3 +1,4 @@
+
 input ExceptionCreateInput {
   employee: EmployeeWhereUniqueInput!
   slots: [ExceptionSlotCreateInput!]!

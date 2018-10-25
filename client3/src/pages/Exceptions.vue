@@ -1,87 +1,137 @@
 <template>
   <q-page>
     <q-table
-      ref="table"
       :data="table.data"
       :columns="table.columns"
       :filter="table.filter"
       row-key="id"
       :pagination.sync="table.pagination"
       :loading="table.loading"
-      :visible-columns="table.visibleColumns"
       @request="request"
     >
       <template slot="top-left" slot-scope="props">
-        <div class="row">
-          <div class="col-6">
-            <q-search hide-underline v-model="table.filter.search" />
+        <div class="row full-width no-wrap">
+          <div class="col-auto">
+            <q-search hide-underline v-model="table.filter" />
           </div>
-          <div class="col-6">
-            <employee-select></employee-select>
+          <div class="col-auto">
+            <employee-select hide-underline placeholder="Filtrar Por Empleado" v-model="table.employeesFilter" multiple></employee-select>
           </div>
         </div>
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-table-columns
-          color="secondary"
-          class="q-mr-sm"
-          v-model="table.visibleColumns"
-          :columns="table.columns"
-        />
+        <q-btn round color="positive" @click="activeShiftModal = true" icon="add"></q-btn>
       </template>
 
-      <template v-for="field in editableFields" :slot="`body-cell-${field.name}`" slot-scope="props">
-        <table-cell-edit
-          :key="field.name"
-          :props="props"
-          :type="field.type"
-          :field="field.name"
-          :options="field.type === 'select' ? options[field.name] : options.boolean"
-          @update="$set(props.row.update, field.name, $event)"
-          @revert="$delete(props.row.update, field.name)"
-        ></table-cell-edit>
-      </template>
-
-      <q-td slot="body-cell-links" class="group" slot-scope="props" :props="props">
+      <q-td slot="body-cell-employee" class="group" slot-scope="props" :props="props">
         <q-btn
-          @click="$router.push({ path: '/Shifts', query: { employeeId: props.row.employee.id } })"
+          @click="$router.push({ path: '/Employees', query: { employeeId: props.row.employee.id } })"
           icon-right="open_in_new"
           color="secondary" size="sm" flat dense
         >
-          Empleado
+          {{props.row.employee.nameFull}}
           <q-tooltip>Ir a Empleado</q-tooltip>
         </q-btn>
       </q-td>
+
+      <q-td slot="body-cell-actions" class="group" slot-scope="props" :props="props">
+        <q-btn
+          icon="schedule"
+          color="secondary" size="md" flat dense
+          @click="viewShift(props.row)"
+        >
+          <q-tooltip>Ver detalles de horario</q-tooltip>
+        </q-btn>
+      </q-td>
     </q-table>
+    <q-modal v-model="activeShiftModal" @hide="activeShiftId = null">
+      <q-modal-layout>
+        <q-toolbar slot="header">
+          <q-toolbar-title>
+            Horario
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
+        </q-toolbar>
+        <div class="q-pa-md">
+          <shift-form
+            :shift-id="activeShiftId"
+            @created="activeShiftModal = false; request()"
+            @updated="activeShiftModal = false; request()"
+            @deleted="activeShiftModal = false; request()"
+          ></shift-form>
+        </div>
+      </q-modal-layout>
+    </q-modal>
   </q-page>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import { ExceptionsPaginationQuery } from 'assets/queries/Exception.graphql'
 import TableCellEdit from 'components/TableCellEdit'
 import EmployeeSelect from 'components/EmployeeSelect'
+import ShiftForm from 'components/ShiftForm'
+import { date } from 'quasar'
 
 export default {
   name: 'Exceptions',
-  components: { TableCellEdit, EmployeeSelect },
+  components: { TableCellEdit, EmployeeSelect, ShiftForm },
   data () {
     return {
+      activeShiftId: null,
+      activeShiftModal: false,
       employeeFilter: [],
       table: {
         data: [],
         columns: [
           {
-            name: 'links',
+            name: 'status',
+            field: row => {
+              if (!row.authorization) return 'PENDIENTE'
+              return row.authorization.granted ? 'APROBADA' : 'DENEGADA'
+            },
+            label: 'Estado',
+            align: 'left'
+          },
+          {
+            name: 'employee',
+            align: 'left',
+            label: 'Empleado'
+          },
+          {
+            name: 'owner',
+            field: row => row.owner ? row.owner.username : '',
+            label: 'Solicitada Por',
+            align: 'left'
+          },
+          {
+            name: 'createdAt',
+            field: row => this.formatDate(row.createdAt, 'HH:mm - DD/MM/YYYY'),
+            label: 'Fecha Solicitud',
+            sortable: true,
+            align: 'left'
+          },
+          {
+            name: 'authorizationOwner',
+            field: row => row.authorization && row.authorization.owner ? row.authorization.owner.username : '',
+            label: 'Aprobada Por',
+            align: 'left'
+          },
+          {
+            name: 'authorizationCreatedAt',
+            field: row => row.authorization ? this.formatDate(row.autorization.createdAt, 'HH:mm - DD/MM/YYYY') : '',
+            label: 'Fecha Aprobacion',
+            align: 'left'
+          },
+          {
+            name: 'actions',
             required: true,
             // label: 'Vínculos Externos',
             align: 'center'
           }
         ],
-        filter: {
-          search: '',
-          employee: []
-        },
+        employeesFilter: [],
+        filter: '',
         loading: false,
         pagination: {
           sortBy: null,
@@ -93,49 +143,23 @@ export default {
       }
     }
   },
+  watch: {
+    'table.employeesFilter': function () {
+      this.request()
+    }
+  },
   methods: {
+    viewShift (row) {
+      this.activeShiftId = row.id
+      this.activeShiftModal = true
+    },
+    formatDate: date.formatDate,
     request (criteria) {
-      const QUERY = gql`
-        query ($first: Int! $skip: Int! $orderBy: ShiftOrderByInput $where: ShiftWhereInput) {
-          meta: shiftsConnection (where: $where) {
-            aggregate {
-              count
-            }
-          }
-          data: shifts (first: $first skip: $skip orderBy: $orderBy where: $where) {
-            id
-            description
-            employee {
-              id
-              nameFull
-            }
-            startDate
-            endDate
-            startIndex
-            slots (orderBy: index_ASC) {
-              index
-              schedule {
-                id
-                description
-              }
-            }
-            owner {
-              id
-              username
-            }
-          }
-        }
-      `
       if (!criteria) criteria = {}
       const { pagination, filter } = {
         pagination: this.table.pagination,
         filter: this.table.filter,
         ...criteria
-      }
-      const { search, employees } = {
-        search: '',
-        employees: [],
-        ...filter
       }
 
       const PARAMETERS = {
@@ -144,20 +168,19 @@ export default {
         where: {}
       }
 
-      if (search.length > 0) {
+      if (filter.length > 0) {
         PARAMETERS.where.OR = [
-          { description_contains: search },
-          { employee: { nameFirst_contains: search } },
-          { employee: { nameMiddle_contains: search } },
-          { employee: { namePaternal_contains: search } },
-          { employee: { nameMaternal_contains: search } },
-          { employee: { cargo_contains: search } },
-          { employee: { department: { name_contains: search } } }
+          { employee: { nameFirst_contains: filter } },
+          { employee: { nameMiddle_contains: filter } },
+          { employee: { namePaternal_contains: filter } },
+          { employee: { nameMaternal_contains: filter } },
+          { employee: { cargo_contains: filter } },
+          { employee: { department: { name_contains: filter } } }
         ]
       }
 
-      if (employees.length > 0) {
-        PARAMETERS.employee = { id_in: Array.isArray(employees) ? employees : [ employees ] }
+      if (this.table.employeesFilter.length > 0) {
+        PARAMETERS.where.employee = { id_in: this.table.employeesFilter }
       }
 
       if (pagination.sortBy !== null) {
@@ -165,16 +188,11 @@ export default {
       }
 
       this.table.loading = true
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(ExceptionsPaginationQuery, PARAMETERS)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
-          this.table.data = response.data.map(employee => ({
-            id: employee.id,
-            data: employee,
-            update: {},
-            updating: false
-          }))
+          this.table.data = response.data
         })
         .catch(this.$defaultErrorHandler)
         .finally(() => {
@@ -183,7 +201,10 @@ export default {
     }
   },
   mounted () {
-    this.request(this.$route.query && this.$route.query.employeeId ? { filter: { employees: this.$route.query.employeeId } } : {})
+    if (this.$route.query && this.$route.query.employeeId) {
+      this.table.employeesFilter = Array.isArray(this.$route.query.employeeId) ? this.$route.query.employeeId : [ this.$route.query.employeeId ]
+    }
+    this.request()
   }
 }
 </script>

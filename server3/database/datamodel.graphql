@@ -24,6 +24,8 @@
 
 type User {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   username: String! @unique
   password: String!
   departments: [Department!]!
@@ -65,6 +67,8 @@ type Employee {
 
 type Department {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   subordinates: [Employee!]!
   supervisors: [User!]!
@@ -72,6 +76,8 @@ type Department {
 
 type Shift {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   description: String
   employee: Employee!
   startDate: DateTime!
@@ -82,13 +88,14 @@ type Shift {
 
 type ShiftSlot {
   id: ID! @unique
-  shift: Shift! @relation(name: "ShiftToShiftSlot")
   index: Int!
   schedule: Schedule!
 }
 
 type Exception {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   employee: Employee!
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
   autorization: ExceptionAuthorization
@@ -97,20 +104,23 @@ type Exception {
 
 type ExceptionSlot {
   id: ID! @unique
-  exception: Exception! @relation(name: "ExceptionToExceptionSlot")
   schedule: Schedule!
   date: DateTime!
 }
 
 type ExceptionAuthorization {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   granted: Boolean!
   exception: Exception!
-  user: User! @relation(name: "ExceptionToExceptionGrantor")
+  owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
 }
 
 type Schedule {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   description: String
   baseTime: Int!
   isPreset: Boolean @default(value: "false")

@@ -138,6 +138,9 @@ export default {
     mainBtnAction () {
       switch (this.mode) {
         case 'preset':
+          this.modal = true
+          this.requestPreset()
+          return
         case 'range':
         case 'date':
           this.modal = true
@@ -226,20 +229,14 @@ export default {
             schedule
           }))
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(this.$defaultErrorHandler)
         .finally(() => {
           this.loading = false
         })
     }
   },
   mounted () {
-    if (this.mode === 'preset') {
-      this.requestPreset()
-    } else {
-      this.calendar.employee.id = this.employeeId
-    }
+    this.calendar.employee.id = this.employeeId
   }
 }
 </script>

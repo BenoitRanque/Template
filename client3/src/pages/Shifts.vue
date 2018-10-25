@@ -1,39 +1,28 @@
 <template>
   <q-page>
     <q-table
-      ref="table"
       :data="table.data"
       :columns="table.columns"
       :filter="table.filter"
       row-key="id"
       :pagination.sync="table.pagination"
       :loading="table.loading"
-      :visible-columns="table.visibleColumns"
       @request="request"
     >
       <template slot="top-left" slot-scope="props">
-        <div class="col-6">
-          <q-search hide-underline v-model="table.filter" />
-        </div>
-        <div class="col-6">
-          <employee-select hide-underline placeholder="Filtrar Por Empleado" v-model="table.employeesFilter" multiple></employee-select>
+        <div class="row full-width no-wrap">
+          <div class="col-auto">
+            <q-search hide-underline v-model="table.filter" />
+          </div>
+          <div class="col-auto">
+            <employee-select hide-underline placeholder="Filtrar Por Empleado" v-model="table.employeesFilter" multiple></employee-select>
+          </div>
         </div>
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-btn icon="add"></q-btn>
+        <q-btn round color="positive" @click="activeShiftModal = true" icon="add"></q-btn>
       </template>
-      <!-- <table-cell-edit v-for="field in editableFields"
-        :key="field.name"
-        :slot="`body-cell-${field.name}`"
-        slot-scope="props"
-        :props="props"
-        :type="field.type"
-        :field="field.name"
-        :options="field.type === 'select' ? options[field.name] : options.boolean"
-        @update="$set(props.row.update, field.name, $event)"
-        @revert="$delete(props.row.update, field.name)"
-      ></table-cell-edit> -->
 
       <q-td slot="body-cell-employee" class="group" slot-scope="props" :props="props">
         <q-btn
@@ -58,14 +47,19 @@
     </q-table>
     <q-modal v-model="activeShiftModal" @hide="activeShiftId = null">
       <q-modal-layout>
-        <q-toolbar slot="header" class="col">
+        <q-toolbar slot="header">
           <q-toolbar-title>
-            Detalles de Horario
+            Horario
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
         <div class="q-pa-md">
-          <shift-form :shift-id="activeShiftId"></shift-form>
+          <shift-form
+            :shift-id="activeShiftId"
+            @created="activeShiftModal = false; request()"
+            @updated="activeShiftModal = false; request()"
+            @deleted="activeShiftModal = false; request()"
+          ></shift-form>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -73,7 +67,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import { ShiftsPagination } from 'assets/queries/Shift.graphql'
 import TableCellEdit from 'components/TableCellEdit'
 import EmployeeSelect from 'components/EmployeeSelect'
 import ShiftForm from 'components/ShiftForm'
@@ -148,25 +142,6 @@ export default {
     },
     formatDate: date.formatDate,
     request (criteria) {
-      const QUERY = gql`
-        query ($first: Int! $skip: Int! $orderBy: ShiftOrderByInput $where: ShiftWhereInput) {
-          meta: shiftsConnection (where: $where) {
-            aggregate {
-              count
-            }
-          }
-          data: shifts (first: $first skip: $skip orderBy: $orderBy where: $where) {
-            id
-            description
-            employee {
-              id
-              nameFull
-            }
-            startDate
-            endDate
-          }
-        }
-      `
       if (!criteria) criteria = {}
       const { pagination, filter } = {
         pagination: this.table.pagination,
@@ -201,7 +176,7 @@ export default {
       }
 
       this.table.loading = true
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(ShiftsPagination, PARAMETERS)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count

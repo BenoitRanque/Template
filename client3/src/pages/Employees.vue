@@ -12,7 +12,14 @@
       @request="request"
     >
       <template slot="top-left" slot-scope="props">
-        <q-search hide-underline v-model="table.filter" />
+        <div class="row full-width no-wrap">
+          <div class="col-auto">
+            <q-search hide-underline v-model="table.filter" />
+          </div>
+          <div class="col-auto">
+            <employee-select hide-underline placeholder="Filtrar Por Empleado" v-model="table.employeesFilter" multiple></employee-select>
+          </div>
+        </div>
       </template>
 
       <template slot="top-right" slot-scope="props">
@@ -82,8 +89,9 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import { EmployeePagination, UpdateEmployeeMutation, EmployeeFieldOptionLabels } from 'assets/queries/Employee.graphql'
 import TableCellEdit from 'components/TableCellEdit'
+import EmployeeSelect from 'components/EmployeeSelect'
 
 const tableFields = [
   {
@@ -170,7 +178,7 @@ const tableFields = [
 
 export default {
   name: 'Employees',
-  components: { TableCellEdit },
+  components: { TableCellEdit, EmployeeSelect },
   data () {
     return {
       options: {
@@ -209,6 +217,7 @@ export default {
           }
         ],
         filter: '',
+        employeesFilter: [],
         loading: false,
         visibleColumns: ['nameFirst', 'namePaternal', 'cargo'],
         pagination: {
@@ -229,40 +238,13 @@ export default {
       return tableFields.map(({ name, label }) => ({ value: name, label }))
     }
   },
+  watch: {
+    'table.employeesFilter': function () {
+      this.request()
+    }
+  },
   methods: {
     request (criteria) {
-      const QUERY = gql`
-        query ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInput $where: EmployeeWhereInput) {
-          meta: employeesConnection (where: $where) {
-            aggregate {
-              count
-            }
-          }
-          data: employees (first: $first skip: $skip orderBy: $orderBy where: $where) {
-            id
-            zkTimePin
-            nameFirst
-            nameMiddle
-            namePaternal
-            nameMaternal
-            cargo
-            department {
-              name
-            }
-            documentType
-            documentNumber
-            sex
-            dateOfBirth
-            nationality
-            jubilado
-            personaConDiscapacidad
-            tutorPersonaConDiscapacidad
-            cajaDeSalud
-            aportaAFP
-            AFP
-          }
-        }
-      `
       if (!criteria) criteria = {}
       const { pagination, filter } = {
         pagination: this.table.pagination,
@@ -272,24 +254,27 @@ export default {
 
       const PARAMETERS = {
         first: pagination.rowsPerPage,
-        skip: pagination.rowsPerPage * (pagination.page - 1)
+        skip: pagination.rowsPerPage * (pagination.page - 1),
+        where: {}
       }
 
       if (filter.length > 0) {
-        PARAMETERS.where = {
-          OR: [
-            { id: filter },
-            { nameFirst_contains: filter },
-            { nameMiddle_contains: filter },
-            { namePaternal_contains: filter },
-            { nameMaternal_contains: filter },
-            { cargo_contains: filter },
-            { department: { name_contains: filter } }
-          ]
-        }
+        PARAMETERS.where.OR = [
+          { id: filter },
+          { nameFirst_contains: filter },
+          { nameMiddle_contains: filter },
+          { namePaternal_contains: filter },
+          { nameMaternal_contains: filter },
+          { cargo_contains: filter },
+          { department: { name_contains: filter } }
+        ]
         if (!isNaN(Number(filter))) {
           PARAMETERS.where.OR.push({ zkTimePin: Number(filter) })
         }
+      }
+
+      if (this.table.employeesFilter.length > 0) {
+        PARAMETERS.where.id_in = this.table.employeesFilter
       }
 
       if (pagination.sortBy !== null) {
@@ -297,7 +282,7 @@ export default {
       }
 
       this.table.loading = true
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(EmployeePagination, PARAMETERS)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
@@ -314,18 +299,11 @@ export default {
         })
     },
     save (employee) {
-      const QUERY = gql`
-        mutation ($where: EmployeeWhereUniqueInput! $data: EmployeeUpdateInput!) {
-          employee: updateEmployee (where: $where data: $data) {
-            nameFull
-          }
-        }
-      `
       const { data, update } = employee
       const PARAMETERS = { where: { id: data.id }, data: update }
 
       employee.updating = true
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(UpdateEmployeeMutation, PARAMETERS)
         .then(response => {
           this.$q.notify({ type: 'positive', message: `Empleado ${response.employee.nameFull} actualizado` })
           this.request()
@@ -336,41 +314,7 @@ export default {
         })
     },
     loadFieldOptionLabels () {
-      const QUERY = gql`
-        query {
-          boolean: fieldOptionLabels(where: {
-            field: "Boolean"
-          }) {
-            value
-            label
-          }
-          sex: fieldOptionLabels(where: {
-            field: "EmployeeSex"
-          }) {
-            value
-            label
-          }
-          documentType: fieldOptionLabels(where: {
-            field: "EmployeeDocumentType"
-          }) {
-            value
-            label
-          }
-          cajaDeSalud: fieldOptionLabels(where: {
-            field: "EmployeeCajaDeSalud"
-          }) {
-            value
-            label
-          }
-          AFP: fieldOptionLabels(where: {
-            field: "EmployeeAFP"
-          }) {
-            value
-            label
-          }
-        }
-      `
-      this.$gql.request(QUERY)
+      this.$gql.request(EmployeeFieldOptionLabels)
         .then(response => {
           this.options = response
         })
@@ -379,7 +323,10 @@ export default {
   },
   mounted () {
     this.loadFieldOptionLabels()
-    this.request(this.$route.query && this.$route.query.employeeId ? { filter: this.$route.query.employeeId } : {})
+    if (this.$route.query && this.$route.query.employeeId) {
+      this.table.employeesFilter = Array.isArray(this.$route.query.employeeId) ? this.$route.query.employeeId : [ this.$route.query.employeeId ]
+    }
+    this.request()
   }
 }
 </script>

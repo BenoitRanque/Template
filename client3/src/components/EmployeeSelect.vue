@@ -1,11 +1,11 @@
 <template>
   <q-input-frame @click.native="showModal" v-bind="$attrs" class="q-select">
 
-    <div class="col q-input-target ellipsis text-truncate" :class="{ 'q-input-target-placeholder': !selectedEmployees.length }">
-      {{selectedEmployees.length ? label : placeholder}}
+    <div class="col q-input-target text-truncate" :class="{ 'q-input-target-placeholder': !hasValue }">
+      {{hasValue ? label : placeholder}}
     </div>
 
-    <q-icon v-if="!readonly && selectedEmployees.length" slot="after" :name="$q.icon.input.clear" @click.native="clear" class="q-if-control"></q-icon>
+    <q-icon v-if="!readonly && hasValue" slot="after" :name="$q.icon.input.clear" @click.native="clear" class="q-if-control"></q-icon>
     <q-icon slot="after" :name="$q.icon.input.dropdown" class="q-if-control"></q-icon>
 
     <q-modal v-model="modal" minimized @show="() => $refs.search.focus()">
@@ -22,9 +22,9 @@
           :columns="table.columns"
           :filter="table.filter"
           row-key="id"
-          :selection="multiple ? 'multiple' : 'single'"
-          :selected="selectedEmployees"
-          @update:selected="updatedSelectedEmployees"
+          :selection="multiple ? 'multiple' : 'none'"
+          :selected="multiple ? value.map(id => ({ id })) : []"
+          @update:selected="$emit('input', $event.map(({ id }) => id))"
           :pagination.sync="table.pagination"
           :loading="table.loading"
           @request="request"
@@ -34,8 +34,11 @@
             <q-search slot="top-left" ref="search" class="col" hide-underline v-model="table.filter" />
           </template>
           <template slot="top-right" slot-scope="props">
-            <q-btn slot="top-right" color="primary" v-close-overlay flat>ok</q-btn>
+            <q-btn v-if="multiple" slot="top-right" color="primary" v-close-overlay flat>ok</q-btn>
           </template>
+          <q-td slot="body-cell-actions" slot-scope="props" :props="props">
+            <q-btn v-if="!multiple" rounded color="primary" size="sm" v-close-overlay @click="$emit('input', props.row.id)">Seleccionar</q-btn>
+          </q-td>
         </q-table>
       </q-modal-layout>
     </q-modal>
@@ -43,7 +46,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import { EmployeeSelectPaginationQuery, EmployeeNameFullQuery, EmployeesNameFullQuery } from 'assets/queries/Employee.graphql'
 import { event } from 'quasar'
 const { stopAndPrevent } = event
 
@@ -59,7 +62,7 @@ export default {
       default: 'Seleccionar Empleado...'
     },
     value: {
-      type: [String, Array],
+      type: [String, Array, null],
       default: null
     },
     multiple: {
@@ -110,18 +113,15 @@ export default {
             sortable: true
           },
           {
-            name: 'zkTimePin',
-            field: 'zkTimePin',
-            label: 'PIN ZKTime',
-            align: 'left',
-            sortable: true
+            name: 'actions',
+            required: true
           }
         ],
         filter: '',
         loading: false,
-        selected: this.multiple ? this.value : [this.value],
+        selected: this.multiple && this.value.length ? this.value : [],
         pagination: {
-          sortBy: 'nameFirst',
+          sortBy: null,
           descending: false,
           page: 1,
           rowsPerPage: 5, // current rows per page being displayed
@@ -131,80 +131,64 @@ export default {
     }
   },
   watch: {
-    selectedEmployees () {
+    'value' () {
       this.setLabel()
     }
   },
   computed: {
-    selectedEmployees () {
-      if (Array.isArray(this.value)) {
-        return this.value.map(id => ({ id }))
-      } else if (!this.value) {
-        return []
-      } else {
-        return [{ id: this.value }]
-      }
+    hasValue () {
+      return this.value && this.value.length
     }
-    // label () {
-    //   // display label for current selection
-    //   switch (this.selectedEmployees.length) {
-    //     case 0: return 'Nigun empleado seleccionado'
-    //     case 1: return this.selectedEmployeeName
-    //     default: return `${this.selectedEmployeeName} & ${this.selectedEmployees.length - 1} mas...`
-    //   }
-    // }
   },
   methods: {
     showModal () {
       if (this.readonly) return
       this.modal = true
+      this.request()
     },
     clear (event) {
       if (this.readonly) return
       stopAndPrevent(event)
-      this.updatedSelectedEmployees([])
+      this.$emit('input', this.multiple ? [] : null)
     },
     setLabel () {
-      // this.$q.notify('setting label')
-      if (this.selectedEmployees.length === 0) {
+      if (!this.hasValue) {
         this.label = ''
-        // this.label = `Nigun empleado seleccionado`
-        return
+      } else if (this.multiple) {
+        this.setLabelMultiple()
+      } else {
+        this.setLabelSingle()
       }
-
-      const QUERY = gql`
-        query ($where: EmployeeWhereInput! $first: Int!) {
-          employees (first: $first where: $where) {
-            nameFull
-          }
-        }
-      `
-      const PARAMETERS = {
-        first: 3,
+    },
+    setLabelSingle () {
+      const parameters = {
         where: {
-          id_in: this.selectedEmployees.map(({ id }) => id)
+          id: this.value
         }
       }
 
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(EmployeeNameFullQuery, parameters)
+        .then(response => {
+          this.label = response.employee.nameFull
+        })
+        .catch(this.$defaultErrorHandler)
+    },
+    setLabelMultiple () {
+      const parameters = {
+        first: 2,
+        where: {
+          id_in: this.value
+        }
+      }
+
+      this.$gql.request(EmployeesNameFullQuery, parameters)
         .then(response => {
           this.label = response.employees
             .map(({ nameFull }) => nameFull)
             .join(', ') +
-              (this.selectedEmployees.length > response.employees.length ? `, & ${this.selectedEmployees.length - response.employees.length} mas...` : '')
+              (this.value.length > response.employees.length ? `, & ${this.value.length - response.employees.length} mas...` : '')
         })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    updatedSelectedEmployees (selected) {
-      if (this.multiple) {
-        this.$emit('input', selected.map(({ id }) => id))
-      } else if (!selected || !selected.length) {
-        this.$emit('input', null)
-      } else {
-        this.$emit('input', selected[0].id)
-      }
+        .catch(this.$defaultErrorHandler)
     },
     request (criteria) {
       const { pagination, filter } = {
@@ -212,24 +196,6 @@ export default {
         filter: this.table.filter,
         ...criteria
       }
-      const QUERY = gql`
-        query ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInput $where: EmployeeWhereInput) {
-          meta: employeesConnection (where: $where) {
-            aggregate {
-              count
-            }
-          }
-          data: employees (first: $first skip: $skip orderBy: $orderBy where: $where) {
-            id
-            nameFirst
-            nameMiddle
-            namePaternal
-            nameMaternal
-            cargo
-            zkTimePin
-          }
-        }
-      `
 
       const PARAMETERS = {
         first: pagination.rowsPerPage,
@@ -255,7 +221,7 @@ export default {
       }
 
       this.table.loading = true
-      this.$gql.request(QUERY, PARAMETERS)
+      this.$gql.request(EmployeeSelectPaginationQuery, PARAMETERS)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
@@ -270,7 +236,6 @@ export default {
     }
   },
   mounted () {
-    this.request()
     this.setLabel()
   }
 }

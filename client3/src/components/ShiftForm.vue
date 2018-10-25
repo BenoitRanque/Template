@@ -2,16 +2,16 @@
   <div class="relative-position">
     <div class="row gutter-x-xs q-pa-sm">
       <div class="col-6">
-        <employee-select v-model="model.employee.id"></employee-select>
+        <employee-select placeholder="Empleado" v-model="model.employee.id"></employee-select>
       </div>
       <div class="col-6">
-        <q-input v-model="model.description"></q-input>
+        <q-input placeholder="Comentario" v-model="model.description"></q-input>
       </div>
       <div class="col-6">
-        <q-datetime v-model="model.startDate"></q-datetime>
+        <q-datetime placeholder="Fecha Inicial" v-model="model.startDate"></q-datetime>
       </div>
       <div class="col-6">
-        <q-datetime v-model="model.endDate"></q-datetime>
+        <q-datetime placeholder="Fecha Final" v-model="model.endDate"></q-datetime>
       </div>
     </div>
     <div class="text-center group">
@@ -189,7 +189,9 @@ export default {
           }
           this.model = model
           this.modelCopy = JSON.parse(JSON.stringify(model))
-          this.modified = false
+          this.$nextTick(() => {
+            this.modified = false
+          })
         })
         .catch(this.$defaulErrorHandler)
         .finally(() => { this.loading = false })
@@ -295,7 +297,7 @@ export default {
             type: 'positive',
             message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} eliminado`
           })
-          this.$emit('updated')
+          this.$emit('deleted')
         })
         .catch(error => {
           console.log(error)

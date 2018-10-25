@@ -6,7 +6,7 @@ const middlewares = require('./middlewares')
 const server = new GraphQLServer({
   typeDefs: './src/schema/index.graphql',
   resolvers,
-  // middlewares, // disabled auth for development
+  middlewares, // disabled auth for development
   context: req => ({
     ...req,
     db: new Prisma({

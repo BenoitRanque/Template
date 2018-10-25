@@ -1,3 +1,21 @@
+query ShiftsPagination ($first: Int! $skip: Int! $orderBy: ShiftOrderByInput $where: ShiftWhereInput) {
+  meta: shiftsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: shifts (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    description
+    employee {
+      id
+      nameFull
+    }
+    startDate
+    endDate
+  }
+}
+
 query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
   shift (where: $where) {
     id
@@ -15,7 +33,6 @@ query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
         ...AllScheduleData
       }
     }
-
   }
 }
 
@@ -40,7 +57,7 @@ mutation UpdateShiftMutation ($data: ShiftUpdateInput! $where: ShiftWhereUniqueI
 }
 
 mutation DeleteShiftMutation ($where: ShiftWhereUniqueInput!) {
-  deleteShift(where: $where) {
+  shift: deleteShift(where: $where) {
     id
     description
     employee {

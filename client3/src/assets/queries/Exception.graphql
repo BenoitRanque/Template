@@ -8,3 +8,29 @@ mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
     }
   }
 }
+
+query ExceptionsPaginationQuery ($first: Int! $skip: Int! $orderBy: ExceptionOrderByInput $where: ExceptionWhereInput) {
+  meta: exceptionsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: exceptions (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    employee {
+      id
+      nameFull
+    }
+    createdAt
+    owner {
+      username
+    }
+    autorization {
+      createdAt
+      granted
+      owner {
+        username
+      }
+    }
+  }
+}

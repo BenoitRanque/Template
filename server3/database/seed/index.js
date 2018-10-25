@@ -10,18 +10,10 @@
       debug: false
     })
 
-    const admin = await db.mutation.createUser({
-      data: {
-        username: 'admin',
-        password: '$2a$10$8yYqN2d1j/OgdX6uIuoZm.pM90xBG7PmcY7CLi2fxN41vdnviovVC', // password is 'admin'
-        role: 'ADMIN'
-      }
-    }, `{ id username }`)
-
+    const users = await require('./users')(db)
     const schedules = await require('./schedules')(db)
-
-    const employees = await require('./employees')(db, schedules, admin)
-
+    const departments = await require('./departments')(db, users)
+    const employees = await require('./employees')(db, users, schedules, departments)
     const options = await require('./options')(db)
 
   } catch (error) {

@@ -38,6 +38,8 @@ module.exports = {
     updateEmployee: isAuthenticated,
     createSchedule: isAuthenticated,
     createShift: isAuthenticated,
+    updateShift: isAuthenticated,
+    deleteShift: isAuthenticated,
     createDepartment: isAuthenticated,
     updateDepartment: isAuthenticated,
     deleteDepartment: isAuthenticated
