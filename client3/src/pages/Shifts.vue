@@ -80,7 +80,6 @@ export default {
     return {
       activeShiftId: null,
       activeShiftModal: false,
-      employeeFilter: [],
       table: {
         data: [],
         columns: [

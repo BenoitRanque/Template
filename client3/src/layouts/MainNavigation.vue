@@ -28,10 +28,6 @@ export default {
       drawerOpen: false,
       routes: [
         {
-          label: 'Inicio',
-          hash: ''
-        },
-        {
           label: 'Empleados',
           hash: 'Employees'
         },

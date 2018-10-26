@@ -3,3 +3,8 @@ input ExceptionCreateInput {
   employee: EmployeeWhereUniqueInput!
   slots: [ExceptionSlotCreateInput!]!
 }
+
+input ExceptionAuthorizationCreateInput {
+  granted: Boolean!
+  exception: ExceptionWhereUniqueInput!
+}

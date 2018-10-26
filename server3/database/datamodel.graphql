@@ -98,7 +98,7 @@ type Exception {
   updatedAt: DateTime!
   employee: Employee!
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
-  autorization: ExceptionAuthorization
+  authorization: ExceptionAuthorization
   owner: User! @relation(name: "ExceptionToExceptionOwner")
 }
 

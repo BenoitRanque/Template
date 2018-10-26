@@ -9,13 +9,13 @@ mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
   }
 }
 
-query ExceptionsPaginationQuery ($first: Int! $skip: Int! $orderBy: ExceptionOrderByInput $where: ExceptionWhereInput) {
+query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhereInput) {
   meta: exceptionsConnection (where: $where) {
     aggregate {
       count
     }
   }
-  data: exceptions (first: $first skip: $skip orderBy: $orderBy where: $where) {
+  data: exceptions (first: $first skip: $skip orderBy: createdAt_DESC where: $where) {
     id
     employee {
       id
@@ -25,12 +25,80 @@ query ExceptionsPaginationQuery ($first: Int! $skip: Int! $orderBy: ExceptionOrd
     owner {
       username
     }
-    autorization {
+    authorization {
       createdAt
       granted
       owner {
         username
       }
     }
+  }
+}
+
+query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
+	exception (where: $where) {
+    id
+    createdAt
+    authorization {
+      id
+      createdAt
+      granted
+      owner {
+        username
+      }
+    }
+    employee {
+      id
+      nameFull
+    }
+    owner {
+      username
+    }
+    slots {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+mutation CreateExceptionAuthorizationMutation ($data: ExceptionAuthorizationCreateInput!) {
+  authorization: createExceptionAuthorization (data: $data) {
+    exception {
+      employee {
+        nameFull
+      }
+    }
+    granted
+  }
+}
+
+
+
+fragment AllScheduleData on Schedule {
+  description
+  baseTime
+  timeline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+  }
+  restline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
   }
 }

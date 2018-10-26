@@ -129,7 +129,7 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
         employee: {
           id: $id
         }
-        autorization: {
+        authorization: {
           granted: true
         }
         slots_some: {

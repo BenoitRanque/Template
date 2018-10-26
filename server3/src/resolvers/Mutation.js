@@ -88,6 +88,24 @@ async function createException(parent, { data }, ctx, info) {
   }, info)
 }
 
+async function createExceptionAuthorization (obj, { data }, ctx, info) {
+  return ctx.db.mutation.createExceptionAuthorization({
+    data: {
+      ...data,
+      exception: {
+        connect: {
+          id: data.exception.id
+        }
+      },
+      owner: {
+        connect: {
+          id: ctx.session.user.id
+        }
+      }
+    }
+  }, info)
+}
+
 async function createShift(obj, { data }, ctx, info) {
   const userId = ctx.session.user.id
   const employeeId = data.employee.id
@@ -201,6 +219,7 @@ module.exports = {
     await ctx.db.mutation.deleteShift(args, `{ id }`)
     return response
   },
+  createExceptionAuthorization,
   createEmployee: (parent, args, ctx, info) => ctx.db.mutation.createEmployee(args, info),
   updateEmployee: (parent, args, ctx, info) => ctx.db.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.db.mutation.createSchedule(args, info),

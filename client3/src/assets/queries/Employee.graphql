@@ -13,7 +13,7 @@ query EmployeePagination ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInpu
     nameMaternal
     cargo
     department {
-      name
+      id
     }
     documentType
     documentNumber
@@ -31,6 +31,12 @@ query EmployeePagination ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInpu
 
 mutation UpdateEmployeeMutation ($where: EmployeeWhereUniqueInput! $data: EmployeeUpdateInput!) {
   employee: updateEmployee (where: $where data: $data) {
+    nameFull
+  }
+}
+
+mutation CreateEmployeeMutation ($data: EmployeeCreateInput!) {
+  employee: createEmployee (data: $data) {
     nameFull
   }
 }
@@ -65,6 +71,10 @@ query EmployeeFieldOptionLabels {
   }) {
     value
     label
+  },
+  departments {
+    name
+    id
   }
 }
 
@@ -94,5 +104,9 @@ query EmployeeSelectPaginationQuery ($first: Int! $skip: Int! $orderBy: Employee
     namePaternal
     nameMaternal
     cargo
+    department {
+      name
+      id
+    }
   }
 }

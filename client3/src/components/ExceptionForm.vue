@@ -57,7 +57,7 @@ import ScheduleInput from 'components/ScheduleInput/index'
 import EmployeeSelect from 'components/EmployeeSelect'
 import ScheduleSelect from 'components/ScheduleSelect'
 export default {
-  name: 'ExceptionSidebar',
+  name: 'ExceptionForm',
   components: { EmployeeSelect, ScheduleSelect, ScheduleInput },
   data () {
     return {

@@ -29,6 +29,7 @@
           v-model="table.visibleColumns"
           :columns="table.columns"
         />
+        <q-btn round color="positive" @click="createEmployeeModal = true" icon="add"></q-btn>
       </template>
 
       <template v-for="field in editableFields" :slot="`body-cell-${field.name}`" slot-scope="props">
@@ -40,6 +41,17 @@
           :options="field.type === 'select' ? options[field.name] : options.boolean"
           @update="$set(props.row.update, field.name, $event)"
           @revert="$delete(props.row.update, field.name)"
+        ></table-cell-edit>
+      </template>
+
+      <template slot="body-cell-department" slot-scope="props">
+        <table-cell-edit
+          :props="props"
+          type="select"
+          field="department"
+          :options="options.department"
+          @update="$set(props.row.update, 'department', $event)"
+          @revert="$delete(props.row.update, 'department')"
         ></table-cell-edit>
       </template>
 
@@ -85,6 +97,20 @@
         </q-btn>
       </q-td>
     </q-table>
+
+    <q-modal v-model="createEmployeeModal">
+      <q-modal-layout>
+        <q-toolbar slot="header">
+          <q-toolbar-title>
+            Empleado
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
+        </q-toolbar>
+        <div class="q-pa-md">
+          <employee-form @create="createEmployeeModal = false; request()"></employee-form>
+        </div>
+      </q-modal-layout>
+    </q-modal>
   </q-page>
 </template>
 
@@ -92,6 +118,7 @@
 import { EmployeePagination, UpdateEmployeeMutation, EmployeeFieldOptionLabels } from 'assets/queries/Employee.graphql'
 import TableCellEdit from 'components/TableCellEdit'
 import EmployeeSelect from 'components/EmployeeSelect'
+import EmployeeForm from 'components/EmployeeForm'
 
 const tableFields = [
   {
@@ -178,9 +205,10 @@ const tableFields = [
 
 export default {
   name: 'Employees',
-  components: { TableCellEdit, EmployeeSelect },
+  components: { TableCellEdit, EmployeeSelect, EmployeeForm },
   data () {
     return {
+      createEmployeeModal: false,
       options: {
         boolean: [],
         sex: [],
@@ -200,7 +228,7 @@ export default {
           {
             name: 'department',
             label: 'Departamento',
-            field: row => row.data.department ? row.data.department.name : null,
+            field: row => row.department,
             align: 'left'
           },
           {
@@ -219,7 +247,7 @@ export default {
         filter: '',
         employeesFilter: [],
         loading: false,
-        visibleColumns: ['nameFirst', 'namePaternal', 'cargo'],
+        visibleColumns: ['nameFirst', 'namePaternal', 'cargo', 'department'],
         pagination: {
           sortBy: null,
           descending: false,
@@ -288,7 +316,10 @@ export default {
           this.table.pagination.rowsNumber = response.meta.aggregate.count
           this.table.data = response.data.map(employee => ({
             id: employee.id,
-            data: employee,
+            data: {
+              ...employee,
+              department: employee.department ? employee.department.id : null
+            },
             update: {},
             updating: false
           }))
@@ -299,8 +330,12 @@ export default {
         })
     },
     save (employee) {
-      const { data, update } = employee
-      const PARAMETERS = { where: { id: data.id }, data: update }
+      const update = {
+        ...employee.update
+      }
+      if (update.department !== undefined) update.department = { connect: { id: update.department } }
+
+      const PARAMETERS = { where: { id: employee.data.id }, data: update }
 
       employee.updating = true
       this.$gql.request(UpdateEmployeeMutation, PARAMETERS)
@@ -316,7 +351,13 @@ export default {
     loadFieldOptionLabels () {
       this.$gql.request(EmployeeFieldOptionLabels)
         .then(response => {
-          this.options = response
+          this.options = {
+            ...response,
+            department: response.departments.map(({ id, name }) => ({
+              value: id,
+              label: name
+            }))
+          }
         })
         .catch(this.$defaultErrorHandler)
     }

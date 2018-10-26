@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Thu Oct 25 2018 17:04:54 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Fri Oct 26 2018 01:49:13 GMT-0400 (SA Western Standard Time)
 
 type AggregateDepartment {
   count: Int!
@@ -1276,7 +1276,7 @@ type Exception implements Node {
   updatedAt: DateTime!
   employee: Employee!
   slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
-  autorization: ExceptionAuthorization
+  authorization: ExceptionAuthorization
   owner: User!
 }
 
@@ -1301,7 +1301,7 @@ type ExceptionAuthorizationConnection {
 
 input ExceptionAuthorizationCreateInput {
   granted: Boolean!
-  exception: ExceptionCreateOneWithoutAutorizationInput!
+  exception: ExceptionCreateOneWithoutAuthorizationInput!
   owner: UserCreateOneInput!
 }
 
@@ -1383,7 +1383,7 @@ input ExceptionAuthorizationSubscriptionWhereInput {
 
 input ExceptionAuthorizationUpdateInput {
   granted: Boolean
-  exception: ExceptionUpdateOneRequiredWithoutAutorizationInput
+  exception: ExceptionUpdateOneRequiredWithoutAuthorizationInput
   owner: UserUpdateOneRequiredInput
 }
 
@@ -1524,7 +1524,7 @@ type ExceptionConnection {
 input ExceptionCreateInput {
   employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
-  autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
 }
 
@@ -1533,12 +1533,12 @@ input ExceptionCreateManyWithoutEmployeeInput {
   connect: [ExceptionWhereUniqueInput!]
 }
 
-input ExceptionCreateOneWithoutAutorizationInput {
-  create: ExceptionCreateWithoutAutorizationInput
+input ExceptionCreateOneWithoutAuthorizationInput {
+  create: ExceptionCreateWithoutAuthorizationInput
   connect: ExceptionWhereUniqueInput
 }
 
-input ExceptionCreateWithoutAutorizationInput {
+input ExceptionCreateWithoutAuthorizationInput {
   employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
   owner: UserCreateOneInput!
@@ -1546,7 +1546,7 @@ input ExceptionCreateWithoutAutorizationInput {
 
 input ExceptionCreateWithoutEmployeeInput {
   slots: ExceptionSlotCreateManyInput
-  autorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
 }
 
@@ -1814,7 +1814,7 @@ input ExceptionSubscriptionWhereInput {
 input ExceptionUpdateInput {
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
-  autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
 }
 
@@ -1827,14 +1827,14 @@ input ExceptionUpdateManyWithoutEmployeeInput {
   upsert: [ExceptionUpsertWithWhereUniqueWithoutEmployeeInput!]
 }
 
-input ExceptionUpdateOneRequiredWithoutAutorizationInput {
-  create: ExceptionCreateWithoutAutorizationInput
+input ExceptionUpdateOneRequiredWithoutAuthorizationInput {
+  create: ExceptionCreateWithoutAuthorizationInput
   connect: ExceptionWhereUniqueInput
-  update: ExceptionUpdateWithoutAutorizationDataInput
-  upsert: ExceptionUpsertWithoutAutorizationInput
+  update: ExceptionUpdateWithoutAuthorizationDataInput
+  upsert: ExceptionUpsertWithoutAuthorizationInput
 }
 
-input ExceptionUpdateWithoutAutorizationDataInput {
+input ExceptionUpdateWithoutAuthorizationDataInput {
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
@@ -1842,7 +1842,7 @@ input ExceptionUpdateWithoutAutorizationDataInput {
 
 input ExceptionUpdateWithoutEmployeeDataInput {
   slots: ExceptionSlotUpdateManyInput
-  autorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
 }
 
@@ -1851,9 +1851,9 @@ input ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
   data: ExceptionUpdateWithoutEmployeeDataInput!
 }
 
-input ExceptionUpsertWithoutAutorizationInput {
-  update: ExceptionUpdateWithoutAutorizationDataInput!
-  create: ExceptionCreateWithoutAutorizationInput!
+input ExceptionUpsertWithoutAuthorizationInput {
+  update: ExceptionUpdateWithoutAuthorizationDataInput!
+  create: ExceptionCreateWithoutAuthorizationInput!
 }
 
 input ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
@@ -1959,7 +1959,7 @@ input ExceptionWhereInput {
   slots_every: ExceptionSlotWhereInput
   slots_some: ExceptionSlotWhereInput
   slots_none: ExceptionSlotWhereInput
-  autorization: ExceptionAuthorizationWhereInput
+  authorization: ExceptionAuthorizationWhereInput
   owner: UserWhereInput
 }
 
