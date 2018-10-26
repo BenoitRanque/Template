@@ -5,6 +5,7 @@
         flat
         dense
         round
+        :disable="!isAuthenticated"
         @click="$root.$emit('TOGGLE_NAVIGATION')"
       >
         <q-icon name="menu" />

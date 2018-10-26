@@ -6,6 +6,7 @@
     icon="power_settings_new"
     @click="isAuthenticated ? logout() : modal = true"
   >
+    <q-tooltip>{{isAuthenticated ? 'Cerrar Session' : 'Iniciar Session'}}</q-tooltip>
     <q-modal v-model="modal" minimized content-css="width: 400px; min-width: 30vw; min-height: 30vh" content-classes="q-py-xl text-center" @show="$refs.username.focus()" @hide="reset">
       <span class="q-display-1 q-my-md">
         Iniciar Session
@@ -77,6 +78,7 @@ export default {
             message: 'Session iniciada exitosamente',
             type: 'positive'
           })
+          this.loading = false
         })
         .catch(() => {
           this.password = ''
@@ -85,8 +87,6 @@ export default {
             message: 'No se pudo iniciar session',
             type: 'negative'
           })
-        })
-        .finally(() => {
           this.loading = false
         })
     },

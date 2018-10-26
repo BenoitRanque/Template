@@ -129,6 +129,14 @@ export default {
         .then(() => this.$delete(this.model.slots, index))
         .catch(() => {})
     },
+    reset () {
+      this.model = {
+        employee: {
+          id: null
+        },
+        slots: []
+      }
+    },
     createException () {
       const parameters = {
         data: {
@@ -159,13 +167,16 @@ export default {
             type: 'positive',
             message: `Boleta para empleado ${response.exception.employee.nameFull} creada por usuario ${response.exception.owner.username}`
           })
+          this.loading = false
           // reset model
+          this.reset()
+          this.$emit('created')
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     }
   }
 }

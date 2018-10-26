@@ -10,6 +10,7 @@ export default ({ app, router, Vue }) => {
 
   Vue.prototype.$gql = client
   Vue.prototype.$defaultErrorHandler = function (error) {
+    console.error(error)
     if (error && error.response && error.response.errors) {
       error.response.errors.forEach(({ message }) => {
         Notify.create({ type: 'negative', message })

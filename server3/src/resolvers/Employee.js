@@ -137,6 +137,7 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
           date_gte: $from
         }
       }) @include(if: $withExceptions) {
+        id
         slots (orderBy: date_ASC) {
           date
           schedule {
@@ -200,6 +201,7 @@ function getAttendanceDates (from, to, shifts, exceptions, events) {
 }
 
 function getReferencesForDate(date, shifts, exceptions) {
+  console.log('exception', exceptions)
   const candidateExceptionsForDate = exceptions
     .filter(exception => exception && exception.slots && exception.slots.some(slot => isSameDay(slot.date, date)))
     .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))

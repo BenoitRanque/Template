@@ -1,8 +1,8 @@
 {
   "name": "client3",
   "version": "1.0.0",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "Sistema Asistencia & RRHH",
+  "productName": "WASP",
   "cordovaId": "org.cordova.quasar.app",
   "author": "BenoitRanque <ranque.benoit@gmail.com>",
   "private": true,

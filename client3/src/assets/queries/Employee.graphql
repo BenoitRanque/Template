@@ -110,3 +110,65 @@ query EmployeeSelectPaginationQuery ($first: Int! $skip: Int! $orderBy: Employee
     }
   }
 }
+
+query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: EmployeeWhereInput $from: DateTime! $to: DateTime! $withExceptions: Boolean!) {
+  meta: employeesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: employees (first: $first skip: $skip where: $where) {
+    id
+    nameFull
+    attendanceReport (from: $from to: $to withExceptions: $withExceptions) {
+      dates {
+      	date
+        events
+        eventCount
+        exception {
+          id
+          createdAt
+          authorization {
+            createdAt
+            owner {
+              username
+            }
+          }
+          owner {
+            username
+          }
+        }
+        schedule {
+          id
+          description
+          ...AllScheduleData
+        }
+      }
+    }
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  baseTime
+  timeline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+  }
+  restline {
+    category
+    startTime
+    startRequireEvent
+    endTime
+    endRequireEvent
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

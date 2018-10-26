@@ -1,5 +1,5 @@
 <template>
-  <q-layout-drawer v-model="drawerOpen">
+  <q-layout-drawer v-model="drawerOpen" behavior="desktop">
     <!-- QScrollArea is optional -->
     <q-scroll-area class="fit">
       <!-- Content here -->

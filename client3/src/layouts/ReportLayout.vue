@@ -3,14 +3,14 @@
 
     <main-header></main-header>
 
-    <main-navigation></main-navigation>
-
-    <q-layout-drawer side="right" content-class="shadow-6" v-model="rightDrawer" :width="500">
+    <q-layout-drawer behavior="desktop" side="right" content-class="shadow-6" v-model="rightDrawer" :width="500">
       <q-scroll-area class="fit">
         <exception-form></exception-form>
       </q-scroll-area>
 
     </q-layout-drawer>
+
+    <main-navigation></main-navigation>
 
     <q-page-container>
       <!-- This is where pages get injected -->

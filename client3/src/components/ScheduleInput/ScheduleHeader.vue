@@ -2,7 +2,7 @@
   <div class="row items-center q-py-xs q-pl-xs">
     <slot name="top-left">
       <div class="col q-mr-xs">
-        <q-input hide-underline v-model="$parent.model.description"></q-input>
+        <q-input :readonly="$parent.readonly" hide-underline v-model="$parent.model.description"></q-input>
       </div>
     </slot>
     <span v-if="!$parent.readonly" class="col-auto">

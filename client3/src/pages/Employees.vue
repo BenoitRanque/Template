@@ -323,9 +323,10 @@ export default {
             update: {},
             updating: false
           }))
+          this.table.loading = false
         })
-        .catch(this.$defaultErrorHandler)
-        .finally(() => {
+        .catch(error => {
+          this.$defaultErrorHandler(error)
           this.table.loading = false
         })
     },
@@ -342,9 +343,10 @@ export default {
         .then(response => {
           this.$q.notify({ type: 'positive', message: `Empleado ${response.employee.nameFull} actualizado` })
           this.request()
+          employee.updating = false
         })
-        .catch(this.$defaultErrorHandler)
-        .finally(() => {
+        .catch(error => {
+          this.$defaultErrorHandler(error)
           employee.updating = false
         })
     },

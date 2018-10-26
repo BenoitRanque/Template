@@ -192,9 +192,12 @@ export default {
           this.$nextTick(() => {
             this.modified = false
           })
+          this.loading = false
         })
-        .catch(this.$defaulErrorHandler)
-        .finally(() => { this.loading = false })
+        .catch(error => {
+          this.$defaulErrorHandler(error)
+          this.loading = false
+        })
     },
     createShift () {
       const parameters = {
@@ -231,12 +234,13 @@ export default {
             message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} creado`
           })
           this.$emit('created')
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     },
     updateShift () {
       const parameters = {
@@ -276,12 +280,13 @@ export default {
             message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} modificado`
           })
           this.$emit('updated')
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     },
     deleteShift () {
       const parameters = {
@@ -298,12 +303,13 @@ export default {
             message: `Horario ${response.shift.description} de empleado ${response.shift.employee.nameFull} eliminado`
           })
           this.$emit('deleted')
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     }
   },
   mounted () {

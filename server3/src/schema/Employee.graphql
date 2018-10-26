@@ -37,7 +37,6 @@ type CalendarDate {
 }
 
 type AttendanceReport {
-  info: String
   from: DateTime!
   to: DateTime!
   events: [DateTime!]!
@@ -56,4 +55,14 @@ type AttendanceReportDate {
   schedule: Schedule!
   shift: Shift
   exception: Exception
+#  compliance: AttendanceReportDateCompliance
 }
+
+# type AttendanceReportDateCompliance {
+#   startLateTime: Int!
+#   startEventsMissing: Int!
+#   endEarlyTime: Int!
+#   endEventsMissing: Int!
+#   absentTime: Int!
+#   unsanctionedEvents: Int!
+# }

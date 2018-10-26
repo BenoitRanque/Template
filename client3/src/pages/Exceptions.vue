@@ -97,7 +97,6 @@ export default {
       activeExceptionId: null,
       activeExceptionModal: false,
       table: {
-        employeeFilter: [],
         statusFilter: ['PENDING'],
         data: [],
         columns: [
@@ -230,9 +229,10 @@ export default {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
           this.table.data = response.data
+          this.table.loading = false
         })
-        .catch(this.$defaultErrorHandler)
-        .finally(() => {
+        .catch(error => {
+          this.$defaultErrorHandler(error)
           this.table.loading = false
         })
     }

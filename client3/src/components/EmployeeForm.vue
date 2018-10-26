@@ -78,12 +78,13 @@ export default {
             message: `Empleado ${response.employee.nameFull} creado`
           })
           this.$emit('created')
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     }
   }
 }

@@ -113,6 +113,12 @@ export default {
             sortable: true
           },
           {
+            name: 'department',
+            field: row => row.department ? row.department.name : '',
+            label: 'Departamento',
+            align: 'left'
+          },
+          {
             name: 'actions',
             required: true
           }
@@ -124,7 +130,7 @@ export default {
           sortBy: null,
           descending: false,
           page: 1,
-          rowsPerPage: 5, // current rows per page being displayed
+          rowsPerPage: 10, // current rows per page being displayed
           rowsNumber: 0
         }
       }
@@ -209,7 +215,8 @@ export default {
           { nameMiddle_contains: filter },
           { namePaternal_contains: filter },
           { nameMaternal_contains: filter },
-          { cargo_contains: filter }
+          { cargo_contains: filter },
+          { department: { name_contains: filter } }
         ]
         if (!isNaN(Number(filter))) {
           PARAMETERS.where.OR.push({ zkTimePin: Number(filter) })
@@ -226,11 +233,10 @@ export default {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
           this.table.data = response.data
+          this.table.loading = false
         })
         .catch(error => {
           console.log(error)
-        })
-        .finally(() => {
           this.table.loading = false
         })
     }

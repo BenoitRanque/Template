@@ -179,9 +179,10 @@ export default {
               const payload = { schedule, date }
               this.$emit('select', payload)
             }
+            this.modal = false
           })
-          .catch(this.$defaultErrorHandler)
-          .finally(() => {
+          .catch(error => {
+            this.$defaultErrorHandler(error)
             this.resetCalendar()
             this.modal = false
           })
@@ -196,9 +197,11 @@ export default {
               const payload = response.employee.calendarRange.map(({ schedule, date }) => ({ schedule, date }))
               this.$emit('select', payload)
             }
+            this.resetCalendar()
+            this.modal = false
           })
-          .catch(this.$defaultErrorHandler)
-          .finally(() => {
+          .catch(error => {
+            this.$defaultErrorHandler(error)
             this.resetCalendar()
             this.modal = false
           })
@@ -228,9 +231,10 @@ export default {
             description: schedule.description,
             schedule
           }))
+          this.loading = false
         })
-        .catch(this.$defaultErrorHandler)
-        .finally(() => {
+        .catch(error => {
+          this.$defaultErrorHandler(error)
           this.loading = false
         })
     }

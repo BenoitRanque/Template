@@ -107,9 +107,12 @@ export default {
       this.$gql.request(ExceptionWithScheduleDataQuery, { where: { id: this.exceptionId } })
         .then(response => {
           this.model = response.exception
+          this.loading = false
         })
-        .catch(this.$defaulErrorHandler)
-        .finally(() => { this.loading = false })
+        .catch(error => {
+          this.$defaulErrorHandler(error)
+          this.loading = false
+        })
     },
     createExceptionAuthorization (granted) {
       const parameters = {
@@ -129,12 +132,13 @@ export default {
             message: `Boleta ${response.authorization.granted ? 'authorizada' : 'denegada'}`
           })
           this.$emit('created')
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
           this.$defaultErrorHandler(error)
+          this.loading = false
         })
-        .finally(() => { this.loading = false })
     }
   },
   mounted () {
