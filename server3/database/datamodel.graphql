@@ -100,6 +100,8 @@ type Exception {
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
   authorization: ExceptionAuthorization
   owner: User! @relation(name: "ExceptionToExceptionOwner")
+  # credits: [OfflineCredit!]!
+  # debits: [OfflineDebit!]!
 }
 
 type ExceptionSlot {
@@ -149,9 +151,31 @@ type ScheduleRestlineElement {
 
 type ScheduleOfflineElement {
   category: ScheduleOfflineCategory!
-  # TODO: add some way to justify the category here
-  # eg justify what holiday this is etc
 }
+
+# type Holiday {
+#   date: DateTime!
+#   name: String!
+# }
+
+# type AttendanceMonth {
+#   name: String!
+#   startDate: DateTime!
+#   endDate: DateTime!
+# }
+
+# type OfflineCredit {
+#   category: ScheduleOfflineCategory!
+#   exception: Exception
+#   holiday: Holiday
+#   debit: OfflineDebit
+# }
+
+# type OfflineDebit {
+#   category: ScheduleOfflineCategory!
+#   exception: Exception!
+#   credit: OfflineCredit!
+# }
 
 enum ScheduleCategory {
   SCH_TIME_WORK         # standard work time
