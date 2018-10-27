@@ -130,12 +130,7 @@ export default {
         .catch(() => {})
     },
     reset () {
-      this.model = {
-        employee: {
-          id: null
-        },
-        slots: []
-      }
+      this.model.slots = []
     },
     createException () {
       const parameters = {

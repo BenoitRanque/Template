@@ -180,6 +180,7 @@ export default {
               this.$emit('select', payload)
             }
             this.modal = false
+            this.resetCalendar()
           })
           .catch(error => {
             this.$defaultErrorHandler(error)
