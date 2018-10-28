@@ -18,21 +18,26 @@ const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const addMinutes = require('date-fns/add_minutes')
 
-function getHalfpointBetweenDates(a, b) c
-  if (typeof a === 'string') a = new Date(a)
-  if (typeof b === 'string') b = new Date(b)
-  return new Date((a.getTime() + b.getTime()) / 2)
-}
-
-function getBoundsForTimelineEvent (event, { schedule, innerBound, outerBound }) {
+function getBoundsForTimelineEvent (event, { schedule, innerBound, outerBound, date }) {
   const candidateReferences = [innerBound, outerBound]
-    .concat(schedule.reduce((acc, { startRequireEvent, startEvent, endEvent, endRequireEvent }) => {
-      if (startRequireEvent && ) acc.push((startEvent + event) / 2)
-      if (endRequireEvent && ) acc.push((endEvent + event) / 2)
+    .concat(schedule.timeline.reduce((acc, { startRequireEvent, startTime, endTime, endRequireEvent }) => {
+      if (startRequireEvent) acc.push(Math.round((startTime + event) / 2))
+      if (endRequireEvent) acc.push(Math.round((endTime + event) / 2))
       return acc
     }, []))
-    .concat()
+    .concat(schedule.restline.reduce((acc, { startRequireEvent, startTime, endRequireEvent, endTime }) => {
+      if (startRequireEvent) acc.push(startTime)
+      if (endRequireEvent) acc.push(endTime)
+      return acc
+    }, []))
 
+  const innerBound = Math.max(...candidateReferences.filter(reference => reference < event))
+  const outerBound = Math.min(...candidateReferences.filter(reference => reference > event))
+
+  return {
+    innerBound: addMinutes(date, innerBound).toISOString(),
+    outerBound: addMinutes(date, outerBound).toISOString()
+  }
 }
 
 function getBoundsForRestlineEvent () {

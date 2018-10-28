@@ -168,8 +168,9 @@ type ScheduleCredit {
   employee: Employee!
   category: ScheduleOfflineCategory! # use this as main filter
   source: ScheduleCreditSourceEnum!
-  direct: DirectCredit # when credited manually. Use for initial load
+  date: DateTime!
   exception: Exception # when crediting anything due to exception
+  direct: DirectCredit # when credited manually. Use for initial load
   holiday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
   debit: AttendanceOfflineDebit
 }
@@ -185,6 +186,7 @@ type ScheduleDebit {
   employee: Employee!
   category: ScheduleOfflineCategory!
   exception: Exception!
+  date: DateTime!
   credit: AttendanceOfflineCredit!
 }
 
