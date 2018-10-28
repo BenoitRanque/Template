@@ -30,6 +30,13 @@ type User {
   password: String!
   departments: [Department!]!
   role: UserRoleEnum!
+  roles: [UserRole]!
+}
+
+type UserRole {
+  id: ID! @unique
+  name: String!
+  privileges: [String!]!
 }
 
 enum UserRoleEnum {
@@ -63,6 +70,8 @@ type Employee {
   department: Department
   shifts: [Shift!]!
   exceptions: [Exception!]!
+  credits: [ScheduleCredit]!
+  debits: [ScheduleDebit]!
 }
 
 type Department {
@@ -97,9 +106,12 @@ type Exception {
   createdAt: DateTime!
   updatedAt: DateTime!
   employee: Employee!
+  description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
   authorization: ExceptionAuthorization
   owner: User! @relation(name: "ExceptionToExceptionOwner")
+  credits: [ScheduleCredit!]!
+  debits: [ScheduleDebit!]!
 }
 
 type ExceptionSlot {
@@ -126,8 +138,8 @@ type Schedule {
   isPreset: Boolean @default(value: "false")
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
-  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflinOPTION_1" onDelete: CASCADE)
-  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOfflinOPTION_2" onDelete: CASCADE)
+  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflin1" onDelete: CASCADE)
+  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOfflin2" onDelete: CASCADE)
 }
 
 type ScheduleTimelineElement {
@@ -151,6 +163,52 @@ type ScheduleOfflineElement {
   category: ScheduleOfflineCategory!
   # TODO: add some way to justify the category here
   # eg justify what holiday this is etc
+}
+
+type ScheduleCredit {
+  id: ID! @unique
+  employee: Employee!
+  category: ScheduleOfflineCategory! # use this as main filter
+  source: ScheduleCreditSourceEnum!
+  direct: DirectCredit # when credited manually. Use for initial load
+  exception: Exception # when crediting anything due to exception
+  holiday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
+  debit: AttendanceOfflineDebit
+}
+
+enum ScheduleCreditSourceEnum {
+  DIRECT
+  HOLIDAY
+  EXCEPTION
+}
+
+type ScheduleDebit {
+  id: ID! @unique
+  employee: Employee!
+  category: ScheduleOfflineCategory!
+  exception: Exception!
+  credit: AttendanceOfflineCredit!
+}
+
+type DirectCredit {
+  id: ID! @unique
+  owner: User!
+  employee: Employee!
+  description: String
+  credits: [ScheduleCredit!]!
+}
+
+type Holiday {
+  id: ID! @unique
+  date: DateTime!
+  name: String!
+}
+
+type AttendanceCycle {
+  id: ID! @unique
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
 }
 
 enum ScheduleCategory {
