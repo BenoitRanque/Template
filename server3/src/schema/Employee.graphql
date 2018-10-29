@@ -27,7 +27,7 @@ type Employee {
   attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean!): AttendanceReport!
   calendarDate(date: DateTime! withExceptions: Boolean!): CalendarDate!
   calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
-  offlineRange(from: DateTime! to: DateTime! category: ScheduleOfflineCategory!): [CalendarDate]!
+  offlineRange(from: DateTime! to: DateTime! withExceptions: Boolean! category: ScheduleOfflineCategory!): [CalendarDate]!
 }
 
 type CalendarDate {
@@ -57,10 +57,10 @@ type AttendanceReportDate {
   shift: Shift
   exception: Exception
   compliance: AttendanceReportDateCompliance
-  flags: AttendanceReportDateFlags
 }
 
 type AttendanceReportDateCompliance {
+  flags: AttendanceReportDateComplianceFlags
   startLateTime: Int!
   startEventsMissing: Int!
   endEarlyTime: Int!
@@ -70,7 +70,7 @@ type AttendanceReportDateCompliance {
   unsanctionedEvents: Int!
 }
 
-type AttendanceReportDateFlags {
+type AttendanceReportDateComplianceFlags {
   hasLateStartEvent: Boolean
   hasEarlyExitEvent: Boolean
   hasRestOvertime: Boolean

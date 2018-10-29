@@ -81,9 +81,6 @@ module.exports = {
     resolve: async (obj, args, ctx, info) => {
       obj.timeline.reduce((acc, val) => {
         if (val.startRequireEvent) {
-          const innerBound
-          const outerBound
-          const event =
         }
       }, 0)
     }
