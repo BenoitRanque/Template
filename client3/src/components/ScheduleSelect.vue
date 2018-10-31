@@ -9,40 +9,40 @@
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
-      </q-modal-layout>
-      <q-table
-        v-if="mode === 'preset'"
-        hide-header
-        title="Aggregar Jornada"
-        ref="table"
-        :data="table.data"
-        :columns="table.columns"
-        :filter="table.filter"
-        row-key="id"
-        :pagination.sync="table.pagination"
-        :loading="table.loading"
-        @request="requestPreset"
-      >
-        <template slot="top-left" slot-scope="props">
-          <q-search hide-underline v-model="table.filter" />
-        </template>
+        <q-table
+          v-if="mode === 'preset'"
+          hide-header
+          title="Aggregar Jornada"
+          ref="table"
+          :data="table.data"
+          :columns="table.columns"
+          :filter="table.filter"
+          row-key="id"
+          :pagination.sync="table.pagination"
+          :loading="table.loading"
+          @request="requestPreset"
+        >
+          <template slot="top-left" slot-scope="props">
+            <q-search hide-underline v-model="table.filter" />
+          </template>
 
-        <q-td slot="body-cell-actions" slot-scope="props">
-          <q-btn rounded color="primary" size="sm" @click="selectPreset(props.row)">Aggregar</q-btn>
-        </q-td>
-      </q-table>
-      <div v-else class="q-pa-md relative-position">
-        <employee-select v-model="calendar.employee.id"></employee-select>
-        <q-datetime v-if="mode === 'date'" float-label="Fecha" v-model="calendar.dateA"></q-datetime>
-        <q-datetime v-if="mode === 'range'" float-label="Desde" :max="calendar.dateC" v-model="calendar.dateB"></q-datetime>
-        <q-datetime v-if="mode === 'range'" float-label="Hasta" :min="calendar.dateB" v-model="calendar.dateC"></q-datetime>
-        <div class="text-center q-pt-md">
-          <q-btn @click="calendarBtnAction" :disable="disableCalendarBtn" rounded color="primary" size="md">Aggregar</q-btn>
+          <q-td slot="body-cell-actions" slot-scope="props">
+            <q-btn rounded color="primary" size="sm" @click="selectPreset(props.row)">Aggregar</q-btn>
+          </q-td>
+        </q-table>
+        <div v-else class="q-pa-md relative-position">
+          <employee-select v-model="calendar.employee.id"></employee-select>
+          <q-datetime v-if="mode === 'date'" float-label="Fecha" v-model="calendar.dateA"></q-datetime>
+          <q-datetime v-if="mode === 'range'" float-label="Desde" :max="calendar.dateC" v-model="calendar.dateB"></q-datetime>
+          <q-datetime v-if="mode === 'range'" float-label="Hasta" :min="calendar.dateB" v-model="calendar.dateC"></q-datetime>
+          <div class="text-center q-pt-md">
+            <q-btn @click="calendarBtnAction" :disable="disableCalendarBtn" rounded color="primary" size="md">Aggregar</q-btn>
+          </div>
+          <q-inner-loading :visible="calendar.loading">
+            <q-spinner size="36px" color="primary"/>
+          </q-inner-loading>
         </div>
-        <q-inner-loading :visible="calendar.loading">
-          <q-spinner size="36px" color="primary"/>
-        </q-inner-loading>
-      </div>
+      </q-modal-layout>
     </q-modal>
   </q-btn>
 </template>

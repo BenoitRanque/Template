@@ -50,6 +50,26 @@
             @click="$router.push('/')"
           ></q-btn>
 
+          <q-btn
+            icon="print"
+            @click="$root.$emit('PRINT', {
+              preview: true,
+              template: 'default',
+              data: 'Hello World!'
+            })"
+          >
+          </q-btn>
+
+          <q-btn
+            icon="print"
+            @click="$root.$emit('PRINT', {
+              preview: false,
+              template: 'default',
+              data: 'Hello All!'
+            })"
+          >
+          </q-btn>
+
           <theme-settings></theme-settings>
 
           <user-session></user-session>

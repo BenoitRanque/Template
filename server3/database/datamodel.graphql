@@ -170,8 +170,8 @@ type ScheduleCredit {
   source: ScheduleCreditSourceEnum!
   date: DateTime!
   exception: Exception # when crediting anything due to exception
-  direct: DirectCredit # when credited manually. Use for initial load
   holiday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
+  direct: DirectCredit # when credited manually. Use for initial load
   debit: AttendanceOfflineDebit
 }
 
