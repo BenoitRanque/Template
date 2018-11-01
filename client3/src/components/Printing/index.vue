@@ -8,8 +8,9 @@
           </q-toolbar-title>
           <q-btn
             icon="print"
-            flat
             dense
+            round
+            color="secondary"
             class="q-mx-xs"
             :disable="printing"
             :loading="printing"
