@@ -47,19 +47,30 @@ module.exports = {
   calendarRange: {
     fragment: `fragment EmployeeID on Employee { id }`, // fragment ensures requires parent object properties will be present
     resolve: async (obj, args, ctx, info) => loadCalendarRange(obj, args, ctx, info)
+  },
+  vacationRange: {
+    fragment: `fragment EmployeeID on Employee { id }`, // fragment ensures requires parent object properties will be present
+    resolve: async (obj, args, ctx, info) => {
+      const presetSchedules = await loadVacationSchedules(ctx)
+      const range = await loadCalendarRange(obj, args, ctx, info, true)
+      return range.map(calendarDate => ({
+        ...calendarDate,
+        schedule: getVacationSchedule(calendarDate, presetSchedules)
+      }))
+    }
   }
 }
 
-async function loadCalendarDate({ id }, { date, withExceptions }, { db }) {
-  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, date, date, withExceptions)
+async function loadCalendarDate({ id }, { date, withExceptions }, { db }, withScheduleData = false) {
+  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, date, date, withExceptions, withScheduleData)
   return {
     date,
     ...getReferencesForDate(date, shifts, exceptions)
   }
 }
 
-async function loadCalendarRange({ id }, { from, to, withExceptions }, { db }) {
-  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, from, to, withExceptions)
+async function loadCalendarRange({ id }, { from, to, withExceptions }, { db }, withScheduleData = false) {
+  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, from, to, withExceptions, withScheduleData)
 
   const dates = eachDay(from, to)
 
@@ -174,10 +185,116 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
     }
   `, { id: employeeID, from, to, withExceptions, withScheduleData })
 
-  console.log('shiftsAndSchedules', response)
   return {
     shifts: (response.data && response.data.shifts) ? response.data.shifts : [],
     exceptions: (response.data && response.data.exceptions) ? response.data.exceptions : [],
+  }
+}
+
+async function loadVacationSchedules ({ db }) {
+  const response = await db.request(`
+    query {
+      VacationVacation: schedules (first: 1 where: {
+        isPreset: true
+        offline1: {
+          category: SCH_DAY_VACATION
+        }
+        offline2: {
+          category: SCH_DAY_VACATION
+        }
+      }) {
+        id
+        ...AllScheduleData
+      }
+      DayoffVacation: schedules (first: 1 where: {
+        isPreset: true
+        offline1: {
+          category: SCH_DAY_OFF
+        }
+        offline2: {
+          category: SCH_DAY_VACATION
+        }
+      }) {
+        id
+        ...AllScheduleData
+      }
+      VacationDayoff: schedules (first: 1 where: {
+        isPreset: true
+        offline1: {
+          category: SCH_DAY_VACATION
+        }
+        offline2: {
+          category: SCH_DAY_OFF
+        }
+      }) {
+        id
+        ...AllScheduleData
+      }
+      DayoffDayoff: schedules (first: 1 where: {
+        isPreset: true
+        offline1: {
+          category: SCH_DAY_OFF
+        }
+        offline2: {
+          category: SCH_DAY_OFF
+        }
+      }) {
+        id
+        ...AllScheduleData
+      }
+    }
+
+    fragment AllScheduleData on Schedule {
+      baseTime
+      timeline {
+        category
+        startTime
+        startRequireEvent
+        endTime
+        endRequireEvent
+      }
+      restline {
+        category
+        startTime
+        startRequireEvent
+        endTime
+        endRequireEvent
+        duration
+      }
+      offline1 {
+        category
+      }
+      offline2 {
+        category
+      }
+    }
+  `)
+
+  return {
+    VacationVacation: response.data.VacationVacation.length ? response.data.VacationVacation[0] : null,
+    DayoffVacation: response.data.DayoffVacation.length ? response.data.DayoffVacation[0] : null,
+    VacationDayoff: response.data.VacationDayoff.length ? response.data.VacationDayoff[0] : null,
+    DayoffDayoff: response.data.DayoffDayoff.length ? response.data.DayoffDayoff[0] : null
+  }
+}
+
+function getVacationSchedule(date, { VacationVacation, DayoffVacation, VacationDayoff, DayoffDayoff }) {
+
+  console.log('hello', date)
+  const { schedule } = date
+
+  if (!schedule) return VacationVacation
+
+  if (schedule.offline1 && schedule.offline1.category === 'SCH_DAY_OFF') {
+    if (schedule.offline2 && schedule.offline2.category === 'SCH_DAY_OFF') {
+      return DayoffDayoff
+    } else {
+      return DayoffVacation
+    }
+  } else if (schedule.offline2 && schedule.offline2.category === 'SCH_DAY_OFF') {
+    return VacationDayoff
+  } else {
+    return VacationVacation
   }
 }
 
@@ -188,7 +305,6 @@ function getAttendanceDates (from, to, shifts, exceptions, events) {
     date,
     ...getReferencesForDate(date, shifts, exceptions)
   }))
-  console.log('datesWithReferences', datesWithReferences)
 
   const referencesForDateBeforeRange = getReferencesForDate(subDays(from, 1), shifts, exceptions)
 
@@ -201,7 +317,6 @@ function getAttendanceDates (from, to, shifts, exceptions, events) {
 }
 
 function getReferencesForDate(date, shifts, exceptions) {
-  console.log('exception', exceptions)
   const candidateExceptionsForDate = exceptions
     .filter(exception => exception && exception.slots && exception.slots.some(slot => isSameDay(slot.date, date)))
     .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))

@@ -1,11 +1,11 @@
 <template>
-  <pre>{{data}}</pre>
+  <pre>{{payload}}</pre>
 </template>
 
 <script>
 export default {
   name: 'DefaultPrintingTemplate',
-  props: ['data']
+  props: ['payload']
 }
 </script>
 

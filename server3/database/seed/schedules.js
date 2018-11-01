@@ -406,6 +406,23 @@ module.exports = db => Promise.all([
   }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
+      description: 'Dia Feriado',
+      isPreset: true,
+      baseTime: 8 * 60,
+      offline1: {
+        create: {
+          category: 'SCH_DAY_HOLIDAY'
+        }
+      },
+      offline2: {
+        create: {
+          category: 'SCH_DAY_HOLIDAY'
+        }
+      }
+    }
+  }, `{ id description }`),
+  db.mutation.createSchedule({
+    data: {
       description: 'Dia Vacacion',
       isPreset: true,
       baseTime: 8 * 60,
@@ -423,17 +440,34 @@ module.exports = db => Promise.all([
   }, `{ id description }`),
   db.mutation.createSchedule({
     data: {
-      description: 'Dia Feriado',
+      description: 'Mañana Libre Tarde Vacacion',
       isPreset: true,
       baseTime: 8 * 60,
       offline1: {
         create: {
-          category: 'SCH_DAY_HOLIDAY'
+          category: 'SCH_DAY_OFF'
         }
       },
       offline2: {
         create: {
-          category: 'SCH_DAY_HOLIDAY'
+          category: 'SCH_DAY_VACATION'
+        }
+      }
+    }
+  }, `{ id description }`),
+  db.mutation.createSchedule({
+    data: {
+      description: 'Mañana Vacacion Tarde Libre',
+      isPreset: true,
+      baseTime: 8 * 60,
+      offline1: {
+        create: {
+          category: 'SCH_DAY_VACATION'
+        }
+      },
+      offline2: {
+        create: {
+          category: 'SCH_DAY_OFF'
         }
       }
     }

@@ -30,7 +30,7 @@ type User {
   password: String!
   departments: [Department!]!
   role: UserRoleEnum!
-  roles: [UserRole]!
+  roles: [UserRole!]!
 }
 
 type UserRole {
@@ -70,8 +70,8 @@ type Employee {
   department: Department
   shifts: [Shift!]!
   exceptions: [Exception!]!
-  credits: [ScheduleCredit]!
-  debits: [ScheduleDebit]!
+  credits: [ScheduleCredit!]!
+  debits: [ScheduleDebit!]!
 }
 
 type Department {
@@ -167,18 +167,18 @@ type ScheduleCredit {
   id: ID! @unique
   employee: Employee!
   category: ScheduleOfflineCategory! # use this as main filter
-  source: ScheduleCreditSourceEnum!
-  date: DateTime!
-  exception: Exception # when crediting anything due to exception
-  holiday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
-  direct: DirectCredit # when credited manually. Use for initial load
-  debit: AttendanceOfflineDebit
+  sourceType: ScheduleCreditSourceEnum!
+  sourceException: Exception # when crediting anything due to exception
+  sourceDirect: DirectCredit # when credited manually. Use for initial load
+  sourceConcurentHoliday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
+  sourceDate: DateTime!
+  debit: ScheduleDebit
 }
 
 enum ScheduleCreditSourceEnum {
-  DIRECT
-  HOLIDAY
   EXCEPTION
+  CONCURENT_HOLIDAY
+  DIRECT_CREDIT
 }
 
 type ScheduleDebit {
@@ -186,8 +186,7 @@ type ScheduleDebit {
   employee: Employee!
   category: ScheduleOfflineCategory!
   exception: Exception!
-  date: DateTime!
-  credit: AttendanceOfflineCredit!
+  credit: ScheduleCredit!
 }
 
 type DirectCredit {

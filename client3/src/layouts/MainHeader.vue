@@ -5,9 +5,9 @@
         flat
         dense
         round
-        :disable="!isAuthenticated"
         @click="$root.$emit('TOGGLE_NAVIGATION')"
       >
+        <!-- :disable="!isAuthenticated" -->
         <q-icon name="menu" />
       </q-btn>
 
@@ -49,26 +49,6 @@
             icon="home"
             @click="$router.push('/')"
           ></q-btn>
-
-          <q-btn
-            icon="print"
-            @click="$root.$emit('PRINT', {
-              preview: true,
-              template: 'default',
-              data: 'Hello World!'
-            })"
-          >
-          </q-btn>
-
-          <q-btn
-            icon="print"
-            @click="$root.$emit('PRINT', {
-              preview: false,
-              template: 'default',
-              data: 'Hello All!'
-            })"
-          >
-          </q-btn>
 
           <theme-settings></theme-settings>
 

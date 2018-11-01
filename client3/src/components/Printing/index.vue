@@ -12,8 +12,6 @@
             round
             color="secondary"
             class="q-mx-xs"
-            :disable="printing"
-            :loading="printing"
             @click="print"
           >
             <q-tooltip>Imprimir</q-tooltip>
@@ -21,17 +19,17 @@
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
 
-        <exception-template v-if="template === 'exception'" :data="data"></exception-template>
-        <vacation-template v-else-if="template === 'vacation'" :data="data"></vacation-template>
-        <default-template v-else :data="data"></default-template>
+        <exception-template v-if="template === 'exception'" :payload="payload"></exception-template>
+        <vacation-template v-else-if="template === 'vacation'" :payload="payload"></vacation-template>
+        <default-template v-else :payload="payload"></default-template>
 
       </q-modal-layout>
     </q-modal>
 
     <div class="print-area z-max print-only">
-      <exception-template v-if="template === 'exception'" :data="data"></exception-template>
-      <vacation-template v-else-if="template === 'vacation'" :data="data"></vacation-template>
-      <default-template v-else :data="data"></default-template>
+      <exception-template v-if="template === 'exception'" :payload="payload"></exception-template>
+      <vacation-template v-else-if="template === 'vacation'" :payload="payload"></vacation-template>
+      <default-template v-else :payload="payload"></default-template>
     </div>
   </div>
 </template>
@@ -46,7 +44,7 @@ export default {
   data () {
     return {
       modal: true,
-      data: 'hello',
+      payload: 'hello',
       template: 'default',
       printing: false
     }
@@ -55,16 +53,16 @@ export default {
     requestPrint (params) {
       const {
         preview,
-        data,
+        payload,
         template
       } = {
         preview: false,
-        data: null,
+        payload: null,
         template: 'default',
         ...params
       }
 
-      this.data = data
+      this.payload = payload
       this.template = template
 
       if (preview) {
@@ -79,10 +77,8 @@ export default {
       if (this.$q.platform.is.electron) {
         const { remote } = require('electron')
 
-        this.printing = true
         remote.getCurrentWebContents().print({ silent: false, printBackground: true, deviceName: '' }, (success) => {
           if (this.modal) this.modal = false
-          this.printing = false
 
           if (!success) {
             this.$q.notify({ type: 'negative', message: 'Error de Impresion' })

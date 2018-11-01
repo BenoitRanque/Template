@@ -11,10 +11,10 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@chenfengyuan/vue-barcode": "^1.0.0",
     "graphql": "^14.0.2",
     "graphql-request": "^1.8.2",
-    "graphql-tag": "^2.10.0",
-    "vue-i18n": "^7.3.3"
+    "graphql-tag": "^2.10.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

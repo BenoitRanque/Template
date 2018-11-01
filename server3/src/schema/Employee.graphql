@@ -27,7 +27,7 @@ type Employee {
   attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean!): AttendanceReport!
   calendarDate(date: DateTime! withExceptions: Boolean!): CalendarDate!
   calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
-  offlineRange(from: DateTime! to: DateTime! withExceptions: Boolean! category: ScheduleOfflineCategory!): [CalendarDate]!
+  vacationRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
 }
 
 type CalendarDate {

@@ -13,6 +13,8 @@
       <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: null, schedule: $event.schedule, valid: true })" mode="preset"></schedule-select>
       <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: $event.date, schedule: $event.schedule, valid: true })" :employee-id="model.employee.id" mode="date"></schedule-select>
       <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="range"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="switch"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="vacation"></schedule-select>
     </div>
 
     <div class="group">

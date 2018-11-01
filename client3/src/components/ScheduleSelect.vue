@@ -33,8 +33,10 @@
         <div v-else class="q-pa-md relative-position">
           <employee-select v-model="calendar.employee.id"></employee-select>
           <q-datetime v-if="mode === 'date'" float-label="Fecha" v-model="calendar.dateA"></q-datetime>
-          <q-datetime v-if="mode === 'range'" float-label="Desde" :max="calendar.dateC" v-model="calendar.dateB"></q-datetime>
-          <q-datetime v-if="mode === 'range'" float-label="Hasta" :min="calendar.dateB" v-model="calendar.dateC"></q-datetime>
+          <q-datetime v-if="mode === 'range' || mode === 'vacation'" float-label="Desde" :max="calendar.dateC" v-model="calendar.dateB"></q-datetime>
+          <q-datetime v-if="mode === 'range' || mode === 'vacation'" float-label="Hasta" :min="calendar.dateB" v-model="calendar.dateC"></q-datetime>
+          <q-datetime v-if="mode === 'switch'" float-label="Fecha A" v-model="calendar.dateD"></q-datetime>
+          <q-datetime v-if="mode === 'switch'" float-label="Fecha B" v-model="calendar.dateE"></q-datetime>
           <div class="text-center q-pt-md">
             <q-btn @click="calendarBtnAction" :disable="disableCalendarBtn" rounded color="primary" size="md">Aggregar</q-btn>
           </div>
@@ -48,7 +50,13 @@
 </template>
 
 <script>
-import { SchedulesPagination, EmployeeCalendarDateSchedule, EmployeeCalendarRangeSchedules } from 'assets/queries/Schedule.graphql'
+import {
+  SchedulesPagination,
+  EmployeeCalendarDateSchedule,
+  EmployeeCalendarRangeSchedules,
+  EmployeeCalendarVacationSchedule,
+  EmployeeCalendarSwitchSchedule
+} from 'assets/queries/Schedule.graphql'
 import EmployeeSelect from 'components/EmployeeSelect'
 
 export default {
@@ -59,7 +67,7 @@ export default {
       type: String,
       default: 'empty',
       validator (value) {
-        return ['preset', 'empty', 'date', 'range']
+        return ['preset', 'empty', 'date', 'range', 'vacation', 'switch'].includes(value)
       }
     },
     employeeId: {
@@ -77,7 +85,9 @@ export default {
         loading: false,
         dateA: null,
         dateB: null,
-        dateC: null
+        dateC: null,
+        dateD: null,
+        dateE: null
       },
       table: {
         data: [],
@@ -111,8 +121,10 @@ export default {
       switch (this.mode) {
         case 'preset': return 'search'
         case 'range': return 'date_range'
-        case 'date': return 'event'
+        case 'date': return 'today'
         case 'empty': return 'add'
+        case 'vacation': return 'airport_shuttle'
+        case 'switch': return 'swap_horiz'
       }
     },
     tooltip () {
@@ -121,14 +133,18 @@ export default {
         case 'range': return 'Aggregar dias en base a rangos de fechas'
         case 'date': return 'Aggregar dia en base a fecha'
         case 'empty': return 'Aggregar dia en blanco'
+        case 'vacation': return 'Aggregar rango de vacaciones'
+        case 'switch': return 'Aggregar intercambio de horarios'
       }
     },
     disableCalendarBtn () {
       if (this.calendar.employee.id) {
         if (this.mode === 'date') {
           return !this.calendar.dateA
-        } else if (this.mode === 'range') {
+        } else if (this.mode === 'range' || this.mode === 'vacation') {
           return !this.calendar.dateB || !this.calendar.dateC
+        } else if (this.mode === 'switch') {
+          return !this.calendar.dateD || !this.calendar.dateE
         }
       }
       return true
@@ -143,6 +159,8 @@ export default {
           return
         case 'range':
         case 'date':
+        case 'switch':
+        case 'vacation':
           this.modal = true
           return
         case 'empty': return this.$emit('select', {
@@ -164,48 +182,102 @@ export default {
       this.calendar.dateA = null
       this.calendar.dateB = null
       this.calendar.dateC = null
+      this.calendar.dateD = null
+      this.calendar.dateE = null
     },
     calendarBtnAction () {
       this.calendar.loading = true
-      if (this.mode === 'date') {
-        this.$gql.request(EmployeeCalendarDateSchedule, {
-          employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
-          date: this.calendar.dateA,
-          to: this.calendar.dateC
-        })
-          .then(response => {
-            if (response.employee.calendarDate) {
-              const { schedule, date } = response.employee.calendarDate
-              const payload = { schedule, date }
-              this.$emit('select', payload)
-            }
-            this.modal = false
-            this.resetCalendar()
+
+      switch (this.mode) {
+        case 'date':
+          this.$gql.request(EmployeeCalendarDateSchedule, {
+            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            date: this.calendar.dateA
           })
-          .catch(error => {
-            this.$defaultErrorHandler(error)
-            this.resetCalendar()
-            this.modal = false
+            .then(response => {
+              if (response.employee.calendarDate) {
+                const { schedule, date } = response.employee.calendarDate
+                const payload = { schedule, date }
+                this.$emit('select', payload)
+              }
+              this.modal = false
+              this.resetCalendar()
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.resetCalendar()
+              this.modal = false
+            })
+          break
+        case 'range':
+          this.$gql.request(EmployeeCalendarRangeSchedules, {
+            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            from: this.calendar.dateB,
+            to: this.calendar.dateC
           })
-      } else if (this.mode === 'range') {
-        this.$gql.request(EmployeeCalendarRangeSchedules, {
-          employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
-          from: this.calendar.dateB,
-          to: this.calendar.dateC
-        })
-          .then(response => {
-            if (response.employee.calendarRange.length) {
-              const payload = response.employee.calendarRange.map(({ schedule, date }) => ({ schedule, date }))
-              this.$emit('select', payload)
-            }
-            this.resetCalendar()
-            this.modal = false
+            .then(response => {
+              if (response.employee.calendarRange.length) {
+                const payload = response.employee.calendarRange.map(({ schedule, date }) => ({ schedule, date }))
+                this.$emit('select', payload)
+              }
+              this.resetCalendar()
+              this.modal = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.resetCalendar()
+              this.modal = false
+            })
+          break
+        case 'switch':
+          this.$gql.request(EmployeeCalendarSwitchSchedule, {
+            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            dateA: this.calendar.dateD,
+            dateB: this.calendar.dateE
           })
-          .catch(error => {
-            this.$defaultErrorHandler(error)
-            this.resetCalendar()
-            this.modal = false
+            .then(response => {
+              if (response.employee.dateA && response.employee.dateB) {
+                const payload = [
+                  {
+                    schedule: response.employee.dateB.schedule,
+                    date: response.employee.dateA.date
+                  },
+                  {
+                    schedule: response.employee.dateA.schedule,
+                    date: response.employee.dateB.date
+                  }
+                ]
+                this.$emit('select', payload)
+              }
+              this.modal = false
+              this.resetCalendar()
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.resetCalendar()
+              this.modal = false
+            })
+          break
+        case 'vacation':
+          this.$gql.request(EmployeeCalendarVacationSchedule, {
+            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            from: this.calendar.dateB,
+            to: this.calendar.dateC
           })
+            .then(response => {
+              if (response.employee.vacationRange.length) {
+                const payload = response.employee.vacationRange.map(({ schedule, date }) => ({ schedule, date }))
+                this.$emit('select', payload)
+              }
+              this.resetCalendar()
+              this.modal = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.resetCalendar()
+              this.modal = false
+            })
+          break
       }
     },
     selectPreset (preset) {

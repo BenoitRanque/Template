@@ -36,6 +36,37 @@ query EmployeeCalendarDateSchedule ($employeeId: ID! $date: DateTime!) {
   }
 }
 
+query EmployeeCalendarSwitchSchedule ($employeeId: ID! $dateA: DateTime! $dateB: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    dateA: calendarDate(date: $dateA withExceptions: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+    dateB: calendarDate(date: $dateB withExceptions: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+query EmployeeCalendarVacationSchedule ($employeeId: ID! $from: DateTime! $to: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    vacationRange(from: $from to: $to withExceptions: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
 fragment AllScheduleData on Schedule {
   description
   baseTime

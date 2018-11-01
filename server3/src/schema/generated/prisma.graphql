@@ -1,7 +1,15 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Fri Oct 26 2018 01:49:13 GMT-0400 (SA Western Standard Time)
+# timestamp: Thu Nov 01 2018 18:15:26 GMT-0400 (Hora estándar oeste, Sudamérica)
+
+type AggregateAttendanceCycle {
+  count: Int!
+}
 
 type AggregateDepartment {
+  count: Int!
+}
+
+type AggregateDirectCredit {
   count: Int!
 }
 
@@ -25,11 +33,23 @@ type AggregateFieldOptionLabel {
   count: Int!
 }
 
+type AggregateHoliday {
+  count: Int!
+}
+
 type AggregateSchedule {
   count: Int!
 }
 
 type AggregateScheduleCategoryConfig {
+  count: Int!
+}
+
+type AggregateScheduleCredit {
+  count: Int!
+}
+
+type AggregateScheduleDebit {
   count: Int!
 }
 
@@ -55,6 +75,248 @@ type AggregateShiftSlot {
 
 type AggregateUser {
   count: Int!
+}
+
+type AggregateUserRole {
+  count: Int!
+}
+
+type AttendanceCycle implements Node {
+  id: ID!
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+"""A connection to a list of items."""
+type AttendanceCycleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AttendanceCycleEdge]!
+  aggregate: AggregateAttendanceCycle!
+}
+
+input AttendanceCycleCreateInput {
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+"""An edge in a connection."""
+type AttendanceCycleEdge {
+  """The item at the end of the edge."""
+  node: AttendanceCycle!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AttendanceCycleOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  startDate_ASC
+  startDate_DESC
+  endDate_ASC
+  endDate_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type AttendanceCyclePreviousValues {
+  id: ID!
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+type AttendanceCycleSubscriptionPayload {
+  mutation: MutationType!
+  node: AttendanceCycle
+  updatedFields: [String!]
+  previousValues: AttendanceCyclePreviousValues
+}
+
+input AttendanceCycleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AttendanceCycleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AttendanceCycleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AttendanceCycleSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AttendanceCycleWhereInput
+}
+
+input AttendanceCycleUpdateInput {
+  name: String
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input AttendanceCycleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AttendanceCycleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AttendanceCycleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AttendanceCycleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  startDate: DateTime
+
+  """All values that are not equal to given value."""
+  startDate_not: DateTime
+
+  """All values that are contained in given list."""
+  startDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  startDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  startDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  startDate_lte: DateTime
+
+  """All values greater than the given value."""
+  startDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  startDate_gte: DateTime
+  endDate: DateTime
+
+  """All values that are not equal to given value."""
+  endDate_not: DateTime
+
+  """All values that are contained in given list."""
+  endDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  endDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  endDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  endDate_lte: DateTime
+
+  """All values greater than the given value."""
+  endDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  endDate_gte: DateTime
+}
+
+input AttendanceCycleWhereUniqueInput {
+  id: ID
 }
 
 type BatchPayload {
@@ -370,6 +632,233 @@ input DepartmentWhereUniqueInput {
   id: ID
 }
 
+type DirectCredit implements Node {
+  id: ID!
+  owner: User!
+  employee: Employee!
+  description: String
+  credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
+}
+
+"""A connection to a list of items."""
+type DirectCreditConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [DirectCreditEdge]!
+  aggregate: AggregateDirectCredit!
+}
+
+input DirectCreditCreateInput {
+  description: String
+  owner: UserCreateOneInput!
+  employee: EmployeeCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceDirectInput
+}
+
+input DirectCreditCreateOneWithoutCreditsInput {
+  create: DirectCreditCreateWithoutCreditsInput
+  connect: DirectCreditWhereUniqueInput
+}
+
+input DirectCreditCreateWithoutCreditsInput {
+  description: String
+  owner: UserCreateOneInput!
+  employee: EmployeeCreateOneInput!
+}
+
+"""An edge in a connection."""
+type DirectCreditEdge {
+  """The item at the end of the edge."""
+  node: DirectCredit!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum DirectCreditOrderByInput {
+  id_ASC
+  id_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type DirectCreditPreviousValues {
+  id: ID!
+  description: String
+}
+
+type DirectCreditSubscriptionPayload {
+  mutation: MutationType!
+  node: DirectCredit
+  updatedFields: [String!]
+  previousValues: DirectCreditPreviousValues
+}
+
+input DirectCreditSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DirectCreditSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DirectCreditSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DirectCreditSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: DirectCreditWhereInput
+}
+
+input DirectCreditUpdateInput {
+  description: String
+  owner: UserUpdateOneRequiredInput
+  employee: EmployeeUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceDirectInput
+}
+
+input DirectCreditUpdateOneWithoutCreditsInput {
+  create: DirectCreditCreateWithoutCreditsInput
+  connect: DirectCreditWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: DirectCreditUpdateWithoutCreditsDataInput
+  upsert: DirectCreditUpsertWithoutCreditsInput
+}
+
+input DirectCreditUpdateWithoutCreditsDataInput {
+  description: String
+  owner: UserUpdateOneRequiredInput
+  employee: EmployeeUpdateOneRequiredInput
+}
+
+input DirectCreditUpsertWithoutCreditsInput {
+  update: DirectCreditUpdateWithoutCreditsDataInput!
+  create: DirectCreditCreateWithoutCreditsInput!
+}
+
+input DirectCreditWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DirectCreditWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DirectCreditWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DirectCreditWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  owner: UserWhereInput
+  employee: EmployeeWhereInput
+  credits_every: ScheduleCreditWhereInput
+  credits_some: ScheduleCreditWhereInput
+  credits_none: ScheduleCreditWhereInput
+}
+
+input DirectCreditWhereUniqueInput {
+  id: ID
+}
+
 type Employee implements Node {
   id: ID!
   createdAt: DateTime!
@@ -394,6 +883,8 @@ type Employee implements Node {
   department: Department
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift!]
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception!]
+  credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
+  debits(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDebit!]
 }
 
 enum EmployeeAFPEnum {
@@ -444,11 +935,28 @@ input EmployeeCreateInput {
   department: DepartmentCreateOneWithoutSubordinatesInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateManyWithoutDepartmentInput {
   create: [EmployeeCreateWithoutDepartmentInput!]
   connect: [EmployeeWhereUniqueInput!]
+}
+
+input EmployeeCreateOneInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
+}
+
+input EmployeeCreateOneWithoutCreditsInput {
+  create: EmployeeCreateWithoutCreditsInput
+  connect: EmployeeWhereUniqueInput
+}
+
+input EmployeeCreateOneWithoutDebitsInput {
+  create: EmployeeCreateWithoutDebitsInput
+  connect: EmployeeWhereUniqueInput
 }
 
 input EmployeeCreateOneWithoutExceptionsInput {
@@ -459,6 +967,54 @@ input EmployeeCreateOneWithoutExceptionsInput {
 input EmployeeCreateOneWithoutShiftsInput {
   create: EmployeeCreateWithoutShiftsInput
   connect: EmployeeWhereUniqueInput
+}
+
+input EmployeeCreateWithoutCreditsInput {
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int!
+  department: DepartmentCreateOneWithoutSubordinatesInput
+  shifts: ShiftCreateManyWithoutEmployeeInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
+}
+
+input EmployeeCreateWithoutDebitsInput {
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int!
+  department: DepartmentCreateOneWithoutSubordinatesInput
+  shifts: ShiftCreateManyWithoutEmployeeInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateWithoutDepartmentInput {
@@ -481,6 +1037,8 @@ input EmployeeCreateWithoutDepartmentInput {
   zkTimePin: Int!
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateWithoutExceptionsInput {
@@ -503,6 +1061,8 @@ input EmployeeCreateWithoutExceptionsInput {
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
   shifts: ShiftCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
 }
 
 input EmployeeCreateWithoutShiftsInput {
@@ -525,6 +1085,8 @@ input EmployeeCreateWithoutShiftsInput {
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
 }
 
 enum EmployeeDocumentTypeEnum {
@@ -651,6 +1213,31 @@ input EmployeeSubscriptionWhereInput {
   node: EmployeeWhereInput
 }
 
+input EmployeeUpdateDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
+  department: DepartmentUpdateOneWithoutSubordinatesInput
+  shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
+}
+
 input EmployeeUpdateInput {
   nameFirst: String
   nameMiddle: String
@@ -672,6 +1259,8 @@ input EmployeeUpdateInput {
   department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateManyWithoutDepartmentInput {
@@ -681,6 +1270,27 @@ input EmployeeUpdateManyWithoutDepartmentInput {
   delete: [EmployeeWhereUniqueInput!]
   update: [EmployeeUpdateWithWhereUniqueWithoutDepartmentInput!]
   upsert: [EmployeeUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input EmployeeUpdateOneRequiredInput {
+  create: EmployeeCreateInput
+  connect: EmployeeWhereUniqueInput
+  update: EmployeeUpdateDataInput
+  upsert: EmployeeUpsertNestedInput
+}
+
+input EmployeeUpdateOneRequiredWithoutCreditsInput {
+  create: EmployeeCreateWithoutCreditsInput
+  connect: EmployeeWhereUniqueInput
+  update: EmployeeUpdateWithoutCreditsDataInput
+  upsert: EmployeeUpsertWithoutCreditsInput
+}
+
+input EmployeeUpdateOneRequiredWithoutDebitsInput {
+  create: EmployeeCreateWithoutDebitsInput
+  connect: EmployeeWhereUniqueInput
+  update: EmployeeUpdateWithoutDebitsDataInput
+  upsert: EmployeeUpsertWithoutDebitsInput
 }
 
 input EmployeeUpdateOneRequiredWithoutExceptionsInput {
@@ -695,6 +1305,54 @@ input EmployeeUpdateOneRequiredWithoutShiftsInput {
   connect: EmployeeWhereUniqueInput
   update: EmployeeUpdateWithoutShiftsDataInput
   upsert: EmployeeUpsertWithoutShiftsInput
+}
+
+input EmployeeUpdateWithoutCreditsDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
+  department: DepartmentUpdateOneWithoutSubordinatesInput
+  shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
+}
+
+input EmployeeUpdateWithoutDebitsDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
+  department: DepartmentUpdateOneWithoutSubordinatesInput
+  shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithoutDepartmentDataInput {
@@ -717,6 +1375,8 @@ input EmployeeUpdateWithoutDepartmentDataInput {
   zkTimePin: Int
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithoutExceptionsDataInput {
@@ -739,6 +1399,8 @@ input EmployeeUpdateWithoutExceptionsDataInput {
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithoutShiftsDataInput {
@@ -761,11 +1423,28 @@ input EmployeeUpdateWithoutShiftsDataInput {
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
 }
 
 input EmployeeUpdateWithWhereUniqueWithoutDepartmentInput {
   where: EmployeeWhereUniqueInput!
   data: EmployeeUpdateWithoutDepartmentDataInput!
+}
+
+input EmployeeUpsertNestedInput {
+  update: EmployeeUpdateDataInput!
+  create: EmployeeCreateInput!
+}
+
+input EmployeeUpsertWithoutCreditsInput {
+  update: EmployeeUpdateWithoutCreditsDataInput!
+  create: EmployeeCreateWithoutCreditsInput!
+}
+
+input EmployeeUpsertWithoutDebitsInput {
+  update: EmployeeUpdateWithoutDebitsDataInput!
+  create: EmployeeCreateWithoutDebitsInput!
 }
 
 input EmployeeUpsertWithoutExceptionsInput {
@@ -1264,6 +1943,12 @@ input EmployeeWhereInput {
   exceptions_every: ExceptionWhereInput
   exceptions_some: ExceptionWhereInput
   exceptions_none: ExceptionWhereInput
+  credits_every: ScheduleCreditWhereInput
+  credits_some: ScheduleCreditWhereInput
+  credits_none: ScheduleCreditWhereInput
+  debits_every: ScheduleDebitWhereInput
+  debits_some: ScheduleDebitWhereInput
+  debits_none: ScheduleDebitWhereInput
 }
 
 input EmployeeWhereUniqueInput {
@@ -1275,9 +1960,12 @@ type Exception implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   employee: Employee!
+  description: String
   slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
   authorization: ExceptionAuthorization
   owner: User!
+  credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
+  debits(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDebit!]
 }
 
 type ExceptionAuthorization implements Node {
@@ -1522,10 +2210,13 @@ type ExceptionConnection {
 }
 
 input ExceptionCreateInput {
+  description: String
   employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
 
 input ExceptionCreateManyWithoutEmployeeInput {
@@ -1538,16 +2229,50 @@ input ExceptionCreateOneWithoutAuthorizationInput {
   connect: ExceptionWhereUniqueInput
 }
 
+input ExceptionCreateOneWithoutCreditsInput {
+  create: ExceptionCreateWithoutCreditsInput
+  connect: ExceptionWhereUniqueInput
+}
+
+input ExceptionCreateOneWithoutDebitsInput {
+  create: ExceptionCreateWithoutDebitsInput
+  connect: ExceptionWhereUniqueInput
+}
+
 input ExceptionCreateWithoutAuthorizationInput {
+  description: String
   employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
   owner: UserCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
 
-input ExceptionCreateWithoutEmployeeInput {
+input ExceptionCreateWithoutCreditsInput {
+  description: String
+  employee: EmployeeCreateOneWithoutExceptionsInput!
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
+  debits: ScheduleDebitCreateManyWithoutExceptionInput
+}
+
+input ExceptionCreateWithoutDebitsInput {
+  description: String
+  employee: EmployeeCreateOneWithoutExceptionsInput!
+  slots: ExceptionSlotCreateManyInput
+  authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  owner: UserCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+}
+
+input ExceptionCreateWithoutEmployeeInput {
+  description: String
+  slots: ExceptionSlotCreateManyInput
+  authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  owner: UserCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
 
 """An edge in a connection."""
@@ -1566,12 +2291,15 @@ enum ExceptionOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  description_ASC
+  description_DESC
 }
 
 type ExceptionPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  description: String
 }
 
 type ExceptionSlot implements Node {
@@ -1812,10 +2540,13 @@ input ExceptionSubscriptionWhereInput {
 }
 
 input ExceptionUpdateInput {
+  description: String
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
 
 input ExceptionUpdateManyWithoutEmployeeInput {
@@ -1834,16 +2565,56 @@ input ExceptionUpdateOneRequiredWithoutAuthorizationInput {
   upsert: ExceptionUpsertWithoutAuthorizationInput
 }
 
+input ExceptionUpdateOneRequiredWithoutDebitsInput {
+  create: ExceptionCreateWithoutDebitsInput
+  connect: ExceptionWhereUniqueInput
+  update: ExceptionUpdateWithoutDebitsDataInput
+  upsert: ExceptionUpsertWithoutDebitsInput
+}
+
+input ExceptionUpdateOneWithoutCreditsInput {
+  create: ExceptionCreateWithoutCreditsInput
+  connect: ExceptionWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ExceptionUpdateWithoutCreditsDataInput
+  upsert: ExceptionUpsertWithoutCreditsInput
+}
+
 input ExceptionUpdateWithoutAuthorizationDataInput {
+  description: String
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
 
-input ExceptionUpdateWithoutEmployeeDataInput {
+input ExceptionUpdateWithoutCreditsDataInput {
+  description: String
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
+  debits: ScheduleDebitUpdateManyWithoutExceptionInput
+}
+
+input ExceptionUpdateWithoutDebitsDataInput {
+  description: String
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
+  slots: ExceptionSlotUpdateManyInput
+  authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+}
+
+input ExceptionUpdateWithoutEmployeeDataInput {
+  description: String
+  slots: ExceptionSlotUpdateManyInput
+  authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
 
 input ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
@@ -1854,6 +2625,16 @@ input ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
 input ExceptionUpsertWithoutAuthorizationInput {
   update: ExceptionUpdateWithoutAuthorizationDataInput!
   create: ExceptionCreateWithoutAuthorizationInput!
+}
+
+input ExceptionUpsertWithoutCreditsInput {
+  update: ExceptionUpdateWithoutCreditsDataInput!
+  create: ExceptionCreateWithoutCreditsInput!
+}
+
+input ExceptionUpsertWithoutDebitsInput {
+  update: ExceptionUpdateWithoutDebitsDataInput!
+  create: ExceptionCreateWithoutDebitsInput!
 }
 
 input ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
@@ -1955,12 +2736,58 @@ input ExceptionWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
   employee: EmployeeWhereInput
   slots_every: ExceptionSlotWhereInput
   slots_some: ExceptionSlotWhereInput
   slots_none: ExceptionSlotWhereInput
   authorization: ExceptionAuthorizationWhereInput
   owner: UserWhereInput
+  credits_every: ScheduleCreditWhereInput
+  credits_some: ScheduleCreditWhereInput
+  credits_none: ScheduleCreditWhereInput
+  debits_every: ScheduleDebitWhereInput
+  debits_some: ScheduleDebitWhereInput
+  debits_none: ScheduleDebitWhereInput
 }
 
 input ExceptionWhereUniqueInput {
@@ -2241,6 +3068,240 @@ input FieldOptionLabelWhereUniqueInput {
   id: ID
 }
 
+type Holiday implements Node {
+  id: ID!
+  date: DateTime!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type HolidayConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [HolidayEdge]!
+  aggregate: AggregateHoliday!
+}
+
+input HolidayCreateInput {
+  date: DateTime!
+  name: String!
+}
+
+input HolidayCreateOneInput {
+  create: HolidayCreateInput
+  connect: HolidayWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type HolidayEdge {
+  """The item at the end of the edge."""
+  node: Holiday!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum HolidayOrderByInput {
+  id_ASC
+  id_DESC
+  date_ASC
+  date_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type HolidayPreviousValues {
+  id: ID!
+  date: DateTime!
+  name: String!
+}
+
+type HolidaySubscriptionPayload {
+  mutation: MutationType!
+  node: Holiday
+  updatedFields: [String!]
+  previousValues: HolidayPreviousValues
+}
+
+input HolidaySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [HolidaySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [HolidaySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [HolidaySubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: HolidayWhereInput
+}
+
+input HolidayUpdateDataInput {
+  date: DateTime
+  name: String
+}
+
+input HolidayUpdateInput {
+  date: DateTime
+  name: String
+}
+
+input HolidayUpdateOneInput {
+  create: HolidayCreateInput
+  connect: HolidayWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: HolidayUpdateDataInput
+  upsert: HolidayUpsertNestedInput
+}
+
+input HolidayUpsertNestedInput {
+  update: HolidayUpdateDataInput!
+  create: HolidayCreateInput!
+}
+
+input HolidayWhereInput {
+  """Logical AND on all given filters."""
+  AND: [HolidayWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [HolidayWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [HolidayWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  date: DateTime
+
+  """All values that are not equal to given value."""
+  date_not: DateTime
+
+  """All values that are contained in given list."""
+  date_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  date_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  date_lt: DateTime
+
+  """All values less than or equal the given value."""
+  date_lte: DateTime
+
+  """All values greater than the given value."""
+  date_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  date_gte: DateTime
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input HolidayWhereUniqueInput {
+  id: ID
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -2248,76 +3309,112 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createEmployee(data: EmployeeCreateInput!): Employee!
   createDepartment(data: DepartmentCreateInput!): Department!
   createShift(data: ShiftCreateInput!): Shift!
   createException(data: ExceptionCreateInput!): Exception!
   createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
+  createScheduleCredit(data: ScheduleCreditCreateInput!): ScheduleCredit!
+  createScheduleDebit(data: ScheduleDebitCreateInput!): ScheduleDebit!
+  createDirectCredit(data: DirectCreditCreateInput!): DirectCredit!
+  createAttendanceCycle(data: AttendanceCycleCreateInput!): AttendanceCycle!
   createScheduleCategoryConfig(data: ScheduleCategoryConfigCreateInput!): ScheduleCategoryConfig!
   createFieldOptionLabel(data: FieldOptionLabelCreateInput!): FieldOptionLabel!
   createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
   createSchedule(data: ScheduleCreateInput!): Schedule!
   createScheduleTimelineElement(data: ScheduleTimelineElementCreateInput!): ScheduleTimelineElement!
+  createEmployee(data: EmployeeCreateInput!): Employee!
   createScheduleOfflineElement(data: ScheduleOfflineElementCreateInput!): ScheduleOfflineElement!
   createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
+  createHoliday(data: HolidayCreateInput!): Holiday!
+  createUserRole(data: UserRoleCreateInput!): UserRole!
   createUser(data: UserCreateInput!): User!
   createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
-  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
   updateDepartment(data: DepartmentUpdateInput!, where: DepartmentWhereUniqueInput!): Department
   updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
   updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
   updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  updateScheduleCredit(data: ScheduleCreditUpdateInput!, where: ScheduleCreditWhereUniqueInput!): ScheduleCredit
+  updateScheduleDebit(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
+  updateDirectCredit(data: DirectCreditUpdateInput!, where: DirectCreditWhereUniqueInput!): DirectCredit
+  updateAttendanceCycle(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
   updateFieldOptionLabel(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
   updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
+  updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
+  updateHoliday(data: HolidayUpdateInput!, where: HolidayWhereUniqueInput!): Holiday
+  updateUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department
   deleteShift(where: ShiftWhereUniqueInput!): Shift
   deleteException(where: ExceptionWhereUniqueInput!): Exception
   deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  deleteScheduleCredit(where: ScheduleCreditWhereUniqueInput!): ScheduleCredit
+  deleteScheduleDebit(where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
+  deleteDirectCredit(where: DirectCreditWhereUniqueInput!): DirectCredit
+  deleteAttendanceCycle(where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
   deleteFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
+  deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
+  deleteHoliday(where: HolidayWhereUniqueInput!): Holiday
+  deleteUserRole(where: UserRoleWhereUniqueInput!): UserRole
   deleteUser(where: UserWhereUniqueInput!): User
   deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
   upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
   upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
   upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
+  upsertScheduleCredit(where: ScheduleCreditWhereUniqueInput!, create: ScheduleCreditCreateInput!, update: ScheduleCreditUpdateInput!): ScheduleCredit!
+  upsertScheduleDebit(where: ScheduleDebitWhereUniqueInput!, create: ScheduleDebitCreateInput!, update: ScheduleDebitUpdateInput!): ScheduleDebit!
+  upsertDirectCredit(where: DirectCreditWhereUniqueInput!, create: DirectCreditCreateInput!, update: DirectCreditUpdateInput!): DirectCredit!
+  upsertAttendanceCycle(where: AttendanceCycleWhereUniqueInput!, create: AttendanceCycleCreateInput!, update: AttendanceCycleUpdateInput!): AttendanceCycle!
   upsertFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!, create: FieldOptionLabelCreateInput!, update: FieldOptionLabelUpdateInput!): FieldOptionLabel!
   upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
   upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
+  upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
+  upsertHoliday(where: HolidayWhereUniqueInput!, create: HolidayCreateInput!, update: HolidayUpdateInput!): Holiday!
+  upsertUserRole(where: UserRoleWhereUniqueInput!, create: UserRoleCreateInput!, update: UserRoleUpdateInput!): UserRole!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
-  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
   updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
   updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
   updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
   updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
+  updateManyScheduleCredits(data: ScheduleCreditUpdateInput!, where: ScheduleCreditWhereInput): BatchPayload!
+  updateManyScheduleDebits(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereInput): BatchPayload!
+  updateManyDirectCredits(data: DirectCreditUpdateInput!, where: DirectCreditWhereInput): BatchPayload!
+  updateManyAttendanceCycles(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereInput): BatchPayload!
   updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
   updateManyFieldOptionLabels(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereInput): BatchPayload!
   updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
   updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
   updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
+  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
   updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
   updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
+  updateManyHolidays(data: HolidayUpdateInput!, where: HolidayWhereInput): BatchPayload!
+  updateManyUserRoles(data: UserRoleUpdateInput!, where: UserRoleWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
-  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
   deleteManyShifts(where: ShiftWhereInput): BatchPayload!
   deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
   deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
+  deleteManyScheduleCredits(where: ScheduleCreditWhereInput): BatchPayload!
+  deleteManyScheduleDebits(where: ScheduleDebitWhereInput): BatchPayload!
+  deleteManyDirectCredits(where: DirectCreditWhereInput): BatchPayload!
+  deleteManyAttendanceCycles(where: AttendanceCycleWhereInput): BatchPayload!
   deleteManyScheduleCategoryConfigs(where: ScheduleCategoryConfigWhereInput): BatchPayload!
   deleteManyFieldOptionLabels(where: FieldOptionLabelWhereInput): BatchPayload!
   deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
   deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
   deleteManyScheduleTimelineElements(where: ScheduleTimelineElementWhereInput): BatchPayload!
+  deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   deleteManyScheduleOfflineElements(where: ScheduleOfflineElementWhereInput): BatchPayload!
   deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
+  deleteManyHolidays(where: HolidayWhereInput): BatchPayload!
+  deleteManyUserRoles(where: UserRoleWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
 }
@@ -2350,42 +3447,60 @@ type PageInfo {
 }
 
 type Query {
-  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department]!
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift]!
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
   exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
+  scheduleCredits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit]!
+  scheduleDebits(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDebit]!
+  directCredits(where: DirectCreditWhereInput, orderBy: DirectCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DirectCredit]!
+  attendanceCycles(where: AttendanceCycleWhereInput, orderBy: AttendanceCycleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AttendanceCycle]!
   scheduleCategoryConfigs(where: ScheduleCategoryConfigWhereInput, orderBy: ScheduleCategoryConfigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCategoryConfig]!
   fieldOptionLabels(where: FieldOptionLabelWhereInput, orderBy: FieldOptionLabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldOptionLabel]!
   shiftSlots(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShiftSlot]!
   schedules(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Schedule]!
   scheduleTimelineElements(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement]!
+  employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   scheduleOfflineElements(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleOfflineElement]!
   scheduleRestlineElements(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement]!
+  holidays(where: HolidayWhereInput, orderBy: HolidayOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Holiday]!
+  userRoles(where: UserRoleWhereInput, orderBy: UserRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserRole]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
-  employee(where: EmployeeWhereUniqueInput!): Employee
   department(where: DepartmentWhereUniqueInput!): Department
   shift(where: ShiftWhereUniqueInput!): Shift
   exception(where: ExceptionWhereUniqueInput!): Exception
   exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
+  scheduleCredit(where: ScheduleCreditWhereUniqueInput!): ScheduleCredit
+  scheduleDebit(where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
+  directCredit(where: DirectCreditWhereUniqueInput!): DirectCredit
+  attendanceCycle(where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
   fieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   schedule(where: ScheduleWhereUniqueInput!): Schedule
+  employee(where: EmployeeWhereUniqueInput!): Employee
+  holiday(where: HolidayWhereUniqueInput!): Holiday
+  userRole(where: UserRoleWhereUniqueInput!): UserRole
   user(where: UserWhereUniqueInput!): User
   exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   departmentsConnection(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DepartmentConnection!
   shiftsConnection(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftConnection!
   exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
   exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
+  scheduleCreditsConnection(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleCreditConnection!
+  scheduleDebitsConnection(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleDebitConnection!
+  directCreditsConnection(where: DirectCreditWhereInput, orderBy: DirectCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DirectCreditConnection!
+  attendanceCyclesConnection(where: AttendanceCycleWhereInput, orderBy: AttendanceCycleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AttendanceCycleConnection!
   scheduleCategoryConfigsConnection(where: ScheduleCategoryConfigWhereInput, orderBy: ScheduleCategoryConfigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleCategoryConfigConnection!
   fieldOptionLabelsConnection(where: FieldOptionLabelWhereInput, orderBy: FieldOptionLabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FieldOptionLabelConnection!
   shiftSlotsConnection(where: ShiftSlotWhereInput, orderBy: ShiftSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShiftSlotConnection!
   schedulesConnection(where: ScheduleWhereInput, orderBy: ScheduleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleConnection!
   scheduleTimelineElementsConnection(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleTimelineElementConnection!
+  employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
   scheduleOfflineElementsConnection(where: ScheduleOfflineElementWhereInput, orderBy: ScheduleOfflineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleOfflineElementConnection!
   scheduleRestlineElementsConnection(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScheduleRestlineElementConnection!
+  holidaysConnection(where: HolidayWhereInput, orderBy: HolidayOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HolidayConnection!
+  userRolesConnection(where: UserRoleWhereInput, orderBy: UserRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserRoleConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
 
@@ -2644,6 +3759,669 @@ input ScheduleCreateInput {
 input ScheduleCreateOneInput {
   create: ScheduleCreateInput
   connect: ScheduleWhereUniqueInput
+}
+
+type ScheduleCredit implements Node {
+  id: ID!
+  employee: Employee!
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceException: Exception
+  sourceDirect: DirectCredit
+  sourceConcurentHoliday: Holiday
+  sourceDate: DateTime!
+  debit: ScheduleDebit
+}
+
+"""A connection to a list of items."""
+type ScheduleCreditConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleCreditEdge]!
+  aggregate: AggregateScheduleCredit!
+}
+
+input ScheduleCreditCreateInput {
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+  employee: EmployeeCreateOneWithoutCreditsInput!
+  sourceException: ExceptionCreateOneWithoutCreditsInput
+  sourceDirect: DirectCreditCreateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayCreateOneInput
+  debit: ScheduleDebitCreateOneWithoutCreditInput
+}
+
+input ScheduleCreditCreateManyWithoutEmployeeInput {
+  create: [ScheduleCreditCreateWithoutEmployeeInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+}
+
+input ScheduleCreditCreateManyWithoutSourceDirectInput {
+  create: [ScheduleCreditCreateWithoutSourceDirectInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+}
+
+input ScheduleCreditCreateManyWithoutSourceExceptionInput {
+  create: [ScheduleCreditCreateWithoutSourceExceptionInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+}
+
+input ScheduleCreditCreateOneWithoutDebitInput {
+  create: ScheduleCreditCreateWithoutDebitInput
+  connect: ScheduleCreditWhereUniqueInput
+}
+
+input ScheduleCreditCreateWithoutDebitInput {
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+  employee: EmployeeCreateOneWithoutCreditsInput!
+  sourceException: ExceptionCreateOneWithoutCreditsInput
+  sourceDirect: DirectCreditCreateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayCreateOneInput
+}
+
+input ScheduleCreditCreateWithoutEmployeeInput {
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+  sourceException: ExceptionCreateOneWithoutCreditsInput
+  sourceDirect: DirectCreditCreateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayCreateOneInput
+  debit: ScheduleDebitCreateOneWithoutCreditInput
+}
+
+input ScheduleCreditCreateWithoutSourceDirectInput {
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+  employee: EmployeeCreateOneWithoutCreditsInput!
+  sourceException: ExceptionCreateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayCreateOneInput
+  debit: ScheduleDebitCreateOneWithoutCreditInput
+}
+
+input ScheduleCreditCreateWithoutSourceExceptionInput {
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+  employee: EmployeeCreateOneWithoutCreditsInput!
+  sourceDirect: DirectCreditCreateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayCreateOneInput
+  debit: ScheduleDebitCreateOneWithoutCreditInput
+}
+
+"""An edge in a connection."""
+type ScheduleCreditEdge {
+  """The item at the end of the edge."""
+  node: ScheduleCredit!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleCreditOrderByInput {
+  id_ASC
+  id_DESC
+  category_ASC
+  category_DESC
+  sourceType_ASC
+  sourceType_DESC
+  sourceDate_ASC
+  sourceDate_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ScheduleCreditPreviousValues {
+  id: ID!
+  category: ScheduleOfflineCategory!
+  sourceType: ScheduleCreditSourceEnum!
+  sourceDate: DateTime!
+}
+
+enum ScheduleCreditSourceEnum {
+  EXCEPTION
+  CONCURENT_HOLIDAY
+  DIRECT_CREDIT
+}
+
+type ScheduleCreditSubscriptionPayload {
+  mutation: MutationType!
+  node: ScheduleCredit
+  updatedFields: [String!]
+  previousValues: ScheduleCreditPreviousValues
+}
+
+input ScheduleCreditSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleCreditSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleCreditSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleCreditSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleCreditWhereInput
+}
+
+input ScheduleCreditUpdateInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
+  employee: EmployeeUpdateOneRequiredWithoutCreditsInput
+  sourceException: ExceptionUpdateOneWithoutCreditsInput
+  sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayUpdateOneInput
+  debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateManyWithoutEmployeeInput {
+  create: [ScheduleCreditCreateWithoutEmployeeInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+  disconnect: [ScheduleCreditWhereUniqueInput!]
+  delete: [ScheduleCreditWhereUniqueInput!]
+  update: [ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput!]
+  upsert: [ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput!]
+}
+
+input ScheduleCreditUpdateManyWithoutSourceDirectInput {
+  create: [ScheduleCreditCreateWithoutSourceDirectInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+  disconnect: [ScheduleCreditWhereUniqueInput!]
+  delete: [ScheduleCreditWhereUniqueInput!]
+  update: [ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput!]
+  upsert: [ScheduleCreditUpsertWithWhereUniqueWithoutSourceDirectInput!]
+}
+
+input ScheduleCreditUpdateManyWithoutSourceExceptionInput {
+  create: [ScheduleCreditCreateWithoutSourceExceptionInput!]
+  connect: [ScheduleCreditWhereUniqueInput!]
+  disconnect: [ScheduleCreditWhereUniqueInput!]
+  delete: [ScheduleCreditWhereUniqueInput!]
+  update: [ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput!]
+  upsert: [ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput!]
+}
+
+input ScheduleCreditUpdateOneRequiredWithoutDebitInput {
+  create: ScheduleCreditCreateWithoutDebitInput
+  connect: ScheduleCreditWhereUniqueInput
+  update: ScheduleCreditUpdateWithoutDebitDataInput
+  upsert: ScheduleCreditUpsertWithoutDebitInput
+}
+
+input ScheduleCreditUpdateWithoutDebitDataInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
+  employee: EmployeeUpdateOneRequiredWithoutCreditsInput
+  sourceException: ExceptionUpdateOneWithoutCreditsInput
+  sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayUpdateOneInput
+}
+
+input ScheduleCreditUpdateWithoutEmployeeDataInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
+  sourceException: ExceptionUpdateOneWithoutCreditsInput
+  sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayUpdateOneInput
+  debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateWithoutSourceDirectDataInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
+  employee: EmployeeUpdateOneRequiredWithoutCreditsInput
+  sourceException: ExceptionUpdateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayUpdateOneInput
+  debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateWithoutSourceExceptionDataInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
+  employee: EmployeeUpdateOneRequiredWithoutCreditsInput
+  sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
+  sourceConcurentHoliday: HolidayUpdateOneInput
+  debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleCreditWhereUniqueInput!
+  data: ScheduleCreditUpdateWithoutEmployeeDataInput!
+}
+
+input ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput {
+  where: ScheduleCreditWhereUniqueInput!
+  data: ScheduleCreditUpdateWithoutSourceDirectDataInput!
+}
+
+input ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput {
+  where: ScheduleCreditWhereUniqueInput!
+  data: ScheduleCreditUpdateWithoutSourceExceptionDataInput!
+}
+
+input ScheduleCreditUpsertWithoutDebitInput {
+  update: ScheduleCreditUpdateWithoutDebitDataInput!
+  create: ScheduleCreditCreateWithoutDebitInput!
+}
+
+input ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleCreditWhereUniqueInput!
+  update: ScheduleCreditUpdateWithoutEmployeeDataInput!
+  create: ScheduleCreditCreateWithoutEmployeeInput!
+}
+
+input ScheduleCreditUpsertWithWhereUniqueWithoutSourceDirectInput {
+  where: ScheduleCreditWhereUniqueInput!
+  update: ScheduleCreditUpdateWithoutSourceDirectDataInput!
+  create: ScheduleCreditCreateWithoutSourceDirectInput!
+}
+
+input ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput {
+  where: ScheduleCreditWhereUniqueInput!
+  update: ScheduleCreditUpdateWithoutSourceExceptionDataInput!
+  create: ScheduleCreditCreateWithoutSourceExceptionInput!
+}
+
+input ScheduleCreditWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleCreditWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleCreditWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleCreditWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  category: ScheduleOfflineCategory
+
+  """All values that are not equal to given value."""
+  category_not: ScheduleOfflineCategory
+
+  """All values that are contained in given list."""
+  category_in: [ScheduleOfflineCategory!]
+
+  """All values that are not contained in given list."""
+  category_not_in: [ScheduleOfflineCategory!]
+  sourceType: ScheduleCreditSourceEnum
+
+  """All values that are not equal to given value."""
+  sourceType_not: ScheduleCreditSourceEnum
+
+  """All values that are contained in given list."""
+  sourceType_in: [ScheduleCreditSourceEnum!]
+
+  """All values that are not contained in given list."""
+  sourceType_not_in: [ScheduleCreditSourceEnum!]
+  sourceDate: DateTime
+
+  """All values that are not equal to given value."""
+  sourceDate_not: DateTime
+
+  """All values that are contained in given list."""
+  sourceDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  sourceDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  sourceDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  sourceDate_lte: DateTime
+
+  """All values greater than the given value."""
+  sourceDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  sourceDate_gte: DateTime
+  employee: EmployeeWhereInput
+  sourceException: ExceptionWhereInput
+  sourceDirect: DirectCreditWhereInput
+  sourceConcurentHoliday: HolidayWhereInput
+  debit: ScheduleDebitWhereInput
+}
+
+input ScheduleCreditWhereUniqueInput {
+  id: ID
+}
+
+type ScheduleDebit implements Node {
+  id: ID!
+  employee: Employee!
+  category: ScheduleOfflineCategory!
+  exception: Exception!
+  credit: ScheduleCredit!
+}
+
+"""A connection to a list of items."""
+type ScheduleDebitConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ScheduleDebitEdge]!
+  aggregate: AggregateScheduleDebit!
+}
+
+input ScheduleDebitCreateInput {
+  category: ScheduleOfflineCategory!
+  employee: EmployeeCreateOneWithoutDebitsInput!
+  exception: ExceptionCreateOneWithoutDebitsInput!
+  credit: ScheduleCreditCreateOneWithoutDebitInput!
+}
+
+input ScheduleDebitCreateManyWithoutEmployeeInput {
+  create: [ScheduleDebitCreateWithoutEmployeeInput!]
+  connect: [ScheduleDebitWhereUniqueInput!]
+}
+
+input ScheduleDebitCreateManyWithoutExceptionInput {
+  create: [ScheduleDebitCreateWithoutExceptionInput!]
+  connect: [ScheduleDebitWhereUniqueInput!]
+}
+
+input ScheduleDebitCreateOneWithoutCreditInput {
+  create: ScheduleDebitCreateWithoutCreditInput
+  connect: ScheduleDebitWhereUniqueInput
+}
+
+input ScheduleDebitCreateWithoutCreditInput {
+  category: ScheduleOfflineCategory!
+  employee: EmployeeCreateOneWithoutDebitsInput!
+  exception: ExceptionCreateOneWithoutDebitsInput!
+}
+
+input ScheduleDebitCreateWithoutEmployeeInput {
+  category: ScheduleOfflineCategory!
+  exception: ExceptionCreateOneWithoutDebitsInput!
+  credit: ScheduleCreditCreateOneWithoutDebitInput!
+}
+
+input ScheduleDebitCreateWithoutExceptionInput {
+  category: ScheduleOfflineCategory!
+  employee: EmployeeCreateOneWithoutDebitsInput!
+  credit: ScheduleCreditCreateOneWithoutDebitInput!
+}
+
+"""An edge in a connection."""
+type ScheduleDebitEdge {
+  """The item at the end of the edge."""
+  node: ScheduleDebit!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ScheduleDebitOrderByInput {
+  id_ASC
+  id_DESC
+  category_ASC
+  category_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ScheduleDebitPreviousValues {
+  id: ID!
+  category: ScheduleOfflineCategory!
+}
+
+type ScheduleDebitSubscriptionPayload {
+  mutation: MutationType!
+  node: ScheduleDebit
+  updatedFields: [String!]
+  previousValues: ScheduleDebitPreviousValues
+}
+
+input ScheduleDebitSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleDebitSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleDebitSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleDebitSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ScheduleDebitWhereInput
+}
+
+input ScheduleDebitUpdateInput {
+  category: ScheduleOfflineCategory
+  employee: EmployeeUpdateOneRequiredWithoutDebitsInput
+  exception: ExceptionUpdateOneRequiredWithoutDebitsInput
+  credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+}
+
+input ScheduleDebitUpdateManyWithoutEmployeeInput {
+  create: [ScheduleDebitCreateWithoutEmployeeInput!]
+  connect: [ScheduleDebitWhereUniqueInput!]
+  disconnect: [ScheduleDebitWhereUniqueInput!]
+  delete: [ScheduleDebitWhereUniqueInput!]
+  update: [ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput!]
+  upsert: [ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput!]
+}
+
+input ScheduleDebitUpdateManyWithoutExceptionInput {
+  create: [ScheduleDebitCreateWithoutExceptionInput!]
+  connect: [ScheduleDebitWhereUniqueInput!]
+  disconnect: [ScheduleDebitWhereUniqueInput!]
+  delete: [ScheduleDebitWhereUniqueInput!]
+  update: [ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput!]
+  upsert: [ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput!]
+}
+
+input ScheduleDebitUpdateOneWithoutCreditInput {
+  create: ScheduleDebitCreateWithoutCreditInput
+  connect: ScheduleDebitWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ScheduleDebitUpdateWithoutCreditDataInput
+  upsert: ScheduleDebitUpsertWithoutCreditInput
+}
+
+input ScheduleDebitUpdateWithoutCreditDataInput {
+  category: ScheduleOfflineCategory
+  employee: EmployeeUpdateOneRequiredWithoutDebitsInput
+  exception: ExceptionUpdateOneRequiredWithoutDebitsInput
+}
+
+input ScheduleDebitUpdateWithoutEmployeeDataInput {
+  category: ScheduleOfflineCategory
+  exception: ExceptionUpdateOneRequiredWithoutDebitsInput
+  credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+}
+
+input ScheduleDebitUpdateWithoutExceptionDataInput {
+  category: ScheduleOfflineCategory
+  employee: EmployeeUpdateOneRequiredWithoutDebitsInput
+  credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+}
+
+input ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleDebitWhereUniqueInput!
+  data: ScheduleDebitUpdateWithoutEmployeeDataInput!
+}
+
+input ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput {
+  where: ScheduleDebitWhereUniqueInput!
+  data: ScheduleDebitUpdateWithoutExceptionDataInput!
+}
+
+input ScheduleDebitUpsertWithoutCreditInput {
+  update: ScheduleDebitUpdateWithoutCreditDataInput!
+  create: ScheduleDebitCreateWithoutCreditInput!
+}
+
+input ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleDebitWhereUniqueInput!
+  update: ScheduleDebitUpdateWithoutEmployeeDataInput!
+  create: ScheduleDebitCreateWithoutEmployeeInput!
+}
+
+input ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput {
+  where: ScheduleDebitWhereUniqueInput!
+  update: ScheduleDebitUpdateWithoutExceptionDataInput!
+  create: ScheduleDebitCreateWithoutExceptionInput!
+}
+
+input ScheduleDebitWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ScheduleDebitWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ScheduleDebitWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ScheduleDebitWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  category: ScheduleOfflineCategory
+
+  """All values that are not equal to given value."""
+  category_not: ScheduleOfflineCategory
+
+  """All values that are contained in given list."""
+  category_in: [ScheduleOfflineCategory!]
+
+  """All values that are not contained in given list."""
+  category_not_in: [ScheduleOfflineCategory!]
+  employee: EmployeeWhereInput
+  exception: ExceptionWhereInput
+  credit: ScheduleCreditWhereInput
+}
+
+input ScheduleDebitWhereUniqueInput {
+  id: ID
 }
 
 """An edge in a connection."""
@@ -4018,18 +5796,24 @@ input ShiftWhereUniqueInput {
 }
 
 type Subscription {
-  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   department(where: DepartmentSubscriptionWhereInput): DepartmentSubscriptionPayload
   shift(where: ShiftSubscriptionWhereInput): ShiftSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
+  scheduleCredit(where: ScheduleCreditSubscriptionWhereInput): ScheduleCreditSubscriptionPayload
+  scheduleDebit(where: ScheduleDebitSubscriptionWhereInput): ScheduleDebitSubscriptionPayload
+  directCredit(where: DirectCreditSubscriptionWhereInput): DirectCreditSubscriptionPayload
+  attendanceCycle(where: AttendanceCycleSubscriptionWhereInput): AttendanceCycleSubscriptionPayload
   scheduleCategoryConfig(where: ScheduleCategoryConfigSubscriptionWhereInput): ScheduleCategoryConfigSubscriptionPayload
   fieldOptionLabel(where: FieldOptionLabelSubscriptionWhereInput): FieldOptionLabelSubscriptionPayload
   shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
   schedule(where: ScheduleSubscriptionWhereInput): ScheduleSubscriptionPayload
   scheduleTimelineElement(where: ScheduleTimelineElementSubscriptionWhereInput): ScheduleTimelineElementSubscriptionPayload
+  employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   scheduleOfflineElement(where: ScheduleOfflineElementSubscriptionWhereInput): ScheduleOfflineElementSubscriptionPayload
   scheduleRestlineElement(where: ScheduleRestlineElementSubscriptionWhereInput): ScheduleRestlineElementSubscriptionPayload
+  holiday(where: HolidaySubscriptionWhereInput): HolidaySubscriptionPayload
+  userRole(where: UserRoleSubscriptionWhereInput): UserRoleSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
 }
@@ -4042,6 +5826,7 @@ type User implements Node {
   password: String!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department!]
   role: UserRoleEnum!
+  roles(where: UserRoleWhereInput, orderBy: UserRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserRole!]
 }
 
 """A connection to a list of items."""
@@ -4059,6 +5844,7 @@ input UserCreateInput {
   password: String!
   role: UserRoleEnum!
   departments: DepartmentCreateManyWithoutSupervisorsInput
+  roles: UserRoleCreateManyInput
 }
 
 input UserCreateManyWithoutDepartmentsInput {
@@ -4075,6 +5861,7 @@ input UserCreateWithoutDepartmentsInput {
   username: String!
   password: String!
   role: UserRoleEnum!
+  roles: UserRoleCreateManyInput
 }
 
 """An edge in a connection."""
@@ -4110,11 +5897,235 @@ type UserPreviousValues {
   role: UserRoleEnum!
 }
 
+type UserRole implements Node {
+  id: ID!
+  name: String!
+  privileges: [String!]!
+}
+
+"""A connection to a list of items."""
+type UserRoleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserRoleEdge]!
+  aggregate: AggregateUserRole!
+}
+
+input UserRoleCreateInput {
+  name: String!
+  privileges: UserRoleCreateprivilegesInput
+}
+
+input UserRoleCreateManyInput {
+  create: [UserRoleCreateInput!]
+  connect: [UserRoleWhereUniqueInput!]
+}
+
+input UserRoleCreateprivilegesInput {
+  set: [String!]
+}
+
+"""An edge in a connection."""
+type UserRoleEdge {
+  """The item at the end of the edge."""
+  node: UserRole!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
 enum UserRoleEnum {
   ADMIN
   MANAGER
   SUPERVISOR
   HR
+}
+
+enum UserRoleOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserRolePreviousValues {
+  id: ID!
+  name: String!
+  privileges: [String!]!
+}
+
+type UserRoleSubscriptionPayload {
+  mutation: MutationType!
+  node: UserRole
+  updatedFields: [String!]
+  previousValues: UserRolePreviousValues
+}
+
+input UserRoleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserRoleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserRoleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserRoleSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserRoleWhereInput
+}
+
+input UserRoleUpdateDataInput {
+  name: String
+  privileges: UserRoleUpdateprivilegesInput
+}
+
+input UserRoleUpdateInput {
+  name: String
+  privileges: UserRoleUpdateprivilegesInput
+}
+
+input UserRoleUpdateManyInput {
+  create: [UserRoleCreateInput!]
+  connect: [UserRoleWhereUniqueInput!]
+  disconnect: [UserRoleWhereUniqueInput!]
+  delete: [UserRoleWhereUniqueInput!]
+  update: [UserRoleUpdateWithWhereUniqueNestedInput!]
+  upsert: [UserRoleUpsertWithWhereUniqueNestedInput!]
+}
+
+input UserRoleUpdateprivilegesInput {
+  set: [String!]
+}
+
+input UserRoleUpdateWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput!
+  data: UserRoleUpdateDataInput!
+}
+
+input UserRoleUpsertWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput!
+  update: UserRoleUpdateDataInput!
+  create: UserRoleCreateInput!
+}
+
+input UserRoleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserRoleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserRoleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserRoleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input UserRoleWhereUniqueInput {
+  id: ID
 }
 
 type UserSubscriptionPayload {
@@ -4161,6 +6172,7 @@ input UserUpdateDataInput {
   password: String
   role: UserRoleEnum
   departments: DepartmentUpdateManyWithoutSupervisorsInput
+  roles: UserRoleUpdateManyInput
 }
 
 input UserUpdateInput {
@@ -4168,6 +6180,7 @@ input UserUpdateInput {
   password: String
   role: UserRoleEnum
   departments: DepartmentUpdateManyWithoutSupervisorsInput
+  roles: UserRoleUpdateManyInput
 }
 
 input UserUpdateManyWithoutDepartmentsInput {
@@ -4190,6 +6203,7 @@ input UserUpdateWithoutDepartmentsDataInput {
   username: String
   password: String
   role: UserRoleEnum
+  roles: UserRoleUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutDepartmentsInput {
@@ -4394,6 +6408,9 @@ input UserWhereInput {
   departments_every: DepartmentWhereInput
   departments_some: DepartmentWhereInput
   departments_none: DepartmentWhereInput
+  roles_every: UserRoleWhereInput
+  roles_some: UserRoleWhereInput
+  roles_none: UserRoleWhereInput
 }
 
 input UserWhereUniqueInput {
