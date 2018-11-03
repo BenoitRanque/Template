@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Thu Nov 01 2018 18:15:26 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Thu Nov 01 2018 23:30:08 GMT-0400 (SA Western Standard Time)
 
 type AggregateAttendanceCycle {
   count: Int!
@@ -175,6 +175,12 @@ input AttendanceCycleSubscriptionWhereInput {
 }
 
 input AttendanceCycleUpdateInput {
+  name: String
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input AttendanceCycleUpdateManyMutationInput {
   name: String
   startDate: DateTime
   endDate: DateTime
@@ -441,6 +447,10 @@ input DepartmentUpdateInput {
   name: String
   subordinates: EmployeeUpdateManyWithoutDepartmentInput
   supervisors: UserUpdateManyWithoutDepartmentsInput
+}
+
+input DepartmentUpdateManyMutationInput {
+  name: String
 }
 
 input DepartmentUpdateManyWithoutSupervisorsInput {
@@ -737,6 +747,10 @@ input DirectCreditUpdateInput {
   owner: UserUpdateOneRequiredInput
   employee: EmployeeUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceDirectInput
+}
+
+input DirectCreditUpdateManyMutationInput {
+  description: String
 }
 
 input DirectCreditUpdateOneWithoutCreditsInput {
@@ -1261,6 +1275,26 @@ input EmployeeUpdateInput {
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
   debits: ScheduleDebitUpdateManyWithoutEmployeeInput
+}
+
+input EmployeeUpdateManyMutationInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
 }
 
 input EmployeeUpdateManyWithoutDepartmentInput {
@@ -2075,6 +2109,10 @@ input ExceptionAuthorizationUpdateInput {
   owner: UserUpdateOneRequiredInput
 }
 
+input ExceptionAuthorizationUpdateManyMutationInput {
+  granted: Boolean
+}
+
 input ExceptionAuthorizationUpdateOneWithoutExceptionInput {
   create: ExceptionAuthorizationCreateWithoutExceptionInput
   connect: ExceptionAuthorizationWhereUniqueInput
@@ -2411,6 +2449,10 @@ input ExceptionSlotUpdateManyInput {
   upsert: [ExceptionSlotUpsertWithWhereUniqueNestedInput!]
 }
 
+input ExceptionSlotUpdateManyMutationInput {
+  date: DateTime
+}
+
 input ExceptionSlotUpdateWithWhereUniqueNestedInput {
   where: ExceptionSlotWhereUniqueInput!
   data: ExceptionSlotUpdateDataInput!
@@ -2547,6 +2589,10 @@ input ExceptionUpdateInput {
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
+}
+
+input ExceptionUpdateManyMutationInput {
+  description: String
 }
 
 input ExceptionUpdateManyWithoutEmployeeInput {
@@ -2893,6 +2939,12 @@ input FieldOptionLabelUpdateInput {
   label: String
 }
 
+input FieldOptionLabelUpdateManyMutationInput {
+  field: String
+  value: String
+  label: String
+}
+
 input FieldOptionLabelWhereInput {
   """Logical AND on all given filters."""
   AND: [FieldOptionLabelWhereInput!]
@@ -3171,6 +3223,11 @@ input HolidayUpdateInput {
   name: String
 }
 
+input HolidayUpdateManyMutationInput {
+  date: DateTime
+  name: String
+}
+
 input HolidayUpdateOneInput {
   create: HolidayCreateInput
   connect: HolidayWhereUniqueInput
@@ -3377,26 +3434,26 @@ type Mutation {
   upsertUserRole(where: UserRoleWhereUniqueInput!, create: UserRoleCreateInput!, update: UserRoleUpdateInput!): UserRole!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
-  updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
-  updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
-  updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
-  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
-  updateManyScheduleCredits(data: ScheduleCreditUpdateInput!, where: ScheduleCreditWhereInput): BatchPayload!
-  updateManyScheduleDebits(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereInput): BatchPayload!
-  updateManyDirectCredits(data: DirectCreditUpdateInput!, where: DirectCreditWhereInput): BatchPayload!
-  updateManyAttendanceCycles(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereInput): BatchPayload!
-  updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
-  updateManyFieldOptionLabels(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereInput): BatchPayload!
-  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
-  updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
-  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
-  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
-  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
-  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
-  updateManyHolidays(data: HolidayUpdateInput!, where: HolidayWhereInput): BatchPayload!
-  updateManyUserRoles(data: UserRoleUpdateInput!, where: UserRoleWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
+  updateManyDepartments(data: DepartmentUpdateManyMutationInput!, where: DepartmentWhereInput): BatchPayload!
+  updateManyShifts(data: ShiftUpdateManyMutationInput!, where: ShiftWhereInput): BatchPayload!
+  updateManyExceptions(data: ExceptionUpdateManyMutationInput!, where: ExceptionWhereInput): BatchPayload!
+  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateManyMutationInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
+  updateManyScheduleCredits(data: ScheduleCreditUpdateManyMutationInput!, where: ScheduleCreditWhereInput): BatchPayload!
+  updateManyScheduleDebits(data: ScheduleDebitUpdateManyMutationInput!, where: ScheduleDebitWhereInput): BatchPayload!
+  updateManyDirectCredits(data: DirectCreditUpdateManyMutationInput!, where: DirectCreditWhereInput): BatchPayload!
+  updateManyAttendanceCycles(data: AttendanceCycleUpdateManyMutationInput!, where: AttendanceCycleWhereInput): BatchPayload!
+  updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateManyMutationInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
+  updateManyFieldOptionLabels(data: FieldOptionLabelUpdateManyMutationInput!, where: FieldOptionLabelWhereInput): BatchPayload!
+  updateManyShiftSlots(data: ShiftSlotUpdateManyMutationInput!, where: ShiftSlotWhereInput): BatchPayload!
+  updateManySchedules(data: ScheduleUpdateManyMutationInput!, where: ScheduleWhereInput): BatchPayload!
+  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateManyMutationInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
+  updateManyEmployees(data: EmployeeUpdateManyMutationInput!, where: EmployeeWhereInput): BatchPayload!
+  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateManyMutationInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
+  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateManyMutationInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
+  updateManyHolidays(data: HolidayUpdateManyMutationInput!, where: HolidayWhereInput): BatchPayload!
+  updateManyUserRoles(data: UserRoleUpdateManyMutationInput!, where: UserRoleWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyExceptionSlots(data: ExceptionSlotUpdateManyMutationInput!, where: ExceptionSlotWhereInput): BatchPayload!
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
   deleteManyShifts(where: ShiftWhereInput): BatchPayload!
   deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
@@ -3629,7 +3686,7 @@ input ScheduleCategoryConfigSubscriptionWhereInput {
   node: ScheduleCategoryConfigWhereInput
 }
 
-input ScheduleCategoryConfigUpdateInput {
+input ScheduleCategoryConfigUpdateManyMutationInput {
   category: ScheduleCategory
   color: String
   label: String
@@ -3770,6 +3827,7 @@ type ScheduleCredit implements Node {
   sourceDirect: DirectCredit
   sourceConcurentHoliday: Holiday
   sourceDate: DateTime!
+  sourceHoliday: Holiday
   debit: ScheduleDebit
 }
 
@@ -3791,6 +3849,7 @@ input ScheduleCreditCreateInput {
   sourceException: ExceptionCreateOneWithoutCreditsInput
   sourceDirect: DirectCreditCreateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayCreateOneInput
+  sourceHoliday: HolidayCreateOneInput
   debit: ScheduleDebitCreateOneWithoutCreditInput
 }
 
@@ -3822,6 +3881,7 @@ input ScheduleCreditCreateWithoutDebitInput {
   sourceException: ExceptionCreateOneWithoutCreditsInput
   sourceDirect: DirectCreditCreateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayCreateOneInput
+  sourceHoliday: HolidayCreateOneInput
 }
 
 input ScheduleCreditCreateWithoutEmployeeInput {
@@ -3831,6 +3891,7 @@ input ScheduleCreditCreateWithoutEmployeeInput {
   sourceException: ExceptionCreateOneWithoutCreditsInput
   sourceDirect: DirectCreditCreateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayCreateOneInput
+  sourceHoliday: HolidayCreateOneInput
   debit: ScheduleDebitCreateOneWithoutCreditInput
 }
 
@@ -3841,6 +3902,7 @@ input ScheduleCreditCreateWithoutSourceDirectInput {
   employee: EmployeeCreateOneWithoutCreditsInput!
   sourceException: ExceptionCreateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayCreateOneInput
+  sourceHoliday: HolidayCreateOneInput
   debit: ScheduleDebitCreateOneWithoutCreditInput
 }
 
@@ -3851,6 +3913,7 @@ input ScheduleCreditCreateWithoutSourceExceptionInput {
   employee: EmployeeCreateOneWithoutCreditsInput!
   sourceDirect: DirectCreditCreateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayCreateOneInput
+  sourceHoliday: HolidayCreateOneInput
   debit: ScheduleDebitCreateOneWithoutCreditInput
 }
 
@@ -3938,7 +4001,14 @@ input ScheduleCreditUpdateInput {
   sourceException: ExceptionUpdateOneWithoutCreditsInput
   sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayUpdateOneInput
+  sourceHoliday: HolidayUpdateOneInput
   debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateManyMutationInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
 }
 
 input ScheduleCreditUpdateManyWithoutEmployeeInput {
@@ -3983,6 +4053,7 @@ input ScheduleCreditUpdateWithoutDebitDataInput {
   sourceException: ExceptionUpdateOneWithoutCreditsInput
   sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayUpdateOneInput
+  sourceHoliday: HolidayUpdateOneInput
 }
 
 input ScheduleCreditUpdateWithoutEmployeeDataInput {
@@ -3992,6 +4063,7 @@ input ScheduleCreditUpdateWithoutEmployeeDataInput {
   sourceException: ExceptionUpdateOneWithoutCreditsInput
   sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayUpdateOneInput
+  sourceHoliday: HolidayUpdateOneInput
   debit: ScheduleDebitUpdateOneWithoutCreditInput
 }
 
@@ -4002,6 +4074,7 @@ input ScheduleCreditUpdateWithoutSourceDirectDataInput {
   employee: EmployeeUpdateOneRequiredWithoutCreditsInput
   sourceException: ExceptionUpdateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayUpdateOneInput
+  sourceHoliday: HolidayUpdateOneInput
   debit: ScheduleDebitUpdateOneWithoutCreditInput
 }
 
@@ -4012,6 +4085,7 @@ input ScheduleCreditUpdateWithoutSourceExceptionDataInput {
   employee: EmployeeUpdateOneRequiredWithoutCreditsInput
   sourceDirect: DirectCreditUpdateOneWithoutCreditsInput
   sourceConcurentHoliday: HolidayUpdateOneInput
+  sourceHoliday: HolidayUpdateOneInput
   debit: ScheduleDebitUpdateOneWithoutCreditInput
 }
 
@@ -4148,6 +4222,7 @@ input ScheduleCreditWhereInput {
   sourceException: ExceptionWhereInput
   sourceDirect: DirectCreditWhereInput
   sourceConcurentHoliday: HolidayWhereInput
+  sourceHoliday: HolidayWhereInput
   debit: ScheduleDebitWhereInput
 }
 
@@ -4282,6 +4357,10 @@ input ScheduleDebitUpdateInput {
   employee: EmployeeUpdateOneRequiredWithoutDebitsInput
   exception: ExceptionUpdateOneRequiredWithoutDebitsInput
   credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+}
+
+input ScheduleDebitUpdateManyMutationInput {
+  category: ScheduleOfflineCategory
 }
 
 input ScheduleDebitUpdateManyWithoutEmployeeInput {
@@ -4531,7 +4610,7 @@ input ScheduleOfflineElementUpdateDataInput {
   category: ScheduleOfflineCategory
 }
 
-input ScheduleOfflineElementUpdateInput {
+input ScheduleOfflineElementUpdateManyMutationInput {
   category: ScheduleOfflineCategory
 }
 
@@ -4707,17 +4786,17 @@ input ScheduleRestlineElementSubscriptionWhereInput {
   node: ScheduleRestlineElementWhereInput
 }
 
-input ScheduleRestlineElementUpdateInput {
+input ScheduleRestlineElementUpdateManyInput {
+  create: [ScheduleRestlineElementCreateInput!]
+}
+
+input ScheduleRestlineElementUpdateManyMutationInput {
   category: ScheduleRestlineCategory
   duration: Int
   startTime: Int
   endTime: Int
   startRequireEvent: Boolean
   endRequireEvent: Boolean
-}
-
-input ScheduleRestlineElementUpdateManyInput {
-  create: [ScheduleRestlineElementCreateInput!]
 }
 
 input ScheduleRestlineElementWhereInput {
@@ -4966,16 +5045,16 @@ input ScheduleTimelineElementSubscriptionWhereInput {
   node: ScheduleTimelineElementWhereInput
 }
 
-input ScheduleTimelineElementUpdateInput {
+input ScheduleTimelineElementUpdateManyInput {
+  create: [ScheduleTimelineElementCreateInput!]
+}
+
+input ScheduleTimelineElementUpdateManyMutationInput {
   category: ScheduleTimelineCategory
   startTime: Int
   endTime: Int
   startRequireEvent: Boolean
   endRequireEvent: Boolean
-}
-
-input ScheduleTimelineElementUpdateManyInput {
-  create: [ScheduleTimelineElementCreateInput!]
 }
 
 input ScheduleTimelineElementWhereInput {
@@ -5069,6 +5148,12 @@ input ScheduleUpdateInput {
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
   offline2: ScheduleOfflineElementUpdateOneInput
+}
+
+input ScheduleUpdateManyMutationInput {
+  description: String
+  baseTime: Int
+  isPreset: Boolean
 }
 
 input ScheduleUpdateOneRequiredInput {
@@ -5442,6 +5527,10 @@ input ShiftSlotUpdateManyInput {
   upsert: [ShiftSlotUpsertWithWhereUniqueNestedInput!]
 }
 
+input ShiftSlotUpdateManyMutationInput {
+  index: Int
+}
+
 input ShiftSlotUpdateWithWhereUniqueNestedInput {
   where: ShiftSlotWhereUniqueInput!
   data: ShiftSlotUpdateDataInput!
@@ -5577,6 +5666,12 @@ input ShiftUpdateInput {
   employee: EmployeeUpdateOneRequiredWithoutShiftsInput
   slots: ShiftSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
+}
+
+input ShiftUpdateManyMutationInput {
+  description: String
+  startDate: DateTime
+  endDate: DateTime
 }
 
 input ShiftUpdateManyWithoutEmployeeInput {
@@ -6018,6 +6113,11 @@ input UserRoleUpdateManyInput {
   upsert: [UserRoleUpsertWithWhereUniqueNestedInput!]
 }
 
+input UserRoleUpdateManyMutationInput {
+  name: String
+  privileges: UserRoleUpdateprivilegesInput
+}
+
 input UserRoleUpdateprivilegesInput {
   set: [String!]
 }
@@ -6181,6 +6281,12 @@ input UserUpdateInput {
   role: UserRoleEnum
   departments: DepartmentUpdateManyWithoutSupervisorsInput
   roles: UserRoleUpdateManyInput
+}
+
+input UserUpdateManyMutationInput {
+  username: String
+  password: String
+  role: UserRoleEnum
 }
 
 input UserUpdateManyWithoutDepartmentsInput {

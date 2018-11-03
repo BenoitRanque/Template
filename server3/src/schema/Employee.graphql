@@ -53,22 +53,39 @@ type AttendanceReportDate {
   outerBound: DateTime!
   events: [DateTime!]!
   eventCount: Int!
-  schedule: Schedule
   shift: Shift
   exception: Exception
+  schedule: Schedule
   compliance: AttendanceReportDateCompliance
 }
 
+enum AttendanceCategory {
+  ATT_START_LATE
+  ATT_START_EARLY
+  ATT_END_LATE
+  ATT_END_EARLY
+  ATT_REST_LATE
+  ATT_ABSENT
+  ATT_ABSENT_DOUBLE
+}
+
 type AttendanceReportDateCompliance {
-  flags: AttendanceReportDateComplianceFlags
   startLateTime: Int!
-  startEventsMissing: Int!
+  # startEventsMissing: Int!
   endEarlyTime: Int!
-  endEventsMissing: Int!
+  # endEventsMissing: Int!
   restOvertime: Int!
   absentTime: Int!
-  unsanctionedEvents: Int!
+  # unsanctionedEvents: Int!
+  flags: AttendanceReportDateComplianceFlags
 }
+
+tiene retraso?
+cuanto
+
+tiene falta
+cuanto
+
 
 type AttendanceReportDateComplianceFlags {
   hasLateStartEvent: Boolean

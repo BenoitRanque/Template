@@ -57,6 +57,13 @@ prisma deploy
 npm run prisma-deploy
 ```
 
+##### 4.1 Server utils
+
+```sh
+prisma reset # remove all server data
+prisma seed # seed startign data
+```
+
 ### 5. Start the server
 
 ```sh
