@@ -47,14 +47,14 @@
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
-                <q-checkbox v-model="model.startRequireEvent"></q-checkbox>
+                <q-checkbox v-model="model.startEventRequired"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>
           <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Salida" class="text-right">
-                <q-checkbox v-model="model.endRequireEvent"></q-checkbox>
+                <q-checkbox v-model="model.endEventRequired"></q-checkbox>
               </q-field>
             </q-item-main>
           </q-item>
@@ -88,9 +88,9 @@ export default {
       model: {
         category: 'SCH_REST_LUNCH',
         startTime: 11 * 60,
-        startRequireEvent: true,
+        startEventRequired: true,
         endTime: 14.5 * 60,
-        endRequireEvent: true,
+        endEventRequired: true,
         duration: 30
       }
     }
@@ -117,8 +117,8 @@ export default {
   methods: {
     reset () {
       this.model.category = 'SCH_REST_LUNCH'
-      this.model.startRequireEvent = true
-      this.model.endRequireEvent = true
+      this.model.startEventRequired = true
+      this.model.endEventRequired = true
       this.model.duration = 30
       if (this.value.start <= 11 * 60 && this.value.end >= 14.5 * 60) {
         this.model.startTime = 11 * 60

@@ -73,16 +73,16 @@ fragment AllScheduleData on Schedule {
   timeline {
     category
     startTime
-    startRequireEvent
+    startEventRequired
     endTime
-    endRequireEvent
+    endEventRequired
   }
   restline {
     category
     startTime
-    startRequireEvent
+    startEventRequired
     endTime
-    endRequireEvent
+    endEventRequired
     duration
   }
   offline1 {

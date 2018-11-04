@@ -3,11 +3,11 @@
     <div class="col-auto q-caption">
       {{formatTime(value.startTime)}}
     </div>
-    <div v-if="value.startRequireEvent" class="col-auto">
+    <div v-if="value.startEventRequired" class="col-auto">
       <q-icon style="font-size: 22px" name="fingerprint"></q-icon>
     </div>
     <div class="col q-caption text-weight-bold text-center overflow-hidden q-px-xs">{{categoryDescription(value.category)}}</div>
-    <div v-if="value.endRequireEvent" class="col-auto">
+    <div v-if="value.endEventRequired" class="col-auto">
       <q-icon style="font-size: 22px" name="fingerprint"></q-icon>
     </div>
     <div class="col-auto q-caption">
@@ -44,14 +44,14 @@
         <q-item v-if="categoryCanEvent(this.value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Entrada" class="text-right">
-              <q-checkbox v-model="value.startRequireEvent"></q-checkbox>
+              <q-checkbox v-model="value.startEventRequired"></q-checkbox>
             </q-field>
           </q-item-main>
         </q-item>
         <q-item v-if="categoryCanEvent(this.value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Salida" class="text-right">
-              <q-checkbox v-model="value.endRequireEvent"></q-checkbox>
+              <q-checkbox v-model="value.endEventRequired"></q-checkbox>
             </q-field>
           </q-item-main>
         </q-item>

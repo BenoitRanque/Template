@@ -221,8 +221,8 @@ export default {
 
         if (this.categoryCanRest(currentElement.category)) {
           if (start === null) {
-            if (currentElement.startRequireEvent || (previousElement &&
-              previousElement.endRequireEvent &&
+            if (currentElement.startEventRequired || (previousElement &&
+              previousElement.endEventRequired &&
               (previousElement.endTime + 30) > currentElement.startTime)) {
               start = currentElement.startTime + 30
             } else {
@@ -230,13 +230,13 @@ export default {
             }
           }
 
-          if (currentElement.endRequireEvent ||
+          if (currentElement.endEventRequired ||
             !nextElement ||
             !this.categoryCanRest(nextElement.category) ||
             nextElement.startTime > currentElement.endTime ||
-            nextElement.startRequireEvent) {
-            if (currentElement.endRequireEvent || (nextElement &&
-              nextElement.startRequireEvent &&
+            nextElement.startEventRequired) {
+            if (currentElement.endEventRequired || (nextElement &&
+              nextElement.startEventRequired &&
               (nextElement.startTime - 30) < currentElement.endTime)) {
               end = currentElement.endTime - 30
             } else {

@@ -150,19 +150,19 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
 
 fragment AllScheduleData on Schedule {
   baseTime
-  timeline {
+  timeline (orderBy: startTime_ASC) {
     category
     startTime
-    startRequireEvent
+    startEventRequired
     endTime
-    endRequireEvent
+    endEventRequired
   }
-  restline {
+  restline (orderBy: startTime_ASC) {
     category
     startTime
-    startRequireEvent
+    startEventRequired
     endTime
-    endRequireEvent
+    endEventRequired
     duration
   }
   offline1 {

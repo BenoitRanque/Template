@@ -161,19 +161,19 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
 
     fragment AllScheduleData on Schedule {
       baseTime
-      timeline {
+      timeline (orderBy: startTime_ASC) {
         category
         startTime
-        startRequireEvent
+        startEventRequired
         endTime
-        endRequireEvent
+        endEventRequired
       }
-      restline {
+      restline (orderBy: startTime_ASC) {
         category
         startTime
-        startRequireEvent
+        startEventRequired
         endTime
-        endRequireEvent
+        endEventRequired
         duration
       }
       offline1 {
@@ -246,19 +246,19 @@ async function loadVacationSchedules ({ db }) {
 
     fragment AllScheduleData on Schedule {
       baseTime
-      timeline {
+      timeline (orderBy: startTime_ASC) {
         category
         startTime
-        startRequireEvent
+        startEventRequired
         endTime
-        endRequireEvent
+        endEventRequired
       }
-      restline {
+      restline (orderBy: startTime_ASC) {
         category
         startTime
-        startRequireEvent
+        startEventRequired
         endTime
-        endRequireEvent
+        endEventRequired
         duration
       }
       offline1 {

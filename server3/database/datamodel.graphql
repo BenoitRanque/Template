@@ -35,7 +35,8 @@ type User {
 
 type UserRole {
   id: ID! @unique
-  name: String!
+  name: String! @unique
+  description: String
   privileges: [String!]!
 }
 
@@ -146,8 +147,8 @@ type ScheduleTimelineElement {
   category: ScheduleTimelineCategory!
   startTime: Int!
   endTime: Int!
-  startRequireEvent: Boolean!
-  endRequireEvent: Boolean!
+  startEventRequired: Boolean!
+  endEventRequired: Boolean!
 }
 
 type ScheduleRestlineElement {
@@ -155,8 +156,8 @@ type ScheduleRestlineElement {
   duration: Int!
   startTime: Int!
   endTime: Int!
-  startRequireEvent: Boolean!
-  endRequireEvent: Boolean!
+  startEventRequired: Boolean!
+  endEventRequired: Boolean!
 }
 
 type ScheduleOfflineElement {
@@ -170,9 +171,9 @@ type ScheduleCredit {
   sourceType: ScheduleCreditSourceEnum!
   sourceException: Exception # when crediting anything due to exception
   sourceDirect: DirectCredit # when credited manually. Use for initial load
-  sourceConcurentHoliday: Holiday @relation(name: "ScheduleCreditToConcurentHoliday") # Use only when crediting a DAY OFF due to holiday on same day
+  sourceConcurentHoliday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
   sourceDate: DateTime!
-  sourceHoliday: Holiday @relation(name: "ScheduleCreditToHoliday") # Use if date has any holidays
+  # sourceHoliday: Holiday # Use if date has any holidays. resolve this using the date
   debit: ScheduleDebit
 }
 
@@ -200,7 +201,7 @@ type DirectCredit {
 
 type Holiday {
   id: ID! @unique
-  date: DateTime!
+  date: DateTime! @unique
   name: String!
 }
 

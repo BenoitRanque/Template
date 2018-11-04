@@ -20,14 +20,14 @@ const addMinutes = require('date-fns/add_minutes')
 
 function getBoundsForTimelineEvent (event, { schedule, innerBound, outerBound, date }) {
   const candidateReferences = [innerBound, outerBound]
-    .concat(schedule.timeline.reduce((acc, { startRequireEvent, startTime, endTime, endRequireEvent }) => {
-      if (startRequireEvent) acc.push(Math.round((startTime + event) / 2))
-      if (endRequireEvent) acc.push(Math.round((endTime + event) / 2))
+    .concat(schedule.timeline.reduce((acc, { startEventRequired, startTime, endTime, endEventRequired }) => {
+      if (startEventRequired) acc.push(Math.round((startTime + event) / 2))
+      if (endEventRequired) acc.push(Math.round((endTime + event) / 2))
       return acc
     }, []))
-    .concat(schedule.restline.reduce((acc, { startRequireEvent, startTime, endRequireEvent, endTime }) => {
-      if (startRequireEvent) acc.push(startTime)
-      if (endRequireEvent) acc.push(endTime)
+    .concat(schedule.restline.reduce((acc, { startEventRequired, startTime, endEventRequired, endTime }) => {
+      if (startEventRequired) acc.push(startTime)
+      if (endEventRequired) acc.push(endTime)
       return acc
     }, []))
 
@@ -80,7 +80,7 @@ module.exports = {
   startLateTime: {
     resolve: async (obj, args, ctx, info) => {
       obj.timeline.reduce((acc, val) => {
-        if (val.startRequireEvent) {
+        if (val.startEventRequired) {
         }
       }, 0)
     }

@@ -8,9 +8,9 @@ const LUNCH = {
   create: {
     category: 'SCH_REST_LUNCH',
     startTime: 11 * 60,
-    startRequireEvent: true,
+    startEventRequired: true,
     endTime: 14.5 * 60,
-    endRequireEvent: true,
+    endEventRequired: true,
     duration: 0.5 * 60
   }
 }
@@ -34,9 +34,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 8.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 16.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -51,9 +51,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 9.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 17.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -68,9 +68,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 10.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 18.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -85,9 +85,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 7 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 15 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -102,9 +102,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 8 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 18 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -120,16 +120,16 @@ module.exports = db => Promise.all([
           {
             category: 'SCH_TIME_MATERNAL',
             startTime: 8.5 * 60,
-            startRequireEvent: false,
+            startEventRequired: false,
             endTime: 9.5 * 60,
-            endRequireEvent: false
+            endEventRequired: false
           },
           {
             category: 'SCH_TIME_WORK',
             startTime: 9.5 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 16.5 * 60,
-            endRequireEvent: true
+            endEventRequired: true
           }
         ]
       },
@@ -146,16 +146,16 @@ module.exports = db => Promise.all([
           {
             category: 'SCH_TIME_MATERNAL',
             startTime: 9.5 * 60,
-            startRequireEvent: false,
+            startEventRequired: false,
             endTime: 10.5 * 60,
-            endRequireEvent: false
+            endEventRequired: false
           },
           {
             category: 'SCH_TIME_WORK',
             startTime: 10.5 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 17.5 * 60,
-            endRequireEvent: true
+            endEventRequired: true
           }
         ]
       },
@@ -173,16 +173,16 @@ module.exports = db => Promise.all([
           {
             category: 'SCH_TIME_WORK',
             startTime: 8.5 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 12 * 60,
-            endRequireEvent: true,
+            endEventRequired: true,
           },
           {
             category: 'SCH_TIME_WORK',
             startTime: 14 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 18.5 * 60,
-            endRequireEvent: true,
+            endEventRequired: true,
           }
         ]
       },
@@ -199,9 +199,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 11.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 18.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       restline: LUNCH
@@ -216,9 +216,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 8.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 12.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       offline2: DAYOFF
@@ -233,9 +233,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 9.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 13.5 * 60,
-          endRequireEvent: true
+          endEventRequired: true
         }
       },
       offline2: DAYOFF
@@ -250,9 +250,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 10.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 14.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline2: DAYOFF
@@ -267,9 +267,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 12.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 16.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline1: DAYOFF
@@ -284,9 +284,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 12.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 16.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline1: DAYOFF
@@ -301,9 +301,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 12.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 16.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline1: DAYOFF
@@ -318,9 +318,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 12.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 16.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline1: DAYOFF
@@ -335,9 +335,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 7 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 11 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       restline: [],
@@ -353,9 +353,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 11 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 15 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline1: DAYOFF
@@ -371,16 +371,16 @@ module.exports = db => Promise.all([
           {
             category: 'SCH_TIME_MATERNAL',
             startTime: 9.5 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 10.5 * 60,
-            endRequireEvent: true,
+            endEventRequired: true,
           },
           {
             category: 'SCH_TIME_WORK',
             startTime: 10.5 * 60,
-            startRequireEvent: true,
+            startEventRequired: true,
             endTime: 13.5 * 60,
-            endRequireEvent: true,
+            endEventRequired: true,
           }
         ]
       },
@@ -396,9 +396,9 @@ module.exports = db => Promise.all([
         create: {
           category: 'SCH_TIME_WORK',
           startTime: 7.5 * 60,
-          startRequireEvent: true,
+          startEventRequired: true,
           endTime: 11.5 * 60,
-          endRequireEvent: true,
+          endEventRequired: true,
         }
       },
       offline2: DAYOFF
