@@ -24,10 +24,10 @@ type Employee {
   department: Department
   shifts: [Shift!]!
   exceptions: [Exception!]!
-  attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean!): AttendanceReport!
-  calendarDate(date: DateTime! withExceptions: Boolean!): CalendarDate!
-  calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
-  vacationRange(from: DateTime! to: DateTime! withExceptions: Boolean!): [CalendarDate]!
+  attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): AttendanceReport!
+  calendarDate(date: DateTime! withExceptions: Boolean! withHolidays: Boolean!): CalendarDate!
+  calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
+  vacationRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
 }
 
 type CalendarDate {
@@ -43,6 +43,7 @@ type AttendanceReport {
   events: [DateTime!]!
   eventCount: Int!
   shifts: [Shift!]!
+  holidays: [Holiday!]!
   exceptions: [Exception!]!
   dates: [AttendanceReportDate!]!
 }
@@ -54,6 +55,7 @@ type AttendanceReportDate {
   events: [DateTime!]!
   eventCount: Int!
   shift: Shift
+  holiday: Holiday
   exception: Exception
   schedule: Schedule
   compliance: AttendanceReportDateCompliance
@@ -70,20 +72,26 @@ enum AttendanceCategory {
 }
 
 type AttendanceReportDateCompliance {
-  startLateTime: Int!
-  # startEventsMissing: Int!
-  endEarlyTime: Int!
-  # endEventsMissing: Int!
-  restOvertime: Int!
+  lateStart: LateStartCompliance!
+  earlyEnd: EarlyEndCompliance!
+  restOvertime: RestOvertimeCompliance!
+  missingStartEventCount: Int!
+  missingEndEventCount: Int!
+  missingRestEventCount: Int!
   absentTime: Int!
-  # unsanctionedEvents: Int!
-  flags: AttendanceReportDateComplianceFlags
 }
 
-type AttendanceReportDateComplianceFlags {
-  hasLateStartEvent: Boolean
-  hasEarlyExitEvent: Boolean
-  hasRestOvertime: Boolean
-  hasUnsanctionedEvents: Boolean
-  hasAbsence: Boolean
+type LateStartCompliance {
+  time: Int!
+  count: Int!
+}
+
+type EarlyEndCompliance {
+  time: Int!
+  count: Int!
+}
+
+type RestOvertimeCompliance {
+  time: Int!
+  count: Int!
 }

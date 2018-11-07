@@ -1,6 +1,6 @@
 <template>
   <q-td :props="props" @click.native="modal = true">
-    {{employee.nameFull}}
+    iconos aqui
     <q-modal v-model="modal">
       <q-modal-layout>
         <q-toolbar slot="header">
@@ -11,7 +11,7 @@
         </q-toolbar>
         <div class="q-px-sm q-pt-sm q-pb-lg">
           <div class="q-my-sm q-title">Asistencia</div>
-          <div class="row gutter-xs">
+          <!-- <div class="row gutter-xs">
             <div class="col-6">Tiempo trabajado total</div>
             <div class="col-6">1</div>
             <div class="col-6">Tiempo retraso en ingreso</div>
@@ -24,7 +24,8 @@
             <div class="col-6">1</div>
             <div class="col-6">Marcaciones faltante</div>
             <div class="col-6">1</div>
-          </div>
+          </div> -->
+          <pre>{{date.compliance}}</pre>
           <div class="q-my-sm q-title">Marcaciones</div>
           <div class="row">
             <div class="col-6"></div>

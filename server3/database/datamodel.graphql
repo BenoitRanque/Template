@@ -144,6 +144,7 @@ type Schedule {
 }
 
 type ScheduleTimelineElement {
+  id: ID! @unique
   category: ScheduleTimelineCategory!
   startTime: Int!
   endTime: Int!
@@ -152,6 +153,7 @@ type ScheduleTimelineElement {
 }
 
 type ScheduleRestlineElement {
+  id: ID! @unique
   category: ScheduleRestlineCategory!
   duration: Int!
   startTime: Int!
@@ -161,6 +163,7 @@ type ScheduleRestlineElement {
 }
 
 type ScheduleOfflineElement {
+  id: ID! @unique
   category: ScheduleOfflineCategory!
 }
 
@@ -260,6 +263,7 @@ enum AttendanceCategory {
 }
 
 type ScheduleCategoryConfig {
+  id: ID! @unique
   category: ScheduleCategory
   color: String! @default(value: "#FFF")
   label: String

@@ -43,8 +43,8 @@ export default {
   components: { ExceptionTemplate, DefaultTemplate, VacationTemplate },
   data () {
     return {
-      modal: true,
-      payload: 'hello',
+      modal: false,
+      payload: '',
       template: 'default',
       printing: false
     }

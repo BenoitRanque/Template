@@ -111,7 +111,7 @@ query EmployeeSelectPaginationQuery ($first: Int! $skip: Int! $orderBy: Employee
   }
 }
 
-query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: EmployeeWhereInput $from: DateTime! $to: DateTime! $withExceptions: Boolean!) {
+query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: EmployeeWhereInput $from: DateTime! $to: DateTime! $withExceptions: Boolean! $withHolidays: Boolean!) {
   meta: employeesConnection (where: $where) {
     aggregate {
       count
@@ -120,7 +120,7 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
   data: employees (first: $first skip: $skip where: $where) {
     id
     nameFull
-    attendanceReport (from: $from to: $to withExceptions: $withExceptions) {
+    attendanceReport (from: $from to: $to withExceptions: $withExceptions withHolidays: $withHolidays) {
       dates {
       	date
         events
@@ -142,6 +142,24 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
           id
           description
           ...AllScheduleData
+        }
+        compliance {
+          lateStart {
+            time
+            count
+          }
+          earlyEnd {
+            time
+            count
+          }
+          restOvertime {
+            time
+            count
+          }
+          missingStartEventCount
+          missingEndEventCount
+          missingRestEventCount
+          absentTime
         }
       }
     }

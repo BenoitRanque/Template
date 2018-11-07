@@ -1,5 +1,5 @@
 # source: http://localhost:4466/wasp/dev
-# timestamp: Sun Nov 04 2018 17:49:47 GMT-0400 (Hora estándar oeste, Sudamérica)
+# timestamp: Wed Nov 07 2018 18:27:38 GMT-0400 (Hora estándar oeste, Sudamérica)
 
 type AggregateAttendanceCycle {
   count: Int!
@@ -3395,10 +3395,14 @@ type Mutation {
   updateScheduleDebit(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
   updateDirectCredit(data: DirectCreditUpdateInput!, where: DirectCreditWhereUniqueInput!): DirectCredit
   updateAttendanceCycle(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
+  updateScheduleCategoryConfig(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereUniqueInput!): ScheduleCategoryConfig
   updateFieldOptionLabel(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
   updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
+  updateScheduleTimelineElement(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
   updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
+  updateScheduleOfflineElement(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  updateScheduleRestlineElement(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
   updateHoliday(data: HolidayUpdateInput!, where: HolidayWhereUniqueInput!): Holiday
   updateUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
@@ -3411,10 +3415,14 @@ type Mutation {
   deleteScheduleDebit(where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
   deleteDirectCredit(where: DirectCreditWhereUniqueInput!): DirectCredit
   deleteAttendanceCycle(where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
+  deleteScheduleCategoryConfig(where: ScheduleCategoryConfigWhereUniqueInput!): ScheduleCategoryConfig
   deleteFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
+  deleteScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
   deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
+  deleteScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  deleteScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
   deleteHoliday(where: HolidayWhereUniqueInput!): Holiday
   deleteUserRole(where: UserRoleWhereUniqueInput!): UserRole
   deleteUser(where: UserWhereUniqueInput!): User
@@ -3427,10 +3435,14 @@ type Mutation {
   upsertScheduleDebit(where: ScheduleDebitWhereUniqueInput!, create: ScheduleDebitCreateInput!, update: ScheduleDebitUpdateInput!): ScheduleDebit!
   upsertDirectCredit(where: DirectCreditWhereUniqueInput!, create: DirectCreditCreateInput!, update: DirectCreditUpdateInput!): DirectCredit!
   upsertAttendanceCycle(where: AttendanceCycleWhereUniqueInput!, create: AttendanceCycleCreateInput!, update: AttendanceCycleUpdateInput!): AttendanceCycle!
+  upsertScheduleCategoryConfig(where: ScheduleCategoryConfigWhereUniqueInput!, create: ScheduleCategoryConfigCreateInput!, update: ScheduleCategoryConfigUpdateInput!): ScheduleCategoryConfig!
   upsertFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!, create: FieldOptionLabelCreateInput!, update: FieldOptionLabelUpdateInput!): FieldOptionLabel!
   upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
   upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
+  upsertScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!, create: ScheduleTimelineElementCreateInput!, update: ScheduleTimelineElementUpdateInput!): ScheduleTimelineElement!
   upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
+  upsertScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!, create: ScheduleOfflineElementCreateInput!, update: ScheduleOfflineElementUpdateInput!): ScheduleOfflineElement!
+  upsertScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!, create: ScheduleRestlineElementCreateInput!, update: ScheduleRestlineElementUpdateInput!): ScheduleRestlineElement!
   upsertHoliday(where: HolidayWhereUniqueInput!, create: HolidayCreateInput!, update: HolidayUpdateInput!): Holiday!
   upsertUserRole(where: UserRoleWhereUniqueInput!, create: UserRoleCreateInput!, update: UserRoleUpdateInput!): UserRole!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
@@ -3533,10 +3545,14 @@ type Query {
   scheduleDebit(where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
   directCredit(where: DirectCreditWhereUniqueInput!): DirectCredit
   attendanceCycle(where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
+  scheduleCategoryConfig(where: ScheduleCategoryConfigWhereUniqueInput!): ScheduleCategoryConfig
   fieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   shiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   schedule(where: ScheduleWhereUniqueInput!): Schedule
+  scheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
   employee(where: EmployeeWhereUniqueInput!): Employee
+  scheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
+  scheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
   holiday(where: HolidayWhereUniqueInput!): Holiday
   userRole(where: UserRoleWhereUniqueInput!): UserRole
   user(where: UserWhereUniqueInput!): User
@@ -3596,7 +3612,8 @@ enum ScheduleCategory {
   SCH_DAY_UNPAID
 }
 
-type ScheduleCategoryConfig {
+type ScheduleCategoryConfig implements Node {
+  id: ID!
   category: ScheduleCategory
   color: String!
   label: String
@@ -3628,14 +3645,14 @@ type ScheduleCategoryConfigEdge {
 }
 
 enum ScheduleCategoryConfigOrderByInput {
+  id_ASC
+  id_DESC
   category_ASC
   category_DESC
   color_ASC
   color_DESC
   label_ASC
   label_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -3643,6 +3660,7 @@ enum ScheduleCategoryConfigOrderByInput {
 }
 
 type ScheduleCategoryConfigPreviousValues {
+  id: ID!
   category: ScheduleCategory
   color: String!
   label: String
@@ -3687,6 +3705,12 @@ input ScheduleCategoryConfigSubscriptionWhereInput {
   node: ScheduleCategoryConfigWhereInput
 }
 
+input ScheduleCategoryConfigUpdateInput {
+  category: ScheduleCategory
+  color: String
+  label: String
+}
+
 input ScheduleCategoryConfigUpdateManyMutationInput {
   category: ScheduleCategory
   color: String
@@ -3702,6 +3726,46 @@ input ScheduleCategoryConfigWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleCategoryConfigWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   category: ScheduleCategory
 
   """All values that are not equal to given value."""
@@ -3792,6 +3856,10 @@ input ScheduleCategoryConfigWhereInput {
 
   """All values not ending with the given string."""
   label_not_ends_with: String
+}
+
+input ScheduleCategoryConfigWhereUniqueInput {
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -4510,7 +4578,8 @@ enum ScheduleOfflineCategory {
   SCH_DAY_UNPAID
 }
 
-type ScheduleOfflineElement {
+type ScheduleOfflineElement implements Node {
+  id: ID!
   category: ScheduleOfflineCategory!
 }
 
@@ -4530,6 +4599,7 @@ input ScheduleOfflineElementCreateInput {
 
 input ScheduleOfflineElementCreateOneInput {
   create: ScheduleOfflineElementCreateInput
+  connect: ScheduleOfflineElementWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -4542,10 +4612,10 @@ type ScheduleOfflineElementEdge {
 }
 
 enum ScheduleOfflineElementOrderByInput {
-  category_ASC
-  category_DESC
   id_ASC
   id_DESC
+  category_ASC
+  category_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -4553,6 +4623,7 @@ enum ScheduleOfflineElementOrderByInput {
 }
 
 type ScheduleOfflineElementPreviousValues {
+  id: ID!
   category: ScheduleOfflineCategory!
 }
 
@@ -4599,12 +4670,17 @@ input ScheduleOfflineElementUpdateDataInput {
   category: ScheduleOfflineCategory
 }
 
+input ScheduleOfflineElementUpdateInput {
+  category: ScheduleOfflineCategory
+}
+
 input ScheduleOfflineElementUpdateManyMutationInput {
   category: ScheduleOfflineCategory
 }
 
 input ScheduleOfflineElementUpdateOneInput {
   create: ScheduleOfflineElementCreateInput
+  connect: ScheduleOfflineElementWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
   update: ScheduleOfflineElementUpdateDataInput
@@ -4625,6 +4701,46 @@ input ScheduleOfflineElementWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleOfflineElementWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   category: ScheduleOfflineCategory
 
   """All values that are not equal to given value."""
@@ -4635,6 +4751,10 @@ input ScheduleOfflineElementWhereInput {
 
   """All values that are not contained in given list."""
   category_not_in: [ScheduleOfflineCategory!]
+}
+
+input ScheduleOfflineElementWhereUniqueInput {
+  id: ID
 }
 
 enum ScheduleOrderByInput {
@@ -4665,7 +4785,8 @@ enum ScheduleRestlineCategory {
   SCH_REST_LUNCH
 }
 
-type ScheduleRestlineElement {
+type ScheduleRestlineElement implements Node {
+  id: ID!
   category: ScheduleRestlineCategory!
   duration: Int!
   startTime: Int!
@@ -4695,6 +4816,7 @@ input ScheduleRestlineElementCreateInput {
 
 input ScheduleRestlineElementCreateManyInput {
   create: [ScheduleRestlineElementCreateInput!]
+  connect: [ScheduleRestlineElementWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -4707,6 +4829,8 @@ type ScheduleRestlineElementEdge {
 }
 
 enum ScheduleRestlineElementOrderByInput {
+  id_ASC
+  id_DESC
   category_ASC
   category_DESC
   duration_ASC
@@ -4719,8 +4843,6 @@ enum ScheduleRestlineElementOrderByInput {
   startEventRequired_DESC
   endEventRequired_ASC
   endEventRequired_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -4728,6 +4850,7 @@ enum ScheduleRestlineElementOrderByInput {
 }
 
 type ScheduleRestlineElementPreviousValues {
+  id: ID!
   category: ScheduleRestlineCategory!
   duration: Int!
   startTime: Int!
@@ -4775,8 +4898,31 @@ input ScheduleRestlineElementSubscriptionWhereInput {
   node: ScheduleRestlineElementWhereInput
 }
 
+input ScheduleRestlineElementUpdateDataInput {
+  category: ScheduleRestlineCategory
+  duration: Int
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
+}
+
+input ScheduleRestlineElementUpdateInput {
+  category: ScheduleRestlineCategory
+  duration: Int
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
+}
+
 input ScheduleRestlineElementUpdateManyInput {
   create: [ScheduleRestlineElementCreateInput!]
+  connect: [ScheduleRestlineElementWhereUniqueInput!]
+  disconnect: [ScheduleRestlineElementWhereUniqueInput!]
+  delete: [ScheduleRestlineElementWhereUniqueInput!]
+  update: [ScheduleRestlineElementUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScheduleRestlineElementUpsertWithWhereUniqueNestedInput!]
 }
 
 input ScheduleRestlineElementUpdateManyMutationInput {
@@ -4788,6 +4934,17 @@ input ScheduleRestlineElementUpdateManyMutationInput {
   endEventRequired: Boolean
 }
 
+input ScheduleRestlineElementUpdateWithWhereUniqueNestedInput {
+  where: ScheduleRestlineElementWhereUniqueInput!
+  data: ScheduleRestlineElementUpdateDataInput!
+}
+
+input ScheduleRestlineElementUpsertWithWhereUniqueNestedInput {
+  where: ScheduleRestlineElementWhereUniqueInput!
+  update: ScheduleRestlineElementUpdateDataInput!
+  create: ScheduleRestlineElementCreateInput!
+}
+
 input ScheduleRestlineElementWhereInput {
   """Logical AND on all given filters."""
   AND: [ScheduleRestlineElementWhereInput!]
@@ -4797,6 +4954,46 @@ input ScheduleRestlineElementWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleRestlineElementWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   category: ScheduleRestlineCategory
 
   """All values that are not equal to given value."""
@@ -4883,6 +5080,10 @@ input ScheduleRestlineElementWhereInput {
   endEventRequired_not: Boolean
 }
 
+input ScheduleRestlineElementWhereUniqueInput {
+  id: ID
+}
+
 type ScheduleSubscriptionPayload {
   mutation: MutationType!
   node: Schedule
@@ -4929,7 +5130,8 @@ enum ScheduleTimelineCategory {
   SCH_TIME_LEAVE
 }
 
-type ScheduleTimelineElement {
+type ScheduleTimelineElement implements Node {
+  id: ID!
   category: ScheduleTimelineCategory!
   startTime: Int!
   endTime: Int!
@@ -4957,6 +5159,7 @@ input ScheduleTimelineElementCreateInput {
 
 input ScheduleTimelineElementCreateManyInput {
   create: [ScheduleTimelineElementCreateInput!]
+  connect: [ScheduleTimelineElementWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -4969,6 +5172,8 @@ type ScheduleTimelineElementEdge {
 }
 
 enum ScheduleTimelineElementOrderByInput {
+  id_ASC
+  id_DESC
   category_ASC
   category_DESC
   startTime_ASC
@@ -4979,8 +5184,6 @@ enum ScheduleTimelineElementOrderByInput {
   startEventRequired_DESC
   endEventRequired_ASC
   endEventRequired_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -4988,6 +5191,7 @@ enum ScheduleTimelineElementOrderByInput {
 }
 
 type ScheduleTimelineElementPreviousValues {
+  id: ID!
   category: ScheduleTimelineCategory!
   startTime: Int!
   endTime: Int!
@@ -5034,8 +5238,29 @@ input ScheduleTimelineElementSubscriptionWhereInput {
   node: ScheduleTimelineElementWhereInput
 }
 
+input ScheduleTimelineElementUpdateDataInput {
+  category: ScheduleTimelineCategory
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
+}
+
+input ScheduleTimelineElementUpdateInput {
+  category: ScheduleTimelineCategory
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
+}
+
 input ScheduleTimelineElementUpdateManyInput {
   create: [ScheduleTimelineElementCreateInput!]
+  connect: [ScheduleTimelineElementWhereUniqueInput!]
+  disconnect: [ScheduleTimelineElementWhereUniqueInput!]
+  delete: [ScheduleTimelineElementWhereUniqueInput!]
+  update: [ScheduleTimelineElementUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScheduleTimelineElementUpsertWithWhereUniqueNestedInput!]
 }
 
 input ScheduleTimelineElementUpdateManyMutationInput {
@@ -5044,6 +5269,17 @@ input ScheduleTimelineElementUpdateManyMutationInput {
   endTime: Int
   startEventRequired: Boolean
   endEventRequired: Boolean
+}
+
+input ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
+  where: ScheduleTimelineElementWhereUniqueInput!
+  data: ScheduleTimelineElementUpdateDataInput!
+}
+
+input ScheduleTimelineElementUpsertWithWhereUniqueNestedInput {
+  where: ScheduleTimelineElementWhereUniqueInput!
+  update: ScheduleTimelineElementUpdateDataInput!
+  create: ScheduleTimelineElementCreateInput!
 }
 
 input ScheduleTimelineElementWhereInput {
@@ -5055,6 +5291,46 @@ input ScheduleTimelineElementWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ScheduleTimelineElementWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   category: ScheduleTimelineCategory
 
   """All values that are not equal to given value."""
@@ -5117,6 +5393,10 @@ input ScheduleTimelineElementWhereInput {
 
   """All values that are not equal to given value."""
   endEventRequired_not: Boolean
+}
+
+input ScheduleTimelineElementWhereUniqueInput {
+  id: ID
 }
 
 input ScheduleUpdateDataInput {

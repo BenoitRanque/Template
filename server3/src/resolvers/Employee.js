@@ -61,38 +61,39 @@ module.exports = {
   }
 }
 
-async function loadCalendarDate({ id }, { date, withExceptions }, { db }, withScheduleData = false) {
-  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, date, date, withExceptions, withScheduleData)
+async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, { db }) {
+  const references = await loadEmployeeReferencesForDateRange(db, id, date, date, { withExceptions, withHolidays, withScheduleData: false })
+  console.log('reference', references)
   return {
     date,
-    ...getReferencesForDate(date, shifts, exceptions)
+    ...getReferencesForDate(date, references)
   }
 }
 
-async function loadCalendarRange({ id }, { from, to, withExceptions }, { db }, withScheduleData = false) {
-  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, from, to, withExceptions, withScheduleData)
+async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { db }, info, withScheduleData = false) {
+  const references = await loadEmployeeReferencesForDateRange(db, id, from, to, { withExceptions, withHolidays, withScheduleData })
 
   const dates = eachDay(from, to)
 
   return dates.map(date => ({
     date,
-    ...getReferencesForDate(date, shifts, exceptions)
+    ...getReferencesForDate(date, references)
   }))
 }
 
-async function loadAttendanceReport({ id, zkTimePin }, { from, to, withExceptions }, { db }) {
+async function loadAttendanceReport({ id, zkTimePin }, { from, to, withExceptions, withHolidays }, { db }) {
 
   // we load the data for one day before in that day's schedule slightly overlaps the first day in this range
-  const { shifts, exceptions } = await loadEmployeeShiftsExceptionsForDateRange(db, id, subDays(from, 1), to, withExceptions, true)
+  const references = await loadEmployeeReferencesForDateRange(db, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true })
   const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
 
-  const dates = getAttendanceDates(from, to, shifts, exceptions, events)
+  const dates = getAttendanceDates(from, to, references, events)
 
   return {
     from,
     to,
-    shifts: shifts.filter(shift => !isAfter(shift.startDate, to) && (!shift.endDate || isBefore(shift.endDate, from))),
-    exceptions: exceptions.filter(exception => exception.slots.some(slot => isWithinRange(slot.date, from, to))),
+    shifts: references.shifts.filter(shift => !isAfter(shift.startDate, to) && (!shift.endDate || isBefore(shift.endDate, from))),
+    exceptions: references.exceptions.filter(exception => exception.slots.some(slot => isWithinRange(slot.date, from, to))),
     events: events.filter(event => isWithinRange(event, dates[0].innerBound, dates[dates.length - 1].outerBound)),
     dates
   }
@@ -112,9 +113,9 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
     .sort(compareAsc)
 }
 
-async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to, withExceptions, withScheduleData = false) {
+async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
   const response = await db.request(`
-    query ($id: ID! $from: DateTime! $to: DateTime! $withExceptions: Boolean! $withScheduleData: Boolean!) {
+    query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean!) {
       shifts (where: {
         employee: {
           id: $id
@@ -157,6 +158,32 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
           }
         }
       }
+      holidays (where: {
+        date_lte: $to
+        date_gte: $from
+      }) @include(if: $withHolidays) {
+        id
+        date
+        name
+      }
+      holidaySchedule: schedules (first: 1 where: {
+        isPreset: true
+        timeline_every: {
+          id: null
+        }
+        restline_every: {
+          id: null
+        }
+        offline1: {
+          category: SCH_DAY_HOLIDAY
+        }
+        offline2: {
+          category: SCH_DAY_HOLIDAY
+        }
+      }) @include(if: $withHolidays) {
+        id
+        ...AllScheduleData @include(if: $withScheduleData)
+      }
     }
 
     fragment AllScheduleData on Schedule {
@@ -183,11 +210,21 @@ async function loadEmployeeShiftsExceptionsForDateRange(db, employeeID, from, to
         category
       }
     }
-  `, { id: employeeID, from, to, withExceptions, withScheduleData })
+  `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData })
+
+  console.log('response', response)
+
+  const holidaySchedule = response.data && response.data.holidaySchedule.length ? response.data.holidaySchedule[0] : null
 
   return {
     shifts: (response.data && response.data.shifts) ? response.data.shifts : [],
     exceptions: (response.data && response.data.exceptions) ? response.data.exceptions : [],
+    holidays: (response.data && response.data.holidays)
+      ? response.data.holidays.map(holiday => ({
+          ...holiday,
+          schedule: holidaySchedule
+        }))
+      : []
   }
 }
 
@@ -196,6 +233,12 @@ async function loadVacationSchedules ({ db }) {
     query {
       VacationVacation: schedules (first: 1 where: {
         isPreset: true
+      	timeline_every: {
+          id: null
+        }
+        restline_every: {
+          id: null
+        }
         offline1: {
           category: SCH_DAY_VACATION
         }
@@ -208,6 +251,12 @@ async function loadVacationSchedules ({ db }) {
       }
       DayoffVacation: schedules (first: 1 where: {
         isPreset: true
+      	timeline_every: {
+          id: null
+        }
+        restline_every: {
+          id: null
+        }
         offline1: {
           category: SCH_DAY_OFF
         }
@@ -220,6 +269,12 @@ async function loadVacationSchedules ({ db }) {
       }
       VacationDayoff: schedules (first: 1 where: {
         isPreset: true
+      	timeline_every: {
+          id: null
+        }
+        restline_every: {
+          id: null
+        }
         offline1: {
           category: SCH_DAY_VACATION
         }
@@ -232,6 +287,12 @@ async function loadVacationSchedules ({ db }) {
       }
       DayoffDayoff: schedules (first: 1 where: {
         isPreset: true
+      	timeline_every: {
+          id: null
+        }
+        restline_every: {
+          id: null
+        }
         offline1: {
           category: SCH_DAY_OFF
         }
@@ -279,8 +340,6 @@ async function loadVacationSchedules ({ db }) {
 }
 
 function getVacationSchedule(date, { VacationVacation, DayoffVacation, VacationDayoff, DayoffDayoff }) {
-
-  console.log('hello', date)
   const { schedule } = date
 
   if (!schedule) return VacationVacation
@@ -298,15 +357,15 @@ function getVacationSchedule(date, { VacationVacation, DayoffVacation, VacationD
   }
 }
 
-function getAttendanceDates (from, to, shifts, exceptions, events) {
+function getAttendanceDates (from, to, references, events) {
   const dates = eachDay(from, to)
 
   const datesWithReferences = dates.map(date => ({
     date,
-    ...getReferencesForDate(date, shifts, exceptions)
+    ...getReferencesForDate(date, references)
   }))
 
-  const referencesForDateBeforeRange = getReferencesForDate(subDays(from, 1), shifts, exceptions)
+  const referencesForDateBeforeRange = getReferencesForDate(subDays(from, 1), references)
 
   const datesWithReferencesBounds = getDateBounds(datesWithReferences, referencesForDateBeforeRange)
 
@@ -316,7 +375,7 @@ function getAttendanceDates (from, to, shifts, exceptions, events) {
   }))
 }
 
-function getReferencesForDate(date, shifts, exceptions) {
+function getReferencesForDate(date, { shifts, exceptions, holidays }) {
   const candidateExceptionsForDate = exceptions
     .filter(exception => exception && exception.slots && exception.slots.some(slot => isSameDay(slot.date, date)))
     .sort((a, b) => compareDesc(a.authorization.created_at, b.authorization.created_at))
@@ -324,6 +383,10 @@ function getReferencesForDate(date, shifts, exceptions) {
   const exceptionForDate = candidateExceptionsForDate[0] ? candidateExceptionsForDate[0] : null
 
   const exceptionScheduleForDate = exceptionForDate ? exceptionForDate.slots.find(slot => isSameDay(slot.date, date)).schedule : null
+
+  const holidayForDate = holidays && holidays.length ? holidays.find(holiday => isSameDay(holiday.date, date)) : null
+
+  const holidayScheduleForDate = holidayForDate && holidayForDate.schedule ? holidayForDate.schedule : null
 
   const candidateShiftsForDate = shifts
     .filter(shift => shift.endDate ? isWithinRange(date, shift.startDate, shift.endDate) : !isBefore(date, shift.startDate))
@@ -334,11 +397,12 @@ function getReferencesForDate(date, shifts, exceptions) {
   const shiftScheduleForDate = (shiftForDate &&  shiftForDate.slots)
     ? shiftForDate.slots[differenceInCalendarDays(date, shiftForDate.startDate) % shiftForDate.slots.length].schedule : null
 
-  const scheduleForDate = exceptionScheduleForDate ? exceptionScheduleForDate : shiftScheduleForDate
+  const scheduleForDate = exceptionScheduleForDate ? exceptionScheduleForDate : holidayScheduleForDate ? holidayScheduleForDate : shiftScheduleForDate
 
   return {
     exception: exceptionForDate ? exceptionForDate : null,
     shift: shiftForDate ? shiftForDate : null,
+    holiday: holidayForDate? holidayForDate : null,
     schedule: scheduleForDate
   }
 }

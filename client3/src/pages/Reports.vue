@@ -22,7 +22,7 @@
             <q-datetime hide-underline placeholder="Desde" v-model="table.from" :max="table.to"></q-datetime>
           </div>
           <div class="col-auto">
-            <q-datetime hide-underline placeholder="Desde" v-model="table.to" :min="table.from" :max="yesterday"></q-datetime>
+            <q-datetime hide-underline placeholder="Desde" v-model="table.to" :min="table.from"></q-datetime>
           </div>
         </div>
       </template>
@@ -48,7 +48,6 @@
       ></attendance-report-cell>
 
     </q-table>
-    <pre>{{dates}}</pre>
   </q-page>
 </template>
 
@@ -65,7 +64,6 @@ export default {
   components: { EmployeeSelect, AttendanceReportCell },
   data () {
     return {
-      yesterday: YESTERDAY,
       table: {
         data: [],
         employeesFilter: [],
@@ -130,6 +128,7 @@ export default {
 
       const PARAMETERS = {
         withExceptions: true,
+        withHolidays: true,
         first: pagination.rowsPerPage,
         skip: pagination.rowsPerPage * (pagination.page - 1),
         from: this.table.from,

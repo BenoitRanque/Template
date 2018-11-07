@@ -14,7 +14,7 @@ query SchedulesPagination ($first: Int! $skip: Int! $where: ScheduleWhereInput) 
 
 query EmployeeCalendarRangeSchedules ($employeeId: ID! $from: DateTime! $to: DateTime!) {
   employee (where: { id: $employeeId }) {
-    calendarRange(from: $from to: $to withExceptions: true) {
+    calendarRange(from: $from to: $to withExceptions: true withHolidays: true) {
       date
       schedule {
         id
@@ -26,7 +26,7 @@ query EmployeeCalendarRangeSchedules ($employeeId: ID! $from: DateTime! $to: Dat
 
 query EmployeeCalendarDateSchedule ($employeeId: ID! $date: DateTime!) {
   employee (where: { id: $employeeId }) {
-    calendarDate(date: $date withExceptions: true) {
+    calendarDate(date: $date withExceptions: true withHolidays: true) {
       date
       schedule {
         id
@@ -38,14 +38,14 @@ query EmployeeCalendarDateSchedule ($employeeId: ID! $date: DateTime!) {
 
 query EmployeeCalendarSwitchSchedule ($employeeId: ID! $dateA: DateTime! $dateB: DateTime!) {
   employee (where: { id: $employeeId }) {
-    dateA: calendarDate(date: $dateA withExceptions: true) {
+    dateA: calendarDate(date: $dateA withExceptions: true withHolidays: true) {
       date
       schedule {
         id
         ...AllScheduleData
       }
     }
-    dateB: calendarDate(date: $dateB withExceptions: true) {
+    dateB: calendarDate(date: $dateB withExceptions: true withHolidays: true) {
       date
       schedule {
         id
@@ -57,7 +57,7 @@ query EmployeeCalendarSwitchSchedule ($employeeId: ID! $dateA: DateTime! $dateB:
 
 query EmployeeCalendarVacationSchedule ($employeeId: ID! $from: DateTime! $to: DateTime!) {
   employee (where: { id: $employeeId }) {
-    vacationRange(from: $from to: $to withExceptions: true) {
+    vacationRange(from: $from to: $to withExceptions: true withHolidays: true) {
       date
       schedule {
         id
