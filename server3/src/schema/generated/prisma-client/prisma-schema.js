@@ -1,4 +1,5 @@
-type AggregateAttendanceCycle {
+module.exports = {
+        typeDefs: /* GraphQL */ `type AggregateAttendanceCycle {
   count: Int!
 }
 
@@ -4386,3 +4387,6 @@ input UserWhereUniqueInput {
   id: ID
   username: String
 }
+`
+      }
+    
