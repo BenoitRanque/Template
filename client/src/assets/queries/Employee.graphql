@@ -124,7 +124,6 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
       dates {
       	date
         events
-        eventCount
         exception {
           id
           createdAt

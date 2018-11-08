@@ -18,8 +18,9 @@ const addDays = require('date-fns/add_days')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const addMinutes = require('date-fns/add_minutes')
+const getMinutes = require('date-fns/get_minutes')
 
-const gql = require('graphql-tag')
+const SCH_TIME_EXTRA = 'SCH_TIME_EXTRA'
 
 const { ZKTIME_DB_PATH } = require('../utils')
 
@@ -61,17 +62,16 @@ module.exports = {
   }
 }
 
-async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, { db }) {
-  const references = await loadEmployeeReferencesForDateRange(db, id, date, date, { withExceptions, withHolidays, withScheduleData: false })
-  console.log('reference', references)
+async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, { prisma }) {
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, date, date, { withExceptions, withHolidays, withScheduleData: false })
   return {
     date,
     ...getReferencesForDate(date, references)
   }
 }
 
-async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { db }, info, withScheduleData = false) {
-  const references = await loadEmployeeReferencesForDateRange(db, id, from, to, { withExceptions, withHolidays, withScheduleData })
+async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { prisma }, info, withScheduleData = false) {
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, from, to, { withExceptions, withHolidays, withScheduleData })
 
   const dates = eachDay(from, to)
 
@@ -81,10 +81,10 @@ async function loadCalendarRange({ id }, { from, to, withExceptions, withHoliday
   }))
 }
 
-async function loadAttendanceReport({ id, zkTimePin }, { from, to, withExceptions, withHolidays }, { db }) {
+async function loadAttendanceReport({ id, zkTimePin }, { from, to, withExceptions, withHolidays }, { prisma }) {
 
   // we load the data for one day before in that day's schedule slightly overlaps the first day in this range
-  const references = await loadEmployeeReferencesForDateRange(db, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true })
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true })
   const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
 
   const dates = getAttendanceDates(from, to, references, events)
@@ -113,8 +113,8 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
     .sort(compareAsc)
 }
 
-async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
-  const { data, errors } = await db.request(`
+async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
+  const data = await prisma.bindings.request(`
     query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean!) {
       shifts (where: {
         employee: {
@@ -200,19 +200,17 @@ async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { wi
     }
   `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData })
 
-  if (errors) throw errors
-
-  const holidaySchedule = data.holidaySchedule ? response.data.holidaySchedule : null
+  const holidaySchedule = data.holidaySchedule ? data.holidaySchedule : null
 
   return {
     shifts: data.shifts ? data.shifts : [],
     exceptions: data.exceptions ? data.exceptions : [],
-    holidays: data.holidays ? response.data.holidays.map(holiday => ({ ...holiday, schedule: holidaySchedule })) : []
+    holidays: data.holidays ? data.holidays.map(holiday => ({ ...holiday, schedule: holidaySchedule })) : []
   }
 }
 
-async function loadVacationSchedules ({ db }) {
-  const { data, errors } = await db.request(`
+async function loadVacationSchedules ({ prisma }) {
+  const data = await prisma.bindings.request(`
     query {
       VacationVacation: schedule (where: {
         systemScheduleIdentifier: SYS_SCH_VACATION_VACATION
@@ -266,8 +264,6 @@ async function loadVacationSchedules ({ db }) {
     }
   `)
 
-  if (errors) throw errors
-
   return {
     VacationVacation: data.VacationVacation ? data.VacationVacation : null,
     DayoffVacation: data.DayoffVacation ? data.DayoffVacation : null,
@@ -304,9 +300,17 @@ function getAttendanceDates (from, to, references, events) {
 
   const referencesForDateBeforeRange = getReferencesForDate(subDays(from, 1), references)
 
-  const datesWithReferencesBounds = getDateBounds(datesWithReferences, referencesForDateBeforeRange)
+  const datesWithReferencesBounds = getDatesWithBounds(datesWithReferences, referencesForDateBeforeRange)
 
-  return datesWithReferencesBounds.map(date => ({
+  const datesWithReferencesBoundsEvents = getDatesWithEvents(datesWithReferencesBounds, events)
+
+  const datesWithReferencesBoundsEventsCompliance = getDatesWithCompliance(datesWithReferencesBoundsEvents)
+
+  return datesWithReferencesBoundsEventsCompliance
+}
+
+function getDatesWithEvents(dates, events) {
+  return dates.map(date => ({
     ...date,
     events: events.filter(event => isWithinRange(event, date.innerBound, date.outerBound))
   }))
@@ -356,8 +360,8 @@ function getScheduleOuterBound(schedule) {
   }, [24 * 60]))
 }
 
-function getDateBounds(dates, dateBefore) {
-  const firstBound = getScheduleOuterBound(dateBefore.schedule)
+function getDatesWithBounds(dates, referenceForDateBeforeFirstDate) {
+  const firstBound = getScheduleOuterBound(referenceForDateBeforeFirstDate.schedule)
   return dates
     .map(date => ({
       ...date,
@@ -371,4 +375,351 @@ function getDateBounds(dates, dateBefore) {
       outerBound: addMinutes(date.date, date.outerBound).toISOString(),
       innerBound: addMinutes(date.date, date.innerBound).toISOString()
     }))
+}
+
+function getDatesWithCompliance (dates) {
+  return dates.map(date => ({
+    ...date,
+    compliance: getAttendanceComplianceForDate(date)
+  }))
+}
+
+function getAttendanceComplianceForDate(data) {
+  if (!data.schedule || isAfter(data.outerBound, new Date())) return null
+
+  const timelineGroups = getTimelineGroupsWithEvents(data)
+  const restlineGroups = getRestlineGroupsWithEvents(data)
+
+  const compliance = {
+    eventCount: data.events ? data.events.length : 0,
+    requiredEventCount: getRequiredEventCount(timelineGroups, restlineGroups),
+    extraTime: getExtraTime(timelineGroups),
+    unsanctionedTime: getUnsanctionedTime(timelineGroups),
+    lateStart: getLateStart(timelineGroups),
+    earlyEnd: getEarlyEnd(timelineGroups),
+    restOvertime: getRestOvertime(restlineGroups),
+    missingStartEventCount: getMissingStartEventCount(timelineGroups),
+    missingEndEventCount: getMissingEndEventCount(timelineGroups),
+    missingRestEventCount: getMissingRestEventCount(restlineGroups),
+    absentTime: getAbsentTime(timelineGroups)
+  }
+
+  return compliance
+}
+
+function currentTimeIsAfter(time, date) {
+  return isBefore(addMinutes(date, time), new Date())
+}
+
+function getExtraTime(timelineGroups) {
+  return timelineGroups.reduce((time, group) => {
+    if (timelineGroupIsAbsent(group)) return time
+
+    let innerBound, outerBound
+    // TODO: finish this: get bounds for extra time based on multiple factors, use those to calculate actual extra time
+
+    if (group.startEvent) {
+      innerBound = differenceInMinutes(group.startEvent, group.date)
+    } else if (!group.startEventRequired) {
+      innerBound = group.startTime
+    } else if (group.endEvent) {
+      let endEventTime = differenceInMinutes(group.endEvent, group.date)
+      innerBound = group.members
+        .map(({ startTime }) => startTime)
+        .filter(value => value <= endEventTime)
+        .sort((a, b) => b - a)[0]
+    } else {
+
+    }
+
+    const innerBound = group.startEventRequired && group.startEvent ? getMinutes(group.startEvent) : null
+    const outerBound = group.endEventRequired && group.endEvent ? getMinutes(group.endEvent) : null
+
+    return time + group.members.reduce((extraTime, member) => {
+      if (member.category === SCH_TIME_EXTRA) {
+        // TODO: check if somehow missing all events?? maybe this is covered by checking for abscense
+        // CHECK if some events not required
+        // if only one event present, replace other event time with bound if block memeber event is on
+        if ((!startEventTime || startEventTime < member.endTime) && (!endEventTime || endTime > member.startTime)) {
+
+        }
+        const difference = Math.max(endTime, group.startEventTime) - Math.min(startTime, group.endEventTime)
+
+        if (member.startTime === group.startEventTime && member.endTime === group.endEventTime) {
+          // group is at start and end
+        } else if (member.startTime === group.startEventTime) {
+          // group is at start
+
+        } else if (member.endTime === group.endEventTime) {
+          // group is at start
+
+        } else {
+
+        }
+      }
+      return extraTime
+    }, 0)
+  }, 0)
+}
+
+function getUnsanctionedTime(timelineGroups) {
+
+}
+
+function getRequiredEventCount (timelineGroups, restlineGroups) {
+  return timelineGroups.reduce((acc, val) => {
+    if (val.startEventRequired) acc += 1
+    if (val.endEventRequired) acc += 1
+    return acc
+  }, 0) + restlineGroups.reduce((acc, val) => {
+    if (val.startEventRequired) acc += 1
+    if (val.endEventRequired) acc += 1
+    return acc
+  }, 0)
+}
+
+function getLateStart (timelineGroups) {
+  return timelineGroups.reduce((result, group) => {
+    const startEventTime = addMinutes(group.date, group.startEventTime)
+
+    if (group.startEvent && group.startEventCategory !== SCH_TIME_EXTRA) {
+      const difference = differenceInMinutes(group.startEvent, startEventTime)
+      if (difference > 0) {
+        result.time += difference,
+        result.count += 1
+      }
+    }
+
+    return result
+  }, {
+    time: 0,
+    count: 0
+  })
+}
+
+function getEarlyEnd (timelineGroups) {
+  return timelineGroups.reduce((result, group) => {
+    const endEventTime = addMinutes(group.date, group.endEventTime)
+    // round early time down to nearest minute
+    // expect 00:05:00, get 00:04:05, returns 00:01:00 late time
+    if (group.endEvent && group.endEventCategory !== SCH_TIME_EXTRA) {
+      const difference = differenceInMinutes(endEventTime, group.endEvent)
+      if (difference > 0) {
+        result.time += difference,
+        result.count += 1
+      }
+    }
+
+    return result
+  }, {
+    time: 0,
+    count: 0
+  })
+}
+
+function getRestOvertime (restlineGroups) {
+  return restlineGroups.reduce((result, group) => {
+    if (group.startEvent && group.endEvent) {
+      const difference = differenceInMinutes(group.endEvent, group.startEvent) - group.duration
+
+      if (difference > 0) {
+        result.time += difference
+        result.count += 1
+      }
+    }
+
+    return result
+  }, {
+    time: 0,
+    count: 0
+  })
+}
+
+function getMissingStartEventCount (timelineGroups) {
+  return timelineGroups.reduce((result, group) => {
+    if (timelineGroupStartEventMissing(group)) {
+      result += 1
+    }
+    return result
+  }, 0)
+}
+
+function timelineGroupStartEventMissing(group) {
+  return currentTimeIsAfter(group.startEventTime, group.date) && group.startEventRequired && !group.startEvent && group.endEvent
+}
+
+function getMissingEndEventCount (timelineGroups) {
+  return timelineGroups.reduce((result, group) => {
+    if (timelineGroupEndEventMissing(group)) {
+      result += 1
+    }
+    return result
+  }, 0)
+}
+
+function timelineGroupEndEventMissing(group) {
+  return currentTimeIsAfter(group.endEventTime, group.date) && group.endEventRequired && !group.endEvent && group.startEvent
+}
+
+function getMissingRestEventCount (restlineGroups) {
+  return restlineGroups.reduce((result, group) => {
+    if (currentTimeIsAfter(group.endTime, group.date)) {
+      if (group.startEventRequired && !group.startEvent) {
+        result += 1
+      }
+      if (group.endEventRequired && !group.endEvent) {
+        result += 1
+      }
+    }
+    return result
+  }, 0)
+}
+
+function getAbsentTime (timelineGroups) {
+  return timelineGroups.reduce((result, group) => {
+    if (timelineGroupIsAbsent(group)) {
+      result += group.endTime - group.startTime
+    }
+    return result
+  }, 0)
+}
+
+function timelineGroupIsAbsent (group) {
+  // return true if:
+  // neither group start not group end events are present
+  // either group start or group end events are required
+  // either current time is after group start time AND start event is required OR current time is after end time
+  return !group.startEvent && !group.endEvent
+    && (group.startEventRequired || group.endEventRequired)
+    && ((currentTimeIsAfter(group.startTime, group.date) && group.startEventRequired) || currentTimeIsAfter(group.endTime, group.date))
+}
+
+function getRestlineGroupsWithEvents ({ schedule, date, events }) {
+  return schedule.restline.map(rest => {
+    const innerBound = addMinutes(date, rest.startTime).toISOString()
+    const outerBound = addMinutes(date, rest.endTime).toISOString()
+    const candidateEvents = events.filter(event => isWithinRange(event, innerBound, outerBound))
+
+    return {
+      ...rest,
+      startEvent: rest.startEventRequired && candidateEvents.length > 1 ? min(candidateEvents) : null,
+      endEvent: rest.endEventRequired && candidateEvents.length > 1  && (candidateEvents.length > 2 || !rest.startEventRequired) ? max(candidateEvents) : null
+    }
+  })
+}
+
+function getTimelineGroupsWithEvents(data) {
+  const groups = getTimelineGroups(data)
+
+  return groups.map(group => ({
+    ...group,
+    startEvent: group.startEventRequired ? getTimelineStartEvent(group.startTime, data) : null,
+    endEvent: group.endEventRequired ? getTimelineEndEvent(group.endTime, data) : null
+  }))
+}
+
+function getTimelineGroups({ schedule, date }) {
+
+  function getGroupToAppendTimelineElement(element, groups) {
+    // element must be contigent and there cannot be two starting/ending elements in the same group
+    if (groups.length) {
+      let group = groups.find(b => b.endTime === element.startTime)
+      if (group) {
+        if (!element.startEventRequired || !group.startEventRequired) {
+          if (!element.endEventRequired || !group.endEventRequired) {
+            return group
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  const groups = []
+
+  schedule.timeline.forEach(element => {
+    const group = getGroupToAppendTimelineElement(element, groups)
+
+    if (group) {
+      group.members.push(element)
+
+      if (!group.startEventRequired  && element.startEventRequired) {
+        // overwrite start event
+        group.startEventRequired = element.startEventRequired
+        group.startEventTime = element.startTime
+        group.startEventCategory = element.category
+      }
+      if (!group.endEventRequired  && element.endEventRequired) {
+        // overwrite end event
+        group.endEventRequired = element.endEventRequired
+        group.endEventTime = element.endTime
+        group.endEventCategory = element.category
+      }
+      // overwrite end data
+      group.endTime = element.endTime
+      group.endCategory = element.category
+
+    } else {
+      // add new group
+      groups.push({
+        date,
+        members: [element],
+        startTime: element.startTime,
+        startCategory: element.category,
+        startEventRequired: element.startEventRequired,
+        // if not required, keep null
+        startEventTime: element.startEventRequired ? element.startTime : null,
+        startEventCategory: element.startEventRequired ? element.category : null,
+        endTime: element.endTime,
+        endCategory: element.category,
+        endEventRequired: element.endEventRequired,
+        // if not required, keep null
+        endEventTime: element.endEventRequired ? element.endTime : null,
+        endEventCategory: element.endEventRequired ? element.category : null
+      })
+    }
+  })
+
+  return groups
+}
+
+function getTimelineStartEvent (time, data) {
+  const { innerBound, outerBound } = getBoundsForTimelineEvent(time, data)
+
+  const candidateEvents = data.events.filter(event => isWithinRange(event, innerBound, outerBound))
+
+  if (candidateEvents.length) {
+    return min(candidateEvents)
+  }
+  return null
+}
+
+function getTimelineEndEvent (time, data) {
+  const { innerBound, outerBound } = getBoundsForTimelineEvent(time, data)
+
+  const candidateEvents = data.events.filter(event => isWithinRange(event, innerBound, outerBound))
+
+  if (candidateEvents.length) {
+    return max(candidateEvents)
+  }
+  return null
+}
+
+function getBoundsForTimelineEvent (event, { schedule, innerBound, outerBound, date }) {
+  const candidateReferences = [differenceInMinutes(innerBound, date), differenceInMinutes(outerBound, date)]
+    .concat(schedule.timeline.reduce((acc, { startEventRequired, startTime, endTime, endEventRequired }) => {
+      if (startEventRequired) acc.push(Math.round((startTime + event) / 2))
+      if (endEventRequired) acc.push(Math.round((endTime + event) / 2))
+      return acc
+    }, []))
+    .concat(schedule.restline.reduce((acc, { startEventRequired, startTime, endEventRequired, endTime }) => {
+      if (startEventRequired) acc.push(startTime)
+      if (endEventRequired) acc.push(endTime)
+      return acc
+    }, []))
+
+  return {
+    innerBound: addMinutes(date, Math.max(...candidateReferences.filter(reference => reference < event))).toISOString(),
+    outerBound: addMinutes(date, Math.min(...candidateReferences.filter(reference => reference > event))).toISOString()
+  }
 }

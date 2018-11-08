@@ -1,5 +1,5 @@
 // function newLinkSubscribe (parent, args, context, info) {
-//   return context.db.subscription.link(
+//   return context.prisma.bindings.subscription.link(
 //     { where: { mutation_in: ['CREATED'] } },
 //     info,
 //   )
@@ -10,7 +10,7 @@
 // }
 
 // function newVoteSubscribe (parent, args, context, info) {
-//   return context.db.subscription.vote(
+//   return context.prisma.bindings.subscription.vote(
 //     { where: { mutation_in: ['CREATED'] } },
 //     info,
 //   )

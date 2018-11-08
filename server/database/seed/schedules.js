@@ -15,8 +15,8 @@ const LUNCH = {
   }
 }
 
-module.exports = db => Promise.all([
-  db.mutation.createSchedule({
+module.exports = prisma => Promise.all([
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Libre',
       systemScheduleIdentifier: 'SYS_SCH_DAYOFF_DAYOFF',
@@ -26,7 +26,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo 08:30 - 16:30',
       isPreset: true,
@@ -43,7 +43,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo 09:30 - 17:30',
       isPreset: true,
@@ -60,7 +60,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo 10:30 - 18:30',
       isPreset: true,
@@ -77,7 +77,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo 07:00 - 15:00',
       isPreset: true,
@@ -94,7 +94,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo Huerta 08:00 - 18:00',
       isPreset: true,
@@ -111,7 +111,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo Con Hora de Lactancia 09:30 - 16:30',
       isPreset: true,
@@ -137,7 +137,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo Con Hora de Lactancia 10:30 - 17:30',
       isPreset: true,
@@ -164,7 +164,7 @@ module.exports = db => Promise.all([
 
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Discontinuo 08:30 - 12:00 14:00 - 18:30',
       isPreset: true,
@@ -191,7 +191,7 @@ module.exports = db => Promise.all([
 
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Laboral Continuo Bus 11:30 - 18:30',
       isPreset: true,
@@ -208,7 +208,7 @@ module.exports = db => Promise.all([
       restline: LUNCH
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 08:30 - 12:30',
       isPreset: true,
@@ -225,7 +225,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 09:30 - 13:30',
       isPreset: true,
@@ -242,7 +242,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 10:30 - 14:30',
       isPreset: true,
@@ -259,7 +259,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 12:30 - 16:30',
       isPreset: true,
@@ -276,7 +276,7 @@ module.exports = db => Promise.all([
       offline1: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 13:30 - 17:30',
       isPreset: true,
@@ -293,7 +293,7 @@ module.exports = db => Promise.all([
       offline1: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 14:30 - 18:30',
       isPreset: true,
@@ -310,7 +310,7 @@ module.exports = db => Promise.all([
       offline1: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 14:30 - 18:30',
       isPreset: true,
@@ -327,7 +327,7 @@ module.exports = db => Promise.all([
       offline1: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 7:00 - 11:00',
       isPreset: true,
@@ -345,7 +345,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral 11:00 - 15:00',
       isPreset: true,
@@ -362,7 +362,7 @@ module.exports = db => Promise.all([
       offline1: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral Con Hora de Lactancia 10:30 - 13:30',
       isPreset: true,
@@ -388,7 +388,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Medio Dia Laboral Bus 07:30 - 11:30',
       isPreset: true,
@@ -405,7 +405,7 @@ module.exports = db => Promise.all([
       offline2: DAYOFF
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Feriado',
       isPreset: true,
@@ -423,7 +423,7 @@ module.exports = db => Promise.all([
       }
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Dia Vacacion',
       isPreset: true,
@@ -441,7 +441,7 @@ module.exports = db => Promise.all([
       }
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Mañana Libre Tarde Vacacion',
       isPreset: true,
@@ -459,7 +459,7 @@ module.exports = db => Promise.all([
       }
     }
   }, `{ id description }`),
-  db.mutation.createSchedule({
+  prisma.bindings.mutation.createSchedule({
     data: {
       description: 'Mañana Vacacion Tarde Libre',
       isPreset: true,

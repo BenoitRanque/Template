@@ -53,7 +53,6 @@ type AttendanceReportDate {
   innerBound: DateTime!
   outerBound: DateTime!
   events: [DateTime!]!
-  eventCount: Int!
   shift: Shift
   holiday: Holiday
   exception: Exception
