@@ -109,15 +109,24 @@ type ExceptionAuthorization {
 
 type Schedule {
   id: ID! @unique
+  isPreset: Boolean @default(value: "false")
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum @unique
   createdAt: DateTime!
   updatedAt: DateTime!
   description: String
   baseTime: Int!
-  isPreset: Boolean @default(value: "false")
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
   offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflin1" onDelete: CASCADE)
   offline2: ScheduleOfflineElement @relation(name: "ScheduleToOfflin2" onDelete: CASCADE)
+}
+
+enum SystemScheduleIdentifierEnum {
+  SYS_SCH_DAYOFF_DAYOFF
+  SYS_SCH_VACATION_VACATION
+  SYS_SCH_VACATION_DAYOFF
+  SYS_SCH_DAYOFF_VACATION
+  SYS_SCH_HOLIDAY_HOLIDAY
 }
 
 type ScheduleTimelineElement {

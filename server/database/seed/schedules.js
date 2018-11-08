@@ -19,6 +19,7 @@ module.exports = db => Promise.all([
   db.mutation.createSchedule({
     data: {
       description: 'Dia Libre',
+      systemScheduleIdentifier: 'SYS_SCH_DAYOFF_DAYOFF',
       isPreset: true,
       baseTime: 8 * 60,
       offline1: DAYOFF,
@@ -408,6 +409,7 @@ module.exports = db => Promise.all([
     data: {
       description: 'Dia Feriado',
       isPreset: true,
+      systemScheduleIdentifier: 'SYS_SCH_HOLIDAY_HOLIDAY',
       baseTime: 8 * 60,
       offline1: {
         create: {
@@ -425,6 +427,7 @@ module.exports = db => Promise.all([
     data: {
       description: 'Dia Vacacion',
       isPreset: true,
+      systemScheduleIdentifier: 'SYS_SCH_VACATION_VACATION',
       baseTime: 8 * 60,
       offline1: {
         create: {
@@ -442,6 +445,7 @@ module.exports = db => Promise.all([
     data: {
       description: 'Mañana Libre Tarde Vacacion',
       isPreset: true,
+      systemScheduleIdentifier: 'SYS_SCH_DAYOFF_VACATION',
       baseTime: 8 * 60,
       offline1: {
         create: {
@@ -459,6 +463,7 @@ module.exports = db => Promise.all([
     data: {
       description: 'Mañana Vacacion Tarde Libre',
       isPreset: true,
+      systemScheduleIdentifier: 'SYS_SCH_VACATION_DAYOFF',
       baseTime: 8 * 60,
       offline1: {
         create: {

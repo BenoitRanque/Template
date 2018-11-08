@@ -149,6 +149,12 @@ input AttendanceCycleUpdateInput {
   endDate: DateTime
 }
 
+input AttendanceCycleUpdateManyMutationInput {
+  name: String
+  startDate: DateTime
+  endDate: DateTime
+}
+
 input AttendanceCycleWhereInput {
   id: ID
   id_not: ID
@@ -295,6 +301,10 @@ input DepartmentUpdateInput {
   name: String
   subordinates: EmployeeUpdateManyWithoutDepartmentInput
   supervisors: UserUpdateManyWithoutDepartmentsInput
+}
+
+input DepartmentUpdateManyMutationInput {
+  name: String
 }
 
 input DepartmentUpdateManyWithoutSupervisorsInput {
@@ -477,6 +487,10 @@ input DirectCreditUpdateInput {
   employee: EmployeeUpdateOneRequiredInput
   description: String
   credits: ScheduleCreditUpdateManyWithoutSourceDirectInput
+}
+
+input DirectCreditUpdateManyMutationInput {
+  description: String
 }
 
 input DirectCreditUpdateOneWithoutCreditsInput {
@@ -915,6 +929,26 @@ input EmployeeUpdateInput {
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
   debits: ScheduleDebitUpdateManyWithoutEmployeeInput
+}
+
+input EmployeeUpdateManyMutationInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
 }
 
 input EmployeeUpdateManyWithoutDepartmentInput {
@@ -1399,6 +1433,10 @@ input ExceptionAuthorizationUpdateInput {
   owner: UserUpdateOneRequiredInput
 }
 
+input ExceptionAuthorizationUpdateManyMutationInput {
+  granted: Boolean
+}
+
 input ExceptionAuthorizationUpdateOneWithoutExceptionInput {
   create: ExceptionAuthorizationCreateWithoutExceptionInput
   update: ExceptionAuthorizationUpdateWithoutExceptionDataInput
@@ -1637,6 +1675,10 @@ input ExceptionSlotUpdateManyInput {
   disconnect: [ExceptionSlotWhereUniqueInput!]
 }
 
+input ExceptionSlotUpdateManyMutationInput {
+  date: DateTime
+}
+
 input ExceptionSlotUpdateWithWhereUniqueNestedInput {
   where: ExceptionSlotWhereUniqueInput!
   data: ExceptionSlotUpdateDataInput!
@@ -1707,6 +1749,10 @@ input ExceptionUpdateInput {
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
+}
+
+input ExceptionUpdateManyMutationInput {
+  description: String
 }
 
 input ExceptionUpdateManyWithoutEmployeeInput {
@@ -1939,6 +1985,12 @@ input FieldOptionLabelUpdateInput {
   label: String
 }
 
+input FieldOptionLabelUpdateManyMutationInput {
+  field: String
+  value: String
+  label: String
+}
+
 input FieldOptionLabelWhereInput {
   id: ID
   id_not: ID
@@ -2079,6 +2131,11 @@ input HolidayUpdateInput {
   name: String
 }
 
+input HolidayUpdateManyMutationInput {
+  date: DateTime
+  name: String
+}
+
 input HolidayUpdateOneInput {
   create: HolidayCreateInput
   update: HolidayUpdateDataInput
@@ -2145,121 +2202,121 @@ scalar Long
 type Mutation {
   createAttendanceCycle(data: AttendanceCycleCreateInput!): AttendanceCycle!
   updateAttendanceCycle(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
-  updateManyAttendanceCycles(data: AttendanceCycleUpdateInput!, where: AttendanceCycleWhereInput): BatchPayload!
+  updateManyAttendanceCycles(data: AttendanceCycleUpdateManyMutationInput!, where: AttendanceCycleWhereInput): BatchPayload!
   upsertAttendanceCycle(where: AttendanceCycleWhereUniqueInput!, create: AttendanceCycleCreateInput!, update: AttendanceCycleUpdateInput!): AttendanceCycle!
   deleteAttendanceCycle(where: AttendanceCycleWhereUniqueInput!): AttendanceCycle
   deleteManyAttendanceCycles(where: AttendanceCycleWhereInput): BatchPayload!
   createDepartment(data: DepartmentCreateInput!): Department!
   updateDepartment(data: DepartmentUpdateInput!, where: DepartmentWhereUniqueInput!): Department
-  updateManyDepartments(data: DepartmentUpdateInput!, where: DepartmentWhereInput): BatchPayload!
+  updateManyDepartments(data: DepartmentUpdateManyMutationInput!, where: DepartmentWhereInput): BatchPayload!
   upsertDepartment(where: DepartmentWhereUniqueInput!, create: DepartmentCreateInput!, update: DepartmentUpdateInput!): Department!
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department
   deleteManyDepartments(where: DepartmentWhereInput): BatchPayload!
   createDirectCredit(data: DirectCreditCreateInput!): DirectCredit!
   updateDirectCredit(data: DirectCreditUpdateInput!, where: DirectCreditWhereUniqueInput!): DirectCredit
-  updateManyDirectCredits(data: DirectCreditUpdateInput!, where: DirectCreditWhereInput): BatchPayload!
+  updateManyDirectCredits(data: DirectCreditUpdateManyMutationInput!, where: DirectCreditWhereInput): BatchPayload!
   upsertDirectCredit(where: DirectCreditWhereUniqueInput!, create: DirectCreditCreateInput!, update: DirectCreditUpdateInput!): DirectCredit!
   deleteDirectCredit(where: DirectCreditWhereUniqueInput!): DirectCredit
   deleteManyDirectCredits(where: DirectCreditWhereInput): BatchPayload!
   createEmployee(data: EmployeeCreateInput!): Employee!
   updateEmployee(data: EmployeeUpdateInput!, where: EmployeeWhereUniqueInput!): Employee
-  updateManyEmployees(data: EmployeeUpdateInput!, where: EmployeeWhereInput): BatchPayload!
+  updateManyEmployees(data: EmployeeUpdateManyMutationInput!, where: EmployeeWhereInput): BatchPayload!
   upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
   createException(data: ExceptionCreateInput!): Exception!
   updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
-  updateManyExceptions(data: ExceptionUpdateInput!, where: ExceptionWhereInput): BatchPayload!
+  updateManyExceptions(data: ExceptionUpdateManyMutationInput!, where: ExceptionWhereInput): BatchPayload!
   upsertException(where: ExceptionWhereUniqueInput!, create: ExceptionCreateInput!, update: ExceptionUpdateInput!): Exception!
   deleteException(where: ExceptionWhereUniqueInput!): Exception
   deleteManyExceptions(where: ExceptionWhereInput): BatchPayload!
   createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization!
   updateExceptionAuthorization(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
-  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
+  updateManyExceptionAuthorizations(data: ExceptionAuthorizationUpdateManyMutationInput!, where: ExceptionAuthorizationWhereInput): BatchPayload!
   upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
   deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
   createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
   updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
-  updateManyExceptionSlots(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereInput): BatchPayload!
+  updateManyExceptionSlots(data: ExceptionSlotUpdateManyMutationInput!, where: ExceptionSlotWhereInput): BatchPayload!
   upsertExceptionSlot(where: ExceptionSlotWhereUniqueInput!, create: ExceptionSlotCreateInput!, update: ExceptionSlotUpdateInput!): ExceptionSlot!
   deleteExceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   deleteManyExceptionSlots(where: ExceptionSlotWhereInput): BatchPayload!
   createFieldOptionLabel(data: FieldOptionLabelCreateInput!): FieldOptionLabel!
   updateFieldOptionLabel(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
-  updateManyFieldOptionLabels(data: FieldOptionLabelUpdateInput!, where: FieldOptionLabelWhereInput): BatchPayload!
+  updateManyFieldOptionLabels(data: FieldOptionLabelUpdateManyMutationInput!, where: FieldOptionLabelWhereInput): BatchPayload!
   upsertFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!, create: FieldOptionLabelCreateInput!, update: FieldOptionLabelUpdateInput!): FieldOptionLabel!
   deleteFieldOptionLabel(where: FieldOptionLabelWhereUniqueInput!): FieldOptionLabel
   deleteManyFieldOptionLabels(where: FieldOptionLabelWhereInput): BatchPayload!
   createHoliday(data: HolidayCreateInput!): Holiday!
   updateHoliday(data: HolidayUpdateInput!, where: HolidayWhereUniqueInput!): Holiday
-  updateManyHolidays(data: HolidayUpdateInput!, where: HolidayWhereInput): BatchPayload!
+  updateManyHolidays(data: HolidayUpdateManyMutationInput!, where: HolidayWhereInput): BatchPayload!
   upsertHoliday(where: HolidayWhereUniqueInput!, create: HolidayCreateInput!, update: HolidayUpdateInput!): Holiday!
   deleteHoliday(where: HolidayWhereUniqueInput!): Holiday
   deleteManyHolidays(where: HolidayWhereInput): BatchPayload!
   createSchedule(data: ScheduleCreateInput!): Schedule!
   updateSchedule(data: ScheduleUpdateInput!, where: ScheduleWhereUniqueInput!): Schedule
-  updateManySchedules(data: ScheduleUpdateInput!, where: ScheduleWhereInput): BatchPayload!
+  updateManySchedules(data: ScheduleUpdateManyMutationInput!, where: ScheduleWhereInput): BatchPayload!
   upsertSchedule(where: ScheduleWhereUniqueInput!, create: ScheduleCreateInput!, update: ScheduleUpdateInput!): Schedule!
   deleteSchedule(where: ScheduleWhereUniqueInput!): Schedule
   deleteManySchedules(where: ScheduleWhereInput): BatchPayload!
   createScheduleCategoryConfig(data: ScheduleCategoryConfigCreateInput!): ScheduleCategoryConfig!
   updateScheduleCategoryConfig(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereUniqueInput!): ScheduleCategoryConfig
-  updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
+  updateManyScheduleCategoryConfigs(data: ScheduleCategoryConfigUpdateManyMutationInput!, where: ScheduleCategoryConfigWhereInput): BatchPayload!
   upsertScheduleCategoryConfig(where: ScheduleCategoryConfigWhereUniqueInput!, create: ScheduleCategoryConfigCreateInput!, update: ScheduleCategoryConfigUpdateInput!): ScheduleCategoryConfig!
   deleteScheduleCategoryConfig(where: ScheduleCategoryConfigWhereUniqueInput!): ScheduleCategoryConfig
   deleteManyScheduleCategoryConfigs(where: ScheduleCategoryConfigWhereInput): BatchPayload!
   createScheduleCredit(data: ScheduleCreditCreateInput!): ScheduleCredit!
   updateScheduleCredit(data: ScheduleCreditUpdateInput!, where: ScheduleCreditWhereUniqueInput!): ScheduleCredit
-  updateManyScheduleCredits(data: ScheduleCreditUpdateInput!, where: ScheduleCreditWhereInput): BatchPayload!
+  updateManyScheduleCredits(data: ScheduleCreditUpdateManyMutationInput!, where: ScheduleCreditWhereInput): BatchPayload!
   upsertScheduleCredit(where: ScheduleCreditWhereUniqueInput!, create: ScheduleCreditCreateInput!, update: ScheduleCreditUpdateInput!): ScheduleCredit!
   deleteScheduleCredit(where: ScheduleCreditWhereUniqueInput!): ScheduleCredit
   deleteManyScheduleCredits(where: ScheduleCreditWhereInput): BatchPayload!
   createScheduleDebit(data: ScheduleDebitCreateInput!): ScheduleDebit!
   updateScheduleDebit(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
-  updateManyScheduleDebits(data: ScheduleDebitUpdateInput!, where: ScheduleDebitWhereInput): BatchPayload!
+  updateManyScheduleDebits(data: ScheduleDebitUpdateManyMutationInput!, where: ScheduleDebitWhereInput): BatchPayload!
   upsertScheduleDebit(where: ScheduleDebitWhereUniqueInput!, create: ScheduleDebitCreateInput!, update: ScheduleDebitUpdateInput!): ScheduleDebit!
   deleteScheduleDebit(where: ScheduleDebitWhereUniqueInput!): ScheduleDebit
   deleteManyScheduleDebits(where: ScheduleDebitWhereInput): BatchPayload!
   createScheduleOfflineElement(data: ScheduleOfflineElementCreateInput!): ScheduleOfflineElement!
   updateScheduleOfflineElement(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
-  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
+  updateManyScheduleOfflineElements(data: ScheduleOfflineElementUpdateManyMutationInput!, where: ScheduleOfflineElementWhereInput): BatchPayload!
   upsertScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!, create: ScheduleOfflineElementCreateInput!, update: ScheduleOfflineElementUpdateInput!): ScheduleOfflineElement!
   deleteScheduleOfflineElement(where: ScheduleOfflineElementWhereUniqueInput!): ScheduleOfflineElement
   deleteManyScheduleOfflineElements(where: ScheduleOfflineElementWhereInput): BatchPayload!
   createScheduleRestlineElement(data: ScheduleRestlineElementCreateInput!): ScheduleRestlineElement!
   updateScheduleRestlineElement(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
-  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
+  updateManyScheduleRestlineElements(data: ScheduleRestlineElementUpdateManyMutationInput!, where: ScheduleRestlineElementWhereInput): BatchPayload!
   upsertScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!, create: ScheduleRestlineElementCreateInput!, update: ScheduleRestlineElementUpdateInput!): ScheduleRestlineElement!
   deleteScheduleRestlineElement(where: ScheduleRestlineElementWhereUniqueInput!): ScheduleRestlineElement
   deleteManyScheduleRestlineElements(where: ScheduleRestlineElementWhereInput): BatchPayload!
   createScheduleTimelineElement(data: ScheduleTimelineElementCreateInput!): ScheduleTimelineElement!
   updateScheduleTimelineElement(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
-  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
+  updateManyScheduleTimelineElements(data: ScheduleTimelineElementUpdateManyMutationInput!, where: ScheduleTimelineElementWhereInput): BatchPayload!
   upsertScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!, create: ScheduleTimelineElementCreateInput!, update: ScheduleTimelineElementUpdateInput!): ScheduleTimelineElement!
   deleteScheduleTimelineElement(where: ScheduleTimelineElementWhereUniqueInput!): ScheduleTimelineElement
   deleteManyScheduleTimelineElements(where: ScheduleTimelineElementWhereInput): BatchPayload!
   createShift(data: ShiftCreateInput!): Shift!
   updateShift(data: ShiftUpdateInput!, where: ShiftWhereUniqueInput!): Shift
-  updateManyShifts(data: ShiftUpdateInput!, where: ShiftWhereInput): BatchPayload!
+  updateManyShifts(data: ShiftUpdateManyMutationInput!, where: ShiftWhereInput): BatchPayload!
   upsertShift(where: ShiftWhereUniqueInput!, create: ShiftCreateInput!, update: ShiftUpdateInput!): Shift!
   deleteShift(where: ShiftWhereUniqueInput!): Shift
   deleteManyShifts(where: ShiftWhereInput): BatchPayload!
   createShiftSlot(data: ShiftSlotCreateInput!): ShiftSlot!
   updateShiftSlot(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereUniqueInput!): ShiftSlot
-  updateManyShiftSlots(data: ShiftSlotUpdateInput!, where: ShiftSlotWhereInput): BatchPayload!
+  updateManyShiftSlots(data: ShiftSlotUpdateManyMutationInput!, where: ShiftSlotWhereInput): BatchPayload!
   upsertShiftSlot(where: ShiftSlotWhereUniqueInput!, create: ShiftSlotCreateInput!, update: ShiftSlotUpdateInput!): ShiftSlot!
   deleteShiftSlot(where: ShiftSlotWhereUniqueInput!): ShiftSlot
   deleteManyShiftSlots(where: ShiftSlotWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   createUserRole(data: UserRoleCreateInput!): UserRole!
   updateUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
-  updateManyUserRoles(data: UserRoleUpdateInput!, where: UserRoleWhereInput): BatchPayload!
+  updateManyUserRoles(data: UserRoleUpdateManyMutationInput!, where: UserRoleWhereInput): BatchPayload!
   upsertUserRole(where: UserRoleWhereUniqueInput!, create: UserRoleCreateInput!, update: UserRoleUpdateInput!): UserRole!
   deleteUserRole(where: UserRoleWhereUniqueInput!): UserRole
   deleteManyUserRoles(where: UserRoleWhereInput): BatchPayload!
@@ -2348,11 +2405,12 @@ type Query {
 
 type Schedule {
   id: ID!
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
   createdAt: DateTime!
   updatedAt: DateTime!
   description: String
   baseTime: Int!
-  isPreset: Boolean
   timeline(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement!]
   restline(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement!]
   offline1: ScheduleOfflineElement
@@ -2443,6 +2501,12 @@ input ScheduleCategoryConfigUpdateInput {
   label: String
 }
 
+input ScheduleCategoryConfigUpdateManyMutationInput {
+  category: ScheduleCategory
+  color: String
+  label: String
+}
+
 input ScheduleCategoryConfigWhereInput {
   id: ID
   id_not: ID
@@ -2506,9 +2570,10 @@ type ScheduleConnection {
 }
 
 input ScheduleCreateInput {
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int!
-  isPreset: Boolean
   timeline: ScheduleTimelineElementCreateManyInput
   restline: ScheduleRestlineElementCreateManyInput
   offline1: ScheduleOfflineElementCreateOneInput
@@ -2669,6 +2734,12 @@ input ScheduleCreditUpdateInput {
   sourceConcurentHoliday: HolidayUpdateOneInput
   sourceDate: DateTime
   debit: ScheduleDebitUpdateOneWithoutCreditInput
+}
+
+input ScheduleCreditUpdateManyMutationInput {
+  category: ScheduleOfflineCategory
+  sourceType: ScheduleCreditSourceEnum
+  sourceDate: DateTime
 }
 
 input ScheduleCreditUpdateManyWithoutEmployeeInput {
@@ -2928,6 +2999,10 @@ input ScheduleDebitUpdateInput {
   credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
 }
 
+input ScheduleDebitUpdateManyMutationInput {
+  category: ScheduleOfflineCategory
+}
+
 input ScheduleDebitUpdateManyWithoutEmployeeInput {
   create: [ScheduleDebitCreateWithoutEmployeeInput!]
   delete: [ScheduleDebitWhereUniqueInput!]
@@ -3112,6 +3187,10 @@ input ScheduleOfflineElementUpdateInput {
   category: ScheduleOfflineCategory
 }
 
+input ScheduleOfflineElementUpdateManyMutationInput {
+  category: ScheduleOfflineCategory
+}
+
 input ScheduleOfflineElementUpdateOneInput {
   create: ScheduleOfflineElementCreateInput
   update: ScheduleOfflineElementUpdateDataInput
@@ -3157,6 +3236,10 @@ input ScheduleOfflineElementWhereUniqueInput {
 enum ScheduleOrderByInput {
   id_ASC
   id_DESC
+  isPreset_ASC
+  isPreset_DESC
+  systemScheduleIdentifier_ASC
+  systemScheduleIdentifier_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3165,17 +3248,16 @@ enum ScheduleOrderByInput {
   description_DESC
   baseTime_ASC
   baseTime_DESC
-  isPreset_ASC
-  isPreset_DESC
 }
 
 type SchedulePreviousValues {
   id: ID!
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
   createdAt: DateTime!
   updatedAt: DateTime!
   description: String
   baseTime: Int!
-  isPreset: Boolean
 }
 
 enum ScheduleRestlineCategory {
@@ -3291,6 +3373,15 @@ input ScheduleRestlineElementUpdateManyInput {
   delete: [ScheduleRestlineElementWhereUniqueInput!]
   connect: [ScheduleRestlineElementWhereUniqueInput!]
   disconnect: [ScheduleRestlineElementWhereUniqueInput!]
+}
+
+input ScheduleRestlineElementUpdateManyMutationInput {
+  category: ScheduleRestlineCategory
+  duration: Int
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
 }
 
 input ScheduleRestlineElementUpdateWithWhereUniqueNestedInput {
@@ -3489,6 +3580,14 @@ input ScheduleTimelineElementUpdateManyInput {
   disconnect: [ScheduleTimelineElementWhereUniqueInput!]
 }
 
+input ScheduleTimelineElementUpdateManyMutationInput {
+  category: ScheduleTimelineCategory
+  startTime: Int
+  endTime: Int
+  startEventRequired: Boolean
+  endEventRequired: Boolean
+}
+
 input ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
   where: ScheduleTimelineElementWhereUniqueInput!
   data: ScheduleTimelineElementUpdateDataInput!
@@ -3549,9 +3648,10 @@ input ScheduleTimelineElementWhereUniqueInput {
 }
 
 input ScheduleUpdateDataInput {
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int
-  isPreset: Boolean
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
@@ -3559,13 +3659,21 @@ input ScheduleUpdateDataInput {
 }
 
 input ScheduleUpdateInput {
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int
-  isPreset: Boolean
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
   offline2: ScheduleOfflineElementUpdateOneInput
+}
+
+input ScheduleUpdateManyMutationInput {
+  isPreset: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
+  description: String
+  baseTime: Int
 }
 
 input ScheduleUpdateOneRequiredInput {
@@ -3595,6 +3703,12 @@ input ScheduleWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  isPreset: Boolean
+  isPreset_not: Boolean
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
+  systemScheduleIdentifier_not: SystemScheduleIdentifierEnum
+  systemScheduleIdentifier_in: [SystemScheduleIdentifierEnum!]
+  systemScheduleIdentifier_not_in: [SystemScheduleIdentifierEnum!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -3633,8 +3747,6 @@ input ScheduleWhereInput {
   baseTime_lte: Int
   baseTime_gt: Int
   baseTime_gte: Int
-  isPreset: Boolean
-  isPreset_not: Boolean
   timeline_every: ScheduleTimelineElementWhereInput
   timeline_some: ScheduleTimelineElementWhereInput
   timeline_none: ScheduleTimelineElementWhereInput
@@ -3650,6 +3762,7 @@ input ScheduleWhereInput {
 
 input ScheduleWhereUniqueInput {
   id: ID
+  systemScheduleIdentifier: SystemScheduleIdentifierEnum
 }
 
 type Shift {
@@ -3801,6 +3914,10 @@ input ShiftSlotUpdateManyInput {
   disconnect: [ShiftSlotWhereUniqueInput!]
 }
 
+input ShiftSlotUpdateManyMutationInput {
+  index: Int
+}
+
 input ShiftSlotUpdateWithWhereUniqueNestedInput {
   where: ShiftSlotWhereUniqueInput!
   data: ShiftSlotUpdateDataInput!
@@ -3870,6 +3987,12 @@ input ShiftUpdateInput {
   endDate: DateTime
   slots: ShiftSlotUpdateManyInput
   owner: UserUpdateOneRequiredInput
+}
+
+input ShiftUpdateManyMutationInput {
+  description: String
+  startDate: DateTime
+  endDate: DateTime
 }
 
 input ShiftUpdateManyWithoutEmployeeInput {
@@ -3996,6 +4119,14 @@ type Subscription {
   shiftSlot(where: ShiftSlotSubscriptionWhereInput): ShiftSlotSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   userRole(where: UserRoleSubscriptionWhereInput): UserRoleSubscriptionPayload
+}
+
+enum SystemScheduleIdentifierEnum {
+  SYS_SCH_DAYOFF_DAYOFF
+  SYS_SCH_VACATION_VACATION
+  SYS_SCH_VACATION_DAYOFF
+  SYS_SCH_DAYOFF_VACATION
+  SYS_SCH_HOLIDAY_HOLIDAY
 }
 
 type User {
@@ -4168,6 +4299,12 @@ input UserRoleUpdateManyInput {
   disconnect: [UserRoleWhereUniqueInput!]
 }
 
+input UserRoleUpdateManyMutationInput {
+  name: String
+  description: String
+  privileges: UserRoleUpdateprivilegesInput
+}
+
 input UserRoleUpdateprivilegesInput {
   set: [String!]
 }
@@ -4268,6 +4405,12 @@ input UserUpdateInput {
   departments: DepartmentUpdateManyWithoutSupervisorsInput
   role: UserRoleEnum
   roles: UserRoleUpdateManyInput
+}
+
+input UserUpdateManyMutationInput {
+  username: String
+  password: String
+  role: UserRoleEnum
 }
 
 input UserUpdateManyWithoutDepartmentsInput {

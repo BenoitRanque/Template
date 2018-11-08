@@ -114,7 +114,7 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
 }
 
 async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
-  const response = await db.request(`
+  const { data, errors } = await db.request(`
     query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean!) {
       shifts (where: {
         employee: {
@@ -166,20 +166,8 @@ async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { wi
         date
         name
       }
-      holidaySchedule: schedules (first: 1 where: {
-        isPreset: true
-        timeline_every: {
-          id: null
-        }
-        restline_every: {
-          id: null
-        }
-        offline1: {
-          category: SCH_DAY_HOLIDAY
-        }
-        offline2: {
-          category: SCH_DAY_HOLIDAY
-        }
+      holidaySchedule: schedule (where: {
+        systemScheduleIdentifier: SYS_SCH_HOLIDAY_HOLIDAY
       }) @include(if: $withHolidays) {
         id
         ...AllScheduleData @include(if: $withScheduleData)
@@ -212,93 +200,40 @@ async function loadEmployeeReferencesForDateRange(db, employeeId, from, to, { wi
     }
   `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData })
 
-  console.log('response', response)
+  if (errors) throw errors
 
-  const holidaySchedule = response.data && response.data.holidaySchedule.length ? response.data.holidaySchedule[0] : null
+  const holidaySchedule = data.holidaySchedule ? response.data.holidaySchedule : null
 
   return {
-    shifts: (response.data && response.data.shifts) ? response.data.shifts : [],
-    exceptions: (response.data && response.data.exceptions) ? response.data.exceptions : [],
-    holidays: (response.data && response.data.holidays)
-      ? response.data.holidays.map(holiday => ({
-          ...holiday,
-          schedule: holidaySchedule
-        }))
-      : []
+    shifts: data.shifts ? data.shifts : [],
+    exceptions: data.exceptions ? data.exceptions : [],
+    holidays: data.holidays ? response.data.holidays.map(holiday => ({ ...holiday, schedule: holidaySchedule })) : []
   }
 }
 
 async function loadVacationSchedules ({ db }) {
-  const response = await db.request(`
+  const { data, errors } = await db.request(`
     query {
-      VacationVacation: schedules (first: 1 where: {
-        isPreset: true
-      	timeline_every: {
-          id: null
-        }
-        restline_every: {
-          id: null
-        }
-        offline1: {
-          category: SCH_DAY_VACATION
-        }
-        offline2: {
-          category: SCH_DAY_VACATION
-        }
+      VacationVacation: schedule (where: {
+        systemScheduleIdentifier: SYS_SCH_VACATION_VACATION
       }) {
         id
         ...AllScheduleData
       }
-      DayoffVacation: schedules (first: 1 where: {
-        isPreset: true
-      	timeline_every: {
-          id: null
-        }
-        restline_every: {
-          id: null
-        }
-        offline1: {
-          category: SCH_DAY_OFF
-        }
-        offline2: {
-          category: SCH_DAY_VACATION
-        }
+      DayoffVacation: schedule (where: {
+        systemScheduleIdentifier: SYS_SCH_DAYOFF_VACATION
       }) {
         id
         ...AllScheduleData
       }
-      VacationDayoff: schedules (first: 1 where: {
-        isPreset: true
-      	timeline_every: {
-          id: null
-        }
-        restline_every: {
-          id: null
-        }
-        offline1: {
-          category: SCH_DAY_VACATION
-        }
-        offline2: {
-          category: SCH_DAY_OFF
-        }
+      VacationDayoff: schedule (where: {
+        systemScheduleIdentifier: SYS_SCH_VACATION_DAYOFF
       }) {
         id
         ...AllScheduleData
       }
-      DayoffDayoff: schedules (first: 1 where: {
-        isPreset: true
-      	timeline_every: {
-          id: null
-        }
-        restline_every: {
-          id: null
-        }
-        offline1: {
-          category: SCH_DAY_OFF
-        }
-        offline2: {
-          category: SCH_DAY_OFF
-        }
+      DayoffDayoff: schedule (where: {
+        systemScheduleIdentifier: SYS_SCH_DAYOFF_DAYOFF
       }) {
         id
         ...AllScheduleData
@@ -331,11 +266,13 @@ async function loadVacationSchedules ({ db }) {
     }
   `)
 
+  if (errors) throw errors
+
   return {
-    VacationVacation: response.data.VacationVacation.length ? response.data.VacationVacation[0] : null,
-    DayoffVacation: response.data.DayoffVacation.length ? response.data.DayoffVacation[0] : null,
-    VacationDayoff: response.data.VacationDayoff.length ? response.data.VacationDayoff[0] : null,
-    DayoffDayoff: response.data.DayoffDayoff.length ? response.data.DayoffDayoff[0] : null
+    VacationVacation: data.VacationVacation ? data.VacationVacation : null,
+    DayoffVacation: data.DayoffVacation ? data.DayoffVacation : null,
+    VacationDayoff: data.VacationDayoff ? data.VacationDayoff : null,
+    DayoffDayoff: data.DayoffDayoff ? data.DayoffDayoff : null
   }
 }
 
