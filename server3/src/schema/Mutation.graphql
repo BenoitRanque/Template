@@ -1,0 +1,29 @@
+
+type Mutation {
+  createUser(data: UserCreateInput!): User
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  createEmployee(data: EmployeeCreateInput!): Employee
+  updateEmployee(data: EmployeeUpdateInput! where: EmployeeWhereUniqueInput!): Employee
+  createShift(data: ShiftCreateInput!): Shift
+  updateShift(data: ShiftUpdateInput! where: ShiftWhereUniqueInput!): Shift
+  deleteShift(where: ShiftWhereUniqueInput!): Shift
+  createException(data: ExceptionCreateInput!): Exception
+  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization
+  createSchedule(data: ScheduleCreateInput!): Schedule!
+  authenticate(username: String!, password: String!): AuthPayload
+  createDepartment(data: DepartmentCreateInput!): Department!
+  updateDepartment(data: DepartmentUpdateInput! where: DepartmentWhereUniqueInput!): Department!
+  deleteDepartment(where: DepartmentWhereUniqueInput!): Department!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type User {
+  id: ID!
+  username: String!
+  departments: [Department]!
+  role: UserRoleEnum!
+}

@@ -1,0 +1,15 @@
+input ShiftCreateInput {
+  description: String
+  startDate: DateTime!
+  endDate: DateTime
+  employee: EmployeeWhereUniqueInput!
+  slots: [ShiftSlotCreateInput!]
+}
+
+input ShiftUpdateInput {
+  description: String
+  startDate: DateTime
+  endDate: DateTime
+  employee: EmployeeWhereUniqueInput
+  slots: [ShiftSlotCreateInput!]
+}

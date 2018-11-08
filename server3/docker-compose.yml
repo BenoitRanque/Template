@@ -1,0 +1,36 @@
+version: '3'
+services:
+  prisma:
+    image: prismagraphql/prisma:1.20
+    restart: always
+    ports:
+    - "4466:4466"
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
+        # managementApiSecret: my-secret
+        managementApiSecret: ${PRISMA_MANAGEMENT_API_SECRET}
+        databases:
+          default:
+            connector: postgres
+            # host: host.docker.internal
+            host: postgres-db
+            port: '5432'
+            database: ${PG_DATABASE}
+            # schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
+            user: ${PG_USERNAME}
+            password: ${PG_PASSWORD}
+            migrations: true
+  postgres-db:
+    image: postgres
+    restart: always
+    ports:
+    - "6543:5432"
+    environment:
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres:

@@ -1,0 +1,26 @@
+{
+  "name": "wasp-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "serve": "node --require dotenv/config src/index.js",
+    "dev": "nodemon --require dotenv/config src/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "date-fns": "^1.29.0",
+    "dotenv": "^6.0.0",
+    "graphql-middleware": "^2.0.1",
+    "graphql-yoga": "^1.7.0",
+    "jsonwebtoken": "^8.2.0",
+    "knex": "^0.15.2",
+    "prisma-binding": "^2.0.2",
+    "sqlite3": "^4.0.2"
+  },
+  "devDependencies": {
+    "graphql-cli": "^2.17.0",
+    "npm-run-all": "^4.1.2",
+    "prisma": "^1.18.1"
+  }
+}

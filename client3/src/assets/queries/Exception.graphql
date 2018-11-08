@@ -1,0 +1,104 @@
+mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
+  exception: createException (data: $data) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}
+
+query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhereInput) {
+  meta: exceptionsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: exceptions (first: $first skip: $skip orderBy: createdAt_DESC where: $where) {
+    id
+    employee {
+      id
+      nameFull
+    }
+    createdAt
+    owner {
+      username
+    }
+    authorization {
+      createdAt
+      granted
+      owner {
+        username
+      }
+    }
+  }
+}
+
+query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
+	exception (where: $where) {
+    id
+    createdAt
+    authorization {
+      id
+      createdAt
+      granted
+      owner {
+        username
+      }
+    }
+    employee {
+      id
+      nameFull
+    }
+    owner {
+      username
+    }
+    slots {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+mutation CreateExceptionAuthorizationMutation ($data: ExceptionAuthorizationCreateInput!) {
+  authorization: createExceptionAuthorization (data: $data) {
+    exception {
+      employee {
+        nameFull
+      }
+    }
+    granted
+  }
+}
+
+
+
+fragment AllScheduleData on Schedule {
+  description
+  baseTime
+  timeline (orderBy: startTime_ASC) {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+  }
+  restline (orderBy: startTime_ASC) {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

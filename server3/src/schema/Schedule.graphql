@@ -1,0 +1,10 @@
+
+input ScheduleCreateInput {
+  description: String
+  baseTime: Int!
+  custom: Boolean
+  timeline: [ScheduleTimelineElementCreateInput]!
+  restline: [ScheduleRestlineElementCreateInput]!
+  offline1: ScheduleOfflineElementCreateInput
+  offline2: ScheduleOfflineElementCreateInput
+}

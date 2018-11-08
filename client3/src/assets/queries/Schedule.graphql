@@ -1,0 +1,94 @@
+
+query SchedulesPagination ($first: Int! $skip: Int! $where: ScheduleWhereInput) {
+  meta: schedulesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: schedules (first: $first skip: $skip where: $where orderBy: createdAt_ASC) {
+    id
+    ...AllScheduleData
+  }
+}
+
+
+query EmployeeCalendarRangeSchedules ($employeeId: ID! $from: DateTime! $to: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    calendarRange(from: $from to: $to withExceptions: true withHolidays: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+query EmployeeCalendarDateSchedule ($employeeId: ID! $date: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    calendarDate(date: $date withExceptions: true withHolidays: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+query EmployeeCalendarSwitchSchedule ($employeeId: ID! $dateA: DateTime! $dateB: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    dateA: calendarDate(date: $dateA withExceptions: true withHolidays: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+    dateB: calendarDate(date: $dateB withExceptions: true withHolidays: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+query EmployeeCalendarVacationSchedule ($employeeId: ID! $from: DateTime! $to: DateTime!) {
+  employee (where: { id: $employeeId }) {
+    vacationRange(from: $from to: $to withExceptions: true withHolidays: true) {
+      date
+      schedule {
+        id
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  description
+  baseTime
+  timeline {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+  }
+  restline {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

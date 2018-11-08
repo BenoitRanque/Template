@@ -1,0 +1,97 @@
+
+type Employee {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFull: String!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int!
+  department: Department
+  shifts: [Shift!]!
+  exceptions: [Exception!]!
+  attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): AttendanceReport!
+  calendarDate(date: DateTime! withExceptions: Boolean! withHolidays: Boolean!): CalendarDate!
+  calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
+  vacationRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
+}
+
+type CalendarDate {
+  date: DateTime!
+  schedule: Schedule
+  shift: Shift
+  exception: Exception
+}
+
+type AttendanceReport {
+  from: DateTime!
+  to: DateTime!
+  events: [DateTime!]!
+  eventCount: Int!
+  shifts: [Shift!]!
+  holidays: [Holiday!]!
+  exceptions: [Exception!]!
+  dates: [AttendanceReportDate!]!
+}
+
+type AttendanceReportDate {
+  date: DateTime!
+  innerBound: DateTime!
+  outerBound: DateTime!
+  events: [DateTime!]!
+  eventCount: Int!
+  shift: Shift
+  holiday: Holiday
+  exception: Exception
+  schedule: Schedule
+  compliance: AttendanceReportDateCompliance
+}
+
+enum AttendanceCategory {
+  ATT_START_LATE
+  ATT_START_EARLY
+  ATT_END_LATE
+  ATT_END_EARLY
+  ATT_REST_LATE
+  ATT_ABSENT
+  ATT_ABSENT_DOUBLE
+}
+
+type AttendanceReportDateCompliance {
+  lateStart: LateStartCompliance!
+  earlyEnd: EarlyEndCompliance!
+  restOvertime: RestOvertimeCompliance!
+  missingStartEventCount: Int!
+  missingEndEventCount: Int!
+  missingRestEventCount: Int!
+  absentTime: Int!
+}
+
+type LateStartCompliance {
+  time: Int!
+  count: Int!
+}
+
+type EarlyEndCompliance {
+  time: Int!
+  count: Int!
+}
+
+type RestOvertimeCompliance {
+  time: Int!
+  count: Int!
+}

@@ -1,0 +1,313 @@
+
+type User {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  username: String! @unique
+  password: String!
+  departments: [Department!]!
+  role: UserRoleEnum!
+  roles: [UserRole!]!
+}
+
+type UserRole {
+  id: ID! @unique
+  name: String! @unique
+  description: String
+  privileges: [String!]!
+}
+
+enum UserRoleEnum {
+  ADMIN
+  MANAGER
+  SUPERVISOR
+  HR
+}
+
+type Employee {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum @default(value: "CI")
+  documentNumber: String @default(value: "CI")
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String @default(value: "Boliviana")
+  jubilado: Boolean! @default(value: "false")
+  personaConDiscapacidad: Boolean! @default(value: "false")
+  tutorPersonaConDiscapacidad: Boolean! @default(value: "false")
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean! @default(value: "false")
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int!
+  department: Department
+  shifts: [Shift!]!
+  exceptions: [Exception!]!
+  credits: [ScheduleCredit!]!
+  debits: [ScheduleDebit!]!
+}
+
+type Department {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  subordinates: [Employee!]!
+  supervisors: [User!]!
+}
+
+type Shift {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  description: String
+  employee: Employee!
+  startDate: DateTime!
+  endDate: DateTime
+  slots: [ShiftSlot!]! @relation(name: "ShiftToShiftSlot" onDelete: CASCADE)
+  owner: User! @relation(name: "ShiftToShiftOwner")
+}
+
+type ShiftSlot {
+  id: ID! @unique
+  index: Int!
+  schedule: Schedule!
+}
+
+type Exception {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  employee: Employee!
+  description: String
+  slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
+  authorization: ExceptionAuthorization
+  owner: User! @relation(name: "ExceptionToExceptionOwner")
+  credits: [ScheduleCredit!]!
+  debits: [ScheduleDebit!]!
+}
+
+type ExceptionSlot {
+  id: ID! @unique
+  schedule: Schedule!
+  date: DateTime!
+}
+
+type ExceptionAuthorization {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  granted: Boolean!
+  exception: Exception!
+  owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
+}
+
+type Schedule {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  description: String
+  baseTime: Int!
+  isPreset: Boolean @default(value: "false")
+  timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
+  restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
+  offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflin1" onDelete: CASCADE)
+  offline2: ScheduleOfflineElement @relation(name: "ScheduleToOfflin2" onDelete: CASCADE)
+}
+
+type ScheduleTimelineElement {
+  id: ID! @unique
+  category: ScheduleTimelineCategory!
+  startTime: Int!
+  endTime: Int!
+  startEventRequired: Boolean!
+  endEventRequired: Boolean!
+}
+
+type ScheduleRestlineElement {
+  id: ID! @unique
+  category: ScheduleRestlineCategory!
+  duration: Int!
+  startTime: Int!
+  endTime: Int!
+  startEventRequired: Boolean!
+  endEventRequired: Boolean!
+}
+
+type ScheduleOfflineElement {
+  id: ID! @unique
+  category: ScheduleOfflineCategory!
+}
+
+type ScheduleCredit {
+  id: ID! @unique
+  employee: Employee!
+  category: ScheduleOfflineCategory! # use this as main filter
+  sourceType: ScheduleCreditSourceEnum!
+  sourceException: Exception # when crediting anything due to exception
+  sourceDirect: DirectCredit # when credited manually. Use for initial load
+  sourceConcurentHoliday: Holiday # Use only when crediting a DAY OFF due to holiday on same day
+  sourceDate: DateTime!
+  # sourceHoliday: Holiday # Use if date has any holidays. resolve this using the date
+  debit: ScheduleDebit
+}
+
+enum ScheduleCreditSourceEnum {
+  EXCEPTION
+  CONCURENT_HOLIDAY
+  DIRECT_CREDIT
+}
+
+type ScheduleDebit {
+  id: ID! @unique
+  employee: Employee!
+  category: ScheduleOfflineCategory!
+  exception: Exception!
+  credit: ScheduleCredit!
+}
+
+type DirectCredit {
+  id: ID! @unique
+  owner: User!
+  employee: Employee!
+  description: String
+  credits: [ScheduleCredit!]!
+}
+
+type Holiday {
+  id: ID! @unique
+  date: DateTime! @unique
+  name: String!
+}
+
+type AttendanceCycle {
+  id: ID! @unique
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+}
+
+enum ScheduleCategory {
+  SCH_TIME_WORK         # standard work time
+  SCH_TIME_EXTRA        # extra work time
+
+  SCH_TIME_MATERNAL    # autorized lactation hour
+  SCH_TIME_LEAVE        # authorized downtime
+
+  SCH_REST_LUNCH         # lunch time
+
+  SCH_DAY_OFF
+  SCH_DAY_VACATION
+  SCH_DAY_HOLIDAY
+  SCH_DAY_SICK
+  SCH_DAY_PAID
+  SCH_DAY_UNPAID
+}
+
+enum ScheduleTimelineCategory {
+  SCH_TIME_WORK         # standard work time
+  SCH_TIME_EXTRA        # extra work time
+  SCH_TIME_MATERNAL    # autorized lactation hour
+  SCH_TIME_LEAVE
+}
+
+enum ScheduleRestlineCategory {
+  SCH_REST_LUNCH         # lunch time
+}
+
+enum ScheduleOfflineCategory {
+  SCH_DAY_OFF
+  SCH_DAY_VACATION
+  SCH_DAY_HOLIDAY
+  SCH_DAY_SICK
+  SCH_DAY_PAID
+  SCH_DAY_UNPAID
+}
+
+enum AttendanceCategory {
+  ATT_START_LATE
+  ATT_START_EARLY
+  ATT_END_LATE
+  ATT_END_EARLY
+  ATT_REST_LATE
+  ATT_ABSENT
+  ATT_ABSENT_DOUBLE
+}
+
+type ScheduleCategoryConfig {
+  id: ID! @unique
+  category: ScheduleCategory
+  color: String! @default(value: "#FFF")
+  label: String
+}
+
+type FieldOptionLabel {
+  id: ID! @unique
+  field: String!
+  value: String!
+  label: String
+}
+
+enum EmployeeSexEnum {
+  F # Feminino
+  M # Masculino
+}
+enum EmployeeDocumentTypeEnum {
+  CI # Carnet de Identidad
+  PASSAPORTE # Passaporte
+}
+enum EmployeeCajaDeSaludEnum {
+  OPTION_1 # 'Caja Nacional de Salud (C.N.S.)'
+  OPTION_2 # 'Caja Petrolera de Salud (C.P.S.)'
+  OPTION_3 # 'Caja de Salud de Caminos'
+  OPTION_4 # 'Caja Bancaria Estatal de Salud (C.B.E.S.)'
+  OPTION_5 # 'Caja de Salud de la Banca Privada (C.S.B.P.)'
+  OPTION_6 # 'Caja de Salud Cordes'
+  OPTION_7 # 'Seguro Social Universitario (S.I.S.S.U.B.)'
+  OPTION_8 # 'Corporación del Seguro Social Militar (COOSMIL)'
+  OPTION_9 # 'Seguro Integral de Salud (SINEC)'
+}
+enum EmployeeAFPEnum {
+  OPTION_1 # 'AFP Previsión'
+  OPTION_2 # 'AFP Futuro'
+}
+enum ContractWorkClassEnum {
+  OPTION_1 # 'Ocupaciones de dirección en la administración pública y empresas'
+  OPTION_2 # 'Ocupaciones de profesionales científicos e intelectuales'
+  OPTION_3 # 'Ocupaciones de técnicos y profesionales de apoyo'
+  OPTION_4 # 'Empleados de oficina'
+  OPTION_5 # 'Trabajadores de los servicios y vendedores del comercio'
+  OPTION_6 # 'Productores y trabajadores en la agricultura, pecuaria, agropecuaria y pesca'
+  OPTION_7 # 'Trabajadores de la industria extractiva, construcción, industria manufacturera y otros oficios'
+  OPTION_8 # 'Operadores de instalaciones y maquinarias'
+  OPTION_9 # 'Trabajadores no calificados'
+  OPTION_10 #  'Fuerzas armada'
+}
+enum ContractModalityEnum {
+  OPTION_1 # 'Tiempo indefinido'
+  OPTION_2 # 'A plazo fijo'
+  OPTION_3 # 'Por temporada'
+  OPTION_4 # 'Por realización de obra o servicio'
+  OPTION_5 # 'Condicional o eventual'
+}
+enum ContractTypeEnum {
+  OPTION_1 # 'Escrito'
+  OPTION_2 # 'Verbal'
+}
+enum ContractCancelMotiveEnum {
+  OPTION_1 # 'Retiro voluntario del trabajador'
+  OPTION_2 # 'Vencimiento de contrato'
+  OPTION_3 # 'Conclusión de obra'
+  OPTION_4 # 'Perjuicio material causado con intención en los instrumentos de trabajo'
+  OPTION_5 # 'Revelación de secretos industriales'
+  OPTION_7 # 'Inasistencia injustificada de más de seis días continuos'
+  OPTION_6 # 'Omisiones o imprudencias que afecten a la seguridad o higiene industrial'
+  OPTION_8 # 'Incumplimiento total o parcial del convenio'
+  OPTION_9 # 'Robo o hurto por el trabajador'
+  OPTION_10 # 'Retiro forzoso'
+}

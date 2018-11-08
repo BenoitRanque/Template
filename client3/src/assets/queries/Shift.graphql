@@ -1,0 +1,92 @@
+query ShiftsPagination ($first: Int! $skip: Int! $orderBy: ShiftOrderByInput $where: ShiftWhereInput) {
+  meta: shiftsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: shifts (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    description
+    employee {
+      id
+      nameFull
+    }
+    startDate
+    endDate
+  }
+}
+
+query ShiftWithScheduleData ($where: ShiftWhereUniqueInput!) {
+  shift (where: $where) {
+    id
+    description
+    employee {
+      id
+    }
+    startDate
+    endDate
+    slots (orderBy: index_ASC){
+      index
+      schedule {
+        id
+        description
+        ...AllScheduleData
+      }
+    }
+  }
+}
+
+mutation CreateShiftMutation ($data: ShiftCreateInput!) {
+  shift: createShift(data: $data) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
+mutation UpdateShiftMutation ($data: ShiftUpdateInput! $where: ShiftWhereUniqueInput!) {
+  shift: updateShift(where: $where data: $data) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
+mutation DeleteShiftMutation ($where: ShiftWhereUniqueInput!) {
+  shift: deleteShift(where: $where) {
+    id
+    description
+    employee {
+      nameFull
+    }
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  baseTime
+  timeline {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+  }
+  restline {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}

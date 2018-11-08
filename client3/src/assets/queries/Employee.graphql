@@ -1,0 +1,192 @@
+query EmployeePagination ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInput $where: EmployeeWhereInput) {
+  meta: employeesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: employees (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    zkTimePin
+    nameFirst
+    nameMiddle
+    namePaternal
+    nameMaternal
+    cargo
+    department {
+      id
+    }
+    documentType
+    documentNumber
+    sex
+    dateOfBirth
+    nationality
+    jubilado
+    personaConDiscapacidad
+    tutorPersonaConDiscapacidad
+    cajaDeSalud
+    aportaAFP
+    AFP
+  }
+}
+
+mutation UpdateEmployeeMutation ($where: EmployeeWhereUniqueInput! $data: EmployeeUpdateInput!) {
+  employee: updateEmployee (where: $where data: $data) {
+    nameFull
+  }
+}
+
+mutation CreateEmployeeMutation ($data: EmployeeCreateInput!) {
+  employee: createEmployee (data: $data) {
+    nameFull
+  }
+}
+
+query EmployeeFieldOptionLabels {
+  boolean: fieldOptionLabels(where: {
+    field: "Boolean"
+  }) {
+    value
+    label
+  }
+  sex: fieldOptionLabels(where: {
+    field: "EmployeeSex"
+  }) {
+    value
+    label
+  }
+  documentType: fieldOptionLabels(where: {
+    field: "EmployeeDocumentType"
+  }) {
+    value
+    label
+  }
+  cajaDeSalud: fieldOptionLabels(where: {
+    field: "EmployeeCajaDeSalud"
+  }) {
+    value
+    label
+  }
+  AFP: fieldOptionLabels(where: {
+    field: "EmployeeAFP"
+  }) {
+    value
+    label
+  },
+  departments {
+    name
+    id
+  }
+}
+
+query EmployeeNameFullQuery ($where: EmployeeWhereUniqueInput!) {
+  employee (where: $where) {
+    nameFull
+  }
+}
+
+query EmployeesNameFullQuery ($where: EmployeeWhereInput! $first: Int!) {
+  employees (first: $first where: $where) {
+    nameFull
+  }
+}
+
+
+query EmployeeSelectPaginationQuery ($first: Int! $skip: Int! $orderBy: EmployeeOrderByInput $where: EmployeeWhereInput) {
+  meta: employeesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: employees (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    nameFirst
+    nameMiddle
+    namePaternal
+    nameMaternal
+    cargo
+    department {
+      name
+      id
+    }
+  }
+}
+
+query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: EmployeeWhereInput $from: DateTime! $to: DateTime! $withExceptions: Boolean! $withHolidays: Boolean!) {
+  meta: employeesConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: employees (first: $first skip: $skip where: $where) {
+    id
+    nameFull
+    attendanceReport (from: $from to: $to withExceptions: $withExceptions withHolidays: $withHolidays) {
+      dates {
+      	date
+        events
+        eventCount
+        exception {
+          id
+          createdAt
+          authorization {
+            createdAt
+            owner {
+              username
+            }
+          }
+          owner {
+            username
+          }
+        }
+        schedule {
+          id
+          description
+          ...AllScheduleData
+        }
+        compliance {
+          lateStart {
+            time
+            count
+          }
+          earlyEnd {
+            time
+            count
+          }
+          restOvertime {
+            time
+            count
+          }
+          missingStartEventCount
+          missingEndEventCount
+          missingRestEventCount
+          absentTime
+        }
+      }
+    }
+  }
+}
+
+fragment AllScheduleData on Schedule {
+  baseTime
+  timeline (orderBy: startTime_ASC) {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+  }
+  restline (orderBy: startTime_ASC) {
+    category
+    startTime
+    startEventRequired
+    endTime
+    endEventRequired
+    duration
+  }
+  offline1 {
+    category
+  }
+  offline2 {
+    category
+  }
+}
