@@ -1,16 +1,23 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import core from './core'
-import hr from './hr'
+import schedule from './schedule'
+import session from './session'
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
-  modules: {
-    core,
-    hr
-  }
-})
+/*
+ * If not building with SSR mode, you can
+ * directly export the Store instantiation
+ */
 
-export default store
+export default function (/* { ssrContext } */) {
+  const Store = new Vuex.Store({
+    modules: {
+      schedule,
+      session
+    }
+  })
+
+  return Store
+}

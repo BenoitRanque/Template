@@ -1,76 +1,33 @@
-import moduleRoutes from './modules'
 
-export default [
+const routes = [
   {
     path: '/',
-    component: () => import('layouts/index'),
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      {
-        path: '',
-        component: () => import('pages/index'),
-        meta: {
-          label: 'index'
-        }
-      },
-      {
-        path: 'user',
-        component: () => import('pages/user'),
-        meta: {
-          label: 'user',
-          requireAuthentication: true
-        }
-      }
+      { path: '', component: () => import('pages/Index.vue'), meta: { label: 'Inicio' } },
+      { path: 'Employees', component: () => import('pages/Employees.vue'), meta: { label: 'Empleados' } },
+      { path: 'Shifts', component: () => import('pages/Shifts.vue'), meta: { label: 'Horarios' } },
+      { path: 'Exceptions', component: () => import('pages/Exceptions.vue'), meta: { label: 'Boletas' } }
     ]
   },
-  ...[].concat(...moduleRoutes.map(mapRoutes)),
-  { // Always leave this as last one
-    path: '*',
-    component: () => import('layouts/default'),
+  {
+    path: '/',
+    component: () => import('layouts/ReportLayout.vue'),
     children: [
-      {
-        path: '',
-        component: () => import('pages/404'),
-        meta: {
-          label: '404'
-        }
-      }
+      { path: 'Reports', component: () => import('pages/Reports.vue'), meta: { label: 'Reportes' } }
     ]
   }
 ]
 
-function mapRoutes (root) {
-  let output = []
-  let layoutIndexes = {}
-
-  let tabs = root.tabs.map(tab => ({
-    meta: tab.meta,
-    hash: tab.hash,
-    root: root.hash
-  }))
-
-  addRoute(root, tabs)
-  root.tabs.forEach(route => {
-    addRoute(route, tabs)
+// Always leave this as last one
+if (process.env.MODE !== 'ssr') {
+  routes.push({
+    path: '*',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Error404.vue'), meta: { label: 'Error 404' } }
+    ]
   })
-
-  return output
-
-  function addRoute (route, tabs) {
-    let { hash, layout, meta } = route
-    if (layoutIndexes[layout] === undefined) {
-      layoutIndexes[layout] = output.length
-      output.push({
-        path: `/${root.hash}`,
-        component: () => import(`layouts/${layout}`),
-        children: []
-      })
-    }
-
-    meta.tabs = tabs
-    output[layoutIndexes[layout]].children.push({
-      path: route === root ? '' : hash,
-      component: () => import(`pages/${root.hash}/${route === root ? 'index' : hash}`),
-      meta
-    })
-  }
 }
+
+export default routes

@@ -2,20 +2,16 @@
 
 module.exports = function (ctx) {
   return {
+    // app plugins (/src/plugins)
     plugins: [
-      'i18n',
-      'axios',
-      'vuelidate',
-      'portal',
-      'date',
-      'VueDragDrop'
+      'GraphQL'
     ],
     css: [
       'app.styl'
     ],
     extras: [
       ctx.theme.mat ? 'roboto-font' : null,
-      'material-icons'
+      'material-icons' // optional, you are not bound to it
       // 'ionicons',
       // 'mdi',
       // 'fontawesome'
@@ -23,37 +19,26 @@ module.exports = function (ctx) {
     supportIE: false,
     build: {
       scopeHoisting: true,
-      vueRouterMode: 'history',
+      // vueRouterMode: 'history',
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      // useNotifier: false,
       extendWebpack (cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /(node_modules|quasar)/
+          exclude: /node_modules/
         })
         cfg.module.rules.push({
-          resourceQuery: /blockType=i18n/,
-          loader: '@kazupon/vue-i18n-loader'
+          test: /\.(graphql|gql)$/,
+          loader: 'graphql-tag/loader',
+          exclude: /(node_modules|quasar)/
         })
       }
     },
     devServer: {
-      proxy: {
-        // proxy all requests starting with /api to jsonplaceholder
-        // '/api': 'http://localhost:80'
-        '/api/**': {
-          target: 'http://localhost:80',
-          changeOrigin: true,
-          pathRewrite: {
-            '^/api': '/api'
-          }
-        }
-      },
       // https: true,
       // port: 8080,
       open: true // opens browser window automatically
@@ -64,72 +49,73 @@ module.exports = function (ctx) {
       components: [
         'QLayout',
         'QLayoutHeader',
+        'QLayoutFooter',
         'QLayoutDrawer',
         'QPageContainer',
         'QPage',
-        'QPageSticky',
         'QToolbar',
         'QToolbarTitle',
-        'QTabs',
-        'QTab',
-        'QTabPane',
-        'QRouteTab',
-        'QChip',
         'QBtn',
         'QBtnGroup',
-        'QBtnDropdown',
         'QIcon',
-        'QField',
-        'QInput',
-        'QChipsInput',
-        'QSelect',
-        'QCheckbox',
-        'QToggle',
-        'QDatetime',
-        'QColor',
-        'QProgress',
-        'QModal',
-        'QModalLayout',
-        'QPopover',
-        'QTooltip',
         'QList',
         'QListHeader',
+        'QItemSeparator',
         'QItem',
         'QItemMain',
         'QItemSide',
         'QItemTile',
+        'QPopover',
+        'QModal',
+        'QModalLayout',
+        'QTooltip',
+        'QInput',
+        'QColor',
+        'QSelect',
+        'QField',
+        'QToggle',
+        'QCheckbox',
+        'QChip',
         'QTable',
-        'QTableColumns',
-        'QTr',
         'QTd',
-        'QTh',
+        'QTableColumns',
         'QSearch',
-        'QSlideTransition',
-        'QStepper',
-        'QStep',
-        'QStepperNavigation',
+        'QInputFrame',
+        'QTabs',
+        'QRouteTab',
+        'QScrollArea',
+        'QPageSticky',
+        'QDatetime',
+        'QDatetimePicker',
+        'QCard',
+        'QCardTitle',
+        'QCardMain',
+        'QCardMedia',
+        'QCardSeparator',
+        'QCardActions',
         'QInnerLoading',
-        'QCollapsible',
-        'QScrollArea'
+        'QSpinner'
       ],
       directives: [
         'Ripple',
-        'CloseOverlay',
-        'TouchPan'
+        'CloseOverlay'
       ],
+      // Quasar plugins
       plugins: [
         'Notify',
-        'Loading',
         'Dialog'
       ]
+      // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
+      // i18n: 'de' // Quasar language
     },
     // animations: 'all' --- includes all animations
-    animations: [
-      'bounceInLeft',
-      'bounceOutRight'
-    ],
+    animations: [],
+    ssr: {
+      pwa: false
+    },
     pwa: {
-      cacheExt: 'js,html,css,woff,ttf,eot,otf,woff,woff2,json,svg,gif,jpg,jpeg,png,wav,ogg,webm,flac,aac,mp4,mp3',
+      // workboxPluginMode: 'InjectManifest',
+      // workboxOptions: {},
       manifest: {
         // name: 'Quasar App',
         // short_name: 'Quasar-PWA',
@@ -192,9 +178,6 @@ module.exports = function (ctx) {
 
         // appId: 'quasar-app'
       }
-    },
-
-    // leave this here for Quasar CLI
-    starterKit: '1.0.0-beta.4'
+    }
   }
 }

@@ -1,19 +1,22 @@
 <template>
-  <q-btn icon="style" @click="$refs.modal.show()" rounded text-color="primary" class="q-pa-sm" color="white">
-    <q-modal ref="modal" :content-css="{minWidth: '60vw', minHeight: '80vh'}">
+  <q-btn icon="style" @click="modal = true" rounded text-color="primary" class="q-pa-sm" color="white">
+    <q-modal v-model="modal">
       <q-modal-layout>
-        <q-toolbar slot="header" class="q-py-none q-pr-none">
+        <q-toolbar slot="header" class="col">
           <q-toolbar-title>
-            {{ $t('theme') }}
+            Theme
           </q-toolbar-title>
-          <q-btn icon="close" class="no-shadow" style="border-radius: 0" color="negative" size="lg" @click="$refs.modal.hide()"></q-btn>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
-        <q-toolbar slot="footer"></q-toolbar>
 
-        <div class="layout-padding group">
-          <q-field v-for="color in colors" :key="color" :label="$t(`${color}-color`)">
-            <q-color :color="color" inverted modal :value="getColor(color)" @input="$event => setColor(color, $event)"></q-color>
-          </q-field>
+        <div class="group q-pa-sm">
+          <q-color color="primary" inverted modal v-model="primary"></q-color>
+          <q-color color="secondary" inverted modal v-model="secondary"></q-color>
+          <q-color color="tertiary" inverted modal v-model="tertiary"></q-color>
+          <q-color color="positive" inverted modal v-model="positive"></q-color>
+          <q-color color="negative" inverted modal v-model="negative"></q-color>
+          <q-color color="warning" inverted modal v-model="warning"></q-color>
+          <q-color color="info" inverted modal v-model="info"></q-color>
         </div>
       </q-modal-layout>
     </q-modal>
@@ -26,18 +29,37 @@ export default {
   name: 'ThemeSettings',
   data () {
     return {
-      modal: false,
-      colors: [
-        'primary', 'secondary', 'tertiary', 'positive', 'negative', 'info', 'warning'
-      ]
+      modal: false
     }
   },
-  methods: {
-    getColor (color) {
-      return colors.getBrand(color)
+  computed: {
+    primary: {
+      get: () => colors.getBrand('primary'),
+      set: (value) => colors.setBrand('primary', value)
     },
-    setColor (color, value) {
-      colors.setBrand(color, value)
+    secondary: {
+      get: () => colors.getBrand('secondary'),
+      set: (value) => colors.setBrand('secondary', value)
+    },
+    tertiary: {
+      get: () => colors.getBrand('tertiary'),
+      set: (value) => colors.setBrand('tertiary', value)
+    },
+    positive: {
+      get: () => colors.getBrand('positive'),
+      set: (value) => colors.setBrand('positive', value)
+    },
+    negative: {
+      get: () => colors.getBrand('negative'),
+      set: (value) => colors.setBrand('negative', value)
+    },
+    warning: {
+      get: () => colors.getBrand('warning'),
+      set: (value) => colors.setBrand('warning', value)
+    },
+    info: {
+      get: () => colors.getBrand('info'),
+      set: (value) => colors.setBrand('info', value)
     }
   }
 }
@@ -46,18 +68,3 @@ export default {
 <style scoped>
 
 </style>
-
-<i18n>
-{
-  "es": {
-    "theme": "Tema",
-    "primary-color": "Color Primario",
-    "secondary-color": "Color Segundario",
-    "tertiary-color": "Color Terciario" ,
-    "positive-color": "Color Positivo" ,
-    "negative-color": "Color Negativo" ,
-    "info-color": "Color Informacion",
-    "warning-color": "Color Advertencia"
-  }
-}
-</i18n>
