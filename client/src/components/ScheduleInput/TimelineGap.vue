@@ -37,7 +37,7 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item>
+          <!-- <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
                 <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.startEventRequired"></q-checkbox>
@@ -50,7 +50,7 @@
                 <q-checkbox :disable="!categoryCanEvent(model.category)" v-model="model.endEventRequired"></q-checkbox>
               </q-field>
             </q-item-main>
-          </q-item>
+          </q-item> -->
           <q-item>
             <q-item-main class="text-center">
               <q-btn rounded color="primary" @click="add" :disable="!valid">Aggregar</q-btn>
@@ -81,9 +81,9 @@ export default {
       model: {
         category: 'SCH_TIME_WORK',
         startTime: 0,
-        startEventRequired: true,
-        endTime: 0,
-        endEventRequired: true
+        endTime: 0
+        // startEventRequired: true,
+        // endEventRequired: true
       }
     }
   },
@@ -105,24 +105,24 @@ export default {
       return true
     }
   },
-  watch: {
-    'model.category' (value) {
-      if (this.categoryCanEvent(value)) {
-        this.model.startEventRequired = true
-        this.model.endEventRequired = true
-      } else {
-        this.model.startEventRequired = false
-        this.model.endEventRequired = false
-      }
-    }
-  },
+  // watch: {
+  //   'model.category' (value) {
+  //     if (this.categoryCanEvent(value)) {
+  //       this.model.startEventRequired = true
+  //       this.model.endEventRequired = true
+  //     } else {
+  //       this.model.startEventRequired = false
+  //       this.model.endEventRequired = false
+  //     }
+  //   }
+  // },
   methods: {
     reset () {
       this.model.category = 'SCH_TIME_WORK'
       this.model.startTime = this.value.start < this.$parent.innerBound ? this.$parent.innerBound : this.value.start
-      this.model.startEventRequired = true
+      // this.model.startEventRequired = true
       this.model.endTime = this.value.end > this.$parent.outerBound ? this.$parent.outerBound : this.value.end
-      this.model.endEventRequired = true
+      // this.model.endEventRequired = true
     },
     add () {
       this.$emit('add', {...this.model})

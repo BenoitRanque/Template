@@ -155,6 +155,10 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
             time
             count
           }
+          eventCount
+          requiredEventCount
+          authorizedExtraTime
+          unauthorizedExtraTime
           missingStartEventCount
           missingEndEventCount
           missingRestEventCount

@@ -287,6 +287,13 @@ export default {
 
       return gaps
     },
+    canAutoAddLunch () {
+      const lunchStart = 11 * 60
+      const lunchEnd = 14.5 * 60
+      const lunchGap = this.restlineGaps.find(gap => gap.start <= lunchStart && gap.end >= lunchEnd)
+      if (lunchGap) return true
+      return false
+    },
     usedTime () {
       return this.model.timeline
         .reduce((acc, val) => this.categoryIsStandardTime(val.category) ? acc + (val.endTime - val.startTime) : acc, 0) +
@@ -300,8 +307,10 @@ export default {
   },
   watch: {
     isValid (isValid) {
-      console.log('valid:', isValid)
       this.$emit('update:valid', isValid)
+    },
+    timelineRestGroups () {
+      if (this.canAutoAddLunch) this.autoAddLunch()
     }
   },
   methods: {
@@ -313,7 +322,36 @@ export default {
 
     //   return hours ? (Number(hours) * 60) + Number(minutes) : Number(minutes)
     // },
+    autoAddLunch () {
+      this.addRestlineElement({
+        category: 'SCH_REST_LUNCH',
+        startTime: 11 * 60,
+        startEventRequired: true,
+        endTime: 14.5 * 60,
+        endEventRequired: true,
+        duration: 30
+      })
+    },
     addTimelineElement (element) {
+      if (this.categoryCanEvent(element.category)) {
+        element.startEventRequired = true
+        element.endEventRequired = true
+
+        const previousTimelineElement = this.model.timeline.find(({ endTime, category }) => this.categoryCanEvent(category) && endTime === element.startTime)
+        const nextTimelineElement = this.model.timeline.find(({ startTime, category }) => this.categoryCanEvent(category) && startTime === element.endTime)
+
+        if (previousTimelineElement) {
+          previousTimelineElement.endEventRequired = false
+          element.startEventRequired = false
+        }
+        if (nextTimelineElement) {
+          nextTimelineElement.startEventRequired = false
+          element.endEventRequired = false
+        }
+      } else {
+        element.startEventRequired = false
+        element.endEventRequired = false
+      }
       this.model.timeline = this.model.timeline
         .concat([element])
         .sort((a, b) => a.startTime - b.startTime)

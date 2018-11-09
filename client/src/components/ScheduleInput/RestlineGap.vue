@@ -44,7 +44,7 @@
               </q-field>
             </q-item-main>
           </q-item>
-          <q-item>
+          <!-- <q-item>
             <q-item-main>
               <q-field label-width="6" label="Marca Entrada" class="text-right">
                 <q-checkbox v-model="model.startEventRequired"></q-checkbox>
@@ -57,7 +57,7 @@
                 <q-checkbox v-model="model.endEventRequired"></q-checkbox>
               </q-field>
             </q-item-main>
-          </q-item>
+          </q-item> -->
           <q-item>
             <q-item-main class="text-center">
               <q-btn rounded color="primary" @click="add" :disable="!valid">Aggregar</q-btn>
