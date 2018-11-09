@@ -48,6 +48,7 @@
       ></attendance-report-cell>
 
     </q-table>
+    <pre>{{table.data}}</pre>
   </q-page>
 </template>
 

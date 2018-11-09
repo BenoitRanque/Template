@@ -20,7 +20,7 @@
     <div class="group">
       <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in model.slots" :key="`slot_card_${index}`">
         <q-card-main>
-          <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
+          <schedule-input advanced v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
             <div class="col" slot="top-left">
               <q-datetime
                 color="teal-8"

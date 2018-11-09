@@ -10,24 +10,13 @@
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
         <div class="q-px-sm q-pt-sm q-pb-lg">
-          <div class="q-my-sm q-title">Asistencia</div>
-          <!-- <div class="row gutter-xs">
-            <div class="col-6">Tiempo trabajado total</div>
-            <div class="col-6">1</div>
-            <div class="col-6">Tiempo retraso en ingreso</div>
-            <div class="col-6">1</div>
-            <div class="col-6">Tiempo adelanto en salida</div>
-            <div class="col-6">1</div>
-            <div class="col-6">Tiempo de pausa no sancionando</div>
-            <div class="col-6">1</div>
-            <div class="col-6">Tiempo de falta</div>
-            <div class="col-6">1</div>
-            <div class="col-6">Marcaciones faltante</div>
-            <div class="col-6">1</div>
-          </div> -->
-          <pre>{{date.compliance}}</pre>
           <div class="q-my-sm q-title">Marcaciones</div>
-          <div class="row">
+          <div v-if="!date.events || !date.events.length" class="q-pa-md text-center">
+            <span class="text-tertiary">
+              No existen marcaciones
+            </span>
+          </div>
+          <div v-else class="row">
             <div class="col-6"></div>
             <div class="col-6">
               <div class="q-my-xs" v-for="(event, index) in date.events" :key="index">
@@ -35,12 +24,41 @@
               </div>
             </div>
           </div>
-          <div class="q-my-sm q-title">Horario</div>
-          <q-card color="teal-8" text-color="black" dark>
-            <q-card-main>
-              <schedule-input readonly :value="date.schedule"></schedule-input>
-            </q-card-main>
-          </q-card>
+          <template v-if="date.compliance">
+            <div class="q-my-sm q-title">Asistencia</div>
+            <div class="row gutter-xs">
+              <div class="col-6">Retraso en ingreso</div>
+              <div class="col-6">{{formatTime(date.compliance.lateStart.time)}} | {{date.compliance.lateStart.count}}</div>
+              <div class="col-6">Adelanto en salida</div>
+              <div class="col-6">{{formatTime(date.compliance.earlyEnd.time)}} | {{date.compliance.earlyEnd.count}}</div>
+              <div class="col-6">Sobretiempo en descanso</div>
+              <div class="col-6">{{formatTime(date.compliance.restOvertime.time)}} | {{date.compliance.restOvertime.count}}</div>
+              <div class="col-6">Tiempo Extra No Autorizado</div>
+              <div class="col-6">{{formatTime(date.compliance.unauthorizedExtraTime)}}</div>
+              <div class="col-6">Tiempo Extra Autorizado</div>
+              <div class="col-6">{{formatTime(date.compliance.authorizedExtraTime)}}</div>
+              <div class="col-6">Dias de falta</div>
+              <div class="col-6">{{(date.compliance.absentTime.value).toFixed(2).replace(/.?0+$/,'')}}</div>
+              <div class="col-6">Marcaciones</div>
+              <div class="col-6">{{date.compliance.eventCount}}</div>
+              <div class="col-6">Marcaciones esperadas</div>
+              <div class="col-6">{{date.compliance.requiredEventCount}}</div>
+              <div class="col-6">Marcaciones de ingreso faltantes</div>
+              <div class="col-6">{{date.compliance.missingStartEventCount}}</div>
+              <div class="col-6">Marcaciones de salido faltantes</div>
+              <div class="col-6">{{date.compliance.missingEndEventCount}}</div>
+              <div class="col-6">Marcaciones de almuerzo faltantes</div>
+              <div class="col-6">{{date.compliance.missingRestEventCount}}</div>
+            </div>
+          </template>
+          <template v-if="date.schedule">
+            <div class="q-my-sm q-title">Horario</div>
+            <q-card color="teal-8" text-color="black" dark>
+              <q-card-main>
+                <schedule-input readonly :value="date.schedule"></schedule-input>
+              </q-card-main>
+            </q-card>
+          </template>
           <div class="q-my-sm q-title">Boleta</div>
           <div class="q-pa-md text-center">
             <q-btn v-if="date.exception" flat color="secondary" @click="exceptionModal = true">
@@ -104,7 +122,10 @@ export default {
     }
   },
   methods: {
-    formatDate: date.formatDate
+    formatDate: date.formatDate,
+    formatTime (minutes) {
+      return `0${Math.floor(minutes / 60)}:0${minutes % 60}`.replace(/0(\d\d)/g, '$1')
+    }
   }
 }
 </script>

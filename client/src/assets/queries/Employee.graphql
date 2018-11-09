@@ -121,6 +121,35 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
     id
     nameFull
     attendanceReport (from: $from to: $to withExceptions: $withExceptions withHolidays: $withHolidays) {
+      complianceSummary {
+        eventCount
+        requiredEventCount
+        authorizedExtraTime
+        unauthorizedExtraTime
+        lateStart {
+          time
+          count
+        }
+        earlyEnd {
+          time
+          count
+        }
+        restOvertime {
+          time
+          count
+        }
+        absentTime {
+          category
+          value
+        }
+        absentTimeDouble {
+          category
+          value
+        }
+        missingStartEventCount
+        missingEndEventCount
+        missingRestEventCount
+      }
       dates {
       	date
         events
@@ -155,6 +184,10 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
             time
             count
           }
+          absentTime {
+            category
+            value
+          }
           eventCount
           requiredEventCount
           authorizedExtraTime
@@ -162,7 +195,6 @@ query EmployeeAttendanceReportPaginationQuery ($first: Int! $skip: Int! $where: 
           missingStartEventCount
           missingEndEventCount
           missingRestEventCount
-          absentTime
         }
       }
     }

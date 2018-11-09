@@ -1,10 +1,10 @@
 <template>
   <div class="row items-center q-py-xs q-pl-xs">
-    <slot name="top-left">
-      <div class="col q-mr-xs">
-        <q-input :readonly="$parent.readonly" hide-underline v-model="$parent.model.description"></q-input>
-      </div>
-    </slot>
+    <div class="col q-mr-xs">
+      <slot name="top-left">
+      </slot>
+      <q-input placeholder="Descripción..." :readonly="$parent.readonly" hide-underline v-model="$parent.model.description"></q-input>
+    </div>
     <span v-if="!$parent.readonly" class="col-auto">
       <q-chip
         :color="$parent.usedTime > $parent.model.baseTime
@@ -31,25 +31,12 @@
         <q-popover anchor="bottom right" self="top right">
           <q-list>
             <q-list-header class="row items-center">
-              <div class="col">
-                Ajustes Avanzados
-              </div>
-              <div class="col-auto">
-                <q-tooltip>Habilitar Edición</q-tooltip>
-                <q-toggle v-model="canEdit"></q-toggle>
-              </div>
+              Ajustes Avanzados
             </q-list-header>
             <q-item>
               <q-item-main>
-                <q-field label-width="6" label="Nombre descriptivo">
-                  <q-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.description"></q-input>
-                </q-field>
-              </q-item-main>
-            </q-item>
-            <q-item>
-              <q-item-main>
                 <q-field label-width="6" label="Tiempo base">
-                  <time-input :readonly="!canEdit" align="right" hide-underline v-model="$parent.model.baseTime"></time-input>
+                  <time-input align="right" hide-underline v-model="$parent.model.baseTime"></time-input>
                 </q-field>
               </q-item-main>
             </q-item>
@@ -72,13 +59,7 @@
 import TimeInput from 'components/TimeInput'
 export default {
   name: 'ScheduleHeader',
-
-  components: { TimeInput },
-  data () {
-    return {
-      canEdit: false
-    }
-  }
+  components: { TimeInput }
 }
 </script>
 

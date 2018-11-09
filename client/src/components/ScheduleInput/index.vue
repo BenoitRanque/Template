@@ -357,6 +357,20 @@ export default {
         .sort((a, b) => a.startTime - b.startTime)
     },
     addRestlineElement (element) {
+      element.startEventRequired = true
+      element.endEventRequired = true
+
+      const previousRestlineElement = this.model.restline.find(({ endTime }) => endTime === element.startTime)
+      const nextRestlineElement = this.model.restline.find(({ startTime }) => startTime === element.endTime)
+
+      if (previousRestlineElement) {
+        previousRestlineElement.endEventRequired = false
+        element.startEventRequired = false
+      }
+      if (nextRestlineElement) {
+        nextRestlineElement.startEventRequired = false
+        element.endEventRequired = false
+      }
       this.model.restline = this.model.restline
         .concat([element])
         .sort((a, b) => a.startTime - b.startTime)

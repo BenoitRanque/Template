@@ -19,9 +19,12 @@ const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const addMinutes = require('date-fns/add_minutes')
 const getMinutes = require('date-fns/get_minutes')
+const isWeekend = require('date-fns/is_weekend')
 
 const SCH_TIME_EXTRA = 'SCH_TIME_EXTRA'
 const SCH_TIME_WORK = 'SCH_TIME_WORK'
+const ATT_ABSENT = 'ATT_ABSENT'
+const ATT_ABSENT_DOUBLE = 'ATT_ABSENT_DOUBLE'
 
 const { ZKTIME_DB_PATH } = require('../utils')
 
@@ -89,6 +92,7 @@ async function loadAttendanceReport({ id, zkTimePin }, { from, to, withException
   const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
 
   const dates = getAttendanceDates(from, to, references, events)
+  const complianceSummary = getAttendanceComplianceSummary(dates)
 
   return {
     from,
@@ -96,6 +100,7 @@ async function loadAttendanceReport({ id, zkTimePin }, { from, to, withException
     shifts: references.shifts.filter(shift => !isAfter(shift.startDate, to) && (!shift.endDate || isBefore(shift.endDate, from))),
     exceptions: references.exceptions.filter(exception => exception.slots.some(slot => isWithinRange(slot.date, from, to))),
     events: events.filter(event => isWithinRange(event, dates[0].innerBound, dates[dates.length - 1].outerBound)),
+    complianceSummary,
     dates
   }
 }
@@ -385,14 +390,14 @@ function getDatesWithCompliance (dates) {
   }))
 }
 
-function getAttendanceComplianceForDate(data) {
-  if (!data.schedule || isAfter(data.outerBound, new Date())) return null
+function getAttendanceComplianceForDate(reference) {
+  if (!reference.schedule || isAfter(reference.outerBound, new Date())) return null
 
-  const timelineGroups = getTimelineGroupsWithEvents(data)
-  const restlineGroups = getRestlineGroupsWithEvents(data)
+  const timelineGroups = getTimelineGroupsWithEvents(reference)
+  const restlineGroups = getRestlineGroupsWithEvents(reference, timelineGroups)
 
   const compliance = {
-    eventCount: data.events ? data.events.length : 0,
+    eventCount: reference.events ? reference.events.length : 0,
     requiredEventCount: getRequiredEventCount(timelineGroups, restlineGroups),
     authorizedExtraTime: getAuthorizedExtraTime(timelineGroups),
     unauthorizedExtraTime: getUnauthorizedExtraTime(timelineGroups),
@@ -402,7 +407,11 @@ function getAttendanceComplianceForDate(data) {
     missingStartEventCount: getMissingStartEventCount(timelineGroups),
     missingEndEventCount: getMissingEndEventCount(timelineGroups),
     missingRestEventCount: getMissingRestEventCount(restlineGroups),
-    absentTime: getAbsentTime(timelineGroups)
+    absentTime: getAbsentTime(timelineGroups, reference)
+  }
+
+  if (isWeekend(reference.date)) {
+    console.log('hello',restlineGroups, timelineGroups, reference, compliance)
   }
 
   return compliance
@@ -602,7 +611,7 @@ function timelineGroupEndEventMissing(group) {
 
 function getMissingRestEventCount (restlineGroups) {
   return restlineGroups.reduce((result, group) => {
-    if (currentTimeIsAfter(group.endTime, group.date)) {
+    if (!timelineGroupIsAbsent(group.parentTimelineGroup) && currentTimeIsAfter(group.endTime, group.date)) {
       if (group.startEventRequired && !group.startEvent) {
         result += 1
       }
@@ -614,13 +623,18 @@ function getMissingRestEventCount (restlineGroups) {
   }, 0)
 }
 
-function getAbsentTime (timelineGroups) {
-  return timelineGroups.reduce((result, group) => {
-    if (timelineGroupIsAbsent(group)) {
-      result += group.endTime - group.startTime
-    }
-    return result
-  }, 0)
+function getAbsentTime (timelineGroups, reference) {
+  if (!reference || !reference.date || !reference.schedule) throw new Error(`reference must have data, schedule property ${timelineGroups}`)
+
+  return {
+    category: reference.holiday || isWeekend(reference.date) ? ATT_ABSENT_DOUBLE : ATT_ABSENT,
+    value: timelineGroups.reduce((time, group) => {
+      if (timelineGroupIsAbsent(group)) {
+        time += group.endTime - group.startTime
+      }
+      return time
+    }, 0) / reference.schedule.baseTime
+  }
 }
 
 function timelineGroupIsAbsent (group) {
@@ -633,16 +647,24 @@ function timelineGroupIsAbsent (group) {
     && ((group.startEventRequired && currentTimeIsAfter(group.startEventTime, group.date)) || (group.endEventRequired && currentTimeIsAfter(group.endEventTime, group.date)))
 }
 
-function getRestlineGroupsWithEvents ({ schedule, date, events }) {
+function getRestlineGroupsWithEvents ({ schedule, date, events }, timelineGroups) {
   return schedule.restline.map(rest => {
     const innerBound = addMinutes(date, rest.startTime).toISOString()
     const outerBound = addMinutes(date, rest.endTime).toISOString()
     const candidateEvents = events.filter(event => isWithinRange(event, innerBound, outerBound))
+    const parentTimelineGroup = timelineGroups.find(({ startTime, endTime }) => startTime <= rest.startTime && endTime >= rest.endTime)
+
+    console.log('here')
+    console.log(innerBound, outerBound, candidateEvents, min(...candidateEvents), max(...candidateEvents))
+
+    if (!parentTimelineGroup) throw new Error(`Cannot find parentTimelineGroup for rest ${rest}`)
 
     return {
       ...rest,
-      startEvent: rest.startEventRequired && candidateEvents.length > 1 ? min(candidateEvents) : null,
-      endEvent: rest.endEventRequired && candidateEvents.length > 1  && (candidateEvents.length > 2 || !rest.startEventRequired) ? max(candidateEvents) : null
+      date,
+      parentTimelineGroup,
+      startEvent: rest.startEventRequired && candidateEvents.length >= 1 ? min(...candidateEvents) : null,
+      endEvent: rest.endEventRequired && candidateEvents.length >= 1  && (candidateEvents.length >= 2 || !rest.startEventRequired) ? max(...candidateEvents) : null
     }
   })
 }
@@ -761,4 +783,42 @@ function getBoundsForTimelineEvent (event, { schedule, innerBound, outerBound, d
     innerBound: addMinutes(date, Math.max(...candidateReferences.filter(reference => reference < event))).toISOString(),
     outerBound: addMinutes(date, Math.min(...candidateReferences.filter(reference => reference > event))).toISOString()
   }
+}
+
+function getAttendanceComplianceSummary (dates) {
+  return dates.reduce((summary, date) => {
+    // add all date compliance data here
+    if (!date.compliance) return summary
+
+    summary.eventCount += date.compliance.eventCount
+    summary.requiredEventCount += date.compliance.requiredEventCount
+    summary.authorizedExtraTime += date.compliance.authorizedExtraTime
+    summary.unauthorizedExtraTime += date.compliance.unauthorizedExtraTime
+    summary.lateStart.time += date.compliance.lateStart.time
+    summary.lateStart.count += date.compliance.lateStart.count
+    summary.earlyEnd.time += date.compliance.earlyEnd.time
+    summary.earlyEnd.count += date.compliance.earlyEnd.count
+    summary.restOvertime.time += date.compliance.restOvertime.time
+    summary.restOvertime.count += date.compliance.restOvertime.count
+    summary.missingStartEventCount += date.compliance.missingStartEventCount
+    summary.missingEndEventCount += date.compliance.missingEndEventCount
+    summary.missingRestEventCount += date.compliance.missingRestEventCount
+    summary.absentTime.value += date.compliance.absentTime.category === ATT_ABSENT ? date.compliance.absentTime.value : 0
+    summary.absentTimeDouble.value += date.compliance.absentTime.category === ATT_ABSENT_DOUBLE ? date.compliance.absentTime.value : 0
+
+    return summary
+  }, {
+    eventCount: 0,
+    requiredEventCount: 0,
+    authorizedExtraTime: 0,
+    unauthorizedExtraTime: 0,
+    lateStart: { count: 0, time: 0 },
+    earlyEnd: { count: 0, time: 0 },
+    restOvertime: { count: 0, time: 0 },
+    missingStartEventCount: 0,
+    missingEndEventCount: 0,
+    missingRestEventCount: 0,
+    absentTime: { value: 0, category: ATT_ABSENT },
+    absentTimeDouble: { value: 0, category: ATT_ABSENT_DOUBLE }
+  })
 }

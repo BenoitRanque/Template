@@ -44,14 +44,14 @@
         <q-item v-if="categoryCanEvent(this.value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Entrada" class="text-right">
-              <q-checkbox v-model="value.startEventRequired"></q-checkbox>
+              <q-checkbox :disable="!$parent.advanced" v-model="value.startEventRequired"></q-checkbox>
             </q-field>
           </q-item-main>
         </q-item>
         <q-item v-if="categoryCanEvent(this.value.category)">
           <q-item-main>
             <q-field label-width="6" label="Marca Salida" class="text-right">
-              <q-checkbox v-model="value.endEventRequired"></q-checkbox>
+              <q-checkbox :disable="!$parent.advanced" v-model="value.endEventRequired"></q-checkbox>
             </q-field>
           </q-item-main>
         </q-item>

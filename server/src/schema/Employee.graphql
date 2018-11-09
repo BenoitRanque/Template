@@ -46,6 +46,7 @@ type AttendanceReport {
   holidays: [Holiday!]!
   exceptions: [Exception!]!
   dates: [AttendanceReportDate!]!
+  complianceSummary: AttendanceReportComplianceSummary!
 }
 
 type AttendanceReportDate {
@@ -78,10 +79,25 @@ type AttendanceReportDateCompliance {
   lateStart: LateStartCompliance!
   earlyEnd: EarlyEndCompliance!
   restOvertime: RestOvertimeCompliance!
+  absentTime: AbsentTimeCompliance!
   missingStartEventCount: Int!
   missingEndEventCount: Int!
   missingRestEventCount: Int!
-  absentTime: Int!
+}
+
+type AttendanceReportComplianceSummary {
+  eventCount: Int!
+  requiredEventCount: Int!
+  authorizedExtraTime: Int!
+  unauthorizedExtraTime: Int!
+  lateStart: LateStartCompliance!
+  earlyEnd: EarlyEndCompliance!
+  restOvertime: RestOvertimeCompliance!
+  absentTime: AbsentTimeCompliance!
+  absentTimeDouble: AbsentTimeCompliance!
+  missingStartEventCount: Int!
+  missingEndEventCount: Int!
+  missingRestEventCount: Int!
 }
 
 type LateStartCompliance {
@@ -97,4 +113,14 @@ type EarlyEndCompliance {
 type RestOvertimeCompliance {
   time: Int!
   count: Int!
+}
+
+type AbsentTimeCompliance {
+  category: AbsentTimeCategoryEnum!
+  value: Float!
+}
+
+enum AbsentTimeCategoryEnum {
+  ATT_ABSENT
+  ATT_ABSENT_DOUBLE
 }
