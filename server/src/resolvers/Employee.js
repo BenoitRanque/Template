@@ -21,6 +21,7 @@ const addMinutes = require('date-fns/add_minutes')
 const getMinutes = require('date-fns/get_minutes')
 
 const SCH_TIME_EXTRA = 'SCH_TIME_EXTRA'
+const SCH_TIME_WORK = 'SCH_TIME_WORK'
 
 const { ZKTIME_DB_PATH } = require('../utils')
 
@@ -393,8 +394,8 @@ function getAttendanceComplianceForDate(data) {
   const compliance = {
     eventCount: data.events ? data.events.length : 0,
     requiredEventCount: getRequiredEventCount(timelineGroups, restlineGroups),
-    extraTime: getExtraTime(timelineGroups),
-    unsanctionedTime: getUnsanctionedTime(timelineGroups),
+    authorizedExtraTime: getAuthorizedExtraTime(timelineGroups),
+    unauthorizedExtraTime: getUnauthorizedExtraTime(timelineGroups),
     lateStart: getLateStart(timelineGroups),
     earlyEnd: getEarlyEnd(timelineGroups),
     restOvertime: getRestOvertime(restlineGroups),
@@ -411,9 +412,12 @@ function currentTimeIsAfter(time, date) {
   return isBefore(addMinutes(date, time), new Date())
 }
 
-function getExtraTime(timelineGroups) {
+function getAuthorizedExtraTime(timelineGroups) {
   return timelineGroups.reduce((time, group) => {
+    // if absent
     if (timelineGroupIsAbsent(group)) return time
+    // if group has not started yet
+    if (!currentTimeIsAfter(group.startEventTime ? group.startEventTime : group.startTime, group.date)) return time
 
     let innerBound, outerBound
     // TODO: finish this: get bounds for extra time based on multiple factors, use those to calculate actual extra time
@@ -424,37 +428,45 @@ function getExtraTime(timelineGroups) {
       innerBound = group.startTime
     } else if (group.endEvent) {
       let endEventTime = differenceInMinutes(group.endEvent, group.date)
-      innerBound = group.members
+      let candidateBounds = group.members
         .map(({ startTime }) => startTime)
         .filter(value => value <= endEventTime)
-        .sort((a, b) => b - a)[0]
+        .sort((a, b) => b - a)
+      if (candidateBounds.length) {
+        innerBound = candidateBounds[0]
+      } else {
+        throw new Error(`THIS SHOULD NOT HAPPEN: Invalid schedule timeline element: endEvent ${group.endEvent} cannot be before startTime ${group.startEventTime}`)
+      }
     } else {
-
+      throw new Error(`THIS SHOULD NOT HAPPEN: this group has no start nor end event, yet requires a start event. it should count as absent`)
     }
 
-    const innerBound = group.startEventRequired && group.startEvent ? getMinutes(group.startEvent) : null
-    const outerBound = group.endEventRequired && group.endEvent ? getMinutes(group.endEvent) : null
+    if (group.endEvent) {
+      outerBound = differenceInMinutes(group.endEvent, group.date)
+    } else if (!group.startEventRequired) {
+      outerBound = group.endTime
+    } else if (group.startEvent) {
+      let startEventTime = differenceInMinutes(group.startEvent, group.date)
+      let candidateBounds = group.members
+        .map(({ endTime }) => endTime)
+        .filter(value => value >= startEventTime)
+        .sort((a, b) => a - b)
+      if (candidateBounds.length) {
+        outerBound = candidateBounds[0]
+      } else {
+        throw new Error(`THIS SHOULD NOT HAPPEN: Invalid schedule timeline element: startEvent ${group.endEvent} cannot be after endTime ${group.startEventTime}`)
+      }
+    } else {
+      throw new Error(`THIS SHOULD NOT HAPPEN: this group has no start nor end event, yet requires an end event. it should count as absent`)
+    }
 
     return time + group.members.reduce((extraTime, member) => {
       if (member.category === SCH_TIME_EXTRA) {
-        // TODO: check if somehow missing all events?? maybe this is covered by checking for abscense
-        // CHECK if some events not required
-        // if only one event present, replace other event time with bound if block memeber event is on
-        if ((!startEventTime || startEventTime < member.endTime) && (!endEventTime || endTime > member.startTime)) {
-
-        }
-        const difference = Math.max(endTime, group.startEventTime) - Math.min(startTime, group.endEventTime)
-
-        if (member.startTime === group.startEventTime && member.endTime === group.endEventTime) {
-          // group is at start and end
-        } else if (member.startTime === group.startEventTime) {
-          // group is at start
-
-        } else if (member.endTime === group.endEventTime) {
-          // group is at start
-
-        } else {
-
+        const startTime = member.startTime === group.startTime ? innerBound : Math.max(innerBound, member.startTime)
+        const endTime = member.endTime === group.endTime ? outerBound : Math.min(outerBound, member.endTime)
+        const difference = endTime - startTime
+        if (difference > 0) {
+          extraTime += difference
         }
       }
       return extraTime
@@ -462,8 +474,26 @@ function getExtraTime(timelineGroups) {
   }, 0)
 }
 
-function getUnsanctionedTime(timelineGroups) {
-
+function getUnauthorizedExtraTime(timelineGroups) {
+  return timelineGroups.reduce((time, group) => {
+    if (group.startEvent && group.startEventCategory !== SCH_TIME_EXTRA) {
+      const reference = addMinutes(group.date, group.startEventTime)
+      const difference = differenceInMinutes(reference, group.startEvent)
+      if (difference > 0) {
+        time += difference
+      }
+    }
+    return time
+  }, 0) + timelineGroups.reduce((time, group) => {
+    if (group.endEvent && group.endEventCategory !== SCH_TIME_EXTRA) {
+      const reference = addMinutes(group.date, group.endEventTime)
+      const difference = differenceInMinutes(group.endEvent, reference)
+      if (difference > 0) {
+        time += difference
+      }
+    }
+    return time
+  }, 0)
 }
 
 function getRequiredEventCount (timelineGroups, restlineGroups) {
@@ -480,16 +510,21 @@ function getRequiredEventCount (timelineGroups, restlineGroups) {
 
 function getLateStart (timelineGroups) {
   return timelineGroups.reduce((result, group) => {
-    const startEventTime = addMinutes(group.date, group.startEventTime)
+    if (group.startEvent) {
+      const candidateReferences = group.members
+        .filter(({ category }) => category === SCH_TIME_WORK)
+        .map(({ startTime }) => startTime)
+        .sort((a, b) => a - b)
 
-    if (group.startEvent && group.startEventCategory !== SCH_TIME_EXTRA) {
-      const difference = differenceInMinutes(group.startEvent, startEventTime)
-      if (difference > 0) {
-        result.time += difference,
-        result.count += 1
+      if (candidateReferences && candidateReferences.length) {
+        const reference = addMinutes(group.date, candidateReferences[0])
+        const difference = differenceInMinutes(group.startEvent, reference)
+        if (difference > 0) {
+          result.time += difference,
+          result.count += 1
+        }
       }
     }
-
     return result
   }, {
     time: 0,
@@ -499,17 +534,21 @@ function getLateStart (timelineGroups) {
 
 function getEarlyEnd (timelineGroups) {
   return timelineGroups.reduce((result, group) => {
-    const endEventTime = addMinutes(group.date, group.endEventTime)
-    // round early time down to nearest minute
-    // expect 00:05:00, get 00:04:05, returns 00:01:00 late time
-    if (group.endEvent && group.endEventCategory !== SCH_TIME_EXTRA) {
-      const difference = differenceInMinutes(endEventTime, group.endEvent)
-      if (difference > 0) {
-        result.time += difference,
-        result.count += 1
+    if (group.endEvent) {
+      const candidateReferences = group.members
+        .filter(({ category }) => category === SCH_TIME_WORK)
+        .map(({ endTime }) => endTime)
+        .sort((a, b) => b - a)
+
+      if (candidateReferences && candidateReferences.length) {
+        const reference = addMinutes(group.date, candidateReferences[0])
+        const difference = differenceInMinutes(reference, group.endEvent)
+        if (difference > 0) {
+          result.time += difference,
+          result.count += 1
+        }
       }
     }
-
     return result
   }, {
     time: 0,
@@ -591,7 +630,7 @@ function timelineGroupIsAbsent (group) {
   // either current time is after group start time AND start event is required OR current time is after end time
   return !group.startEvent && !group.endEvent
     && (group.startEventRequired || group.endEventRequired)
-    && ((currentTimeIsAfter(group.startTime, group.date) && group.startEventRequired) || currentTimeIsAfter(group.endTime, group.date))
+    && ((group.startEventRequired && currentTimeIsAfter(group.startEventTime, group.date)) || (group.endEventRequired && currentTimeIsAfter(group.endEventTime, group.date)))
 }
 
 function getRestlineGroupsWithEvents ({ schedule, date, events }) {

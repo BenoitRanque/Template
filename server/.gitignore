@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-.env*
-=======
 .env
-database/.env
->>>>>>> graphql
 dist
 package-lock.json
 node_modules

@@ -71,6 +71,10 @@ enum AttendanceCategory {
 }
 
 type AttendanceReportDateCompliance {
+  eventCount: Int!
+  requiredEventCount: Int!
+  authorizedExtraTime: Int!
+  unauthorizedExtraTime: Int!
   lateStart: LateStartCompliance!
   earlyEnd: EarlyEndCompliance!
   restOvertime: RestOvertimeCompliance!
