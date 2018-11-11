@@ -26,6 +26,7 @@ type Employee {
   exceptions: [Exception!]!
   attendanceReport(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): AttendanceReport!
   calendarDate(date: DateTime! withExceptions: Boolean! withHolidays: Boolean!): CalendarDate!
+  calendarDates(dates: [DateTime!]! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
   calendarRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
   vacationRange(from: DateTime! to: DateTime! withExceptions: Boolean! withHolidays: Boolean!): [CalendarDate]!
 }

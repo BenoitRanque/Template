@@ -31,6 +31,7 @@
     <div class="q-py-md flex justify-around" v-if="canAuthorize">
       <q-btn @click="createExceptionAuthorization(false)" color="negative" size="md" rounded>Negar</q-btn>
       <q-btn @click="createExceptionAuthorization(true)" color="positive" size="md" rounded>Authorizar</q-btn>
+      <q-btn @click="$root.$emit('PRINT', { template: 'exception', payload: model, preview: true })" color="secondary" round icon="print"></q-btn>
     </div>
     <!-- <pre>{{model}}</pre> -->
     <q-inner-loading :visible="loading">

@@ -81,6 +81,7 @@ type ShiftSlot {
 
 type Exception {
   id: ID! @unique
+  type: ExceptionTypeEnum!
   createdAt: DateTime!
   updatedAt: DateTime!
   employee: Employee!
@@ -90,6 +91,11 @@ type Exception {
   owner: User! @relation(name: "ExceptionToExceptionOwner")
   credits: [ScheduleCredit!]!
   debits: [ScheduleDebit!]!
+}
+
+enum ExceptionTypeEnum {
+  MIXED
+  VACATION
 }
 
 type ExceptionSlot {

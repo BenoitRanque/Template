@@ -49,6 +49,10 @@ module.exports = {
     fragment: `fragment EmployeeID on Employee { id }`, // fragment ensures requires parent object properties will be present
     resolve: async (obj, args, ctx, info) => loadCalendarDate(obj, args, ctx, info)
   },
+  calendarDates: {
+    fragment: `fragment EmployeeID on Employee { id }`, // fragment ensures requires parent object properties will be present
+    resolve: async (obj, args, ctx, info) => loadCalendarDates(obj, args, ctx, info)
+  },
   calendarRange: {
     fragment: `fragment EmployeeID on Employee { id }`, // fragment ensures requires parent object properties will be present
     resolve: async (obj, args, ctx, info) => loadCalendarRange(obj, args, ctx, info)
@@ -74,11 +78,18 @@ async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, 
   }
 }
 
+async function loadCalendarDates({ id }, { dates, withExceptions, withHolidays }, { prisma }) {
+  if (!dates.length) return []
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, min(...dates), max(...dates), { withExceptions, withHolidays, withScheduleData: false })
+  return dates.map(date => ({
+    date,
+    ...getReferencesForDate(date, references)
+  }))
+}
+
 async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { prisma }, info, withScheduleData = false) {
   const references = await loadEmployeeReferencesForDateRange(prisma, id, from, to, { withExceptions, withHolidays, withScheduleData })
-
   const dates = eachDay(from, to)
-
   return dates.map(date => ({
     date,
     ...getReferencesForDate(date, references)
@@ -218,25 +229,25 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
 async function loadVacationSchedules ({ prisma }) {
   const data = await prisma.bindings.request(`
     query {
-      VacationVacation: schedule (where: {
+      SYS_SCH_VACATION_VACATION: schedule (where: {
         systemScheduleIdentifier: SYS_SCH_VACATION_VACATION
       }) {
         id
         ...AllScheduleData
       }
-      DayoffVacation: schedule (where: {
+      SYS_SCH_DAYOFF_VACATION: schedule (where: {
         systemScheduleIdentifier: SYS_SCH_DAYOFF_VACATION
       }) {
         id
         ...AllScheduleData
       }
-      VacationDayoff: schedule (where: {
+      SYS_SCH_VACATION_DAYOFF: schedule (where: {
         systemScheduleIdentifier: SYS_SCH_VACATION_DAYOFF
       }) {
         id
         ...AllScheduleData
       }
-      DayoffDayoff: schedule (where: {
+      SYS_SCH_DAYOFF_DAYOFF: schedule (where: {
         systemScheduleIdentifier: SYS_SCH_DAYOFF_DAYOFF
       }) {
         id
@@ -271,28 +282,28 @@ async function loadVacationSchedules ({ prisma }) {
   `)
 
   return {
-    VacationVacation: data.VacationVacation ? data.VacationVacation : null,
-    DayoffVacation: data.DayoffVacation ? data.DayoffVacation : null,
-    VacationDayoff: data.VacationDayoff ? data.VacationDayoff : null,
-    DayoffDayoff: data.DayoffDayoff ? data.DayoffDayoff : null
+    SYS_SCH_VACATION_VACATION: data.SYS_SCH_VACATION_VACATION ? data.SYS_SCH_VACATION_VACATION : null,
+    SYS_SCH_DAYOFF_VACATION: data.SYS_SCH_DAYOFF_VACATION ? data.SYS_SCH_DAYOFF_VACATION : null,
+    SYS_SCH_VACATION_DAYOFF: data.SYS_SCH_VACATION_DAYOFF ? data.SYS_SCH_VACATION_DAYOFF : null,
+    SYS_SCH_DAYOFF_DAYOFF: data.SYS_SCH_DAYOFF_DAYOFF ? data.SYS_SCH_DAYOFF_DAYOFF : null
   }
 }
 
-function getVacationSchedule(date, { VacationVacation, DayoffVacation, VacationDayoff, DayoffDayoff }) {
+function getVacationSchedule(date, { SYS_SCH_VACATION_VACATION, SYS_SCH_DAYOFF_VACATION, SYS_SCH_VACATION_DAYOFF, SYS_SCH_DAYOFF_DAYOFF }) {
   const { schedule } = date
 
-  if (!schedule) return VacationVacation
+  if (!schedule) return SYS_SCH_VACATION_VACATION
 
   if (schedule.offline1 && schedule.offline1.category === 'SCH_DAY_OFF') {
     if (schedule.offline2 && schedule.offline2.category === 'SCH_DAY_OFF') {
-      return DayoffDayoff
+      return SYS_SCH_DAYOFF_DAYOFF
     } else {
-      return DayoffVacation
+      return SYS_SCH_DAYOFF_VACATION
     }
   } else if (schedule.offline2 && schedule.offline2.category === 'SCH_DAY_OFF') {
-    return VacationDayoff
+    return SYS_SCH_VACATION_DAYOFF
   } else {
-    return VacationVacation
+    return SYS_SCH_VACATION_VACATION
   }
 }
 
