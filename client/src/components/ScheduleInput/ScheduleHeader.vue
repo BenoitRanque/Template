@@ -3,7 +3,8 @@
     <div class="col q-mr-xs">
       <slot name="top-left">
       </slot>
-      <q-input placeholder="Descripción..." :readonly="$parent.readonly" hide-underline v-model="$parent.model.description"></q-input>
+      <!-- <q-input placeholder="Descripción..." :readonly="$parent.readonly" hide-underline v-model="$parent.model.description"></q-input> -->
+      <div class="q-caption">{{$parent.model.description}}</div>
     </div>
     <span v-if="!$parent.readonly" class="col-auto">
       <q-chip

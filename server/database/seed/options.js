@@ -1,9 +1,4 @@
 module.exports = prisma => Promise.all([
-  prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'ADMIN', label: 'Administrador' } }, `{ id }`),
-  prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'MANAGER', label: 'Manager' } }, `{ id }`),
-  prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'SUPERVISOR', label: 'Supervisor' } }, `{ id }`),
-  prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Role', value: 'HR', label: 'Recursos Humanos' } }, `{ id }`),
-
   prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Boolean', value: 'true', label: 'Si' } }, `{ id }`),
   prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'Boolean', value: 'false', label: 'No' } }, `{ id }`),
   prisma.bindings.mutation.createFieldOptionLabel({ data: { field: 'EmployeeSex', value: 'F', label: 'Feminino' } }, `{ id }`),

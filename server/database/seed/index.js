@@ -17,6 +17,8 @@
     const schedules = await require('./schedules')(prisma)
     const departments = await require('./departments')(prisma, users)
     const employees = await require('./employees')(prisma, users, schedules, departments)
+
+    const scheduleCategoryConfig = await require('./scheduleCategoryConfig')(prisma)
     const options = await require('./options')(prisma)
 
   } catch (error) {

@@ -20,7 +20,7 @@
     <div class="group">
       <q-card color="teal-8" text-color="black" dark v-for="(slot, index) in model.slots" :key="`slot_card_${index}`">
         <q-card-main>
-          <schedule-input advanced v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
+          <schedule-input :advanced="isAuthorized(['ADMIN', 'HR'])" v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id">
             <div class="col" slot="top-left">
               <q-datetime
                 color="teal-8"
@@ -39,9 +39,49 @@
                 <q-tooltip>Quitar</q-tooltip>
               </q-btn>
             </div>
+
+            <template slot="offline1-header">
+              <q-icon class="text-bold" style="font-size: 16px" name="check">
+                <q-tooltip>Tiene Fuente</q-tooltip>
+              </q-icon>
+            </template>
+            <template slot="offline2-header">
+              <q-icon class="text-bold" style="font-size: 16px" name="check">
+                <q-tooltip>Tiene Fuente</q-tooltip>
+              </q-icon>
+            </template>
+
+            <template slot="offline1-source">
+              <q-item>
+                <q-item-main class="text-center">
+                  <q-select placeholder="Seleccionar Fuente en misma boleta" :options="sourceOptions(slot.schedule.offline1)" v-model="slot.source1.exception"></q-select>
+                </q-item-main>
+              </q-item>
+              <q-item>
+                <q-item-main class="text-center">
+                  <credit-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1.category" v-model="slot.source1.debit"></credit-select>
+                </q-item-main>
+              </q-item>
+            </template>
+
+            <template slot="offline2-source">
+              <q-item>
+                <q-item-main class="text-center">
+                  <q-select placeholder="Seleccionar Fuente en misma boleta" :options="sourceOptions(slot.schedule.offline2)" v-model="slot.source2.exception"></q-select>
+                </q-item-main>
+              </q-item>
+              <q-item>
+                <q-item-main class="text-center">
+                  <credit-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2.category" v-model="slot.source2.debit"></credit-select>
+                </q-item-main>
+              </q-item>
+            </template>
           </schedule-input>
         </q-card-main>
       </q-card>
+    </div>
+    <div class="text-center q-py-md">
+      <q-btn @click="validateException" :disable="!valid" color="secondary" size="lg">Validar</q-btn>
     </div>
     <div class="text-center q-py-md">
       <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
@@ -53,6 +93,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { CreateExceptionMutation } from 'assets/queries/Exception.graphql'
 import { date } from 'quasar'
 import ScheduleInput from 'components/ScheduleInput/index'
@@ -74,6 +115,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('session', {
+      isAuthorized: 'isAuthorized'
+    }),
     validationCode () {
       const duplicateDates = this.model.slots
         .map(({ date }) => date ? new Date(date).getTime() : null)
@@ -134,6 +178,9 @@ export default {
     },
     reset () {
       this.model.slots = []
+    },
+    validateException () {
+
     },
     createException () {
       const parameters = {

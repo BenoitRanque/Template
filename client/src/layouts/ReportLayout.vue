@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lFf"> <!-- Be sure to play with the Layout demo on docs -->
+  <q-layout view="hHh LpR lFf"> <!-- Be sure to play with the Layout demo on docs -->
 
     <main-header></main-header>
 

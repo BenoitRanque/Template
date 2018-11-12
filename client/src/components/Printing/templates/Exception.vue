@@ -34,18 +34,11 @@
         <div class="col-8">{{slot.schedule.description}}</div>
       </div>
     </div>
-    <div v-if="credits" class="q-my-sm">
-      <div class="q-title">Saldos a favor</div>
+    <div v-if="debits" class="q-my-sm">
+      <div class="q-title">Devoluciones</div>
       <div class="row" v-for="(amount, creditCategory) in credits" :key="creditCategory">
         <div class="col-4">{{amount}}</div>
         <div class="col-8">{{categoryDescription(creditCategory)}}</div>
-      </div>
-    </div>
-    <div v-if="debits" class="q-my-sm">
-      <div class="q-title">Saldos en contra</div>
-      <div class="row" v-for="(amount, debitCategory) in debits" :key="debitCategory">
-        <div class="col-4">{{amount}}</div>
-        <div class="col-8">{{categoryDescription(debitCategory)}}</div>
       </div>
     </div>
     <div class="q-px-lg row gutter-x-md">
@@ -63,18 +56,18 @@
       <!-- <div class="q-caption">Fecha de creacion: {{formatDate(payload.createdAt, 'DD/MM/YYYY')}}</div> -->
       <!-- <div class="q-caption">Identificador Unico</div> -->
       <barcode
-        style="transform: scaleX(0.75)"
+        style="transform: scaleX(0.60)"
         :value="payload.id"
         :options="{
           textAlign: 'right',
           format: 'CODE128',
           displayValue: false,
           width: 1,
-          height: 20,
+          height: 30,
           margin: 0
         }"
       />
-      <div style="font-family: monospace, monospace; font-size: 14px;">{{payload.id}}</div>
+      <div style="font-family: monospace, monospace; font-size: 12px;">{{payload.id}}</div>
     </div>
   </div>
 </template>

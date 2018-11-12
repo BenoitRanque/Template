@@ -87,6 +87,7 @@ type Exception {
   description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
   authorization: ExceptionAuthorization
+  cancelation: ExceptionCancelation
   owner: User! @relation(name: "ExceptionToExceptionOwner")
   credits: [ScheduleCredit!]!
   debits: [ScheduleDebit!]!
@@ -109,6 +110,15 @@ type ExceptionAuthorization {
   updatedAt: DateTime!
   granted: Boolean!
   exception: Exception!
+  owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
+}
+
+type ExceptionCancelation {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  exception: Exception!
+  description: String!
   owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
 }
 
@@ -256,7 +266,8 @@ enum AttendanceCategory {
 type ScheduleCategoryConfig {
   id: ID! @unique
   category: ScheduleCategory
-  color: String! @default(value: "#FFF")
+  backgroundColor: String! @default(value: "#FFF")
+  foregroundColor: String! @default(value: "#000")
   label: String
 }
 

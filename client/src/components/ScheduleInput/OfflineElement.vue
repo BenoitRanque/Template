@@ -29,12 +29,13 @@
             </q-item-main>
           </q-item>
         </q-list>
-        <slot name="trace"></slot>
+        <slot name="source"></slot>
       </q-modal-layout>
     </q-modal>
   </div>
   <div v-else :style="style" class="round-borders offline-element q-caption text-weight-bold row items-center justify-center no-wrap">
     {{categoryDescription(value.category)}}
+    <slot name="header"></slot>
     <q-tooltip>{{tooltip}}</q-tooltip>
     <q-popover self="top middle" anchor="bottom middle" :disable="$parent.readonly">
       <q-list>
@@ -59,7 +60,7 @@
         <!-- <q-list-header>
           Quitar Elemento
         </q-list-header> -->
-        <slot name="trace"></slot>
+        <slot name="source"></slot>
         <q-item-separator></q-item-separator>
         <q-item>
           <q-item-side>

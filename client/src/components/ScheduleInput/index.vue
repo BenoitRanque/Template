@@ -13,10 +13,12 @@
     <restline-gap v-if="!readonly" v-for="(gap, index) in restlineGaps" :key="`restline_gap_${index}`" :value="gap" @add="addRestlineElement"></restline-gap>
     <restline-element v-for="(element, index) in model.restline" :key="`restline_element_${index}`" :value="element" @remove="model.restline.splice(index, 1)"></restline-element>
     <offline-element v-model="model.offline1" :style="{ gridRow: offlineRow, gridColumn: `1 / ${ Math.floor(gridColumns / 2) + 1}` }">
-      <slot name="trace1" slot="trace"></slot>
+      <slot name="offline1-source" slot="source"></slot>
+      <slot name="offline1-header" slot="header"></slot>
     </offline-element>
     <offline-element v-model="model.offline2" :style="{ gridRow: offlineRow, gridColumn: `${Math.floor(gridColumns / 2) + 1} / ${gridColumns + 1}` }">
-      <slot name="trace2" slot="trace"></slot>
+      <slot name="offline2-source" slot="source"></slot>
+      <slot name="offline2-header" slot="header"></slot>
     </offline-element>
   </div>
 </template>
@@ -88,11 +90,6 @@ export default {
       // }
     }
   },
-  provide () {
-    return {
-      $parent: this
-    }
-  },
   computed: {
     model: {
       get () {
@@ -106,6 +103,7 @@ export default {
       'categoryCanRest',
       'categoryCanEvent',
       'categoryIsStandardTime',
+      'categoryDescription',
       'formatTime'
     ]),
     gridStyle () {
@@ -303,11 +301,76 @@ export default {
     isValid () {
       if (this.usedTime !== this.model.baseTime) return false
       return true
+    },
+    autoDescription () {
+      let desc = []
+
+      if (this.model.offline1 && this.model.offline2 && this.model.offline1.category === this.model.offline2.category) {
+        desc.push(`Día ${this.categoryDescription(this.model.offline1.category)}`)
+      } else {
+        if (this.model.offline1) {
+          desc.push(`Mañana ${this.categoryDescription(this.model.offline1.category)}`)
+        }
+        if (this.model.offline2) {
+          desc.push(`Tarde ${this.categoryDescription(this.model.offline2.category)}`)
+        }
+      }
+
+      desc = desc.concat(this.model.timeline.reduce((timeline, element) => {
+        timeline.push(`${this.categoryDescription(element.category)} ${this.formatTime(element.startTime)} - ${this.formatTime(element.endTime)}`)
+        return timeline
+      }, []))
+
+      desc = desc.concat(this.model.restline.reduce((timeline, element) => {
+        timeline.push(`${this.categoryDescription(element.category)} ${this.formatTime(element.duration)}`)
+        return timeline
+      }, []))
+
+      return desc.join(', ')
     }
   },
   watch: {
     isValid (isValid) {
       this.$emit('update:valid', isValid)
+    },
+    autoDescription (description) {
+      this.model.description = description
+    },
+    'model.timeline': {
+      deep: true,
+      handler (timeline) {
+        if (this.advanced) return
+
+        for (let i = 0, l = this.model.timeline.length - 1; i < l; i += 1) {
+          let currentElement = this.model.timeline[i]
+          let nextElement = this.model.timeline[i + 1]
+
+          if (nextElement.startTime === currentElement.endTime && nextElement.category === currentElement.category) {
+            currentElement.endTime = nextElement.endTime
+            this.model.timeline.splice(i + 1, 1)
+            return
+          }
+        }
+
+        for (let i = 0, l = this.model.timeline.length; i < l; i += 1) {
+          let currentElement = this.model.timeline[i]
+          let previousElement = i > 0 ? this.model.timeline[i - 1] : null
+          let nextElement = i < (l - 1) ? this.model.timeline[i + 1] : null
+
+          if (this.categoryCanEvent(currentElement.category)) {
+            if (previousElement && previousElement.endTime === currentElement.startTime && this.categoryCanEvent(previousElement.category)) {
+              currentElement.startEventRequired = false
+            } else {
+              currentElement.startEventRequired = true
+            }
+            if (nextElement && nextElement.startTime === currentElement.endTime && this.categoryCanEvent(nextElement.category)) {
+              currentElement.endEventRequired = false
+            } else {
+              currentElement.endEventRequired = true
+            }
+          }
+        }
+      }
     },
     timelineRestGroups () {
       if (this.canAutoAddLunch) this.autoAddLunch()

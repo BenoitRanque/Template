@@ -38,14 +38,13 @@
         </q-btn>
       </q-td>
 
-      <attendance-report-cell
-        v-for="(date, index) in dates"
-        :slot="`body-cell-${date}`"
-        :key="index"
-        :index="index"
-        slot-scope="props"
-        :props="props"
-      ></attendance-report-cell>
+      <template v-for="(date, index) in dates" :slot="`body-cell-${date}`" slot-scope="props">
+        <attendance-report-cell
+          :key="index"
+          :index="index"
+          :props="props"
+        ></attendance-report-cell>
+      </template>
     </q-table>
   </q-page>
 </template>

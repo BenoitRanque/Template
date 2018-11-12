@@ -2458,7 +2458,8 @@ enum ScheduleCategory {
 type ScheduleCategoryConfig {
   id: ID!
   category: ScheduleCategory
-  color: String!
+  backgroundColor: String!
+  foregroundColor: String!
   label: String
 }
 
@@ -2470,7 +2471,8 @@ type ScheduleCategoryConfigConnection {
 
 input ScheduleCategoryConfigCreateInput {
   category: ScheduleCategory
-  color: String
+  backgroundColor: String
+  foregroundColor: String
   label: String
 }
 
@@ -2484,8 +2486,10 @@ enum ScheduleCategoryConfigOrderByInput {
   id_DESC
   category_ASC
   category_DESC
-  color_ASC
-  color_DESC
+  backgroundColor_ASC
+  backgroundColor_DESC
+  foregroundColor_ASC
+  foregroundColor_DESC
   label_ASC
   label_DESC
   createdAt_ASC
@@ -2497,7 +2501,8 @@ enum ScheduleCategoryConfigOrderByInput {
 type ScheduleCategoryConfigPreviousValues {
   id: ID!
   category: ScheduleCategory
-  color: String!
+  backgroundColor: String!
+  foregroundColor: String!
   label: String
 }
 
@@ -2521,13 +2526,15 @@ input ScheduleCategoryConfigSubscriptionWhereInput {
 
 input ScheduleCategoryConfigUpdateInput {
   category: ScheduleCategory
-  color: String
+  backgroundColor: String
+  foregroundColor: String
   label: String
 }
 
 input ScheduleCategoryConfigUpdateManyMutationInput {
   category: ScheduleCategory
-  color: String
+  backgroundColor: String
+  foregroundColor: String
   label: String
 }
 
@@ -2550,20 +2557,34 @@ input ScheduleCategoryConfigWhereInput {
   category_not: ScheduleCategory
   category_in: [ScheduleCategory!]
   category_not_in: [ScheduleCategory!]
-  color: String
-  color_not: String
-  color_in: [String!]
-  color_not_in: [String!]
-  color_lt: String
-  color_lte: String
-  color_gt: String
-  color_gte: String
-  color_contains: String
-  color_not_contains: String
-  color_starts_with: String
-  color_not_starts_with: String
-  color_ends_with: String
-  color_not_ends_with: String
+  backgroundColor: String
+  backgroundColor_not: String
+  backgroundColor_in: [String!]
+  backgroundColor_not_in: [String!]
+  backgroundColor_lt: String
+  backgroundColor_lte: String
+  backgroundColor_gt: String
+  backgroundColor_gte: String
+  backgroundColor_contains: String
+  backgroundColor_not_contains: String
+  backgroundColor_starts_with: String
+  backgroundColor_not_starts_with: String
+  backgroundColor_ends_with: String
+  backgroundColor_not_ends_with: String
+  foregroundColor: String
+  foregroundColor_not: String
+  foregroundColor_in: [String!]
+  foregroundColor_not_in: [String!]
+  foregroundColor_lt: String
+  foregroundColor_lte: String
+  foregroundColor_gt: String
+  foregroundColor_gte: String
+  foregroundColor_contains: String
+  foregroundColor_not_contains: String
+  foregroundColor_starts_with: String
+  foregroundColor_not_starts_with: String
+  foregroundColor_ends_with: String
+  foregroundColor_not_ends_with: String
   label: String
   label_not: String
   label_in: [String!]

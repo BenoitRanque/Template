@@ -1411,8 +1411,10 @@ export type ScheduleCategoryConfigOrderByInput =
   | "id_DESC"
   | "category_ASC"
   | "category_DESC"
-  | "color_ASC"
-  | "color_DESC"
+  | "backgroundColor_ASC"
+  | "backgroundColor_DESC"
+  | "foregroundColor_ASC"
+  | "foregroundColor_DESC"
   | "label_ASC"
   | "label_DESC"
   | "createdAt_ASC"
@@ -2532,7 +2534,8 @@ export interface EmployeeCreateOneInput {
 
 export interface ScheduleCategoryConfigUpdateManyMutationInput {
   category?: ScheduleCategory;
-  color?: String;
+  backgroundColor?: String;
+  foregroundColor?: String;
   label?: String;
 }
 
@@ -2563,7 +2566,8 @@ export interface EmployeeCreateInput {
 
 export interface ScheduleCategoryConfigUpdateInput {
   category?: ScheduleCategory;
-  color?: String;
+  backgroundColor?: String;
+  foregroundColor?: String;
   label?: String;
 }
 
@@ -2591,20 +2595,34 @@ export interface ScheduleCategoryConfigWhereInput {
   category_not?: ScheduleCategory;
   category_in?: ScheduleCategory[] | ScheduleCategory;
   category_not_in?: ScheduleCategory[] | ScheduleCategory;
-  color?: String;
-  color_not?: String;
-  color_in?: String[] | String;
-  color_not_in?: String[] | String;
-  color_lt?: String;
-  color_lte?: String;
-  color_gt?: String;
-  color_gte?: String;
-  color_contains?: String;
-  color_not_contains?: String;
-  color_starts_with?: String;
-  color_not_starts_with?: String;
-  color_ends_with?: String;
-  color_not_ends_with?: String;
+  backgroundColor?: String;
+  backgroundColor_not?: String;
+  backgroundColor_in?: String[] | String;
+  backgroundColor_not_in?: String[] | String;
+  backgroundColor_lt?: String;
+  backgroundColor_lte?: String;
+  backgroundColor_gt?: String;
+  backgroundColor_gte?: String;
+  backgroundColor_contains?: String;
+  backgroundColor_not_contains?: String;
+  backgroundColor_starts_with?: String;
+  backgroundColor_not_starts_with?: String;
+  backgroundColor_ends_with?: String;
+  backgroundColor_not_ends_with?: String;
+  foregroundColor?: String;
+  foregroundColor_not?: String;
+  foregroundColor_in?: String[] | String;
+  foregroundColor_not_in?: String[] | String;
+  foregroundColor_lt?: String;
+  foregroundColor_lte?: String;
+  foregroundColor_gt?: String;
+  foregroundColor_gte?: String;
+  foregroundColor_contains?: String;
+  foregroundColor_not_contains?: String;
+  foregroundColor_starts_with?: String;
+  foregroundColor_not_starts_with?: String;
+  foregroundColor_ends_with?: String;
+  foregroundColor_not_ends_with?: String;
   label?: String;
   label_not?: String;
   label_in?: String[] | String;
@@ -3801,7 +3819,8 @@ export interface ExceptionAuthorizationUpsertWithoutExceptionInput {
 
 export interface ScheduleCategoryConfigCreateInput {
   category?: ScheduleCategory;
-  color?: String;
+  backgroundColor?: String;
+  foregroundColor?: String;
   label?: String;
 }
 
@@ -5766,7 +5785,8 @@ export interface DepartmentConnectionSubscription
 export interface ScheduleCategoryConfig {
   id: ID_Output;
   category?: ScheduleCategory;
-  color: String;
+  backgroundColor: String;
+  foregroundColor: String;
   label?: String;
 }
 
@@ -5775,7 +5795,8 @@ export interface ScheduleCategoryConfigPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   category: () => Promise<ScheduleCategory>;
-  color: () => Promise<String>;
+  backgroundColor: () => Promise<String>;
+  foregroundColor: () => Promise<String>;
   label: () => Promise<String>;
 }
 
@@ -5784,7 +5805,8 @@ export interface ScheduleCategoryConfigSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   category: () => Promise<AsyncIterator<ScheduleCategory>>;
-  color: () => Promise<AsyncIterator<String>>;
+  backgroundColor: () => Promise<AsyncIterator<String>>;
+  foregroundColor: () => Promise<AsyncIterator<String>>;
   label: () => Promise<AsyncIterator<String>>;
 }
 
@@ -6603,7 +6625,8 @@ export interface AggregateScheduleRestlineElementSubscription
 export interface ScheduleCategoryConfigPreviousValues {
   id: ID_Output;
   category?: ScheduleCategory;
-  color: String;
+  backgroundColor: String;
+  foregroundColor: String;
   label?: String;
 }
 
@@ -6612,7 +6635,8 @@ export interface ScheduleCategoryConfigPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   category: () => Promise<ScheduleCategory>;
-  color: () => Promise<String>;
+  backgroundColor: () => Promise<String>;
+  foregroundColor: () => Promise<String>;
   label: () => Promise<String>;
 }
 
@@ -6621,7 +6645,8 @@ export interface ScheduleCategoryConfigPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   category: () => Promise<AsyncIterator<ScheduleCategory>>;
-  color: () => Promise<AsyncIterator<String>>;
+  backgroundColor: () => Promise<AsyncIterator<String>>;
+  foregroundColor: () => Promise<AsyncIterator<String>>;
   label: () => Promise<AsyncIterator<String>>;
 }
 
