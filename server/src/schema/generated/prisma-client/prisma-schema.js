@@ -1344,6 +1344,7 @@ input EmployeeWhereUniqueInput {
 
 type Exception {
   id: ID!
+  type: ExceptionTypeEnum!
   createdAt: DateTime!
   updatedAt: DateTime!
   employee: Employee!
@@ -1507,6 +1508,7 @@ type ExceptionConnection {
 }
 
 input ExceptionCreateInput {
+  type: ExceptionTypeEnum!
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
   slots: ExceptionSlotCreateManyInput
@@ -1537,6 +1539,7 @@ input ExceptionCreateOneWithoutDebitsInput {
 }
 
 input ExceptionCreateWithoutAuthorizationInput {
+  type: ExceptionTypeEnum!
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
   slots: ExceptionSlotCreateManyInput
@@ -1546,6 +1549,7 @@ input ExceptionCreateWithoutAuthorizationInput {
 }
 
 input ExceptionCreateWithoutCreditsInput {
+  type: ExceptionTypeEnum!
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
   slots: ExceptionSlotCreateManyInput
@@ -1555,6 +1559,7 @@ input ExceptionCreateWithoutCreditsInput {
 }
 
 input ExceptionCreateWithoutDebitsInput {
+  type: ExceptionTypeEnum!
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
   slots: ExceptionSlotCreateManyInput
@@ -1564,6 +1569,7 @@ input ExceptionCreateWithoutDebitsInput {
 }
 
 input ExceptionCreateWithoutEmployeeInput {
+  type: ExceptionTypeEnum!
   description: String
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
@@ -1580,6 +1586,8 @@ type ExceptionEdge {
 enum ExceptionOrderByInput {
   id_ASC
   id_DESC
+  type_ASC
+  type_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1590,6 +1598,7 @@ enum ExceptionOrderByInput {
 
 type ExceptionPreviousValues {
   id: ID!
+  type: ExceptionTypeEnum!
   createdAt: DateTime!
   updatedAt: DateTime!
   description: String
@@ -1741,7 +1750,13 @@ input ExceptionSubscriptionWhereInput {
   NOT: [ExceptionSubscriptionWhereInput!]
 }
 
+enum ExceptionTypeEnum {
+  MIXED
+  VACATION
+}
+
 input ExceptionUpdateInput {
+  type: ExceptionTypeEnum
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
   slots: ExceptionSlotUpdateManyInput
@@ -1752,6 +1767,7 @@ input ExceptionUpdateInput {
 }
 
 input ExceptionUpdateManyMutationInput {
+  type: ExceptionTypeEnum
   description: String
 }
 
@@ -1788,6 +1804,7 @@ input ExceptionUpdateOneWithoutCreditsInput {
 }
 
 input ExceptionUpdateWithoutAuthorizationDataInput {
+  type: ExceptionTypeEnum
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
   slots: ExceptionSlotUpdateManyInput
@@ -1797,6 +1814,7 @@ input ExceptionUpdateWithoutAuthorizationDataInput {
 }
 
 input ExceptionUpdateWithoutCreditsDataInput {
+  type: ExceptionTypeEnum
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
   slots: ExceptionSlotUpdateManyInput
@@ -1806,6 +1824,7 @@ input ExceptionUpdateWithoutCreditsDataInput {
 }
 
 input ExceptionUpdateWithoutDebitsDataInput {
+  type: ExceptionTypeEnum
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
   slots: ExceptionSlotUpdateManyInput
@@ -1815,6 +1834,7 @@ input ExceptionUpdateWithoutDebitsDataInput {
 }
 
 input ExceptionUpdateWithoutEmployeeDataInput {
+  type: ExceptionTypeEnum
   description: String
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
@@ -1864,6 +1884,10 @@ input ExceptionWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  type: ExceptionTypeEnum
+  type_not: ExceptionTypeEnum
+  type_in: [ExceptionTypeEnum!]
+  type_not_in: [ExceptionTypeEnum!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4136,7 +4160,6 @@ type User {
   username: String!
   password: String!
   departments(where: DepartmentWhereInput, orderBy: DepartmentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Department!]
-  role: UserRoleEnum!
   roles(where: UserRoleWhereInput, orderBy: UserRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserRole!]
 }
 
@@ -4150,7 +4173,6 @@ input UserCreateInput {
   username: String!
   password: String!
   departments: DepartmentCreateManyWithoutSupervisorsInput
-  role: UserRoleEnum!
   roles: UserRoleCreateManyInput
 }
 
@@ -4167,7 +4189,6 @@ input UserCreateOneInput {
 input UserCreateWithoutDepartmentsInput {
   username: String!
   password: String!
-  role: UserRoleEnum!
   roles: UserRoleCreateManyInput
 }
 
@@ -4187,8 +4208,6 @@ enum UserOrderByInput {
   username_DESC
   password_ASC
   password_DESC
-  role_ASC
-  role_DESC
 }
 
 type UserPreviousValues {
@@ -4197,14 +4216,12 @@ type UserPreviousValues {
   updatedAt: DateTime!
   username: String!
   password: String!
-  role: UserRoleEnum!
 }
 
 type UserRole {
   id: ID!
   name: String!
   description: String
-  privileges: [String!]!
 }
 
 type UserRoleConnection {
@@ -4216,7 +4233,6 @@ type UserRoleConnection {
 input UserRoleCreateInput {
   name: String!
   description: String
-  privileges: UserRoleCreateprivilegesInput
 }
 
 input UserRoleCreateManyInput {
@@ -4224,20 +4240,9 @@ input UserRoleCreateManyInput {
   connect: [UserRoleWhereUniqueInput!]
 }
 
-input UserRoleCreateprivilegesInput {
-  set: [String!]
-}
-
 type UserRoleEdge {
   node: UserRole!
   cursor: String!
-}
-
-enum UserRoleEnum {
-  ADMIN
-  MANAGER
-  SUPERVISOR
-  HR
 }
 
 enum UserRoleOrderByInput {
@@ -4257,7 +4262,6 @@ type UserRolePreviousValues {
   id: ID!
   name: String!
   description: String
-  privileges: [String!]!
 }
 
 type UserRoleSubscriptionPayload {
@@ -4281,13 +4285,11 @@ input UserRoleSubscriptionWhereInput {
 input UserRoleUpdateDataInput {
   name: String
   description: String
-  privileges: UserRoleUpdateprivilegesInput
 }
 
 input UserRoleUpdateInput {
   name: String
   description: String
-  privileges: UserRoleUpdateprivilegesInput
 }
 
 input UserRoleUpdateManyInput {
@@ -4302,11 +4304,6 @@ input UserRoleUpdateManyInput {
 input UserRoleUpdateManyMutationInput {
   name: String
   description: String
-  privileges: UserRoleUpdateprivilegesInput
-}
-
-input UserRoleUpdateprivilegesInput {
-  set: [String!]
 }
 
 input UserRoleUpdateWithWhereUniqueNestedInput {
@@ -4395,7 +4392,6 @@ input UserUpdateDataInput {
   username: String
   password: String
   departments: DepartmentUpdateManyWithoutSupervisorsInput
-  role: UserRoleEnum
   roles: UserRoleUpdateManyInput
 }
 
@@ -4403,14 +4399,12 @@ input UserUpdateInput {
   username: String
   password: String
   departments: DepartmentUpdateManyWithoutSupervisorsInput
-  role: UserRoleEnum
   roles: UserRoleUpdateManyInput
 }
 
 input UserUpdateManyMutationInput {
   username: String
   password: String
-  role: UserRoleEnum
 }
 
 input UserUpdateManyWithoutDepartmentsInput {
@@ -4432,7 +4426,6 @@ input UserUpdateOneRequiredInput {
 input UserUpdateWithoutDepartmentsDataInput {
   username: String
   password: String
-  role: UserRoleEnum
   roles: UserRoleUpdateManyInput
 }
 
@@ -4514,10 +4507,6 @@ input UserWhereInput {
   departments_every: DepartmentWhereInput
   departments_some: DepartmentWhereInput
   departments_none: DepartmentWhereInput
-  role: UserRoleEnum
-  role_not: UserRoleEnum
-  role_in: [UserRoleEnum!]
-  role_not_in: [UserRoleEnum!]
   roles_every: UserRoleWhereInput
   roles_some: UserRoleWhereInput
   roles_none: UserRoleWhereInput

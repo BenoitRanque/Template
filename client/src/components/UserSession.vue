@@ -58,7 +58,9 @@ export default {
             token
             user {
               username
-              role
+              roles {
+                name
+              }
             }
           }
         }

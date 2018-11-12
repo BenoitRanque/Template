@@ -16,13 +16,13 @@ async function updateUser(obj, args, ctx, info) {
 }
 
 async function authenticate(obj, args, ctx, info) {
-  const user = await ctx.prisma.bindings.query.user({ where: { username: args.username } }, `{ id password role }`)
+  const user = await ctx.prisma.bindings.query.user({ where: { username: args.username } }, `{ id password roles { name } }`)
   if (user) {
     const valid = await bcrypt.compare(args.password, user.password)
     if (valid) {
       return {
         user,
-        token: jwt.sign({ user: { id: user.id, role: user.role } }, APP_SECRET)
+        token: jwt.sign({ user: { id: user.id, roles: user.roles } }, APP_SECRET)
       }
     }
   }
@@ -57,6 +57,7 @@ async function createException(parent, { data }, ctx, info) {
 
   return ctx.prisma.bindings.mutation.createException({
     data: {
+      type: data.type,
       owner: {
         connect: {
           id: userId

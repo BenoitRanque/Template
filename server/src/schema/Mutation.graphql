@@ -25,5 +25,5 @@ type User {
   id: ID!
   username: String!
   departments: [Department]!
-  role: UserRoleEnum!
+  roles: [UserRole!]!
 }

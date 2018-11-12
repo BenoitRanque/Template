@@ -6,7 +6,7 @@ const HR = 'HR'
 
 function isAuthorized (roles) {
   return (resolve, obj, args, ctx, info) => {
-    if (ctx.session && ctx.session.user && ctx.session.user.role && roles.includes(ctx.session.user.role)) {
+    if (ctx.session && ctx.session.user && ctx.session.user.roles && ctx.session.user.roles.some(role => roles.includes(role.name))) {
       return resolve(obj, args, ctx, info)
     }
     throw new Error(`Se require Authorización`)

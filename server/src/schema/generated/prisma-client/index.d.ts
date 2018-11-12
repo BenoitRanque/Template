@@ -1076,13 +1076,7 @@ export interface ClientConstructor<T> {
 
 export type EmployeeSexEnum = "F" | "M";
 
-export type ScheduleOfflineCategory =
-  | "SCH_DAY_OFF"
-  | "SCH_DAY_VACATION"
-  | "SCH_DAY_HOLIDAY"
-  | "SCH_DAY_SICK"
-  | "SCH_DAY_PAID"
-  | "SCH_DAY_UNPAID";
+export type ExceptionTypeEnum = "MIXED" | "VACATION";
 
 export type EmployeeCajaDeSaludEnum =
   | "OPTION_1"
@@ -1123,6 +1117,8 @@ export type ScheduleCategory =
 export type ExceptionOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1172,18 +1168,6 @@ export type FieldOptionLabelOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type UserRoleEnum = "ADMIN" | "MANAGER" | "SUPERVISOR" | "HR";
-
-export type DirectCreditOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type DepartmentOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1194,11 +1178,11 @@ export type DepartmentOrderByInput =
   | "name_ASC"
   | "name_DESC";
 
-export type ScheduleDebitOrderByInput =
+export type DirectCreditOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "category_ASC"
-  | "category_DESC"
+  | "description_ASC"
+  | "description_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1224,11 +1208,11 @@ export type ScheduleRestlineElementOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type ExceptionSlotOrderByInput =
+export type ScheduleDebitOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "date_ASC"
-  | "date_DESC"
+  | "category_ASC"
+  | "category_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1252,7 +1236,15 @@ export type ScheduleTimelineElementOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+export type ExceptionSlotOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "date_ASC"
+  | "date_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type ShiftSlotOrderByInput =
   | "id_ASC"
@@ -1263,6 +1255,15 @@ export type ShiftSlotOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
+export type SystemScheduleIdentifierEnum =
+  | "SYS_SCH_DAYOFF_DAYOFF"
+  | "SYS_SCH_VACATION_VACATION"
+  | "SYS_SCH_VACATION_DAYOFF"
+  | "SYS_SCH_DAYOFF_VACATION"
+  | "SYS_SCH_HOLIDAY_HOLIDAY";
 
 export type AttendanceCycleOrderByInput =
   | "id_ASC"
@@ -1278,23 +1279,6 @@ export type AttendanceCycleOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type SystemScheduleIdentifierEnum =
-  | "SYS_SCH_DAYOFF_DAYOFF"
-  | "SYS_SCH_VACATION_VACATION"
-  | "SYS_SCH_VACATION_DAYOFF"
-  | "SYS_SCH_DAYOFF_VACATION"
-  | "SYS_SCH_HOLIDAY_HOLIDAY";
-
-export type ExceptionAuthorizationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "granted_ASC"
-  | "granted_DESC";
-
 export type ShiftOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1309,6 +1293,22 @@ export type ShiftOrderByInput =
   | "endDate_ASC"
   | "endDate_DESC";
 
+export type ExceptionAuthorizationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "granted_ASC"
+  | "granted_DESC";
+
+export type ScheduleTimelineCategory =
+  | "SCH_TIME_WORK"
+  | "SCH_TIME_EXTRA"
+  | "SCH_TIME_MATERNAL"
+  | "SCH_TIME_LEAVE";
+
 export type ScheduleCreditOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1322,6 +1322,14 @@ export type ScheduleCreditOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type ScheduleOfflineCategory =
+  | "SCH_DAY_OFF"
+  | "SCH_DAY_VACATION"
+  | "SCH_DAY_HOLIDAY"
+  | "SCH_DAY_SICK"
+  | "SCH_DAY_PAID"
+  | "SCH_DAY_UNPAID";
 
 export type ScheduleCreditSourceEnum =
   | "EXCEPTION"
@@ -1372,12 +1380,6 @@ export type EmployeeOrderByInput =
   | "zkTimePin_ASC"
   | "zkTimePin_DESC";
 
-export type ScheduleTimelineCategory =
-  | "SCH_TIME_WORK"
-  | "SCH_TIME_EXTRA"
-  | "SCH_TIME_MATERNAL"
-  | "SCH_TIME_LEAVE";
-
 export type EmployeeDocumentTypeEnum = "CI" | "PASSAPORTE";
 
 export type UserOrderByInput =
@@ -1390,9 +1392,7 @@ export type UserOrderByInput =
   | "username_ASC"
   | "username_DESC"
   | "password_ASC"
-  | "password_DESC"
-  | "role_ASC"
-  | "role_DESC";
+  | "password_DESC";
 
 export type HolidayOrderByInput =
   | "id_ASC"
@@ -1463,6 +1463,10 @@ export interface ExceptionWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
+  type?: ExceptionTypeEnum;
+  type_not?: ExceptionTypeEnum;
+  type_in?: ExceptionTypeEnum[] | ExceptionTypeEnum;
+  type_not_in?: ExceptionTypeEnum[] | ExceptionTypeEnum;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -1836,6 +1840,7 @@ export interface ExceptionUpsertWithoutDebitsInput {
 }
 
 export interface ExceptionCreateWithoutEmployeeInput {
+  type: ExceptionTypeEnum;
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
@@ -2191,7 +2196,6 @@ export interface ExceptionSubscriptionWhereInput {
 export interface UserCreateWithoutDepartmentsInput {
   username: String;
   password: String;
-  role: UserRoleEnum;
   roles?: UserRoleCreateManyInput;
 }
 
@@ -2226,7 +2230,6 @@ export interface ScheduleDebitCreateWithoutEmployeeInput {
 export interface UserRoleUpdateManyMutationInput {
   name?: String;
   description?: String;
-  privileges?: UserRoleUpdateprivilegesInput;
 }
 
 export interface ExceptionCreateOneWithoutDebitsInput {
@@ -2237,10 +2240,10 @@ export interface ExceptionCreateOneWithoutDebitsInput {
 export interface UserRoleUpdateInput {
   name?: String;
   description?: String;
-  privileges?: UserRoleUpdateprivilegesInput;
 }
 
 export interface ExceptionCreateWithoutDebitsInput {
+  type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
@@ -2253,7 +2256,6 @@ export interface UserUpdateInput {
   username?: String;
   password?: String;
   departments?: DepartmentUpdateManyWithoutSupervisorsInput;
-  role?: UserRoleEnum;
   roles?: UserRoleUpdateManyInput;
 }
 
@@ -2335,6 +2337,7 @@ export type ExceptionSlotWhereUniqueInput = AtLeastOne<{
 }>;
 
 export interface ExceptionCreateWithoutCreditsInput {
+  type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
@@ -2730,6 +2733,7 @@ export interface ShiftUpdateManyWithoutEmployeeInput {
 }
 
 export interface ExceptionUpdateWithoutAuthorizationDataInput {
+  type?: ExceptionTypeEnum;
   employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
@@ -2756,6 +2760,7 @@ export interface ShiftUpdateWithoutEmployeeDataInput {
 }
 
 export interface ExceptionCreateWithoutAuthorizationInput {
+  type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
@@ -2787,6 +2792,7 @@ export interface ShiftSlotUpdateWithWhereUniqueNestedInput {
 }
 
 export interface ExceptionUpdateManyMutationInput {
+  type?: ExceptionTypeEnum;
   description?: String;
 }
 
@@ -3214,7 +3220,6 @@ export interface UserUpdateDataInput {
   username?: String;
   password?: String;
   departments?: DepartmentUpdateManyWithoutSupervisorsInput;
-  role?: UserRoleEnum;
   roles?: UserRoleUpdateManyInput;
 }
 
@@ -3241,7 +3246,6 @@ export interface UserCreateInput {
   username: String;
   password: String;
   departments?: DepartmentCreateManyWithoutSupervisorsInput;
-  role: UserRoleEnum;
   roles?: UserRoleCreateManyInput;
 }
 
@@ -3263,7 +3267,6 @@ export interface DepartmentUpdateWithoutSupervisorsDataInput {
 export interface UserRoleCreateInput {
   name: String;
   description?: String;
-  privileges?: UserRoleCreateprivilegesInput;
 }
 
 export interface DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput {
@@ -3272,15 +3275,15 @@ export interface DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput {
   create: DepartmentCreateWithoutSupervisorsInput;
 }
 
-export interface UserRoleSubscriptionWhereInput {
+export interface UserSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: UserRoleWhereInput;
-  AND?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
-  OR?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
-  NOT?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
 export interface UserRoleUpdateManyInput {
@@ -3296,23 +3299,7 @@ export interface UserRoleUpdateManyInput {
   disconnect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
 }
 
-export interface ShiftSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ShiftWhereInput;
-  AND?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-  OR?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-  NOT?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-}
-
-export interface UserRoleUpdateWithWhereUniqueNestedInput {
-  where: UserRoleWhereUniqueInput;
-  data: UserRoleUpdateDataInput;
-}
-
-export interface DepartmentWhereInput {
+export interface UserWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -3343,589 +3330,48 @@ export interface DepartmentWhereInput {
   updatedAt_lte?: DateTimeInput;
   updatedAt_gt?: DateTimeInput;
   updatedAt_gte?: DateTimeInput;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  subordinates_every?: EmployeeWhereInput;
-  subordinates_some?: EmployeeWhereInput;
-  subordinates_none?: EmployeeWhereInput;
-  supervisors_every?: UserWhereInput;
-  supervisors_some?: UserWhereInput;
-  supervisors_none?: UserWhereInput;
-  AND?: DepartmentWhereInput[] | DepartmentWhereInput;
-  OR?: DepartmentWhereInput[] | DepartmentWhereInput;
-  NOT?: DepartmentWhereInput[] | DepartmentWhereInput;
-}
-
-export interface UserRoleUpdateDataInput {
-  name?: String;
-  description?: String;
-  privileges?: UserRoleUpdateprivilegesInput;
-}
-
-export interface ScheduleDebitSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ScheduleDebitWhereInput;
-  AND?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-  OR?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-  NOT?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-}
-
-export interface UserRoleUpdateprivilegesInput {
-  set?: String[] | String;
-}
-
-export interface HolidaySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: HolidayWhereInput;
-  AND?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-  OR?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-  NOT?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-}
-
-export interface UserRoleUpsertWithWhereUniqueNestedInput {
-  where: UserRoleWhereUniqueInput;
-  update: UserRoleUpdateDataInput;
-  create: UserRoleCreateInput;
-}
-
-export interface ExceptionAuthorizationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionAuthorizationWhereInput;
-  AND?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-  OR?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-  NOT?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface DirectCreditSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: DirectCreditWhereInput;
-  AND?:
-    | DirectCreditSubscriptionWhereInput[]
-    | DirectCreditSubscriptionWhereInput;
-  OR?:
-    | DirectCreditSubscriptionWhereInput[]
-    | DirectCreditSubscriptionWhereInput;
-  NOT?:
-    | DirectCreditSubscriptionWhereInput[]
-    | DirectCreditSubscriptionWhereInput;
-}
-
-export interface ShiftUpsertWithWhereUniqueWithoutEmployeeInput {
-  where: ShiftWhereUniqueInput;
-  update: ShiftUpdateWithoutEmployeeDataInput;
-  create: ShiftCreateWithoutEmployeeInput;
-}
-
-export type EmployeeWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ExceptionUpdateManyWithoutEmployeeInput {
-  create?:
-    | ExceptionCreateWithoutEmployeeInput[]
-    | ExceptionCreateWithoutEmployeeInput;
-  delete?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
-  connect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
-  disconnect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
-  update?:
-    | ExceptionUpdateWithWhereUniqueWithoutEmployeeInput[]
-    | ExceptionUpdateWithWhereUniqueWithoutEmployeeInput;
-  upsert?:
-    | ExceptionUpsertWithWhereUniqueWithoutEmployeeInput[]
-    | ExceptionUpsertWithWhereUniqueWithoutEmployeeInput;
-}
-
-export type ExceptionWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
-  where: ExceptionWhereUniqueInput;
-  data: ExceptionUpdateWithoutEmployeeDataInput;
-}
-
-export type ExceptionAuthorizationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ExceptionUpdateWithoutEmployeeDataInput {
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
-
-export interface ShiftUpdateInput {
-  description?: String;
-  employee?: EmployeeUpdateOneRequiredWithoutShiftsInput;
-  startDate?: DateTimeInput;
-  endDate?: DateTimeInput;
-  slots?: ShiftSlotUpdateManyInput;
-  owner?: UserUpdateOneRequiredInput;
-}
-
-export interface ExceptionSlotUpdateManyInput {
-  create?: ExceptionSlotCreateInput[] | ExceptionSlotCreateInput;
-  update?:
-    | ExceptionSlotUpdateWithWhereUniqueNestedInput[]
-    | ExceptionSlotUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | ExceptionSlotUpsertWithWhereUniqueNestedInput[]
-    | ExceptionSlotUpsertWithWhereUniqueNestedInput;
-  delete?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
-  connect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
-  disconnect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
-}
-
-export interface ShiftCreateInput {
-  description?: String;
-  employee: EmployeeCreateOneWithoutShiftsInput;
-  startDate: DateTimeInput;
-  endDate?: DateTimeInput;
-  slots?: ShiftSlotCreateManyInput;
-  owner: UserCreateOneInput;
-}
-
-export interface ExceptionSlotUpdateWithWhereUniqueNestedInput {
-  where: ExceptionSlotWhereUniqueInput;
-  data: ExceptionSlotUpdateDataInput;
-}
-
-export interface ScheduleTimelineElementUpdateInput {
-  category?: ScheduleTimelineCategory;
-  startTime?: Int;
-  endTime?: Int;
-  startEventRequired?: Boolean;
-  endEventRequired?: Boolean;
-}
-
-export interface ExceptionSlotUpdateDataInput {
-  schedule?: ScheduleUpdateOneRequiredInput;
-  date?: DateTimeInput;
-}
-
-export type HolidayWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  date?: DateTimeInput;
-}>;
-
-export interface ExceptionSlotUpsertWithWhereUniqueNestedInput {
-  where: ExceptionSlotWhereUniqueInput;
-  update: ExceptionSlotUpdateDataInput;
-  create: ExceptionSlotCreateInput;
-}
-
-export interface ScheduleDebitCreateInput {
-  employee: EmployeeCreateOneWithoutDebitsInput;
-  category: ScheduleOfflineCategory;
-  exception: ExceptionCreateOneWithoutDebitsInput;
-  credit: ScheduleCreditCreateOneWithoutDebitInput;
-}
-
-export interface ExceptionAuthorizationUpdateOneWithoutExceptionInput {
-  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
-  update?: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionAuthorizationUpsertWithoutExceptionInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionAuthorizationWhereUniqueInput;
-}
-
-export interface ScheduleCreditCreateInput {
-  employee: EmployeeCreateOneWithoutCreditsInput;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionCreateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-  debit?: ScheduleDebitCreateOneWithoutCreditInput;
-}
-
-export interface ExceptionAuthorizationUpdateWithoutExceptionDataInput {
-  granted?: Boolean;
-  owner?: UserUpdateOneRequiredInput;
-}
-
-export interface AttendanceCycleWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  startDate?: DateTimeInput;
-  startDate_not?: DateTimeInput;
-  startDate_in?: DateTimeInput[] | DateTimeInput;
-  startDate_not_in?: DateTimeInput[] | DateTimeInput;
-  startDate_lt?: DateTimeInput;
-  startDate_lte?: DateTimeInput;
-  startDate_gt?: DateTimeInput;
-  startDate_gte?: DateTimeInput;
-  endDate?: DateTimeInput;
-  endDate_not?: DateTimeInput;
-  endDate_in?: DateTimeInput[] | DateTimeInput;
-  endDate_not_in?: DateTimeInput[] | DateTimeInput;
-  endDate_lt?: DateTimeInput;
-  endDate_lte?: DateTimeInput;
-  endDate_gt?: DateTimeInput;
-  endDate_gte?: DateTimeInput;
-  AND?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
-  OR?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
-  NOT?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
-}
-
-export interface ExceptionAuthorizationUpsertWithoutExceptionInput {
-  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
-  create: ExceptionAuthorizationCreateWithoutExceptionInput;
-}
-
-export interface ScheduleUpdateInput {
-  isPreset?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  description?: String;
-  baseTime?: Int;
-  timeline?: ScheduleTimelineElementUpdateManyInput;
-  restline?: ScheduleRestlineElementUpdateManyInput;
-  offline1?: ScheduleOfflineElementUpdateOneInput;
-  offline2?: ScheduleOfflineElementUpdateOneInput;
-}
-
-export interface ScheduleCreditUpdateManyWithoutSourceExceptionInput {
-  create?:
-    | ScheduleCreditCreateWithoutSourceExceptionInput[]
-    | ScheduleCreditCreateWithoutSourceExceptionInput;
-  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-  disconnect?:
-    | ScheduleCreditWhereUniqueInput[]
-    | ScheduleCreditWhereUniqueInput;
-  update?:
-    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput[]
-    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput;
-  upsert?:
-    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput[]
-    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput;
-}
-
-export interface FieldOptionLabelUpdateManyMutationInput {
-  field?: String;
-  value?: String;
-  label?: String;
-}
-
-export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput {
-  where: ScheduleCreditWhereUniqueInput;
-  data: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
-}
-
-export interface ExceptionSlotUpdateManyMutationInput {
-  date?: DateTimeInput;
-}
-
-export interface ScheduleCreditUpdateWithoutSourceExceptionDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
-}
-
-export interface ExceptionUpsertWithoutAuthorizationInput {
-  update: ExceptionUpdateWithoutAuthorizationDataInput;
-  create: ExceptionCreateWithoutAuthorizationInput;
-}
-
-export interface EmployeeUpdateOneRequiredWithoutCreditsInput {
-  create?: EmployeeCreateWithoutCreditsInput;
-  update?: EmployeeUpdateWithoutCreditsDataInput;
-  upsert?: EmployeeUpsertWithoutCreditsInput;
-  connect?: EmployeeWhereUniqueInput;
-}
-
-export interface ExceptionAuthorizationUpdateInput {
-  granted?: Boolean;
-  exception?: ExceptionUpdateOneRequiredWithoutAuthorizationInput;
-  owner?: UserUpdateOneRequiredInput;
-}
-
-export interface EmployeeUpdateWithoutCreditsDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
-}
-
-export interface ExceptionAuthorizationCreateInput {
-  granted: Boolean;
-  exception: ExceptionCreateOneWithoutAuthorizationInput;
-  owner: UserCreateOneInput;
-}
-
-export interface DepartmentUpdateOneWithoutSubordinatesInput {
-  create?: DepartmentCreateWithoutSubordinatesInput;
-  update?: DepartmentUpdateWithoutSubordinatesDataInput;
-  upsert?: DepartmentUpsertWithoutSubordinatesInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: DepartmentWhereUniqueInput;
-}
-
-export interface ExceptionCreateInput {
-  employee: EmployeeCreateOneWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotCreateManyInput;
-  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  owner: UserCreateOneInput;
-  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
-
-export interface DepartmentUpdateWithoutSubordinatesDataInput {
-  name?: String;
-  supervisors?: UserUpdateManyWithoutDepartmentsInput;
-}
-
-export interface DirectCreditUpdateManyMutationInput {
-  description?: String;
-}
-
-export interface UserUpdateManyWithoutDepartmentsInput {
-  create?:
-    | UserCreateWithoutDepartmentsInput[]
-    | UserCreateWithoutDepartmentsInput;
-  delete?: UserWhereUniqueInput[] | UserWhereUniqueInput;
-  connect?: UserWhereUniqueInput[] | UserWhereUniqueInput;
-  disconnect?: UserWhereUniqueInput[] | UserWhereUniqueInput;
-  update?:
-    | UserUpdateWithWhereUniqueWithoutDepartmentsInput[]
-    | UserUpdateWithWhereUniqueWithoutDepartmentsInput;
-  upsert?:
-    | UserUpsertWithWhereUniqueWithoutDepartmentsInput[]
-    | UserUpsertWithWhereUniqueWithoutDepartmentsInput;
-}
-
-export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput {
-  where: ScheduleCreditWhereUniqueInput;
-  data: ScheduleCreditUpdateWithoutSourceDirectDataInput;
-}
-
-export interface UserUpdateWithWhereUniqueWithoutDepartmentsInput {
-  where: UserWhereUniqueInput;
-  data: UserUpdateWithoutDepartmentsDataInput;
-}
-
-export interface ScheduleCreditCreateWithoutSourceDirectInput {
-  employee: EmployeeCreateOneWithoutCreditsInput;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-  debit?: ScheduleDebitCreateOneWithoutCreditInput;
-}
-
-export interface UserUpdateWithoutDepartmentsDataInput {
   username?: String;
+  username_not?: String;
+  username_in?: String[] | String;
+  username_not_in?: String[] | String;
+  username_lt?: String;
+  username_lte?: String;
+  username_gt?: String;
+  username_gte?: String;
+  username_contains?: String;
+  username_not_contains?: String;
+  username_starts_with?: String;
+  username_not_starts_with?: String;
+  username_ends_with?: String;
+  username_not_ends_with?: String;
   password?: String;
-  role?: UserRoleEnum;
-  roles?: UserRoleUpdateManyInput;
+  password_not?: String;
+  password_in?: String[] | String;
+  password_not_in?: String[] | String;
+  password_lt?: String;
+  password_lte?: String;
+  password_gt?: String;
+  password_gte?: String;
+  password_contains?: String;
+  password_not_contains?: String;
+  password_starts_with?: String;
+  password_not_starts_with?: String;
+  password_ends_with?: String;
+  password_not_ends_with?: String;
+  departments_every?: DepartmentWhereInput;
+  departments_some?: DepartmentWhereInput;
+  departments_none?: DepartmentWhereInput;
+  roles_every?: UserRoleWhereInput;
+  roles_some?: UserRoleWhereInput;
+  roles_none?: UserRoleWhereInput;
+  AND?: UserWhereInput[] | UserWhereInput;
+  OR?: UserWhereInput[] | UserWhereInput;
+  NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface AttendanceCycleCreateInput {
-  name: String;
-  startDate: DateTimeInput;
-  endDate: DateTimeInput;
-}
-
-export interface UserUpsertWithWhereUniqueWithoutDepartmentsInput {
-  where: UserWhereUniqueInput;
-  update: UserUpdateWithoutDepartmentsDataInput;
-  create: UserCreateWithoutDepartmentsInput;
-}
-
-export interface EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
-  where: EmployeeWhereUniqueInput;
-  update: EmployeeUpdateWithoutDepartmentDataInput;
-  create: EmployeeCreateWithoutDepartmentInput;
-}
-
-export interface DepartmentUpsertWithoutSubordinatesInput {
-  update: DepartmentUpdateWithoutSubordinatesDataInput;
-  create: DepartmentCreateWithoutSubordinatesInput;
-}
-
-export interface ShiftCreateManyWithoutEmployeeInput {
-  create?: ShiftCreateWithoutEmployeeInput[] | ShiftCreateWithoutEmployeeInput;
-  connect?: ShiftWhereUniqueInput[] | ShiftWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateManyWithoutEmployeeInput {
-  create?:
-    | ScheduleDebitCreateWithoutEmployeeInput[]
-    | ScheduleDebitCreateWithoutEmployeeInput;
-  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  update?:
-    | ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput[]
-    | ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput;
-  upsert?:
-    | ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput[]
-    | ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput;
-}
-
-export interface ScheduleCreateOneInput {
-  create?: ScheduleCreateInput;
-  connect?: ScheduleWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
-  where: ScheduleDebitWhereUniqueInput;
-  data: ScheduleDebitUpdateWithoutEmployeeDataInput;
-}
-
-export interface ScheduleRestlineElementCreateManyInput {
-  create?:
-    | ScheduleRestlineElementCreateInput[]
-    | ScheduleRestlineElementCreateInput;
-  connect?:
-    | ScheduleRestlineElementWhereUniqueInput[]
-    | ScheduleRestlineElementWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
-  category?: ScheduleOfflineCategory;
-  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
-  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
-}
-
-export interface UserCreateOneInput {
-  create?: UserCreateInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface ExceptionUpdateOneRequiredWithoutDebitsInput {
-  create?: ExceptionCreateWithoutDebitsInput;
-  update?: ExceptionUpdateWithoutDebitsDataInput;
-  upsert?: ExceptionUpsertWithoutDebitsInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface UserRoleCreateManyInput {
-  create?: UserRoleCreateInput[] | UserRoleCreateInput;
-  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
-}
-
-export interface ExceptionUpdateWithoutDebitsDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface EmployeeUpdateOneRequiredWithoutExceptionsInput {
-  create?: EmployeeCreateWithoutExceptionsInput;
-  update?: EmployeeUpdateWithoutExceptionsDataInput;
-  upsert?: EmployeeUpsertWithoutExceptionsInput;
-  connect?: EmployeeWhereUniqueInput;
+export interface UserRoleUpdateWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput;
+  data: UserRoleUpdateDataInput;
 }
 
 export interface EmployeeWhereInput {
@@ -4115,49 +3561,58 @@ export interface EmployeeWhereInput {
   NOT?: EmployeeWhereInput[] | EmployeeWhereInput;
 }
 
-export interface EmployeeUpdateWithoutExceptionsDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+export interface UserRoleUpdateDataInput {
+  name?: String;
+  description?: String;
+}
+
+export interface ScheduleCategoryConfigSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleCategoryConfigWhereInput;
+  AND?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+  OR?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+  NOT?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+}
+
+export interface UserRoleUpsertWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput;
+  update: UserRoleUpdateDataInput;
+  create: UserRoleCreateInput;
 }
 
 export type DepartmentWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface ScheduleCreditUpdateManyWithoutEmployeeInput {
-  create?:
-    | ScheduleCreditCreateWithoutEmployeeInput[]
-    | ScheduleCreditCreateWithoutEmployeeInput;
-  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-  disconnect?:
-    | ScheduleCreditWhereUniqueInput[]
-    | ScheduleCreditWhereUniqueInput;
-  update?:
-    | ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput[]
-    | ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput;
-  upsert?:
-    | ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput[]
-    | ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput;
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface EmployeeSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: EmployeeWhereInput;
+  AND?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+  OR?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+  NOT?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+}
+
+export interface ShiftUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ShiftWhereUniqueInput;
+  update: ShiftUpdateWithoutEmployeeDataInput;
+  create: ShiftCreateWithoutEmployeeInput;
 }
 
 export interface AttendanceCycleSubscriptionWhereInput {
@@ -4177,9 +3632,29 @@ export interface AttendanceCycleSubscriptionWhereInput {
     | AttendanceCycleSubscriptionWhereInput;
 }
 
-export interface ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput {
-  where: ScheduleCreditWhereUniqueInput;
-  data: ScheduleCreditUpdateWithoutEmployeeDataInput;
+export interface ExceptionUpdateManyWithoutEmployeeInput {
+  create?:
+    | ExceptionCreateWithoutEmployeeInput[]
+    | ExceptionCreateWithoutEmployeeInput;
+  delete?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
+  connect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
+  disconnect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
+  update?:
+    | ExceptionUpdateWithWhereUniqueWithoutEmployeeInput[]
+    | ExceptionUpdateWithWhereUniqueWithoutEmployeeInput;
+  upsert?:
+    | ExceptionUpsertWithWhereUniqueWithoutEmployeeInput[]
+    | ExceptionUpsertWithWhereUniqueWithoutEmployeeInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  username?: String;
+  password?: String;
+}
+
+export interface ExceptionUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ExceptionWhereUniqueInput;
+  data: ExceptionUpdateWithoutEmployeeDataInput;
 }
 
 export interface ShiftSlotUpdateInput {
@@ -4187,14 +3662,51 @@ export interface ShiftSlotUpdateInput {
   schedule?: ScheduleUpdateOneRequiredInput;
 }
 
-export interface ScheduleCreditUpdateWithoutEmployeeDataInput {
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+export interface ExceptionUpdateWithoutEmployeeDataInput {
+  type?: ExceptionTypeEnum;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
+
+export interface EmployeeUpdateWithoutShiftsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface ExceptionSlotUpdateManyInput {
+  create?: ExceptionSlotCreateInput[] | ExceptionSlotCreateInput;
+  update?:
+    | ExceptionSlotUpdateWithWhereUniqueNestedInput[]
+    | ExceptionSlotUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | ExceptionSlotUpsertWithWhereUniqueNestedInput[]
+    | ExceptionSlotUpsertWithWhereUniqueNestedInput;
+  delete?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
+  connect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
+  disconnect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
 }
 
 export interface EmployeeCreateWithoutShiftsInput {
@@ -4221,13 +3733,22 @@ export interface EmployeeCreateWithoutShiftsInput {
   debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export interface ExceptionUpdateOneWithoutCreditsInput {
-  create?: ExceptionCreateWithoutCreditsInput;
-  update?: ExceptionUpdateWithoutCreditsDataInput;
-  upsert?: ExceptionUpsertWithoutCreditsInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionWhereUniqueInput;
+export interface ExceptionSlotUpdateWithWhereUniqueNestedInput {
+  where: ExceptionSlotWhereUniqueInput;
+  data: ExceptionSlotUpdateDataInput;
+}
+
+export interface ScheduleTimelineElementUpdateManyMutationInput {
+  category?: ScheduleTimelineCategory;
+  startTime?: Int;
+  endTime?: Int;
+  startEventRequired?: Boolean;
+  endEventRequired?: Boolean;
+}
+
+export interface ExceptionSlotUpdateDataInput {
+  schedule?: ScheduleUpdateOneRequiredInput;
+  date?: DateTimeInput;
 }
 
 export interface ScheduleRestlineElementUpdateInput {
@@ -4239,13 +3760,23 @@ export interface ScheduleRestlineElementUpdateInput {
   endEventRequired?: Boolean;
 }
 
-export interface ExceptionUpdateWithoutCreditsDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+export interface ExceptionSlotUpsertWithWhereUniqueNestedInput {
+  where: ExceptionSlotWhereUniqueInput;
+  update: ExceptionSlotUpdateDataInput;
+  create: ExceptionSlotCreateInput;
+}
+
+export interface ScheduleDebitUpdateManyMutationInput {
+  category?: ScheduleOfflineCategory;
+}
+
+export interface ExceptionAuthorizationUpdateOneWithoutExceptionInput {
+  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
+  update?: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionAuthorizationUpsertWithoutExceptionInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionAuthorizationWhereUniqueInput;
 }
 
 export interface ScheduleCreditUpdateManyMutationInput {
@@ -4254,19 +3785,18 @@ export interface ScheduleCreditUpdateManyMutationInput {
   sourceDate?: DateTimeInput;
 }
 
-export interface ScheduleDebitUpdateManyWithoutExceptionInput {
-  create?:
-    | ScheduleDebitCreateWithoutExceptionInput[]
-    | ScheduleDebitCreateWithoutExceptionInput;
-  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  update?:
-    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput[]
-    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput;
-  upsert?:
-    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput[]
-    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput;
+export interface ExceptionAuthorizationUpdateWithoutExceptionDataInput {
+  granted?: Boolean;
+  owner?: UserUpdateOneRequiredInput;
+}
+
+export type ScheduleCategoryConfigWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ExceptionAuthorizationUpsertWithoutExceptionInput {
+  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
+  create: ExceptionAuthorizationCreateWithoutExceptionInput;
 }
 
 export interface ScheduleCategoryConfigCreateInput {
@@ -4275,19 +3805,55 @@ export interface ScheduleCategoryConfigCreateInput {
   label?: String;
 }
 
-export interface ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput {
-  where: ScheduleDebitWhereUniqueInput;
-  data: ScheduleDebitUpdateWithoutExceptionDataInput;
+export interface ScheduleCreditUpdateManyWithoutSourceExceptionInput {
+  create?:
+    | ScheduleCreditCreateWithoutSourceExceptionInput[]
+    | ScheduleCreditCreateWithoutSourceExceptionInput;
+  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  disconnect?:
+    | ScheduleCreditWhereUniqueInput[]
+    | ScheduleCreditWhereUniqueInput;
+  update?:
+    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput[]
+    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput;
+  upsert?:
+    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput[]
+    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput;
+}
+
+export type ScheduleCreditWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput {
+  where: ScheduleCreditWhereUniqueInput;
+  data: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
 }
 
 export type ScheduleDebitWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface ScheduleDebitUpdateWithoutExceptionDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
+export interface ScheduleCreditUpdateWithoutSourceExceptionDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
   category?: ScheduleOfflineCategory;
-  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+}
+
+export type ScheduleOfflineElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface EmployeeUpdateOneRequiredWithoutCreditsInput {
+  create?: EmployeeCreateWithoutCreditsInput;
+  update?: EmployeeUpdateWithoutCreditsDataInput;
+  upsert?: EmployeeUpsertWithoutCreditsInput;
+  connect?: EmployeeWhereUniqueInput;
 }
 
 export interface ExceptionUpdateOneRequiredWithoutAuthorizationInput {
@@ -4297,14 +3863,46 @@ export interface ExceptionUpdateOneRequiredWithoutAuthorizationInput {
   connect?: ExceptionWhereUniqueInput;
 }
 
-export interface EmployeeUpdateOneRequiredWithoutDebitsInput {
-  create?: EmployeeCreateWithoutDebitsInput;
-  update?: EmployeeUpdateWithoutDebitsDataInput;
-  upsert?: EmployeeUpsertWithoutDebitsInput;
-  connect?: EmployeeWhereUniqueInput;
+export interface EmployeeUpdateWithoutCreditsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface ExceptionCreateOneWithoutAuthorizationInput {
+  create?: ExceptionCreateWithoutAuthorizationInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface DepartmentUpdateOneWithoutSubordinatesInput {
+  create?: DepartmentCreateWithoutSubordinatesInput;
+  update?: DepartmentUpdateWithoutSubordinatesDataInput;
+  upsert?: DepartmentUpsertWithoutSubordinatesInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: DepartmentWhereUniqueInput;
 }
 
 export interface ExceptionUpdateInput {
+  type?: ExceptionTypeEnum;
   employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
@@ -4314,7 +3912,12 @@ export interface ExceptionUpdateInput {
   debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
 }
 
-export interface EmployeeUpdateWithoutDebitsDataInput {
+export interface DepartmentUpdateWithoutSubordinatesDataInput {
+  name?: String;
+  supervisors?: UserUpdateManyWithoutDepartmentsInput;
+}
+
+export interface EmployeeUpdateInput {
   nameFirst?: String;
   nameMiddle?: String;
   namePaternal?: String;
@@ -4336,6 +3939,22 @@ export interface EmployeeUpdateWithoutDebitsDataInput {
   shifts?: ShiftUpdateManyWithoutEmployeeInput;
   exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
   credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface UserUpdateManyWithoutDepartmentsInput {
+  create?:
+    | UserCreateWithoutDepartmentsInput[]
+    | UserCreateWithoutDepartmentsInput;
+  delete?: UserWhereUniqueInput[] | UserWhereUniqueInput;
+  connect?: UserWhereUniqueInput[] | UserWhereUniqueInput;
+  disconnect?: UserWhereUniqueInput[] | UserWhereUniqueInput;
+  update?:
+    | UserUpdateWithWhereUniqueWithoutDepartmentsInput[]
+    | UserUpdateWithWhereUniqueWithoutDepartmentsInput;
+  upsert?:
+    | UserUpsertWithWhereUniqueWithoutDepartmentsInput[]
+    | UserUpsertWithWhereUniqueWithoutDepartmentsInput;
 }
 
 export interface ScheduleCreditUpdateWithoutSourceDirectDataInput {
@@ -4348,9 +3967,22 @@ export interface ScheduleCreditUpdateWithoutSourceDirectDataInput {
   debit?: ScheduleDebitUpdateOneWithoutCreditInput;
 }
 
-export interface EmployeeUpsertWithoutDebitsInput {
-  update: EmployeeUpdateWithoutDebitsDataInput;
-  create: EmployeeCreateWithoutDebitsInput;
+export interface UserUpdateWithWhereUniqueWithoutDepartmentsInput {
+  where: UserWhereUniqueInput;
+  data: UserUpdateWithoutDepartmentsDataInput;
+}
+
+export interface DirectCreditUpdateInput {
+  owner?: UserUpdateOneRequiredInput;
+  employee?: EmployeeUpdateOneRequiredInput;
+  description?: String;
+  credits?: ScheduleCreditUpdateManyWithoutSourceDirectInput;
+}
+
+export interface UserUpdateWithoutDepartmentsDataInput {
+  username?: String;
+  password?: String;
+  roles?: UserRoleUpdateManyInput;
 }
 
 export interface DirectCreditCreateInput {
@@ -4360,11 +3992,21 @@ export interface DirectCreditCreateInput {
   credits?: ScheduleCreditCreateManyWithoutSourceDirectInput;
 }
 
-export interface ScheduleCreditUpdateOneRequiredWithoutDebitInput {
-  create?: ScheduleCreditCreateWithoutDebitInput;
-  update?: ScheduleCreditUpdateWithoutDebitDataInput;
-  upsert?: ScheduleCreditUpsertWithoutDebitInput;
-  connect?: ScheduleCreditWhereUniqueInput;
+export interface UserUpsertWithWhereUniqueWithoutDepartmentsInput {
+  where: UserWhereUniqueInput;
+  update: UserUpdateWithoutDepartmentsDataInput;
+  create: UserCreateWithoutDepartmentsInput;
+}
+
+export interface AttendanceCycleUpdateManyMutationInput {
+  name?: String;
+  startDate?: DateTimeInput;
+  endDate?: DateTimeInput;
+}
+
+export interface DepartmentUpsertWithoutSubordinatesInput {
+  update: DepartmentUpdateWithoutSubordinatesDataInput;
+  create: DepartmentCreateWithoutSubordinatesInput;
 }
 
 export interface EmployeeCreateManyWithoutDepartmentInput {
@@ -4374,14 +4016,29 @@ export interface EmployeeCreateManyWithoutDepartmentInput {
   connect?: EmployeeWhereUniqueInput[] | EmployeeWhereUniqueInput;
 }
 
-export interface ScheduleCreditUpdateWithoutDebitDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
+export interface ScheduleDebitUpdateManyWithoutEmployeeInput {
+  create?:
+    | ScheduleDebitCreateWithoutEmployeeInput[]
+    | ScheduleDebitCreateWithoutEmployeeInput;
+  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  update?:
+    | ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput[]
+    | ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput;
+  upsert?:
+    | ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput[]
+    | ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput;
+}
+
+export interface ShiftSlotCreateManyInput {
+  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
+  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+}
+
+export interface ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleDebitWhereUniqueInput;
+  data: ScheduleDebitUpdateWithoutEmployeeDataInput;
 }
 
 export interface ScheduleTimelineElementCreateManyInput {
@@ -4393,13 +4050,22 @@ export interface ScheduleTimelineElementCreateManyInput {
     | ScheduleTimelineElementWhereUniqueInput;
 }
 
-export interface DirectCreditUpdateOneWithoutCreditsInput {
-  create?: DirectCreditCreateWithoutCreditsInput;
-  update?: DirectCreditUpdateWithoutCreditsDataInput;
-  upsert?: DirectCreditUpsertWithoutCreditsInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: DirectCreditWhereUniqueInput;
+export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
+  category?: ScheduleOfflineCategory;
+  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
+  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+}
+
+export interface ScheduleOfflineElementCreateOneInput {
+  create?: ScheduleOfflineElementCreateInput;
+  connect?: ScheduleOfflineElementWhereUniqueInput;
+}
+
+export interface ExceptionUpdateOneRequiredWithoutDebitsInput {
+  create?: ExceptionCreateWithoutDebitsInput;
+  update?: ExceptionUpdateWithoutDebitsDataInput;
+  upsert?: ExceptionUpsertWithoutDebitsInput;
+  connect?: ExceptionWhereUniqueInput;
 }
 
 export interface DepartmentCreateManyWithoutSupervisorsInput {
@@ -4409,13 +4075,35 @@ export interface DepartmentCreateManyWithoutSupervisorsInput {
   connect?: DepartmentWhereUniqueInput[] | DepartmentWhereUniqueInput;
 }
 
-export interface DirectCreditUpdateWithoutCreditsDataInput {
-  owner?: UserUpdateOneRequiredInput;
-  employee?: EmployeeUpdateOneRequiredInput;
+export interface ExceptionUpdateWithoutDebitsDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
 }
 
-export interface UserWhereInput {
+export interface UserRoleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserRoleWhereInput;
+  AND?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+  OR?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+  NOT?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+}
+
+export interface EmployeeUpdateOneRequiredWithoutExceptionsInput {
+  create?: EmployeeCreateWithoutExceptionsInput;
+  update?: EmployeeUpdateWithoutExceptionsDataInput;
+  upsert?: EmployeeUpsertWithoutExceptionsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface DepartmentWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -4446,47 +4134,362 @@ export interface UserWhereInput {
   updatedAt_lte?: DateTimeInput;
   updatedAt_gt?: DateTimeInput;
   updatedAt_gte?: DateTimeInput;
-  username?: String;
-  username_not?: String;
-  username_in?: String[] | String;
-  username_not_in?: String[] | String;
-  username_lt?: String;
-  username_lte?: String;
-  username_gt?: String;
-  username_gte?: String;
-  username_contains?: String;
-  username_not_contains?: String;
-  username_starts_with?: String;
-  username_not_starts_with?: String;
-  username_ends_with?: String;
-  username_not_ends_with?: String;
-  password?: String;
-  password_not?: String;
-  password_in?: String[] | String;
-  password_not_in?: String[] | String;
-  password_lt?: String;
-  password_lte?: String;
-  password_gt?: String;
-  password_gte?: String;
-  password_contains?: String;
-  password_not_contains?: String;
-  password_starts_with?: String;
-  password_not_starts_with?: String;
-  password_ends_with?: String;
-  password_not_ends_with?: String;
-  departments_every?: DepartmentWhereInput;
-  departments_some?: DepartmentWhereInput;
-  departments_none?: DepartmentWhereInput;
-  role?: UserRoleEnum;
-  role_not?: UserRoleEnum;
-  role_in?: UserRoleEnum[] | UserRoleEnum;
-  role_not_in?: UserRoleEnum[] | UserRoleEnum;
-  roles_every?: UserRoleWhereInput;
-  roles_some?: UserRoleWhereInput;
-  roles_none?: UserRoleWhereInput;
-  AND?: UserWhereInput[] | UserWhereInput;
-  OR?: UserWhereInput[] | UserWhereInput;
-  NOT?: UserWhereInput[] | UserWhereInput;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  subordinates_every?: EmployeeWhereInput;
+  subordinates_some?: EmployeeWhereInput;
+  subordinates_none?: EmployeeWhereInput;
+  supervisors_every?: UserWhereInput;
+  supervisors_some?: UserWhereInput;
+  supervisors_none?: UserWhereInput;
+  AND?: DepartmentWhereInput[] | DepartmentWhereInput;
+  OR?: DepartmentWhereInput[] | DepartmentWhereInput;
+  NOT?: DepartmentWhereInput[] | DepartmentWhereInput;
+}
+
+export interface EmployeeUpdateWithoutExceptionsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface HolidaySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: HolidayWhereInput;
+  AND?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
+  OR?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
+  NOT?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
+}
+
+export interface ScheduleCreditUpdateManyWithoutEmployeeInput {
+  create?:
+    | ScheduleCreditCreateWithoutEmployeeInput[]
+    | ScheduleCreditCreateWithoutEmployeeInput;
+  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  disconnect?:
+    | ScheduleCreditWhereUniqueInput[]
+    | ScheduleCreditWhereUniqueInput;
+  update?:
+    | ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput[]
+    | ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput;
+  upsert?:
+    | ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput[]
+    | ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput;
+}
+
+export interface DirectCreditSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: DirectCreditWhereInput;
+  AND?:
+    | DirectCreditSubscriptionWhereInput[]
+    | DirectCreditSubscriptionWhereInput;
+  OR?:
+    | DirectCreditSubscriptionWhereInput[]
+    | DirectCreditSubscriptionWhereInput;
+  NOT?:
+    | DirectCreditSubscriptionWhereInput[]
+    | DirectCreditSubscriptionWhereInput;
+}
+
+export interface ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleCreditWhereUniqueInput;
+  data: ScheduleCreditUpdateWithoutEmployeeDataInput;
+}
+
+export type ExceptionWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ScheduleCreditUpdateWithoutEmployeeDataInput {
+  category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+}
+
+export interface ShiftUpdateInput {
+  description?: String;
+  employee?: EmployeeUpdateOneRequiredWithoutShiftsInput;
+  startDate?: DateTimeInput;
+  endDate?: DateTimeInput;
+  slots?: ShiftSlotUpdateManyInput;
+  owner?: UserUpdateOneRequiredInput;
+}
+
+export interface ExceptionUpdateOneWithoutCreditsInput {
+  create?: ExceptionCreateWithoutCreditsInput;
+  update?: ExceptionUpdateWithoutCreditsDataInput;
+  upsert?: ExceptionUpsertWithoutCreditsInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface ScheduleTimelineElementUpdateInput {
+  category?: ScheduleTimelineCategory;
+  startTime?: Int;
+  endTime?: Int;
+  startEventRequired?: Boolean;
+  endEventRequired?: Boolean;
+}
+
+export interface ExceptionUpdateWithoutCreditsDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
+
+export interface ScheduleDebitCreateInput {
+  employee: EmployeeCreateOneWithoutDebitsInput;
+  category: ScheduleOfflineCategory;
+  exception: ExceptionCreateOneWithoutDebitsInput;
+  credit: ScheduleCreditCreateOneWithoutDebitInput;
+}
+
+export interface ScheduleDebitUpdateManyWithoutExceptionInput {
+  create?:
+    | ScheduleDebitCreateWithoutExceptionInput[]
+    | ScheduleDebitCreateWithoutExceptionInput;
+  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  update?:
+    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput[]
+    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput;
+  upsert?:
+    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput[]
+    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput;
+}
+
+export interface AttendanceCycleWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  startDate?: DateTimeInput;
+  startDate_not?: DateTimeInput;
+  startDate_in?: DateTimeInput[] | DateTimeInput;
+  startDate_not_in?: DateTimeInput[] | DateTimeInput;
+  startDate_lt?: DateTimeInput;
+  startDate_lte?: DateTimeInput;
+  startDate_gt?: DateTimeInput;
+  startDate_gte?: DateTimeInput;
+  endDate?: DateTimeInput;
+  endDate_not?: DateTimeInput;
+  endDate_in?: DateTimeInput[] | DateTimeInput;
+  endDate_not_in?: DateTimeInput[] | DateTimeInput;
+  endDate_lt?: DateTimeInput;
+  endDate_lte?: DateTimeInput;
+  endDate_gt?: DateTimeInput;
+  endDate_gte?: DateTimeInput;
+  AND?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
+  OR?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
+  NOT?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
+}
+
+export interface ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput {
+  where: ScheduleDebitWhereUniqueInput;
+  data: ScheduleDebitUpdateWithoutExceptionDataInput;
+}
+
+export interface FieldOptionLabelUpdateManyMutationInput {
+  field?: String;
+  value?: String;
+  label?: String;
+}
+
+export interface ScheduleDebitUpdateWithoutExceptionDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
+  category?: ScheduleOfflineCategory;
+  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+}
+
+export interface ExceptionUpsertWithoutAuthorizationInput {
+  update: ExceptionUpdateWithoutAuthorizationDataInput;
+  create: ExceptionCreateWithoutAuthorizationInput;
+}
+
+export interface EmployeeUpdateOneRequiredWithoutDebitsInput {
+  create?: EmployeeCreateWithoutDebitsInput;
+  update?: EmployeeUpdateWithoutDebitsDataInput;
+  upsert?: EmployeeUpsertWithoutDebitsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface ExceptionAuthorizationCreateInput {
+  granted: Boolean;
+  exception: ExceptionCreateOneWithoutAuthorizationInput;
+  owner: UserCreateOneInput;
+}
+
+export interface EmployeeUpdateWithoutDebitsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+}
+
+export interface DirectCreditUpdateManyMutationInput {
+  description?: String;
+}
+
+export interface EmployeeUpsertWithoutDebitsInput {
+  update: EmployeeUpdateWithoutDebitsDataInput;
+  create: EmployeeCreateWithoutDebitsInput;
+}
+
+export interface ScheduleCreditCreateWithoutSourceDirectInput {
+  employee: EmployeeCreateOneWithoutCreditsInput;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+  debit?: ScheduleDebitCreateOneWithoutCreditInput;
+}
+
+export interface ScheduleCreditUpdateOneRequiredWithoutDebitInput {
+  create?: ScheduleCreditCreateWithoutDebitInput;
+  update?: ScheduleCreditUpdateWithoutDebitDataInput;
+  upsert?: ScheduleCreditUpsertWithoutDebitInput;
+  connect?: ScheduleCreditWhereUniqueInput;
+}
+
+export interface EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
+  where: EmployeeWhereUniqueInput;
+  update: EmployeeUpdateWithoutDepartmentDataInput;
+  create: EmployeeCreateWithoutDepartmentInput;
+}
+
+export interface ScheduleCreditUpdateWithoutDebitDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
+  category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+}
+
+export interface ScheduleCreateOneInput {
+  create?: ScheduleCreateInput;
+  connect?: ScheduleWhereUniqueInput;
+}
+
+export interface DirectCreditUpdateOneWithoutCreditsInput {
+  create?: DirectCreditCreateWithoutCreditsInput;
+  update?: DirectCreditUpdateWithoutCreditsDataInput;
+  upsert?: DirectCreditUpsertWithoutCreditsInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: DirectCreditWhereUniqueInput;
+}
+
+export interface UserCreateOneInput {
+  create?: UserCreateInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface DirectCreditUpdateWithoutCreditsDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  employee?: EmployeeUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface ShiftSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ShiftWhereInput;
+  AND?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
+  OR?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
+  NOT?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
 }
 
 export interface EmployeeUpdateOneRequiredInput {
@@ -4496,15 +4499,21 @@ export interface EmployeeUpdateOneRequiredInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface EmployeeSubscriptionWhereInput {
+export interface ExceptionAuthorizationSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: EmployeeWhereInput;
-  AND?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
-  OR?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
-  NOT?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+  node?: ExceptionAuthorizationWhereInput;
+  AND?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
+  OR?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
+  NOT?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
 }
 
 export interface EmployeeUpdateDataInput {
@@ -4532,47 +4541,35 @@ export interface EmployeeUpdateDataInput {
   debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
 }
 
-export interface EmployeeUpdateWithoutShiftsDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
-}
+export type ExceptionAuthorizationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface EmployeeUpsertNestedInput {
   update: EmployeeUpdateDataInput;
   create: EmployeeCreateInput;
 }
 
-export interface ScheduleDebitUpdateManyMutationInput {
-  category?: ScheduleOfflineCategory;
-}
+export type HolidayWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  date?: DateTimeInput;
+}>;
 
 export interface DirectCreditUpsertWithoutCreditsInput {
   update: DirectCreditUpdateWithoutCreditsDataInput;
   create: DirectCreditCreateWithoutCreditsInput;
 }
 
-export type ScheduleCreditWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ScheduleUpdateInput {
+  isPreset?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  description?: String;
+  baseTime?: Int;
+  timeline?: ScheduleTimelineElementUpdateManyInput;
+  restline?: ScheduleRestlineElementUpdateManyInput;
+  offline1?: ScheduleOfflineElementUpdateOneInput;
+  offline2?: ScheduleOfflineElementUpdateOneInput;
+}
 
 export interface HolidayUpdateOneInput {
   create?: HolidayCreateInput;
@@ -4583,9 +4580,10 @@ export interface HolidayUpdateOneInput {
   connect?: HolidayWhereUniqueInput;
 }
 
-export interface ExceptionCreateOneWithoutAuthorizationInput {
-  create?: ExceptionCreateWithoutAuthorizationInput;
-  connect?: ExceptionWhereUniqueInput;
+export interface ExceptionAuthorizationUpdateInput {
+  granted?: Boolean;
+  exception?: ExceptionUpdateOneRequiredWithoutAuthorizationInput;
+  owner?: UserUpdateOneRequiredInput;
 }
 
 export interface HolidayUpdateDataInput {
@@ -4593,11 +4591,9 @@ export interface HolidayUpdateDataInput {
   name?: String;
 }
 
-export interface DirectCreditUpdateInput {
-  owner?: UserUpdateOneRequiredInput;
-  employee?: EmployeeUpdateOneRequiredInput;
-  description?: String;
-  credits?: ScheduleCreditUpdateManyWithoutSourceDirectInput;
+export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput {
+  where: ScheduleCreditWhereUniqueInput;
+  data: ScheduleCreditUpdateWithoutSourceDirectDataInput;
 }
 
 export interface HolidayUpsertNestedInput {
@@ -4605,9 +4601,9 @@ export interface HolidayUpsertNestedInput {
   create: HolidayCreateInput;
 }
 
-export interface ShiftSlotCreateManyInput {
-  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
-  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+export interface ShiftCreateManyWithoutEmployeeInput {
+  create?: ShiftCreateWithoutEmployeeInput[] | ShiftCreateWithoutEmployeeInput;
+  connect?: ShiftWhereUniqueInput[] | ShiftWhereUniqueInput;
 }
 
 export interface ScheduleCreditUpsertWithoutDebitInput {
@@ -4615,8 +4611,9 @@ export interface ScheduleCreditUpsertWithoutDebitInput {
   create: ScheduleCreditCreateWithoutDebitInput;
 }
 
-export interface UserRoleCreateprivilegesInput {
-  set?: String[] | String;
+export interface UserRoleCreateManyInput {
+  create?: UserRoleCreateInput[] | UserRoleCreateInput;
+  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
 }
 
 export interface ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput {
@@ -4625,20 +4622,25 @@ export interface ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput {
   create: ScheduleDebitCreateWithoutExceptionInput;
 }
 
-export interface UserUpdateManyMutationInput {
-  username?: String;
-  password?: String;
-  role?: UserRoleEnum;
-}
+export type EmployeeWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ExceptionUpsertWithoutCreditsInput {
   update: ExceptionUpdateWithoutCreditsDataInput;
   create: ExceptionCreateWithoutCreditsInput;
 }
 
-export type ScheduleCategoryConfigWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ScheduleCreditCreateInput {
+  employee: EmployeeCreateOneWithoutCreditsInput;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionCreateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+  debit?: ScheduleDebitCreateOneWithoutCreditInput;
+}
 
 export interface ScheduleDebitUpdateOneWithoutCreditInput {
   create?: ScheduleDebitCreateWithoutCreditInput;
@@ -4649,29 +4651,15 @@ export interface ScheduleDebitUpdateOneWithoutCreditInput {
   connect?: ScheduleDebitWhereUniqueInput;
 }
 
-export interface EmployeeUpdateInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+export interface ExceptionCreateInput {
+  type: ExceptionTypeEnum;
+  employee: EmployeeCreateOneWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotCreateManyInput;
+  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
+  owner: UserCreateOneInput;
+  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
 }
 
 export interface EmployeeUpsertWithoutExceptionsInput {
@@ -4696,44 +4684,49 @@ export interface ScheduleDebitUpdateWithoutCreditDataInput {
   exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
 }
 
-export interface AttendanceCycleUpdateManyMutationInput {
-  name?: String;
-  startDate?: DateTimeInput;
+export interface AttendanceCycleCreateInput {
+  name: String;
+  startDate: DateTimeInput;
+  endDate: DateTimeInput;
+}
+
+export interface ExceptionSlotUpdateManyMutationInput {
+  date?: DateTimeInput;
+}
+
+export interface ShiftCreateInput {
+  description?: String;
+  employee: EmployeeCreateOneWithoutShiftsInput;
+  startDate: DateTimeInput;
   endDate?: DateTimeInput;
+  slots?: ShiftSlotCreateManyInput;
+  owner: UserCreateOneInput;
 }
 
-export type ScheduleOfflineElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleTimelineElementUpdateManyMutationInput {
-  category?: ScheduleTimelineCategory;
-  startTime?: Int;
-  endTime?: Int;
-  startEventRequired?: Boolean;
-  endEventRequired?: Boolean;
-}
-
-export interface ScheduleCategoryConfigSubscriptionWhereInput {
+export interface ScheduleDebitSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ScheduleCategoryConfigWhereInput;
+  node?: ScheduleDebitWhereInput;
   AND?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
   OR?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
   NOT?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
 }
 
-export interface ScheduleOfflineElementCreateOneInput {
-  create?: ScheduleOfflineElementCreateInput;
-  connect?: ScheduleOfflineElementWhereUniqueInput;
+export interface ScheduleRestlineElementCreateManyInput {
+  create?:
+    | ScheduleRestlineElementCreateInput[]
+    | ScheduleRestlineElementCreateInput;
+  connect?:
+    | ScheduleRestlineElementWhereUniqueInput[]
+    | ScheduleRestlineElementWhereUniqueInput;
 }
 
 export interface NodeNode {
@@ -4744,7 +4737,6 @@ export interface UserRolePreviousValues {
   id: ID_Output;
   name: String;
   description?: String;
-  privileges: String[];
 }
 
 export interface UserRolePreviousValuesPromise
@@ -4753,7 +4745,6 @@ export interface UserRolePreviousValuesPromise
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   description: () => Promise<String>;
-  privileges: () => Promise<String[]>;
 }
 
 export interface UserRolePreviousValuesSubscription
@@ -4762,7 +4753,6 @@ export interface UserRolePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
-  privileges: () => Promise<AsyncIterator<String[]>>;
 }
 
 export interface EmployeeEdge {
@@ -5709,6 +5699,7 @@ export interface AggregateScheduleCategoryConfigSubscription
 
 export interface ExceptionPreviousValues {
   id: ID_Output;
+  type: ExceptionTypeEnum;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   description?: String;
@@ -5718,6 +5709,7 @@ export interface ExceptionPreviousValuesPromise
   extends Promise<ExceptionPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  type: () => Promise<ExceptionTypeEnum>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   description: () => Promise<String>;
@@ -5727,6 +5719,7 @@ export interface ExceptionPreviousValuesSubscription
   extends Promise<AsyncIterator<ExceptionPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<ExceptionTypeEnum>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -7076,6 +7069,7 @@ export interface UserRoleEdgeSubscription
 
 export interface Exception {
   id: ID_Output;
+  type: ExceptionTypeEnum;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   description?: String;
@@ -7083,6 +7077,7 @@ export interface Exception {
 
 export interface ExceptionPromise extends Promise<Exception>, Fragmentable {
   id: () => Promise<ID_Output>;
+  type: () => Promise<ExceptionTypeEnum>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   employee: <T = Employee>() => T;
@@ -7128,6 +7123,7 @@ export interface ExceptionSubscription
   extends Promise<AsyncIterator<Exception>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<ExceptionTypeEnum>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   employee: <T = EmployeeSubscription>() => T;
@@ -7284,14 +7280,12 @@ export interface UserRole {
   id: ID_Output;
   name: String;
   description?: String;
-  privileges: String[];
 }
 
 export interface UserRolePromise extends Promise<UserRole>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   description: () => Promise<String>;
-  privileges: () => Promise<String[]>;
 }
 
 export interface UserRoleSubscription
@@ -7300,7 +7294,6 @@ export interface UserRoleSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
-  privileges: () => Promise<AsyncIterator<String[]>>;
 }
 
 export interface HolidayEdge {
@@ -7415,7 +7408,6 @@ export interface User {
   updatedAt: DateTimeOutput;
   username: String;
   password: String;
-  role: UserRoleEnum;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -7435,7 +7427,6 @@ export interface UserPromise extends Promise<User>, Fragmentable {
       last?: Int;
     }
   ) => T;
-  role: () => Promise<UserRoleEnum>;
   roles: <T = FragmentableArray<UserRole>>(
     args?: {
       where?: UserRoleWhereInput;
@@ -7468,7 +7459,6 @@ export interface UserSubscription
       last?: Int;
     }
   ) => T;
-  role: () => Promise<AsyncIterator<UserRoleEnum>>;
   roles: <T = Promise<AsyncIterator<UserRoleSubscription>>>(
     args?: {
       where?: UserRoleWhereInput;
@@ -7529,7 +7519,6 @@ export interface UserPreviousValues {
   updatedAt: DateTimeOutput;
   username: String;
   password: String;
-  role: UserRoleEnum;
 }
 
 export interface UserPreviousValuesPromise
@@ -7540,7 +7529,6 @@ export interface UserPreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
   username: () => Promise<String>;
   password: () => Promise<String>;
-  role: () => Promise<UserRoleEnum>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -7551,7 +7539,6 @@ export interface UserPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   username: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
-  role: () => Promise<AsyncIterator<UserRoleEnum>>;
 }
 
 export interface FieldOptionLabelEdge {

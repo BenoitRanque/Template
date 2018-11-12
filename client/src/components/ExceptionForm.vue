@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div class="q-mx-md q-my-lg">
     <div class="q-headline text-center q-mx-md">Crear Boleta</div>
     <div class="q-body-1 text-weight-bold q-mx-md q-my-xs text-center" :class="{
@@ -65,6 +65,7 @@ export default {
     return {
       loading: false,
       model: {
+        type: 'MIXED',
         employee: {
           id: null
         },
@@ -140,6 +141,7 @@ export default {
           employee: {
             id: this.model.employee.id
           },
+          type: this.model.type,
           slots: this.model.slots.map(({ date, schedule }) => ({
             date,
             schedule: schedule.id

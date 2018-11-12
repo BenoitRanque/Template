@@ -1,5 +1,6 @@
 
 input ExceptionCreateInput {
+  type: ExceptionTypeEnum!
   employee: EmployeeWhereUniqueInput!
   slots: [ExceptionSlotCreateInput!]!
 }
