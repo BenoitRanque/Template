@@ -407,6 +407,8 @@ function getAttendanceComplianceForDate(reference) {
   const timelineGroups = getTimelineGroupsWithEvents(reference)
   const restlineGroups = getRestlineGroupsWithEvents(reference, timelineGroups)
 
+  console.log('timelineGroups here', timelineGroups, reference)
+
   const compliance = {
     eventCount: reference.events ? reference.events.length : 0,
     requiredEventCount: getRequiredEventCount(timelineGroups, restlineGroups),
@@ -455,6 +457,7 @@ function getAuthorizedExtraTime(timelineGroups) {
       if (candidateBounds.length) {
         innerBound = candidateBounds[0]
       } else {
+        console.log('error here', timelineGroups)
         throw new Error(`THIS SHOULD NOT HAPPEN: Invalid schedule timeline element: endEvent ${group.endEvent} cannot be before startTime ${group.startEventTime}`)
       }
     } else {
@@ -761,7 +764,7 @@ function getTimelineStartEvent (time, data) {
   const candidateEvents = data.events.filter(event => isWithinRange(event, innerBound, outerBound))
 
   if (candidateEvents.length) {
-    return min(candidateEvents)
+    return min(...candidateEvents)
   }
   return null
 }
@@ -772,7 +775,7 @@ function getTimelineEndEvent (time, data) {
   const candidateEvents = data.events.filter(event => isWithinRange(event, innerBound, outerBound))
 
   if (candidateEvents.length) {
-    return max(candidateEvents)
+    return max(...candidateEvents)
   }
   return null
 }

@@ -51,7 +51,7 @@
               </q-icon>
             </template>
 
-            <template slot="offline1-source">
+            <!-- <template slot="offline1-source">
               <q-item>
                 <q-item-main class="text-center">
                   <q-select placeholder="Seleccionar Fuente en misma boleta" :options="sourceOptions(slot.schedule.offline1)" v-model="slot.source1.exception"></q-select>
@@ -75,7 +75,7 @@
                   <credit-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2.category" v-model="slot.source2.debit"></credit-select>
                 </q-item-main>
               </q-item>
-            </template>
+            </template> -->
           </schedule-input>
         </q-card-main>
       </q-card>

@@ -25,19 +25,15 @@
         <q-card-main>
           <schedule-input v-model="slot.schedule" :valid.sync="slot.valid" :readonly="!!slot.schedule.id" advanced>
             <template slot="top-left">
-              <div class="col">
-                {{slotLabel(index)}}
-              </div>
-              <div class="col-auto">
-                <q-btn-group class="q-mr-xs">
-                  <q-btn :disable="index < 1" @click="setSlotIndex(index, index - 1)" dense color="secondary" icon="keyboard_arrow_up">
-                    <q-tooltip>Mover Hacia Arriba</q-tooltip>
-                  </q-btn>
-                  <q-btn :disable="index > (model.slots.length - 1)" @click="setSlotIndex(index, index + 1)" dense color="secondary" icon="keyboard_arrow_down">
-                    <q-tooltip>Mover Hacia Abajo</q-tooltip>
-                  </q-btn>
-                </q-btn-group>
-              </div>
+              <q-btn-group class="q-mr-xs">
+                <q-btn :disable="index < 1" @click="setSlotIndex(index, index - 1)" dense color="secondary" icon="keyboard_arrow_up">
+                  <q-tooltip>Mover Hacia Arriba</q-tooltip>
+                </q-btn>
+                <q-btn :disable="index > (model.slots.length - 1)" @click="setSlotIndex(index, index + 1)" dense color="secondary" icon="keyboard_arrow_down">
+                  <q-tooltip>Mover Hacia Abajo</q-tooltip>
+                </q-btn>
+              </q-btn-group>
+              {{slotLabel(index)}}
             </template>
             <template slot="top-right">
               <div class="col-auto">

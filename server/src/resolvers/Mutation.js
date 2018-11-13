@@ -75,6 +75,12 @@ async function createException(parent, { data }, ctx, info) {
             connect: !schedule.connect ? null : schedule.connect,
             create: !schedule.create ? null : {
               ...schedule.create,
+              offline1: {
+                create: schedule.create.offline1
+              },
+              offline2: {
+                create: schedule.create.offline2
+              },
               restline: {
                 create: schedule.create.restline
               },

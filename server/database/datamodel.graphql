@@ -119,7 +119,7 @@ type ExceptionCancelation {
   updatedAt: DateTime!
   exception: Exception!
   description: String!
-  owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
+  owner: User! @relation(name: "ExceptionCancelationToExceptionCancelationOwner")
 }
 
 type Schedule {

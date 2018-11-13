@@ -1,11 +1,42 @@
 <template>
   <q-td :props="props" @click.native="modal = true">
-    iconos aqui
+    <div class="text-center">
+      <template v-if="date.compliance">
+        <q-icon v-if="date.compliance.lateStart.count" name="warning" color="warning" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Ingreso con Retraso de {{formatTime(date.compliance.lateStart.time)}}</q-tooltip>
+        </q-icon>
+
+        <q-icon v-if="date.compliance.missingStartEventCount" name="warning" color="warning" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Falta {{date.compliance.missingStartEventCount}} Marcacion de Ingreso</q-tooltip>
+        </q-icon>
+
+        <q-icon v-if="date.compliance.earlyEnd.count" name="warning" color="warning" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Salida Adelantada de {{formatTime(date.compliance.earlyEnd.time)}}</q-tooltip>
+        </q-icon>
+
+        <q-icon v-if="date.compliance.missingEndEventCount" name="warning" color="warning" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Falta {{date.compliance.missingEndEventCount}} Marcacion de Salida</q-tooltip>
+        </q-icon>
+
+        <q-icon v-if="date.compliance.absentTime.value" name="warning" color="negative" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Falta {{(date.compliance.absentTime.value).toFixed(2).replace(/.?0+$/,'')}} Dia</q-tooltip>
+        </q-icon>
+
+        <q-icon v-if="date.compliance.requiredEventCount === 0 && date.compliance.eventCount > 0" name="error" color="purple" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>No se esperaban marcaciones</q-tooltip>
+        </q-icon>
+      </template>
+
+      <q-icon v-if="date.exception" name="error" color="info" class="q-mx-xs" style="font-size: 20px">
+        <q-tooltip>Horario modificado por boleta</q-tooltip>
+      </q-icon>
+    </div>
+
     <q-modal v-model="modal">
       <q-modal-layout>
         <q-toolbar slot="header">
           <q-toolbar-title>
-            {{formatDate(date.date, 'dddd DD MMMM YYYY')}}
+            {{formatDate(date.date, 'dddd DD MMMM YYYY')}} - {{employee.nameFull}}
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
