@@ -102,6 +102,8 @@ type ExceptionSlot {
   id: ID! @unique
   schedule: Schedule!
   date: DateTime!
+  source1: ScheduleCredit @relation(name: "ExceptionSlotToSource1ScheduleCredit")
+  source2: ScheduleCredit @relation(name: "ExceptionSlotToSource2ScheduleCredit")
 }
 
 type ExceptionAuthorization {
@@ -268,7 +270,7 @@ type ScheduleCategoryConfig {
   category: ScheduleCategory
   backgroundColor: String! @default(value: "#FFF")
   foregroundColor: String! @default(value: "#000")
-  label: String
+  description: String
 }
 
 type FieldOptionLabel {

@@ -14,6 +14,10 @@
           <q-tooltip>Salida Adelantada de {{formatTime(date.compliance.earlyEnd.time)}}</q-tooltip>
         </q-icon>
 
+        <q-icon v-if="date.compliance.unauthorizedExtraTime > 120" name="warning" color="purple" class="q-mx-xs" style="font-size: 20px">
+          <q-tooltip>Tiempo extra no autorizado de {{formatTime(date.compliance.unauthorizedExtraTime)}}</q-tooltip>
+        </q-icon>
+
         <q-icon v-if="date.compliance.missingEndEventCount" name="warning" color="warning" class="q-mx-xs" style="font-size: 20px">
           <q-tooltip>Falta {{date.compliance.missingEndEventCount}} Marcacion de Salida</q-tooltip>
         </q-icon>

@@ -218,6 +218,7 @@ module.exports = {
   updateUser,
   authenticate,
   createException,
+  createExceptionAuthorization,
   createShift,
   updateShift,
   deleteShift: async (parent, args, ctx, info) => {
@@ -226,7 +227,6 @@ module.exports = {
     await ctx.prisma.bindings.mutation.deleteShift(args, `{ id }`)
     return response
   },
-  createExceptionAuthorization,
   createEmployee: (parent, args, ctx, info) => ctx.prisma.bindings.mutation.createEmployee(args, info),
   updateEmployee: (parent, args, ctx, info) => ctx.prisma.bindings.mutation.updateEmployee(args, info),
   createSchedule: (parent, args, ctx, info) => ctx.prisma.bindings.mutation.createSchedule(args, info),
