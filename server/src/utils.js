@@ -815,6 +815,113 @@ function getAttendanceComplianceSummary (dates) {
   })
 }
 
+async function loadExceptionBalance (prisma, employeeId, exception) {
+  const dates = exception.slots.map(({ date }) => date)
+  if (!dates.length) throw new Error(`Exception must have at least one date`)
+  const references = await loadEmployeeReferencesForDateRange(prisma, employeeId, min(...dates), max(...dates), { withExceptions: true, withHolidays: true, withScheduleData: true })
+  const exceptionWithReferences = {
+    ...exception,
+    slots: exception.slots.map(slot => ({
+      ...slot,
+      reference: getReferencesForDate(slot.date, references)
+    }))
+  }
+
+  const balance = getExceptionBalance(exceptionWithReferences)
+
+  return balance
+}
+
+function getExceptionBalance (exceptionWithReferences) {
+  function initCategory(balance, category) {
+    if (balance[category] === undefined) {
+      balance[category] = {
+        category,
+        credit: [],
+        debit: []
+      }
+    }
+  }
+
+  const balance = exceptionWithReferences.slots.reduce((balance, slot) => {
+    if (slot.source1 || !slot.schedule.offline1 || !slot.reference.schedule.offline1 || slot.schedule.offline1.category !== slot.reference.schedule.offline1.category) {
+      if (slot.schedule && slot.schedule.offline1) {
+        initCategory(balance, slot.schedule.offline1.category)
+        balance[slot.schedule.offline1.category].debit.push({
+          source: slot.source1 ? slot.source1 : null,
+          offline: 1,
+          date: slot.date,
+          slot
+        })
+      }
+      if (slot.reference && slot.reference.schedule && slot.reference.schedule.offline1) {
+        initCategory(balance, slot.reference.schedule.offline1.category)
+        balance[slot.reference.schedule.offline1.category].credit.push({
+          offline: 1,
+          date: slot.date,
+          slot
+        })
+      }
+    }
+    if (slot.source2 || !slot.schedule.offline2 || !slot.reference.schedule.offline2 || slot.schedule.offline2.category !== slot.reference.schedule.offline2.category) {
+      if (slot.schedule && slot.schedule.offline2) {
+        initCategory(balance, slot.schedule.offline2.category)
+        balance[slot.schedule.offline2.category].debit.push({
+          source: slot.source2 ? slot.source2 : null,
+          offline: 2,
+          date: slot.date,
+          slot
+        })
+      }
+      if (slot.reference && slot.reference.schedule && slot.reference.schedule.offline2) {
+        initCategory(balance, slot.reference.schedule.offline2.category)
+        balance[slot.reference.schedule.offline2.category].credit.push({
+          offline: 2,
+          date: slot.date,
+          slot
+        })
+      }
+    }
+    return balance
+  }, {})
+
+  Object.keys(balance).forEach(category => {
+    balance[category].credit.sort((a, b) => a.offline - b.offline).sort((a, b) => compareAsc(a.date, b.date))
+    balance[category].debit.sort((a, b) => a.offline - b.offline).sort((a, b) => compareAsc(a.date, b.date))
+  })
+
+  return balance
+}
+
+function getExceptionDebits (balance) {
+  // get debits that are not acounted for by source nor by existing credits in same exception
+  return Object.keys(balance).reduce((debits, category) => {
+    const creditCount = balance[category].credit.length
+    const debitCount = balance[category].debit.filter(({ source }) => source).length
+
+    if (debitCount <= creditCount) return debits
+    // slice out
+    return debits.concat(balance[category].debit.slice(creditCount - 1).map(debit => ({
+      category,
+      date: debit.date
+    })))
+  }, [])
+}
+
+function getExceptionCredits (balance) {
+  return Object.keys(balance).reduce((credits, category) => {
+    const creditCount = balance[category].credit.length
+    const debitCount = balance[category].debit.filter(({ source }) => source).length
+
+    if (debitCount >= creditCount) return credits
+    // slice out the credits that are already offset by debits
+    return credits.concat(balance[category].credit.slice(debitCount - 1).map(credit => ({
+      category,
+      date: credit.date
+    })))
+  }, [])
+}
+
 module.exports = {
   APP_SECRET,
   BCRYPT_SALT_ROUNDS,
@@ -825,5 +932,8 @@ module.exports = {
   loadCalendarDates,
   loadCalendarRange,
   loadVacationSchedules,
-  getVacationSchedule
+  getVacationSchedule,
+  loadExceptionBalance,
+  getExceptionCredits,
+  getExceptionDebits
 }

@@ -2,16 +2,8 @@
 
 (async () => {
   try {
-    const { Prisma } = require('prisma-binding')
-    const prisma = {
-      client: require('../../src/schema/generated/prisma-client/index.js'),
-      bindings: new Prisma({
-        typeDefs: 'src/schema/generated/prisma.graphql',
-        endpoint: process.env.PRISMA_ENDPOINT,
-        secret: process.env.PRISMA_SECRET,
-        debug: false
-      })
-    }
+    const prisma = require('../../src/prisma')
+
     const scheduleCategoryConfig = await require('./scheduleCategoryConfig')(prisma)
     const options = await require('./options')(prisma)
 

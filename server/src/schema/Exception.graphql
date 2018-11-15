@@ -5,6 +5,13 @@ input ExceptionCreateInput {
   slots: [ExceptionSlotCreateInput!]!
 }
 
+input ExceptionSlotCreateInput {
+  schedule: ScheduleCreateOneInput!
+  date: DateTime!
+  source1: ScheduleCreditWhereUniqueInput
+  source2: ScheduleCreditWhereUniqueInput
+}
+
 input ExceptionAuthorizationCreateInput {
   granted: Boolean!
   exception: ExceptionWhereUniqueInput!

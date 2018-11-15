@@ -1,7 +1,7 @@
 const isBefore = require('date-fns/is_before')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, BCRYPT_SALT_ROUNDS } = require('../utils')
+const { APP_SECRET, BCRYPT_SALT_ROUNDS, loadExceptionBalance, getExceptionCredits, getExceptionDebits } = require('../utils')
 
 async function createUser(obj, args, ctx, info) {
   args.data.password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
@@ -29,33 +29,26 @@ async function authenticate(obj, args, ctx, info) {
   throw new Error('No se pudo Iniciar Session')
 }
 
-async function createException(parent, { data }, ctx, info) {
-
-  const userId = ctx.session.user.id
+async function createException (obj, { data }, { prisma, session }, info) {
+  const userId = session.user.id
   const employeeId = data.employee.id
   const exceptionDates = data.slots.map(({ date }) => date)
 
-  const userIsSupervisor = await ctx.prisma.bindings.exists.Employee({
-    id: employeeId,
-    department: {
-      supervisors_some: {
-        id: userId
-      }
-    }
-  })
-  if (!userIsSupervisor) throw new Error('User is not an authorized supervisor of employee')
+  const userIsSupervisor = await prisma.client.$exists.employee({ id: employeeId, department: { supervisors_some: { id: userId } } })
+  if (!userIsSupervisor) throw new Error(`Usuario no es supervisor authorizado`)
 
-  const exceptionsWithDuplicateDates = await ctx.prisma.bindings.exists.Exception({
-    employee: {
-      id: employeeId
-    },
-    slots_some: {
-      date_in: exceptionDates
-    }
-  })
-  if (exceptionsWithDuplicateDates) throw new Error('Conflict with other exceptions: dates already exist')
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancelation: null })
+  if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
-  return ctx.prisma.bindings.mutation.createException({
+  const balance = await loadExceptionBalance(prisma, employeeId, data)
+
+  const debits = getExceptionDebits(balance)
+  if (debits.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+
+  const credits = getExceptionCredits(balance)
+  console.log(credits)
+
+  return prisma.bindings.mutation.createException({
     data: {
       type: data.type,
       owner: {
@@ -69,8 +62,10 @@ async function createException(parent, { data }, ctx, info) {
         }
       },
       slots: {
-        create: data.slots.map(({ date, schedule }) => ({
+        create: data.slots.map(({ source1, source2, date, schedule }) => ({
           date,
+          source1: !source1 ? null : { connect: source1 },
+          source2: !source2 ? null : { connect: source2 },
           schedule: {
             connect: !schedule.connect ? null : schedule.connect,
             create: !schedule.create ? null : {
@@ -95,7 +90,123 @@ async function createException(parent, { data }, ctx, info) {
   }, info)
 }
 
+// async function createException(parent, { data }, ctx, info) {
+
+//   const userId = ctx.session.user.id
+//   const employeeId = data.employee.id
+//   const exceptionDates = data.slots.map(({ date }) => date)
+
+//   const userIsSupervisor = await ctx.prisma.bindings.exists.Employee({
+//     id: employeeId,
+//     department: {
+//       supervisors_some: {
+//         id: userId
+//       }
+//     }
+//   })
+//   if (!userIsSupervisor) throw new Error('User is not an authorized supervisor of employee')
+
+//   const exceptionsWithDuplicateDates = await ctx.prisma.bindings.exists.Exception({
+//     employee: {
+//       id: employeeId
+//     },
+//     slots_some: {
+//       date_in: exceptionDates
+//     }
+//   })
+//   if (exceptionsWithDuplicateDates) throw new Error('Conflict with other exceptions: dates already exist')
+
+//   return ctx.prisma.bindings.mutation.createException({
+//     data: {
+//       type: data.type,
+//       owner: {
+//         connect: {
+//           id: userId
+//         }
+//       },
+//       employee: {
+//         connect: {
+//           id: employeeId
+//         }
+//       },
+//       slots: {
+//         create: data.slots.map(({ date, schedule }) => ({
+//           date,
+//           schedule: {
+//             connect: !schedule.connect ? null : schedule.connect,
+//             create: !schedule.create ? null : {
+//               ...schedule.create,
+//               offline1: {
+//                 create: schedule.create.offline1
+//               },
+//               offline2: {
+//                 create: schedule.create.offline2
+//               },
+//               restline: {
+//                 create: schedule.create.restline
+//               },
+//               timeline: {
+//                 create: schedule.create.timeline
+//               }
+//             }
+//           }
+//         }))
+//       }
+//     }
+//   }, info)
+// }
+
 async function createExceptionAuthorization (obj, { data }, ctx, info) {
+
+  const exception = await ctx.prisma.bindings.query.exception({ where: { id: data.exception.id } }, `
+  {
+    id
+    type
+    slots {
+      schedule {
+        offline1 {
+          category
+        }
+        offline2 {
+          category
+        }
+      }
+      date
+      source1 {
+        id
+      }
+      source2 {
+        id
+      }
+    }
+  }
+  `)
+
+  console.log(exception)
+
+  const userId = session.user.id
+  const employeeId = exception.employee.id
+  const exceptionDates = exception.slots.map(({ date }) => date)
+
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancelation: null })
+  if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
+
+  const balance = await loadExceptionBalance(prisma, employeeId, exception)
+
+  const debits = getExceptionDebits(balance)
+  if (debits.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+
+  const credits = getExceptionCredits(balance)
+  console.log(credits)
+
+
+  // todo: create authorization and
+
+  return ctx.prisma.bindings.mutation.updateException({ where: { id: exception.id }, data: {
+
+  }})
+
+  throw new Error(`stop here`)
   return ctx.prisma.bindings.mutation.createExceptionAuthorization({
     data: {
       ...data,

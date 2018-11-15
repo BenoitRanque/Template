@@ -7,8 +7,9 @@ type Mutation {
   createShift(data: ShiftCreateInput!): Shift
   updateShift(data: ShiftUpdateInput! where: ShiftWhereUniqueInput!): Shift
   deleteShift(where: ShiftWhereUniqueInput!): Shift
-  createException(data: ExceptionCreateInput!): Exception
-  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): ExceptionAuthorization
+  createException(data: ExceptionCreateInput!): Exception!
+  createExceptionAuthorization(data: ExceptionAuthorizationCreateInput!): Exception!
+  createExceptionCancelation(data: ExceptionCancelationCreateInput!): Exception!
   createSchedule(data: ScheduleCreateInput!): Schedule!
   authenticate(username: String!, password: String!): AuthPayload
   createDepartment(data: DepartmentCreateInput!): Department!
