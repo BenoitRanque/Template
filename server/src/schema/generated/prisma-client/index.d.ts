@@ -18,8 +18,8 @@ export interface Exists {
   exceptionAuthorization: (
     where?: ExceptionAuthorizationWhereInput
   ) => Promise<boolean>;
-  exceptionCancelation: (
-    where?: ExceptionCancelationWhereInput
+  exceptionCancellation: (
+    where?: ExceptionCancellationWhereInput
   ) => Promise<boolean>;
   exceptionSlot: (where?: ExceptionSlotWhereInput) => Promise<boolean>;
   fieldOptionLabel: (where?: FieldOptionLabelWhereInput) => Promise<boolean>;
@@ -206,31 +206,31 @@ export interface Prisma {
       last?: Int;
     }
   ) => ExceptionAuthorizationConnectionPromise;
-  exceptionCancelation: (
-    where: ExceptionCancelationWhereUniqueInput
-  ) => ExceptionCancelationPromise;
-  exceptionCancelations: (
+  exceptionCancellation: (
+    where: ExceptionCancellationWhereUniqueInput
+  ) => ExceptionCancellationPromise;
+  exceptionCancellations: (
     args?: {
-      where?: ExceptionCancelationWhereInput;
-      orderBy?: ExceptionCancelationOrderByInput;
+      where?: ExceptionCancellationWhereInput;
+      orderBy?: ExceptionCancellationOrderByInput;
       skip?: Int;
       after?: String;
       before?: String;
       first?: Int;
       last?: Int;
     }
-  ) => FragmentableArray<ExceptionCancelation>;
-  exceptionCancelationsConnection: (
+  ) => FragmentableArray<ExceptionCancellation>;
+  exceptionCancellationsConnection: (
     args?: {
-      where?: ExceptionCancelationWhereInput;
-      orderBy?: ExceptionCancelationOrderByInput;
+      where?: ExceptionCancellationWhereInput;
+      orderBy?: ExceptionCancellationOrderByInput;
       skip?: Int;
       after?: String;
       before?: String;
       first?: Int;
       last?: Int;
     }
-  ) => ExceptionCancelationConnectionPromise;
+  ) => ExceptionCancellationConnectionPromise;
   exceptionSlot: (where: ExceptionSlotWhereUniqueInput) => ExceptionSlotPromise;
   exceptionSlots: (
     args?: {
@@ -704,33 +704,33 @@ export interface Prisma {
   deleteManyExceptionAuthorizations: (
     where?: ExceptionAuthorizationWhereInput
   ) => BatchPayloadPromise;
-  createExceptionCancelation: (
-    data: ExceptionCancelationCreateInput
-  ) => ExceptionCancelationPromise;
-  updateExceptionCancelation: (
+  createExceptionCancellation: (
+    data: ExceptionCancellationCreateInput
+  ) => ExceptionCancellationPromise;
+  updateExceptionCancellation: (
     args: {
-      data: ExceptionCancelationUpdateInput;
-      where: ExceptionCancelationWhereUniqueInput;
+      data: ExceptionCancellationUpdateInput;
+      where: ExceptionCancellationWhereUniqueInput;
     }
-  ) => ExceptionCancelationPromise;
-  updateManyExceptionCancelations: (
+  ) => ExceptionCancellationPromise;
+  updateManyExceptionCancellations: (
     args: {
-      data: ExceptionCancelationUpdateManyMutationInput;
-      where?: ExceptionCancelationWhereInput;
+      data: ExceptionCancellationUpdateManyMutationInput;
+      where?: ExceptionCancellationWhereInput;
     }
   ) => BatchPayloadPromise;
-  upsertExceptionCancelation: (
+  upsertExceptionCancellation: (
     args: {
-      where: ExceptionCancelationWhereUniqueInput;
-      create: ExceptionCancelationCreateInput;
-      update: ExceptionCancelationUpdateInput;
+      where: ExceptionCancellationWhereUniqueInput;
+      create: ExceptionCancellationCreateInput;
+      update: ExceptionCancellationUpdateInput;
     }
-  ) => ExceptionCancelationPromise;
-  deleteExceptionCancelation: (
-    where: ExceptionCancelationWhereUniqueInput
-  ) => ExceptionCancelationPromise;
-  deleteManyExceptionCancelations: (
-    where?: ExceptionCancelationWhereInput
+  ) => ExceptionCancellationPromise;
+  deleteExceptionCancellation: (
+    where: ExceptionCancellationWhereUniqueInput
+  ) => ExceptionCancellationPromise;
+  deleteManyExceptionCancellations: (
+    where?: ExceptionCancellationWhereInput
   ) => BatchPayloadPromise;
   createExceptionSlot: (data: ExceptionSlotCreateInput) => ExceptionSlotPromise;
   updateExceptionSlot: (
@@ -1078,9 +1078,9 @@ export interface Subscription {
   exceptionAuthorization: (
     where?: ExceptionAuthorizationSubscriptionWhereInput
   ) => ExceptionAuthorizationSubscriptionPayloadSubscription;
-  exceptionCancelation: (
-    where?: ExceptionCancelationSubscriptionWhereInput
-  ) => ExceptionCancelationSubscriptionPayloadSubscription;
+  exceptionCancellation: (
+    where?: ExceptionCancellationSubscriptionWhereInput
+  ) => ExceptionCancellationSubscriptionPayloadSubscription;
   exceptionSlot: (
     where?: ExceptionSlotSubscriptionWhereInput
   ) => ExceptionSlotSubscriptionPayloadSubscription;
@@ -1463,7 +1463,7 @@ export type ScheduleDebitOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type ExceptionCancelationOrderByInput =
+export type ExceptionCancellationOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "createdAt_ASC"
@@ -1613,7 +1613,7 @@ export interface ExceptionWhereInput {
   slots_some?: ExceptionSlotWhereInput;
   slots_none?: ExceptionSlotWhereInput;
   authorization?: ExceptionAuthorizationWhereInput;
-  cancelation?: ExceptionCancelationWhereInput;
+  cancellation?: ExceptionCancellationWhereInput;
   owner?: UserWhereInput;
   credits_every?: ScheduleCreditWhereInput;
   credits_some?: ScheduleCreditWhereInput;
@@ -2178,7 +2178,7 @@ export interface ExceptionCreateWithoutDebitsInput {
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
 }
@@ -2205,21 +2205,21 @@ export interface EmployeeCreateOneWithoutExceptionsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface ExceptionCancelationSubscriptionWhereInput {
+export interface ExceptionCancellationSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ExceptionCancelationWhereInput;
+  node?: ExceptionCancellationWhereInput;
   AND?:
-    | ExceptionCancelationSubscriptionWhereInput[]
-    | ExceptionCancelationSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
   OR?:
-    | ExceptionCancelationSubscriptionWhereInput[]
-    | ExceptionCancelationSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
   NOT?:
-    | ExceptionCancelationSubscriptionWhereInput[]
-    | ExceptionCancelationSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
 }
 
 export interface EmployeeCreateWithoutExceptionsInput {
@@ -2311,7 +2311,7 @@ export interface ExceptionCreateWithoutCreditsInput {
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
 }
@@ -2339,16 +2339,16 @@ export interface ShiftSlotUpdateManyMutationInput {
   index?: Int;
 }
 
-export interface ExceptionCancelationCreateOneWithoutExceptionInput {
-  create?: ExceptionCancelationCreateWithoutExceptionInput;
-  connect?: ExceptionCancelationWhereUniqueInput;
+export interface ExceptionCancellationCreateOneWithoutExceptionInput {
+  create?: ExceptionCancellationCreateWithoutExceptionInput;
+  connect?: ExceptionCancellationWhereUniqueInput;
 }
 
 export type ExceptionAuthorizationWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface ExceptionCancelationCreateWithoutExceptionInput {
+export interface ExceptionCancellationCreateWithoutExceptionInput {
   description: String;
   owner: UserCreateOneInput;
 }
@@ -2765,7 +2765,7 @@ export interface ScheduleCreditCreateManyWithoutSourceDirectInput {
   connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
 }
 
-export interface ExceptionCancelationUpdateManyMutationInput {
+export interface ExceptionCancellationUpdateManyMutationInput {
   description?: String;
 }
 
@@ -2782,9 +2782,9 @@ export interface ShiftUpdateManyWithoutEmployeeInput {
     | ShiftUpsertWithWhereUniqueWithoutEmployeeInput;
 }
 
-export interface ExceptionUpsertWithoutCancelationInput {
-  update: ExceptionUpdateWithoutCancelationDataInput;
-  create: ExceptionCreateWithoutCancelationInput;
+export interface ExceptionUpsertWithoutCancellationInput {
+  update: ExceptionUpdateWithoutCancellationDataInput;
+  create: ExceptionCreateWithoutCancellationInput;
 }
 
 export interface ShiftUpdateWithWhereUniqueWithoutEmployeeInput {
@@ -2792,10 +2792,10 @@ export interface ShiftUpdateWithWhereUniqueWithoutEmployeeInput {
   data: ShiftUpdateWithoutEmployeeDataInput;
 }
 
-export interface ExceptionUpdateOneRequiredWithoutCancelationInput {
-  create?: ExceptionCreateWithoutCancelationInput;
-  update?: ExceptionUpdateWithoutCancelationDataInput;
-  upsert?: ExceptionUpsertWithoutCancelationInput;
+export interface ExceptionUpdateOneRequiredWithoutCancellationInput {
+  create?: ExceptionCreateWithoutCancellationInput;
+  update?: ExceptionUpdateWithoutCancellationDataInput;
+  upsert?: ExceptionUpsertWithoutCancellationInput;
   connect?: ExceptionWhereUniqueInput;
 }
 
@@ -2807,8 +2807,8 @@ export interface ShiftUpdateWithoutEmployeeDataInput {
   owner?: UserUpdateOneRequiredInput;
 }
 
-export interface ExceptionCancelationUpdateInput {
-  exception?: ExceptionUpdateOneRequiredWithoutCancelationInput;
+export interface ExceptionCancellationUpdateInput {
+  exception?: ExceptionUpdateOneRequiredWithoutCancellationInput;
   description?: String;
   owner?: UserUpdateOneRequiredInput;
 }
@@ -2826,8 +2826,8 @@ export interface ShiftSlotUpdateManyInput {
   disconnect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
 }
 
-export interface ExceptionCreateOneWithoutCancelationInput {
-  create?: ExceptionCreateWithoutCancelationInput;
+export interface ExceptionCreateOneWithoutCancellationInput {
+  create?: ExceptionCreateWithoutCancellationInput;
   connect?: ExceptionWhereUniqueInput;
 }
 
@@ -2938,7 +2938,7 @@ export interface ExceptionCreateInput {
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
@@ -3163,7 +3163,7 @@ export interface EmployeeCreateWithoutDepartmentInput {
   debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export interface ExceptionCancelationWhereInput {
+export interface ExceptionCancellationWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -3210,9 +3210,9 @@ export interface ExceptionCancelationWhereInput {
   description_ends_with?: String;
   description_not_ends_with?: String;
   owner?: UserWhereInput;
-  AND?: ExceptionCancelationWhereInput[] | ExceptionCancelationWhereInput;
-  OR?: ExceptionCancelationWhereInput[] | ExceptionCancelationWhereInput;
-  NOT?: ExceptionCancelationWhereInput[] | ExceptionCancelationWhereInput;
+  AND?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
+  OR?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
+  NOT?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
 }
 
 export interface ShiftCreateWithoutEmployeeInput {
@@ -3409,7 +3409,7 @@ export interface ExceptionCreateWithoutEmployeeInput {
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
@@ -3766,7 +3766,7 @@ export interface ExceptionUpdateWithoutEmployeeDataInput {
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
   authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
   owner?: UserUpdateOneRequiredInput;
   credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
@@ -3893,7 +3893,7 @@ export interface EmployeeUpdateOneRequiredWithoutCreditsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export type ExceptionCancelationWhereUniqueInput = AtLeastOne<{
+export type ExceptionCancellationWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
@@ -4096,7 +4096,7 @@ export interface ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
   data: ScheduleDebitUpdateWithoutEmployeeDataInput;
 }
 
-export interface ExceptionUpdateWithoutCancelationDataInput {
+export interface ExceptionUpdateWithoutCancellationDataInput {
   type?: ExceptionTypeEnum;
   employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
@@ -4113,7 +4113,7 @@ export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
   credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
 }
 
-export interface ExceptionCreateWithoutCancelationInput {
+export interface ExceptionCreateWithoutCancellationInput {
   type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
@@ -4141,7 +4141,7 @@ export interface ExceptionUpdateWithoutDebitsDataInput {
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
   authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
   owner?: UserUpdateOneRequiredInput;
   credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
 }
@@ -4195,7 +4195,7 @@ export interface ExceptionUpdateInput {
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
   authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
   owner?: UserUpdateOneRequiredInput;
   credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
@@ -4299,7 +4299,7 @@ export interface ExceptionUpdateWithoutCreditsDataInput {
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
   authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancelation?: ExceptionCancelationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
   owner?: UserUpdateOneRequiredInput;
   debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
 }
@@ -4347,13 +4347,13 @@ export interface UserCreateOneInput {
   connect?: UserWhereUniqueInput;
 }
 
-export interface ExceptionCancelationUpdateOneWithoutExceptionInput {
-  create?: ExceptionCancelationCreateWithoutExceptionInput;
-  update?: ExceptionCancelationUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionCancelationUpsertWithoutExceptionInput;
+export interface ExceptionCancellationUpdateOneWithoutExceptionInput {
+  create?: ExceptionCancellationCreateWithoutExceptionInput;
+  update?: ExceptionCancellationUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionCancellationUpsertWithoutExceptionInput;
   delete?: Boolean;
   disconnect?: Boolean;
-  connect?: ExceptionCancelationWhereUniqueInput;
+  connect?: ExceptionCancellationWhereUniqueInput;
 }
 
 export interface UserRoleCreateManyInput {
@@ -4361,7 +4361,7 @@ export interface UserRoleCreateManyInput {
   connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
 }
 
-export interface ExceptionCancelationUpdateWithoutExceptionDataInput {
+export interface ExceptionCancellationUpdateWithoutExceptionDataInput {
   description?: String;
   owner?: UserUpdateOneRequiredInput;
 }
@@ -4371,9 +4371,9 @@ export interface ExceptionSlotCreateManyInput {
   connect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
 }
 
-export interface ExceptionCancelationUpsertWithoutExceptionInput {
-  update: ExceptionCancelationUpdateWithoutExceptionDataInput;
-  create: ExceptionCancelationCreateWithoutExceptionInput;
+export interface ExceptionCancellationUpsertWithoutExceptionInput {
+  update: ExceptionCancellationUpdateWithoutExceptionDataInput;
+  create: ExceptionCancellationCreateWithoutExceptionInput;
 }
 
 export interface ShiftSubscriptionWhereInput {
@@ -4587,7 +4587,7 @@ export interface ExceptionUpdateWithoutAuthorizationDataInput {
   employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotUpdateManyInput;
-  cancelation?: ExceptionCancelationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
   owner?: UserUpdateOneRequiredInput;
   credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
@@ -4824,8 +4824,8 @@ export interface ScheduleDebitUpsertWithoutCreditInput {
   create: ScheduleDebitCreateWithoutCreditInput;
 }
 
-export interface ExceptionCancelationCreateInput {
-  exception: ExceptionCreateOneWithoutCancelationInput;
+export interface ExceptionCancellationCreateInput {
+  exception: ExceptionCreateOneWithoutCancellationInput;
   description: String;
   owner: UserCreateOneInput;
 }
@@ -4994,7 +4994,7 @@ export interface ExceptionCreateWithoutAuthorizationInput {
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
   slots?: ExceptionSlotCreateManyInput;
-  cancelation?: ExceptionCancelationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
@@ -6283,27 +6283,27 @@ export interface AggregateFieldOptionLabelSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ExceptionCancelationSubscriptionPayload {
+export interface ExceptionCancellationSubscriptionPayload {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ExceptionCancelationSubscriptionPayloadPromise
-  extends Promise<ExceptionCancelationSubscriptionPayload>,
+export interface ExceptionCancellationSubscriptionPayloadPromise
+  extends Promise<ExceptionCancellationSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ExceptionCancelation>() => T;
+  node: <T = ExceptionCancellation>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionCancelationPreviousValues>() => T;
+  previousValues: <T = ExceptionCancellationPreviousValues>() => T;
 }
 
-export interface ExceptionCancelationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionCancelationSubscriptionPayload>>,
+export interface ExceptionCancellationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionCancelationSubscription>() => T;
+  node: <T = ExceptionCancellationSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionCancelationPreviousValuesSubscription>() => T;
+  previousValues: <T = ExceptionCancellationPreviousValuesSubscription>() => T;
 }
 
 export interface FieldOptionLabelConnection {}
@@ -6324,15 +6324,15 @@ export interface FieldOptionLabelConnectionSubscription
   aggregate: <T = AggregateFieldOptionLabelSubscription>() => T;
 }
 
-export interface ExceptionCancelationPreviousValues {
+export interface ExceptionCancellationPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   description: String;
 }
 
-export interface ExceptionCancelationPreviousValuesPromise
-  extends Promise<ExceptionCancelationPreviousValues>,
+export interface ExceptionCancellationPreviousValuesPromise
+  extends Promise<ExceptionCancellationPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -6340,8 +6340,8 @@ export interface ExceptionCancelationPreviousValuesPromise
   description: () => Promise<String>;
 }
 
-export interface ExceptionCancelationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExceptionCancelationPreviousValues>>,
+export interface ExceptionCancellationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -6482,18 +6482,18 @@ export interface ExceptionSlotSubscriptionPayloadSubscription
   previousValues: <T = ExceptionSlotPreviousValuesSubscription>() => T;
 }
 
-export interface AggregateExceptionCancelation {
+export interface AggregateExceptionCancellation {
   count: Int;
 }
 
-export interface AggregateExceptionCancelationPromise
-  extends Promise<AggregateExceptionCancelation>,
+export interface AggregateExceptionCancellationPromise
+  extends Promise<AggregateExceptionCancellation>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateExceptionCancelationSubscription
-  extends Promise<AsyncIterator<AggregateExceptionCancelation>>,
+export interface AggregateExceptionCancellationSubscription
+  extends Promise<AsyncIterator<AggregateExceptionCancellation>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -6517,35 +6517,35 @@ export interface ExceptionSlotPreviousValuesSubscription
   date: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface ExceptionCancelationConnection {}
+export interface ExceptionCancellationConnection {}
 
-export interface ExceptionCancelationConnectionPromise
-  extends Promise<ExceptionCancelationConnection>,
+export interface ExceptionCancellationConnectionPromise
+  extends Promise<ExceptionCancellationConnection>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<ExceptionCancelationEdge>>() => T;
-  aggregate: <T = AggregateExceptionCancelation>() => T;
+  edges: <T = FragmentableArray<ExceptionCancellationEdge>>() => T;
+  aggregate: <T = AggregateExceptionCancellation>() => T;
 }
 
-export interface ExceptionCancelationConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionCancelationConnection>>,
+export interface ExceptionCancellationConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
-    T = Promise<AsyncIterator<ExceptionCancelationEdgeSubscription>>
+    T = Promise<AsyncIterator<ExceptionCancellationEdgeSubscription>>
   >() => T;
-  aggregate: <T = AggregateExceptionCancelationSubscription>() => T;
+  aggregate: <T = AggregateExceptionCancellationSubscription>() => T;
 }
 
-export interface ExceptionCancelation {
+export interface ExceptionCancellation {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   description: String;
 }
 
-export interface ExceptionCancelationPromise
-  extends Promise<ExceptionCancelation>,
+export interface ExceptionCancellationPromise
+  extends Promise<ExceptionCancellation>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -6555,8 +6555,8 @@ export interface ExceptionCancelationPromise
   owner: <T = User>() => T;
 }
 
-export interface ExceptionCancelationSubscription
-  extends Promise<AsyncIterator<ExceptionCancelation>>,
+export interface ExceptionCancellationSubscription
+  extends Promise<AsyncIterator<ExceptionCancellation>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -7297,21 +7297,21 @@ export interface ScheduleDebitSubscriptionPayloadSubscription
   previousValues: <T = ScheduleDebitPreviousValuesSubscription>() => T;
 }
 
-export interface ExceptionCancelationEdge {
+export interface ExceptionCancellationEdge {
   cursor: String;
 }
 
-export interface ExceptionCancelationEdgePromise
-  extends Promise<ExceptionCancelationEdge>,
+export interface ExceptionCancellationEdgePromise
+  extends Promise<ExceptionCancellationEdge>,
     Fragmentable {
-  node: <T = ExceptionCancelation>() => T;
+  node: <T = ExceptionCancellation>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ExceptionCancelationEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionCancelationEdge>>,
+export interface ExceptionCancellationEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationEdge>>,
     Fragmentable {
-  node: <T = ExceptionCancelationSubscription>() => T;
+  node: <T = ExceptionCancellationSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -7498,7 +7498,7 @@ export interface ExceptionPromise extends Promise<Exception>, Fragmentable {
     }
   ) => T;
   authorization: <T = ExceptionAuthorization>() => T;
-  cancelation: <T = ExceptionCancelation>() => T;
+  cancellation: <T = ExceptionCancellation>() => T;
   owner: <T = User>() => T;
   credits: <T = FragmentableArray<ScheduleCredit>>(
     args?: {
@@ -7545,7 +7545,7 @@ export interface ExceptionSubscription
     }
   ) => T;
   authorization: <T = ExceptionAuthorizationSubscription>() => T;
-  cancelation: <T = ExceptionCancelationSubscription>() => T;
+  cancellation: <T = ExceptionCancellationSubscription>() => T;
   owner: <T = UserSubscription>() => T;
   credits: <T = Promise<AsyncIterator<ScheduleCreditSubscription>>>(
     args?: {
@@ -8272,7 +8272,7 @@ export const models = [
     embedded: false
   },
   {
-    name: "ExceptionCancelation",
+    name: "ExceptionCancellation",
     embedded: false
   },
   {

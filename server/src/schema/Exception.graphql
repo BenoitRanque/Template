@@ -12,7 +12,14 @@ input ExceptionSlotCreateInput {
   source2: ScheduleCreditWhereUniqueInput
 }
 
-input ExceptionAuthorizationCreateInput {
-  granted: Boolean!
-  exception: ExceptionWhereUniqueInput!
+type ExceptionAuthorizationCreateInput {
+  description: String
+}
+
+type ExceptionRejectionCreateInput {
+  description: String
+}
+
+type ExceptionCancellationCreateInput {
+  description: String
 }

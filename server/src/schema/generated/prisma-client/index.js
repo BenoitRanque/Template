@@ -65,7 +65,7 @@ var models = [
     embedded: false
   },
   {
-    name: "ExceptionCancelation",
+    name: "ExceptionCancellation",
     embedded: false
   },
   {

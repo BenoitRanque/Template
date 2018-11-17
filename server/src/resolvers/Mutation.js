@@ -37,7 +37,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
   const userIsSupervisor = await prisma.client.$exists.employee({ id: employeeId, department: { supervisors_some: { id: userId } } })
   if (!userIsSupervisor) throw new Error(`Usuario no es supervisor authorizado`)
 
-  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancelation: null })
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
   const balance = await loadExceptionBalance(prisma, employeeId, data)
@@ -188,7 +188,7 @@ async function createExceptionAuthorization (obj, { data }, ctx, info) {
   const employeeId = exception.employee.id
   const exceptionDates = exception.slots.map(({ date }) => date)
 
-  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancelation: null })
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
   const balance = await loadExceptionBalance(prisma, employeeId, exception)

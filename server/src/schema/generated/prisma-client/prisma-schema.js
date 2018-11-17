@@ -23,7 +23,7 @@ type AggregateExceptionAuthorization {
   count: Int!
 }
 
-type AggregateExceptionCancelation {
+type AggregateExceptionCancellation {
   count: Int!
 }
 
@@ -1355,7 +1355,7 @@ type Exception {
   description: String
   slots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot!]
   authorization: ExceptionAuthorization
-  cancelation: ExceptionCancelation
+  cancellation: ExceptionCancellation
   owner: User!
   credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
   debits(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDebit!]
@@ -1506,7 +1506,7 @@ input ExceptionAuthorizationWhereUniqueInput {
   id: ID
 }
 
-type ExceptionCancelation {
+type ExceptionCancellation {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1515,34 +1515,34 @@ type ExceptionCancelation {
   owner: User!
 }
 
-type ExceptionCancelationConnection {
+type ExceptionCancellationConnection {
   pageInfo: PageInfo!
-  edges: [ExceptionCancelationEdge]!
-  aggregate: AggregateExceptionCancelation!
+  edges: [ExceptionCancellationEdge]!
+  aggregate: AggregateExceptionCancellation!
 }
 
-input ExceptionCancelationCreateInput {
-  exception: ExceptionCreateOneWithoutCancelationInput!
+input ExceptionCancellationCreateInput {
+  exception: ExceptionCreateOneWithoutCancellationInput!
   description: String!
   owner: UserCreateOneInput!
 }
 
-input ExceptionCancelationCreateOneWithoutExceptionInput {
-  create: ExceptionCancelationCreateWithoutExceptionInput
-  connect: ExceptionCancelationWhereUniqueInput
+input ExceptionCancellationCreateOneWithoutExceptionInput {
+  create: ExceptionCancellationCreateWithoutExceptionInput
+  connect: ExceptionCancellationWhereUniqueInput
 }
 
-input ExceptionCancelationCreateWithoutExceptionInput {
+input ExceptionCancellationCreateWithoutExceptionInput {
   description: String!
   owner: UserCreateOneInput!
 }
 
-type ExceptionCancelationEdge {
-  node: ExceptionCancelation!
+type ExceptionCancellationEdge {
+  node: ExceptionCancellation!
   cursor: String!
 }
 
-enum ExceptionCancelationOrderByInput {
+enum ExceptionCancellationOrderByInput {
   id_ASC
   id_DESC
   createdAt_ASC
@@ -1553,61 +1553,61 @@ enum ExceptionCancelationOrderByInput {
   description_DESC
 }
 
-type ExceptionCancelationPreviousValues {
+type ExceptionCancellationPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   description: String!
 }
 
-type ExceptionCancelationSubscriptionPayload {
+type ExceptionCancellationSubscriptionPayload {
   mutation: MutationType!
-  node: ExceptionCancelation
+  node: ExceptionCancellation
   updatedFields: [String!]
-  previousValues: ExceptionCancelationPreviousValues
+  previousValues: ExceptionCancellationPreviousValues
 }
 
-input ExceptionCancelationSubscriptionWhereInput {
+input ExceptionCancellationSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: ExceptionCancelationWhereInput
-  AND: [ExceptionCancelationSubscriptionWhereInput!]
-  OR: [ExceptionCancelationSubscriptionWhereInput!]
-  NOT: [ExceptionCancelationSubscriptionWhereInput!]
+  node: ExceptionCancellationWhereInput
+  AND: [ExceptionCancellationSubscriptionWhereInput!]
+  OR: [ExceptionCancellationSubscriptionWhereInput!]
+  NOT: [ExceptionCancellationSubscriptionWhereInput!]
 }
 
-input ExceptionCancelationUpdateInput {
-  exception: ExceptionUpdateOneRequiredWithoutCancelationInput
+input ExceptionCancellationUpdateInput {
+  exception: ExceptionUpdateOneRequiredWithoutCancellationInput
   description: String
   owner: UserUpdateOneRequiredInput
 }
 
-input ExceptionCancelationUpdateManyMutationInput {
+input ExceptionCancellationUpdateManyMutationInput {
   description: String
 }
 
-input ExceptionCancelationUpdateOneWithoutExceptionInput {
-  create: ExceptionCancelationCreateWithoutExceptionInput
-  update: ExceptionCancelationUpdateWithoutExceptionDataInput
-  upsert: ExceptionCancelationUpsertWithoutExceptionInput
+input ExceptionCancellationUpdateOneWithoutExceptionInput {
+  create: ExceptionCancellationCreateWithoutExceptionInput
+  update: ExceptionCancellationUpdateWithoutExceptionDataInput
+  upsert: ExceptionCancellationUpsertWithoutExceptionInput
   delete: Boolean
   disconnect: Boolean
-  connect: ExceptionCancelationWhereUniqueInput
+  connect: ExceptionCancellationWhereUniqueInput
 }
 
-input ExceptionCancelationUpdateWithoutExceptionDataInput {
+input ExceptionCancellationUpdateWithoutExceptionDataInput {
   description: String
   owner: UserUpdateOneRequiredInput
 }
 
-input ExceptionCancelationUpsertWithoutExceptionInput {
-  update: ExceptionCancelationUpdateWithoutExceptionDataInput!
-  create: ExceptionCancelationCreateWithoutExceptionInput!
+input ExceptionCancellationUpsertWithoutExceptionInput {
+  update: ExceptionCancellationUpdateWithoutExceptionDataInput!
+  create: ExceptionCancellationCreateWithoutExceptionInput!
 }
 
-input ExceptionCancelationWhereInput {
+input ExceptionCancellationWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1654,12 +1654,12 @@ input ExceptionCancelationWhereInput {
   description_ends_with: String
   description_not_ends_with: String
   owner: UserWhereInput
-  AND: [ExceptionCancelationWhereInput!]
-  OR: [ExceptionCancelationWhereInput!]
-  NOT: [ExceptionCancelationWhereInput!]
+  AND: [ExceptionCancellationWhereInput!]
+  OR: [ExceptionCancellationWhereInput!]
+  NOT: [ExceptionCancellationWhereInput!]
 }
 
-input ExceptionCancelationWhereUniqueInput {
+input ExceptionCancellationWhereUniqueInput {
   id: ID
 }
 
@@ -1675,7 +1675,7 @@ input ExceptionCreateInput {
   description: String
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1691,8 +1691,8 @@ input ExceptionCreateOneWithoutAuthorizationInput {
   connect: ExceptionWhereUniqueInput
 }
 
-input ExceptionCreateOneWithoutCancelationInput {
-  create: ExceptionCreateWithoutCancelationInput
+input ExceptionCreateOneWithoutCancellationInput {
+  create: ExceptionCreateWithoutCancellationInput
   connect: ExceptionWhereUniqueInput
 }
 
@@ -1711,13 +1711,13 @@ input ExceptionCreateWithoutAuthorizationInput {
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
   slots: ExceptionSlotCreateManyInput
-  cancelation: ExceptionCancelationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
 
-input ExceptionCreateWithoutCancelationInput {
+input ExceptionCreateWithoutCancellationInput {
   type: ExceptionTypeEnum!
   employee: EmployeeCreateOneWithoutExceptionsInput!
   description: String
@@ -1734,7 +1734,7 @@ input ExceptionCreateWithoutCreditsInput {
   description: String
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
@@ -1745,7 +1745,7 @@ input ExceptionCreateWithoutDebitsInput {
   description: String
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
 }
@@ -1755,7 +1755,7 @@ input ExceptionCreateWithoutEmployeeInput {
   description: String
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1954,7 +1954,7 @@ input ExceptionUpdateInput {
   description: String
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -1981,10 +1981,10 @@ input ExceptionUpdateOneRequiredWithoutAuthorizationInput {
   connect: ExceptionWhereUniqueInput
 }
 
-input ExceptionUpdateOneRequiredWithoutCancelationInput {
-  create: ExceptionCreateWithoutCancelationInput
-  update: ExceptionUpdateWithoutCancelationDataInput
-  upsert: ExceptionUpsertWithoutCancelationInput
+input ExceptionUpdateOneRequiredWithoutCancellationInput {
+  create: ExceptionCreateWithoutCancellationInput
+  update: ExceptionUpdateWithoutCancellationDataInput
+  upsert: ExceptionUpsertWithoutCancellationInput
   connect: ExceptionWhereUniqueInput
 }
 
@@ -2009,13 +2009,13 @@ input ExceptionUpdateWithoutAuthorizationDataInput {
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
   slots: ExceptionSlotUpdateManyInput
-  cancelation: ExceptionCancelationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
 
-input ExceptionUpdateWithoutCancelationDataInput {
+input ExceptionUpdateWithoutCancellationDataInput {
   type: ExceptionTypeEnum
   employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
   description: String
@@ -2032,7 +2032,7 @@ input ExceptionUpdateWithoutCreditsDataInput {
   description: String
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
@@ -2043,7 +2043,7 @@ input ExceptionUpdateWithoutDebitsDataInput {
   description: String
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
 }
@@ -2053,7 +2053,7 @@ input ExceptionUpdateWithoutEmployeeDataInput {
   description: String
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
-  cancelation: ExceptionCancelationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2069,9 +2069,9 @@ input ExceptionUpsertWithoutAuthorizationInput {
   create: ExceptionCreateWithoutAuthorizationInput!
 }
 
-input ExceptionUpsertWithoutCancelationInput {
-  update: ExceptionUpdateWithoutCancelationDataInput!
-  create: ExceptionCreateWithoutCancelationInput!
+input ExceptionUpsertWithoutCancellationInput {
+  update: ExceptionUpdateWithoutCancellationDataInput!
+  create: ExceptionCreateWithoutCancellationInput!
 }
 
 input ExceptionUpsertWithoutCreditsInput {
@@ -2144,7 +2144,7 @@ input ExceptionWhereInput {
   slots_some: ExceptionSlotWhereInput
   slots_none: ExceptionSlotWhereInput
   authorization: ExceptionAuthorizationWhereInput
-  cancelation: ExceptionCancelationWhereInput
+  cancellation: ExceptionCancellationWhereInput
   owner: UserWhereInput
   credits_every: ScheduleCreditWhereInput
   credits_some: ScheduleCreditWhereInput
@@ -2482,12 +2482,12 @@ type Mutation {
   upsertExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!, create: ExceptionAuthorizationCreateInput!, update: ExceptionAuthorizationUpdateInput!): ExceptionAuthorization!
   deleteExceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   deleteManyExceptionAuthorizations(where: ExceptionAuthorizationWhereInput): BatchPayload!
-  createExceptionCancelation(data: ExceptionCancelationCreateInput!): ExceptionCancelation!
-  updateExceptionCancelation(data: ExceptionCancelationUpdateInput!, where: ExceptionCancelationWhereUniqueInput!): ExceptionCancelation
-  updateManyExceptionCancelations(data: ExceptionCancelationUpdateManyMutationInput!, where: ExceptionCancelationWhereInput): BatchPayload!
-  upsertExceptionCancelation(where: ExceptionCancelationWhereUniqueInput!, create: ExceptionCancelationCreateInput!, update: ExceptionCancelationUpdateInput!): ExceptionCancelation!
-  deleteExceptionCancelation(where: ExceptionCancelationWhereUniqueInput!): ExceptionCancelation
-  deleteManyExceptionCancelations(where: ExceptionCancelationWhereInput): BatchPayload!
+  createExceptionCancellation(data: ExceptionCancellationCreateInput!): ExceptionCancellation!
+  updateExceptionCancellation(data: ExceptionCancellationUpdateInput!, where: ExceptionCancellationWhereUniqueInput!): ExceptionCancellation
+  updateManyExceptionCancellations(data: ExceptionCancellationUpdateManyMutationInput!, where: ExceptionCancellationWhereInput): BatchPayload!
+  upsertExceptionCancellation(where: ExceptionCancellationWhereUniqueInput!, create: ExceptionCancellationCreateInput!, update: ExceptionCancellationUpdateInput!): ExceptionCancellation!
+  deleteExceptionCancellation(where: ExceptionCancellationWhereUniqueInput!): ExceptionCancellation
+  deleteManyExceptionCancellations(where: ExceptionCancellationWhereInput): BatchPayload!
   createExceptionSlot(data: ExceptionSlotCreateInput!): ExceptionSlot!
   updateExceptionSlot(data: ExceptionSlotUpdateInput!, where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   updateManyExceptionSlots(data: ExceptionSlotUpdateManyMutationInput!, where: ExceptionSlotWhereInput): BatchPayload!
@@ -2610,9 +2610,9 @@ type Query {
   exceptionAuthorization(where: ExceptionAuthorizationWhereUniqueInput!): ExceptionAuthorization
   exceptionAuthorizations(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionAuthorization]!
   exceptionAuthorizationsConnection(where: ExceptionAuthorizationWhereInput, orderBy: ExceptionAuthorizationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionAuthorizationConnection!
-  exceptionCancelation(where: ExceptionCancelationWhereUniqueInput!): ExceptionCancelation
-  exceptionCancelations(where: ExceptionCancelationWhereInput, orderBy: ExceptionCancelationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionCancelation]!
-  exceptionCancelationsConnection(where: ExceptionCancelationWhereInput, orderBy: ExceptionCancelationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionCancelationConnection!
+  exceptionCancellation(where: ExceptionCancellationWhereUniqueInput!): ExceptionCancellation
+  exceptionCancellations(where: ExceptionCancellationWhereInput, orderBy: ExceptionCancellationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionCancellation]!
+  exceptionCancellationsConnection(where: ExceptionCancellationWhereInput, orderBy: ExceptionCancellationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionCancellationConnection!
   exceptionSlot(where: ExceptionSlotWhereUniqueInput!): ExceptionSlot
   exceptionSlots(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionSlot]!
   exceptionSlotsConnection(where: ExceptionSlotWhereInput, orderBy: ExceptionSlotOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionSlotConnection!
@@ -4411,7 +4411,7 @@ type Subscription {
   employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
-  exceptionCancelation(where: ExceptionCancelationSubscriptionWhereInput): ExceptionCancelationSubscriptionPayload
+  exceptionCancellation(where: ExceptionCancellationSubscriptionWhereInput): ExceptionCancellationSubscriptionPayload
   exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   fieldOptionLabel(where: FieldOptionLabelSubscriptionWhereInput): FieldOptionLabelSubscriptionPayload
   holiday(where: HolidaySubscriptionWhereInput): HolidaySubscriptionPayload
