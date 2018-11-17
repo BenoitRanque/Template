@@ -86,9 +86,9 @@ type Exception {
   employee: Employee!
   description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
-  rejection: ExceptionRejection
-  authorization: ExceptionAuthorization
-  cancellation: ExceptionCancellation
+  rejection: ExceptionRejection @relation("ExceptionToExceptionRejection" onDelete: CASCADE)
+  authorization: ExceptionAuthorization @relation("ExceptionToExceptionAuthorization")
+  cancellation: ExceptionCancellation @relation("ExceptionToExceptionCancellation")
   owner: User! @relation(name: "ExceptionToExceptionOwner")
   credits: [ScheduleCredit!]!
   debits: [ScheduleDebit!]!
@@ -205,6 +205,7 @@ type ScheduleDebit {
   category: ScheduleOfflineCategory!
   exception: Exception!
   credit: ScheduleCredit!
+  date: DateTime!
 }
 
 type DirectCredit {

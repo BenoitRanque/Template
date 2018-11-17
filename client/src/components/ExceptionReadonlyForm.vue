@@ -37,7 +37,9 @@
 
 <script>
 import { date } from 'quasar'
-import { ExceptionWithScheduleDataQuery } from 'assets/queries/Exception.graphql'
+import {
+  ExceptionWithScheduleDataQuery
+} from 'assets/queries/Exception.graphql'
 import ScheduleInput from 'components/ScheduleInput'
 
 export default {

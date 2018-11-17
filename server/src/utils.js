@@ -30,6 +30,11 @@ const SCH_TIME_WORK = 'SCH_TIME_WORK'
 const ATT_ABSENT = 'ATT_ABSENT'
 const ATT_ABSENT_DOUBLE = 'ATT_ABSENT_DOUBLE'
 
+// schedule credit source type enum
+const EXCEPTION = 'EXCEPTION'
+const CONCURENT_HOLIDAY = 'CONCURENT_HOLIDAY'
+const DIRECT_CREDIT = 'DIRECT_CREDIT'
+
 const knex = require('knex')({
   client: 'sqlite3',
   useNullAsDefault: true,
@@ -137,8 +142,9 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
           id: $id
         }
         authorization: {
-          granted: true
+          id_not: null
         }
+        cancellation: null
         slots_some: {
           date_lte: $to
           date_gte: $from
@@ -384,8 +390,6 @@ function getAttendanceComplianceForDate(reference) {
 
   const timelineGroups = getTimelineGroupsWithEvents(reference)
   const restlineGroups = getRestlineGroupsWithEvents(reference, timelineGroups)
-
-  console.log('timelineGroups here', timelineGroups, reference)
 
   const compliance = {
     eventCount: reference.events ? reference.events.length : 0,
@@ -646,9 +650,6 @@ function getRestlineGroupsWithEvents ({ schedule, date, events }, timelineGroups
     const candidateEvents = events.filter(event => isWithinRange(event, innerBound, outerBound))
     const parentTimelineGroup = timelineGroups.find(({ startTime, endTime }) => startTime <= rest.startTime && endTime >= rest.endTime)
 
-    console.log('here')
-    console.log(innerBound, outerBound, candidateEvents, min(...candidateEvents), max(...candidateEvents))
-
     if (!parentTimelineGroup) throw new Error(`Cannot find parentTimelineGroup for rest ${rest}`)
 
     return {
@@ -893,11 +894,11 @@ function getExceptionBalance (exceptionWithReferences) {
   return balance
 }
 
-function getExceptionDebits (balance) {
+function getExceptionDebitsWithoutSource (balance) {
   // get debits that are not acounted for by source nor by existing credits in same exception
   return Object.keys(balance).reduce((debits, category) => {
     const creditCount = balance[category].credit.length
-    const debitCount = balance[category].debit.filter(({ source }) => source).length
+    const debitCount = balance[category].debit.filter(({ source }) => !source).length
 
     if (debitCount <= creditCount) return debits
     // slice out
@@ -908,7 +909,24 @@ function getExceptionDebits (balance) {
   }, [])
 }
 
-function getExceptionCredits (balance) {
+function getExceptionDebits (balance, exception) {
+  // get debits that are not acounted for by source nor by existing credits in same exception
+  return Object.keys(balance).reduce((debits, category) => {
+    const creditCount = balance[category].credit.length
+    const debitCount = balance[category].debit.filter(({ source }) => source).length
+
+    if (debitCount <= creditCount) return debits
+    // slice out
+    return debits.concat(balance[category].debit.slice(creditCount - 1).map(debit => ({
+      credit: { connect: debit.source },
+      employee: { connect: exception.employee },
+      category,
+      date: debit.date
+    })))
+  }, [])
+}
+
+function getExceptionCredits (balance, exception) {
   return Object.keys(balance).reduce((credits, category) => {
     const creditCount = balance[category].credit.length
     const debitCount = balance[category].debit.filter(({ source }) => source).length
@@ -917,7 +935,9 @@ function getExceptionCredits (balance) {
     // slice out the credits that are already offset by debits
     return credits.concat(balance[category].credit.slice(debitCount - 1).map(credit => ({
       category,
-      date: credit.date
+      employee: { connect: exception.employee },
+      sourceType: EXCEPTION,
+      sourceDate: credit.date
     })))
   }, [])
 }
@@ -935,5 +955,6 @@ module.exports = {
   getVacationSchedule,
   loadExceptionBalance,
   getExceptionCredits,
-  getExceptionDebits
+  getExceptionDebits,
+  getExceptionDebitsWithoutSource
 }

@@ -9,6 +9,50 @@ mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
   }
 }
 
+mutation RejectExceptionMutation ($data: ExceptionRejectionCreateInput! $where: ExceptionWhereUniqueInput!) {
+  exception: rejectException (where: $where data: $data) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}
+
+mutation AuthorizeExceptionMutation ($data: ExceptionAuthorizationCreateInput! $where: ExceptionWhereUniqueInput!) {
+  exception: authorizeException (where: $where data: $data) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}
+
+mutation CancelExceptionMutation ($data: ExceptionCancellationCreateInput! $where: ExceptionWhereUniqueInput!) {
+  exception: cancelException (where: $where data: $data) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}
+
+mutation DeleteExceptionMutation ($where: ExceptionWhereUniqueInput!) {
+  exception: deleteException (where: $where) {
+    employee {
+      nameFull
+    }
+    owner {
+      username
+    }
+  }
+}
+
 query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhereInput) {
   meta: exceptionsConnection (where: $where) {
     aggregate {
@@ -25,9 +69,20 @@ query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhere
     owner {
       username
     }
+    rejection {
+      createdAt
+      owner {
+        username
+      }
+    }
     authorization {
       createdAt
-      granted
+      owner {
+        username
+      }
+    }
+    cancellation {
+      createdAt
       owner {
         username
       }
@@ -42,7 +97,23 @@ query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
     authorization {
       id
       createdAt
-      granted
+      description
+      owner {
+        username
+      }
+    }
+    rejection {
+      id
+      createdAt
+      description
+      owner {
+        username
+      }
+    }
+    cancellation {
+      id
+      createdAt
+      description
       owner {
         username
       }
@@ -63,19 +134,6 @@ query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
     }
   }
 }
-
-mutation CreateExceptionAuthorizationMutation ($data: ExceptionAuthorizationCreateInput!) {
-  authorization: createExceptionAuthorization (data: $data) {
-    exception {
-      employee {
-        nameFull
-      }
-    }
-    granted
-  }
-}
-
-
 
 fragment AllScheduleData on Schedule {
   description

@@ -59,7 +59,7 @@
         <div class="q-pa-md">
           <exception-authorization-form
             :exception-id="activeExceptionId"
-            @created="activeExceptionModal = false; request()"
+            @updated="activeExceptionModal = false; request()"
           ></exception-authorization-form>
         </div>
       </q-modal-layout>
@@ -85,12 +85,16 @@ export default {
             label: 'Pendientes'
           },
           {
-            value: 'APROVED',
-            label: 'Aprobadas'
+            value: 'AUTHORIZED',
+            label: 'Autorizada'
           },
           {
-            value: 'DENIED',
-            label: 'Denegadas'
+            value: 'REJECTED',
+            label: 'Rechazada'
+          },
+          {
+            value: 'CANCELLED',
+            label: 'Anulada'
           }
         ]
       },
@@ -103,8 +107,10 @@ export default {
           {
             name: 'status',
             field: row => {
-              if (!row.authorization) return 'PENDIENTE'
-              return row.authorization.granted ? 'APROBADA' : 'DENEGADA'
+              if (row.cancellation) return 'ANULADA'
+              if (row.authorization) return 'AUTORIZADA'
+              if (row.rejection) return 'RECHAZADA'
+              return 'PENDIENTE'
             },
             label: 'Estado',
             align: 'left'
@@ -209,15 +215,19 @@ export default {
         const statusFilter = []
 
         if (this.table.statusFilter.includes('PENDING')) {
-          statusFilter.push({ authorization: null })
+          statusFilter.push({ authorization: null, rejection: null })
         }
 
         if (this.table.statusFilter.includes('AUTHORIZED')) {
-          statusFilter.push({ authorization: { granted: true } })
+          statusFilter.push({ authorization: { id_not: null }, cancellation: null })
         }
 
-        if (this.table.statusFilter.includes('DENIED')) {
-          statusFilter.push({ authorization: { granted: false } })
+        if (this.table.statusFilter.includes('REJECTED')) {
+          statusFilter.push({ rejection: { id_not: null } })
+        }
+
+        if (this.table.statusFilter.includes('CANCELLED')) {
+          statusFilter.push({ cancellation: { id_not: null } })
         }
 
         PARAMETERS.where.AND.push({ OR: statusFilter })

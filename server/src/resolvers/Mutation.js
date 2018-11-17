@@ -1,7 +1,7 @@
 const isBefore = require('date-fns/is_before')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, BCRYPT_SALT_ROUNDS, loadExceptionBalance, getExceptionCredits, getExceptionDebits } = require('../utils')
+const { APP_SECRET, BCRYPT_SALT_ROUNDS, loadExceptionBalance, getExceptionCredits, getExceptionDebits, getExceptionDebitsWithoutSource } = require('../utils')
 
 async function createUser(obj, args, ctx, info) {
   args.data.password = await bcrypt.hash(args.data.password, BCRYPT_SALT_ROUNDS)
@@ -42,20 +42,13 @@ async function createException (obj, { data }, { prisma, session }, info) {
 
   const balance = await loadExceptionBalance(prisma, employeeId, data)
 
-  const debits = getExceptionDebits(balance)
-  if (debits.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
-
-  const credits = getExceptionCredits(balance)
-  console.log(credits)
+  const debitsWithoutSource =  getExceptionDebitsWithoutSource(balance)
+  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
 
   return prisma.bindings.mutation.createException({
     data: {
       type: data.type,
-      owner: {
-        connect: {
-          id: userId
-        }
-      },
+      owner: { connect: { id: userId } },
       employee: {
         connect: {
           id: employeeId
@@ -90,138 +83,143 @@ async function createException (obj, { data }, { prisma, session }, info) {
   }, info)
 }
 
-// async function createException(parent, { data }, ctx, info) {
+async function rejectException(obj, { where, data }, { prisma, session }, info) {
 
-//   const userId = ctx.session.user.id
-//   const employeeId = data.employee.id
-//   const exceptionDates = data.slots.map(({ date }) => date)
+  const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
+  ])
 
-//   const userIsSupervisor = await ctx.prisma.bindings.exists.Employee({
-//     id: employeeId,
-//     department: {
-//       supervisors_some: {
-//         id: userId
-//       }
-//     }
-//   })
-//   if (!userIsSupervisor) throw new Error('User is not an authorized supervisor of employee')
+  if (exceptionRejected) throw new Error(`Boleta ya rechazada`)
+  if (exceptionAuthorized) throw new Error(`Boleta ya authorizada`)
+  if (exceptionCancelled) throw new Error(`Boleta ya cancellada`)
 
-//   const exceptionsWithDuplicateDates = await ctx.prisma.bindings.exists.Exception({
-//     employee: {
-//       id: employeeId
-//     },
-//     slots_some: {
-//       date_in: exceptionDates
-//     }
-//   })
-//   if (exceptionsWithDuplicateDates) throw new Error('Conflict with other exceptions: dates already exist')
-
-//   return ctx.prisma.bindings.mutation.createException({
-//     data: {
-//       type: data.type,
-//       owner: {
-//         connect: {
-//           id: userId
-//         }
-//       },
-//       employee: {
-//         connect: {
-//           id: employeeId
-//         }
-//       },
-//       slots: {
-//         create: data.slots.map(({ date, schedule }) => ({
-//           date,
-//           schedule: {
-//             connect: !schedule.connect ? null : schedule.connect,
-//             create: !schedule.create ? null : {
-//               ...schedule.create,
-//               offline1: {
-//                 create: schedule.create.offline1
-//               },
-//               offline2: {
-//                 create: schedule.create.offline2
-//               },
-//               restline: {
-//                 create: schedule.create.restline
-//               },
-//               timeline: {
-//                 create: schedule.create.timeline
-//               }
-//             }
-//           }
-//         }))
-//       }
-//     }
-//   }, info)
-// }
-
-async function createExceptionAuthorization (obj, { data }, ctx, info) {
-
-  const exception = await ctx.prisma.bindings.query.exception({ where: { id: data.exception.id } }, `
-  {
-    id
-    type
-    slots {
-      schedule {
-        offline1 {
-          category
-        }
-        offline2 {
-          category
-        }
-      }
-      date
-      source1 {
-        id
-      }
-      source2 {
-        id
+  return prisma.bindings.mutation.updateException({ where, data: {
+    rejection: {
+      create: {
+        ...data,
+        owner: { connect: { id: session.user.id } }
       }
     }
-  }
+  } }, info)
+}
+
+async function authorizeException(obj, { where, data }, { prisma, session }, info) {
+
+  const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
+  ])
+
+  if (exceptionRejected) throw new Error(`No se permite authorizar boleta rechazada`)
+  if (exceptionAuthorized) throw new Error(`No se permite authorizar boleta authorizada`)
+  if (exceptionCancelled) throw new Error(`No se permite authorizar boleta cancelada`)
+
+  const exception = await prisma.bindings.query.exception({ where }, `
+    {
+      id
+      type
+      employee {
+        id
+      }
+      slots {
+        schedule {
+          offline1 {
+            category
+          }
+          offline2 {
+            category
+          }
+        }
+        date
+        source1 {
+          id
+        }
+        source2 {
+          id
+        }
+      }
+    }
   `)
-
-  console.log(exception)
-
-  const userId = session.user.id
   const employeeId = exception.employee.id
   const exceptionDates = exception.slots.map(({ date }) => date)
 
-  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { id_not: null }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
   const balance = await loadExceptionBalance(prisma, employeeId, exception)
 
-  const debits = getExceptionDebits(balance)
-  if (debits.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+  const debitsWithoutSource =  getExceptionDebitsWithoutSource(balance)
+  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
 
-  const credits = getExceptionCredits(balance)
-  console.log(credits)
+  const debits = getExceptionDebits(balance, exception)
+  const credits = getExceptionCredits(balance, exception)
 
-
-  // todo: create authorization and
-
-  return ctx.prisma.bindings.mutation.updateException({ where: { id: exception.id }, data: {
-
-  }})
-
-  throw new Error(`stop here`)
-  return ctx.prisma.bindings.mutation.createExceptionAuthorization({
-    data: {
-      ...data,
-      exception: {
-        connect: {
-          id: data.exception.id
-        }
-      },
-      owner: {
-        connect: {
-          id: ctx.session.user.id
-        }
+  return prisma.bindings.mutation.updateException({ where, data: {
+    credits: {
+      create: credits
+    },
+    debits: {
+      create: debits
+    },
+    authorization: {
+      create: {
+        ...data,
+        owner: { connect: { id: session.user.id } }
       }
     }
-  }, info)
+  } }, info)
+}
+
+
+async function cancelException(obj, { where, data }, { prisma, session }, info) {
+
+  const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
+  ])
+
+  if (exceptionRejected) throw new Error(`No se permite cancelar boleta rechazada`)
+  if (!exceptionAuthorized) throw new Error(`No se permite cancelar boleta no autorizada`)
+  if (exceptionCancelled) throw new Error(`No se permite cancelar boleta cancelada`)
+
+  const [ relatedCredits, relatedDebits ] = await Promise.all([
+    prisma.bindings.query.scheduleCredits({ where: { sourceException: where } }, `{ id }`),
+    prisma.bindings.query.scheduleDebits({ where: { exception: where } }, `{ id }`)
+  ])
+
+  return prisma.bindings.mutation.updateException({ where, data: {
+    credits: {
+      delete: relatedCredits
+    },
+    debits: {
+      delete: relatedDebits
+    },
+    cancellation: {
+      create: {
+        ...data,
+        owner: { connect: { id: session.user.id } }
+      }
+    }
+  } }, info)
+}
+
+async function deleteException(obj, { where }, { prisma, session }, info) {
+
+  const [ exceptionAuthorized, exceptionCancelled ] = await Promise.all([
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
+  ])
+
+  if (exceptionAuthorized) throw new Error(`No se permite eliminar boleta authorizada`)
+  if (exceptionCancelled) throw new Error(`No se permite eliminar boleta cancellada`)
+
+  const exception = await prisma.bindings.query.deleteException({ where }, info)
+  await prisma.client.deleteException(where)
+  return exception
 }
 
 async function createShift(obj, { data }, ctx, info) {
@@ -329,7 +327,10 @@ module.exports = {
   updateUser,
   authenticate,
   createException,
-  createExceptionAuthorization,
+  rejectException,
+  authorizeException,
+  cancelException,
+  deleteException,
   createShift,
   updateShift,
   deleteShift: async (parent, args, ctx, info) => {

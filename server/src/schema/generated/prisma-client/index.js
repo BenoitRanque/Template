@@ -69,6 +69,10 @@ var models = [
     embedded: false
   },
   {
+    name: "ExceptionRejection",
+    embedded: false
+  },
+  {
     name: "ExceptionSlot",
     embedded: false
   },

@@ -28,9 +28,12 @@
         </q-card-main>
       </q-card>
     </div>
-    <div class="q-py-md flex justify-around" v-if="canAuthorize">
-      <q-btn @click="createExceptionAuthorization(false)" color="negative" size="md" rounded>Negar</q-btn>
-      <q-btn @click="createExceptionAuthorization(true)" color="positive" size="md" rounded>Authorizar</q-btn>
+    <div class="q-py-md flex justify-around">
+      <q-btn v-if="canReject" @click="rejectException" color="warning" size="md" rounded>Rechazar Boleta</q-btn>
+      <q-btn v-if="canAuthorize" @click="authorizeException" color="positive" size="md" rounded>Autorizar Boleta</q-btn>
+      <q-btn v-if="canCancel" @click="cancelException" color="negative" size="md" rounded>Anular Boleta</q-btn>
+      <q-btn v-if="canDelete" @click="deleteException" color="negative" size="md" rounded>Eliminar Boleta</q-btn>
+      <!-- <q-btn @click="createExceptionAuthorization(true)" color="positive" size="md" rounded>Authorizar</q-btn> -->
       <q-btn @click="$root.$emit('PRINT', { template: 'exception', payload: model, preview: true })" color="secondary" round icon="print"></q-btn>
     </div>
     <!-- <pre>{{model}}</pre> -->
@@ -42,7 +45,13 @@
 
 <script>
 import { date } from 'quasar'
-import { ExceptionWithScheduleDataQuery, CreateExceptionAuthorizationMutation } from 'assets/queries/Exception.graphql'
+import {
+  ExceptionWithScheduleDataQuery,
+  RejectExceptionMutation,
+  AuthorizeExceptionMutation,
+  CancelExceptionMutation,
+  DeleteExceptionMutation
+} from 'assets/queries/Exception.graphql'
 import ScheduleInput from 'components/ScheduleInput'
 
 export default {
@@ -69,8 +78,21 @@ export default {
     }
   },
   computed: {
+    canDelete () {
+      // TODO
+      return true
+    },
+    canReject () {
+      // TODO
+      return true
+    },
     canAuthorize () {
-      return !this.model.authorization
+      // TODO
+      return true
+    },
+    canCancel () {
+      // TODO
+      return true
     },
     valid () {
       return true
@@ -115,32 +137,152 @@ export default {
           this.loading = false
         })
     },
-    createExceptionAuthorization (granted) {
-      const parameters = {
-        data: {
-          granted,
-          exception: {
-            id: this.exceptionId
-          }
-        }
-      }
-
-      this.loading = true
-      this.$gql.request(CreateExceptionAuthorizationMutation, parameters)
-        .then(response => {
-          this.$q.notify({
-            type: 'positive',
-            message: `Boleta ${response.authorization.granted ? 'authorizada' : 'denegada'}`
-          })
-          this.$emit('created')
-          this.loading = false
+    rejectException () {
+      this.$q.dialog({
+        title: 'Rechazar Boleta',
+        message: 'Rechazar esta boleta con un comentario',
+        prompt: {
+          model: '',
+          type: 'text' // optional
+        },
+        cancel: true,
+        ok: true,
+        color: 'primary'
+      })
+        .then(description => {
+          this.loading = true
+          this.$gql.request(RejectExceptionMutation, { where: { id: this.exceptionId }, data: { description } })
+            .then(response => {
+              this.$q.notify({
+                type: 'positive',
+                message: `Boleta Rechazada`
+              })
+              this.$emit('updated')
+              this.loading = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.loading = false
+            })
         })
-        .catch(error => {
-          console.log(error)
-          this.$defaultErrorHandler(error)
-          this.loading = false
+        .catch(() => {})
+    },
+    authorizeException () {
+      this.$q.dialog({
+        title: 'Autorizar Boleta',
+        message: 'Autorizar esta boleta con un comentario',
+        prompt: {
+          model: '',
+          type: 'text' // optional
+        },
+        cancel: true,
+        ok: true,
+        color: 'primary'
+      })
+        .then(description => {
+          this.loading = true
+          this.$gql.request(AuthorizeExceptionMutation, { where: { id: this.exceptionId }, data: { description } })
+            .then(response => {
+              this.$q.notify({
+                type: 'positive',
+                message: `Boleta Autorizada`
+              })
+              this.$emit('updated')
+              this.loading = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.loading = false
+            })
         })
+        .catch(() => {})
+    },
+    cancelException () {
+      this.$q.dialog({
+        title: 'Cancelar Boleta',
+        message: 'Cancelar esta boleta con un comentario',
+        prompt: {
+          model: '',
+          type: 'text' // optional
+        },
+        cancel: true,
+        ok: true,
+        color: 'primary'
+      })
+        .then(description => {
+          this.loading = true
+          this.$gql.request(CancelExceptionMutation, { where: { id: this.exceptionId }, data: { description } })
+            .then(response => {
+              this.$q.notify({
+                type: 'positive',
+                message: `Boleta Cancelada`
+              })
+              this.$emit('updated')
+              this.loading = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.loading = false
+            })
+        })
+        .catch(() => {})
+    },
+    deleteException () {
+      this.$q.dialog({
+        title: 'Eliminar Boleta',
+        message: 'Eliminar esta boleta',
+        prompt: {
+          model: '',
+          type: 'text' // optional
+        },
+        cancel: true,
+        ok: true,
+        color: 'primary'
+      })
+        .then(description => {
+          this.loading = true
+          this.$gql.request(DeleteExceptionMutation, { where: { id: this.exceptionId }, data: { description } })
+            .then(response => {
+              this.$q.notify({
+                type: 'positive',
+                message: `Boleta Eliminada`
+              })
+              this.$emit('updated')
+              this.loading = false
+            })
+            .catch(error => {
+              this.$defaultErrorHandler(error)
+              this.loading = false
+            })
+        })
+        .catch(() => {})
     }
+    // createExceptionAuthorization (granted) {
+    //   const parameters = {
+    //     data: {
+    //       granted,
+    //       exception: {
+    //         id: this.exceptionId
+    //       }
+    //     }
+    //   }
+
+    //   this.loading = true
+    //   this.$gql.request(CreateExceptionAuthorizationMutation, parameters)
+    //     .then(response => {
+    //       this.$q.notify({
+    //         type: 'positive',
+    //         message: `Boleta ${response.authorization.granted ? 'authorizada' : 'denegada'}`
+    //       })
+    //       this.$emit('created')
+    //       this.loading = false
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //       this.$defaultErrorHandler(error)
+    //       this.loading = false
+    //     })
+    // }
   },
   mounted () {
     this.loadException()

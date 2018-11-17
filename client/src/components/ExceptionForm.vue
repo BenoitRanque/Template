@@ -80,9 +80,9 @@
         </q-card-main>
       </q-card>
     </div>
-    <div class="text-center q-py-md">
+    <!-- <div class="text-center q-py-md">
       <q-btn @click="validateException" :disable="!valid" color="secondary" size="lg">Validar</q-btn>
-    </div>
+    </div> -->
     <div class="text-center q-py-md">
       <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
     </div>
