@@ -37,7 +37,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
   const userIsSupervisor = await prisma.client.$exists.employee({ id: employeeId, department: { supervisors_some: { id: userId } } })
   if (!userIsSupervisor) throw new Error(`Usuario no es supervisor authorizado`)
 
-  const exceptionDateCollision = await prisma.client.$exists.exceptions({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
   const balance = await loadExceptionBalance(prisma, employeeId, data)
@@ -86,9 +86,9 @@ async function createException (obj, { data }, { prisma, session }, info) {
 async function rejectException(obj, { where, data }, { prisma, session }, info) {
 
   const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
-    prisma.client.$exists.exceptions({ ...where, rejection: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, authorization: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, cancellation: { id_not: null } })
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
   ])
 
   if (exceptionRejected) throw new Error(`Boleta ya rechazada`)
@@ -108,9 +108,9 @@ async function rejectException(obj, { where, data }, { prisma, session }, info) 
 async function authorizeException(obj, { where, data }, { prisma, session }, info) {
 
   const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
-    prisma.client.$exists.exceptions({ ...where, rejection: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, authorization: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, cancellation: { id_not: null } })
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
   ])
 
   if (exceptionRejected) throw new Error(`No se permite authorizar boleta rechazada`)
@@ -146,7 +146,7 @@ async function authorizeException(obj, { where, data }, { prisma, session }, inf
   const employeeId = exception.employee.id
   const exceptionDates = exception.slots.map(({ date }) => date)
 
-  const exceptionDateCollision = await prisma.client.$exists.exceptions({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { id_not: null }, cancellation: null })
+  const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { id_not: null }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
 
   const balance = await loadExceptionBalance(prisma, employeeId, exception)
@@ -177,9 +177,9 @@ async function authorizeException(obj, { where, data }, { prisma, session }, inf
 async function cancelException(obj, { where, data }, { prisma, session }, info) {
 
   const [ exceptionRejected, exceptionAuthorized, exceptionCancelled ] = await Promise.all([
-    prisma.client.$exists.exceptions({ ...where, rejection: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, authorization: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, cancellation: { id_not: null } })
+    prisma.client.$exists.exception({ ...where, rejection: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
   ])
 
   if (exceptionRejected) throw new Error(`No se permite cancelar boleta rechazada`)
@@ -210,8 +210,8 @@ async function cancelException(obj, { where, data }, { prisma, session }, info) 
 async function deleteException(obj, { where }, { prisma, session }, info) {
 
   const [ exceptionAuthorized, exceptionCancelled, exceptionOwner ] = await Promise.all([
-    prisma.client.$exists.exceptions({ ...where, authorization: { id_not: null } }),
-    prisma.client.$exists.exceptions({ ...where, cancellation: { id_not: null } })
+    prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
   ])
 
   if (exceptionAuthorized) throw new Error(`No se permite eliminar boleta authorizada`)
