@@ -2,6 +2,8 @@
 input ScheduleCreateInput {
   description: String
   baseTime: Int!
+  innerBound: Int
+  outerBound: Int
   custom: Boolean
   timeline: [ScheduleTimelineElementCreateInput]!
   restline: [ScheduleRestlineElementCreateInput]!

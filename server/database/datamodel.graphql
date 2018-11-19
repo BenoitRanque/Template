@@ -86,9 +86,9 @@ type Exception {
   employee: Employee!
   description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
-  rejection: ExceptionRejection @relation("ExceptionToExceptionRejection" onDelete: CASCADE)
-  authorization: ExceptionAuthorization @relation("ExceptionToExceptionAuthorization")
-  cancellation: ExceptionCancellation @relation("ExceptionToExceptionCancellation")
+  rejection: ExceptionRejection @relation(name: "ExceptionToExceptionRejection" onDelete: CASCADE)
+  authorization: ExceptionAuthorization @relation(name: "ExceptionToExceptionAuthorization")
+  cancellation: ExceptionCancellation @relation(name: "ExceptionToExceptionCancellation")
   owner: User! @relation(name: "ExceptionToExceptionOwner")
   credits: [ScheduleCredit!]!
   debits: [ScheduleDebit!]!
@@ -111,7 +111,7 @@ type ExceptionRejection {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception!
+  exception: Exception! @relation(name: "ExceptionToExceptionRejection")
   owner: User! @relation(name: "ExceptionRejectionToExceptionRejectionOwner")
   description: String
 }
@@ -120,7 +120,7 @@ type ExceptionAuthorization {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception!
+  exception: Exception! @relation(name: "ExceptionToExceptionAuthorization")
   owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
   description: String
 }
@@ -129,7 +129,7 @@ type ExceptionCancellation {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception!
+  exception: Exception! @relation(name: "ExceptionToExceptionCancellation")
   owner: User! @relation(name: "ExceptionCancellationToExceptionCancellationOwner")
   description: String
 }
@@ -142,6 +142,8 @@ type Schedule {
   updatedAt: DateTime!
   description: String
   baseTime: Int!
+  innerBound: Int
+  outerBound: Int
   timeline: [ScheduleTimelineElement!]! @relation(name: "ScheduleToTimeline" onDelete: CASCADE)
   restline: [ScheduleRestlineElement!]! @relation(name: "ScheduleToRestline" onDelete: CASCADE)
   offline1: ScheduleOfflineElement @relation(name: "ScheduleToOfflin1" onDelete: CASCADE)

@@ -2903,6 +2903,8 @@ type Schedule {
   updatedAt: DateTime!
   description: String
   baseTime: Int!
+  innerBound: Int
+  outerBound: Int
   timeline(where: ScheduleTimelineElementWhereInput, orderBy: ScheduleTimelineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleTimelineElement!]
   restline(where: ScheduleRestlineElementWhereInput, orderBy: ScheduleRestlineElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleRestlineElement!]
   offline1: ScheduleOfflineElement
@@ -3087,6 +3089,8 @@ input ScheduleCreateInput {
   systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int!
+  innerBound: Int
+  outerBound: Int
   timeline: ScheduleTimelineElementCreateManyInput
   restline: ScheduleRestlineElementCreateManyInput
   offline1: ScheduleOfflineElementCreateOneInput
@@ -3448,6 +3452,7 @@ type ScheduleDebit {
   category: ScheduleOfflineCategory!
   exception: Exception!
   credit: ScheduleCredit!
+  date: DateTime!
 }
 
 type ScheduleDebitConnection {
@@ -3461,6 +3466,7 @@ input ScheduleDebitCreateInput {
   category: ScheduleOfflineCategory!
   exception: ExceptionCreateOneWithoutDebitsInput!
   credit: ScheduleCreditCreateOneWithoutDebitInput!
+  date: DateTime!
 }
 
 input ScheduleDebitCreateManyWithoutEmployeeInput {
@@ -3482,18 +3488,21 @@ input ScheduleDebitCreateWithoutCreditInput {
   employee: EmployeeCreateOneWithoutDebitsInput!
   category: ScheduleOfflineCategory!
   exception: ExceptionCreateOneWithoutDebitsInput!
+  date: DateTime!
 }
 
 input ScheduleDebitCreateWithoutEmployeeInput {
   category: ScheduleOfflineCategory!
   exception: ExceptionCreateOneWithoutDebitsInput!
   credit: ScheduleCreditCreateOneWithoutDebitInput!
+  date: DateTime!
 }
 
 input ScheduleDebitCreateWithoutExceptionInput {
   employee: EmployeeCreateOneWithoutDebitsInput!
   category: ScheduleOfflineCategory!
   credit: ScheduleCreditCreateOneWithoutDebitInput!
+  date: DateTime!
 }
 
 type ScheduleDebitEdge {
@@ -3506,6 +3515,8 @@ enum ScheduleDebitOrderByInput {
   id_DESC
   category_ASC
   category_DESC
+  date_ASC
+  date_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3515,6 +3526,7 @@ enum ScheduleDebitOrderByInput {
 type ScheduleDebitPreviousValues {
   id: ID!
   category: ScheduleOfflineCategory!
+  date: DateTime!
 }
 
 type ScheduleDebitSubscriptionPayload {
@@ -3540,10 +3552,12 @@ input ScheduleDebitUpdateInput {
   category: ScheduleOfflineCategory
   exception: ExceptionUpdateOneRequiredWithoutDebitsInput
   credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+  date: DateTime
 }
 
 input ScheduleDebitUpdateManyMutationInput {
   category: ScheduleOfflineCategory
+  date: DateTime
 }
 
 input ScheduleDebitUpdateManyWithoutEmployeeInput {
@@ -3577,18 +3591,21 @@ input ScheduleDebitUpdateWithoutCreditDataInput {
   employee: EmployeeUpdateOneRequiredWithoutDebitsInput
   category: ScheduleOfflineCategory
   exception: ExceptionUpdateOneRequiredWithoutDebitsInput
+  date: DateTime
 }
 
 input ScheduleDebitUpdateWithoutEmployeeDataInput {
   category: ScheduleOfflineCategory
   exception: ExceptionUpdateOneRequiredWithoutDebitsInput
   credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+  date: DateTime
 }
 
 input ScheduleDebitUpdateWithoutExceptionDataInput {
   employee: EmployeeUpdateOneRequiredWithoutDebitsInput
   category: ScheduleOfflineCategory
   credit: ScheduleCreditUpdateOneRequiredWithoutDebitInput
+  date: DateTime
 }
 
 input ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
@@ -3640,6 +3657,14 @@ input ScheduleDebitWhereInput {
   category_not_in: [ScheduleOfflineCategory!]
   exception: ExceptionWhereInput
   credit: ScheduleCreditWhereInput
+  date: DateTime
+  date_not: DateTime
+  date_in: [DateTime!]
+  date_not_in: [DateTime!]
+  date_lt: DateTime
+  date_lte: DateTime
+  date_gt: DateTime
+  date_gte: DateTime
   AND: [ScheduleDebitWhereInput!]
   OR: [ScheduleDebitWhereInput!]
   NOT: [ScheduleDebitWhereInput!]
@@ -3791,6 +3816,10 @@ enum ScheduleOrderByInput {
   description_DESC
   baseTime_ASC
   baseTime_DESC
+  innerBound_ASC
+  innerBound_DESC
+  outerBound_ASC
+  outerBound_DESC
 }
 
 type SchedulePreviousValues {
@@ -3801,6 +3830,8 @@ type SchedulePreviousValues {
   updatedAt: DateTime!
   description: String
   baseTime: Int!
+  innerBound: Int
+  outerBound: Int
 }
 
 enum ScheduleRestlineCategory {
@@ -4195,6 +4226,8 @@ input ScheduleUpdateDataInput {
   systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int
+  innerBound: Int
+  outerBound: Int
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
@@ -4206,6 +4239,8 @@ input ScheduleUpdateInput {
   systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int
+  innerBound: Int
+  outerBound: Int
   timeline: ScheduleTimelineElementUpdateManyInput
   restline: ScheduleRestlineElementUpdateManyInput
   offline1: ScheduleOfflineElementUpdateOneInput
@@ -4217,6 +4252,8 @@ input ScheduleUpdateManyMutationInput {
   systemScheduleIdentifier: SystemScheduleIdentifierEnum
   description: String
   baseTime: Int
+  innerBound: Int
+  outerBound: Int
 }
 
 input ScheduleUpdateOneRequiredInput {
@@ -4290,6 +4327,22 @@ input ScheduleWhereInput {
   baseTime_lte: Int
   baseTime_gt: Int
   baseTime_gte: Int
+  innerBound: Int
+  innerBound_not: Int
+  innerBound_in: [Int!]
+  innerBound_not_in: [Int!]
+  innerBound_lt: Int
+  innerBound_lte: Int
+  innerBound_gt: Int
+  innerBound_gte: Int
+  outerBound: Int
+  outerBound_not: Int
+  outerBound_in: [Int!]
+  outerBound_not_in: [Int!]
+  outerBound_lt: Int
+  outerBound_lte: Int
+  outerBound_gt: Int
+  outerBound_gte: Int
   timeline_every: ScheduleTimelineElementWhereInput
   timeline_some: ScheduleTimelineElementWhereInput
   timeline_none: ScheduleTimelineElementWhereInput

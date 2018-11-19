@@ -1271,7 +1271,11 @@ export type ScheduleOrderByInput =
   | "description_ASC"
   | "description_DESC"
   | "baseTime_ASC"
-  | "baseTime_DESC";
+  | "baseTime_DESC"
+  | "innerBound_ASC"
+  | "innerBound_DESC"
+  | "outerBound_ASC"
+  | "outerBound_DESC";
 
 export type ExceptionOrderByInput =
   | "id_ASC"
@@ -1366,6 +1370,8 @@ export type ScheduleDebitOrderByInput =
   | "id_DESC"
   | "category_ASC"
   | "category_DESC"
+  | "date_ASC"
+  | "date_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1694,6 +1700,14 @@ export interface ScheduleDebitWhereInput {
   category_not_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
   exception?: ExceptionWhereInput;
   credit?: ScheduleCreditWhereInput;
+  date?: DateTimeInput;
+  date_not?: DateTimeInput;
+  date_in?: DateTimeInput[] | DateTimeInput;
+  date_not_in?: DateTimeInput[] | DateTimeInput;
+  date_lt?: DateTimeInput;
+  date_lte?: DateTimeInput;
+  date_gt?: DateTimeInput;
+  date_gte?: DateTimeInput;
   AND?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
   OR?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
   NOT?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
@@ -2046,6 +2060,22 @@ export interface ScheduleWhereInput {
   baseTime_lte?: Int;
   baseTime_gt?: Int;
   baseTime_gte?: Int;
+  innerBound?: Int;
+  innerBound_not?: Int;
+  innerBound_in?: Int[] | Int;
+  innerBound_not_in?: Int[] | Int;
+  innerBound_lt?: Int;
+  innerBound_lte?: Int;
+  innerBound_gt?: Int;
+  innerBound_gte?: Int;
+  outerBound?: Int;
+  outerBound_not?: Int;
+  outerBound_in?: Int[] | Int;
+  outerBound_not_in?: Int[] | Int;
+  outerBound_lt?: Int;
+  outerBound_lte?: Int;
+  outerBound_gt?: Int;
+  outerBound_gte?: Int;
   timeline_every?: ScheduleTimelineElementWhereInput;
   timeline_some?: ScheduleTimelineElementWhereInput;
   timeline_none?: ScheduleTimelineElementWhereInput;
@@ -2162,6 +2192,7 @@ export interface ScheduleDebitCreateWithoutEmployeeInput {
   category: ScheduleOfflineCategory;
   exception: ExceptionCreateOneWithoutDebitsInput;
   credit: ScheduleCreditCreateOneWithoutDebitInput;
+  date: DateTimeInput;
 }
 
 export interface ScheduleOfflineElementSubscriptionWhereInput {
@@ -2465,6 +2496,7 @@ export interface ScheduleDebitCreateWithoutExceptionInput {
   employee: EmployeeCreateOneWithoutDebitsInput;
   category: ScheduleOfflineCategory;
   credit: ScheduleCreditCreateOneWithoutDebitInput;
+  date: DateTimeInput;
 }
 
 export type ExceptionCancellationWhereUniqueInput = AtLeastOne<{
@@ -2671,6 +2703,7 @@ export interface ScheduleDebitCreateInput {
   category: ScheduleOfflineCategory;
   exception: ExceptionCreateOneWithoutDebitsInput;
   credit: ScheduleCreditCreateOneWithoutDebitInput;
+  date: DateTimeInput;
 }
 
 export interface HolidayCreateInput {
@@ -2705,6 +2738,7 @@ export interface ScheduleDebitCreateWithoutCreditInput {
   employee: EmployeeCreateOneWithoutDebitsInput;
   category: ScheduleOfflineCategory;
   exception: ExceptionCreateOneWithoutDebitsInput;
+  date: DateTimeInput;
 }
 
 export interface ScheduleCategoryConfigCreateInput {
@@ -2974,6 +3008,8 @@ export interface ScheduleUpdateDataInput {
   systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
   description?: String;
   baseTime?: Int;
+  innerBound?: Int;
+  outerBound?: Int;
   timeline?: ScheduleTimelineElementUpdateManyInput;
   restline?: ScheduleRestlineElementUpdateManyInput;
   offline1?: ScheduleOfflineElementUpdateOneInput;
@@ -3428,6 +3464,8 @@ export interface ScheduleCreateInput {
   systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
   description?: String;
   baseTime: Int;
+  innerBound?: Int;
+  outerBound?: Int;
   timeline?: ScheduleTimelineElementCreateManyInput;
   restline?: ScheduleRestlineElementCreateManyInput;
   offline1?: ScheduleOfflineElementCreateOneInput;
@@ -4064,6 +4102,7 @@ export interface DepartmentUpsertWithoutSubordinatesInput {
 
 export interface ScheduleDebitUpdateManyMutationInput {
   category?: ScheduleOfflineCategory;
+  date?: DateTimeInput;
 }
 
 export interface ScheduleDebitUpdateManyWithoutEmployeeInput {
@@ -4103,6 +4142,7 @@ export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
   category?: ScheduleOfflineCategory;
   exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
   credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  date?: DateTimeInput;
 }
 
 export interface ScheduleUpdateInput {
@@ -4110,6 +4150,8 @@ export interface ScheduleUpdateInput {
   systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
   description?: String;
   baseTime?: Int;
+  innerBound?: Int;
+  outerBound?: Int;
   timeline?: ScheduleTimelineElementUpdateManyInput;
   restline?: ScheduleRestlineElementUpdateManyInput;
   offline1?: ScheduleOfflineElementUpdateOneInput;
@@ -4451,6 +4493,7 @@ export interface ScheduleDebitUpdateWithoutExceptionDataInput {
   employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
   category?: ScheduleOfflineCategory;
   credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  date?: DateTimeInput;
 }
 
 export interface ShiftSubscriptionWhereInput {
@@ -4781,6 +4824,7 @@ export interface ScheduleDebitUpdateInput {
   category?: ScheduleOfflineCategory;
   exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
   credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  date?: DateTimeInput;
 }
 
 export interface EmployeeUpdateOneRequiredInput {
@@ -4795,6 +4839,8 @@ export interface ScheduleUpdateManyMutationInput {
   systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
   description?: String;
   baseTime?: Int;
+  innerBound?: Int;
+  outerBound?: Int;
 }
 
 export interface EmployeeUpdateDataInput {
@@ -4991,6 +5037,7 @@ export interface ScheduleDebitUpdateWithoutCreditDataInput {
   employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
   category?: ScheduleOfflineCategory;
   exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
+  date?: DateTimeInput;
 }
 
 export interface UserRoleWhereInput {
@@ -5328,6 +5375,8 @@ export interface Schedule {
   updatedAt: DateTimeOutput;
   description?: String;
   baseTime: Int;
+  innerBound?: Int;
+  outerBound?: Int;
 }
 
 export interface SchedulePromise extends Promise<Schedule>, Fragmentable {
@@ -5338,6 +5387,8 @@ export interface SchedulePromise extends Promise<Schedule>, Fragmentable {
   updatedAt: () => Promise<DateTimeOutput>;
   description: () => Promise<String>;
   baseTime: () => Promise<Int>;
+  innerBound: () => Promise<Int>;
+  outerBound: () => Promise<Int>;
   timeline: <T = FragmentableArray<ScheduleTimelineElement>>(
     args?: {
       where?: ScheduleTimelineElementWhereInput;
@@ -5376,6 +5427,8 @@ export interface ScheduleSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   description: () => Promise<AsyncIterator<String>>;
   baseTime: () => Promise<AsyncIterator<Int>>;
+  innerBound: () => Promise<AsyncIterator<Int>>;
+  outerBound: () => Promise<AsyncIterator<Int>>;
   timeline: <T = Promise<AsyncIterator<ScheduleTimelineElementSubscription>>>(
     args?: {
       where?: ScheduleTimelineElementWhereInput;
@@ -7216,6 +7269,7 @@ export interface ShiftSlotEdgeSubscription
 export interface ScheduleDebit {
   id: ID_Output;
   category: ScheduleOfflineCategory;
+  date: DateTimeOutput;
 }
 
 export interface ScheduleDebitPromise
@@ -7226,6 +7280,7 @@ export interface ScheduleDebitPromise
   category: () => Promise<ScheduleOfflineCategory>;
   exception: <T = ExceptionPromise>() => T;
   credit: <T = ScheduleCreditPromise>() => T;
+  date: () => Promise<DateTimeOutput>;
 }
 
 export interface ScheduleDebitSubscription
@@ -7236,6 +7291,7 @@ export interface ScheduleDebitSubscription
   category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
   exception: <T = ExceptionSubscription>() => T;
   credit: <T = ScheduleCreditSubscription>() => T;
+  date: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ShiftConnection {}
@@ -7303,6 +7359,8 @@ export interface SchedulePreviousValues {
   updatedAt: DateTimeOutput;
   description?: String;
   baseTime: Int;
+  innerBound?: Int;
+  outerBound?: Int;
 }
 
 export interface SchedulePreviousValuesPromise
@@ -7315,6 +7373,8 @@ export interface SchedulePreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
   description: () => Promise<String>;
   baseTime: () => Promise<Int>;
+  innerBound: () => Promise<Int>;
+  outerBound: () => Promise<Int>;
 }
 
 export interface SchedulePreviousValuesSubscription
@@ -7329,6 +7389,8 @@ export interface SchedulePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   description: () => Promise<AsyncIterator<String>>;
   baseTime: () => Promise<AsyncIterator<Int>>;
+  innerBound: () => Promise<AsyncIterator<Int>>;
+  outerBound: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ScheduleOfflineElementEdge {
@@ -7733,6 +7795,7 @@ export interface AttendanceCycleEdgeSubscription
 export interface ScheduleDebitPreviousValues {
   id: ID_Output;
   category: ScheduleOfflineCategory;
+  date: DateTimeOutput;
 }
 
 export interface ScheduleDebitPreviousValuesPromise
@@ -7740,6 +7803,7 @@ export interface ScheduleDebitPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   category: () => Promise<ScheduleOfflineCategory>;
+  date: () => Promise<DateTimeOutput>;
 }
 
 export interface ScheduleDebitPreviousValuesSubscription
@@ -7747,6 +7811,7 @@ export interface ScheduleDebitPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  date: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface AggregateAttendanceCycle {

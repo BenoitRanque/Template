@@ -177,6 +177,8 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
 
     fragment AllScheduleData on Schedule {
       baseTime
+      innerBound
+      outerBound
       timeline (orderBy: startTime_ASC) {
         category
         startTime
@@ -241,6 +243,8 @@ async function loadVacationSchedules ({ prisma }) {
 
     fragment AllScheduleData on Schedule {
       baseTime
+      innerBound
+      outerBound
       timeline (orderBy: startTime_ASC) {
         category
         startTime
@@ -362,14 +366,14 @@ function getScheduleOuterBound(schedule) {
 }
 
 function getDatesWithBounds(dates, referenceForDateBeforeFirstDate) {
-  const firstBound = getScheduleOuterBound(referenceForDateBeforeFirstDate.schedule)
+  const firstBound = referenceForDateBeforeFirstDate.schedule.outerBound !== null ? referenceForDateBeforeFirstDate.schedule.outerBound : getScheduleOuterBound(referenceForDateBeforeFirstDate.schedule)
   return dates
     .map(date => ({
       ...date,
-      outerBound: getScheduleOuterBound(date.schedule)
+      outerBound: date.schedule.outerBound !== null ? date.schedule.outerBound : getScheduleOuterBound(date.schedule)
     })).map((date, index, arr) => ({
       ...date,
-      innerBound: (index === 0 ? firstBound : arr[index - 1].outerBound) - (24 * 60)
+      innerBound: date.schedule.innerBound !== null ? date.schedule.innerBound : (index === 0 ? firstBound : arr[index - 1].outerBound) - (24 * 60)
     }))
     .map(date => ({
       ...date,
