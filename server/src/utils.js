@@ -366,6 +366,7 @@ function getScheduleOuterBound(schedule) {
 }
 
 function getDatesWithBounds(dates, referenceForDateBeforeFirstDate) {
+  // return schedule bounds if present, else calculate them.
   const firstBound = referenceForDateBeforeFirstDate.schedule.outerBound !== null ? referenceForDateBeforeFirstDate.schedule.outerBound : getScheduleOuterBound(referenceForDateBeforeFirstDate.schedule)
   return dates
     .map(date => ({
@@ -373,12 +374,12 @@ function getDatesWithBounds(dates, referenceForDateBeforeFirstDate) {
       outerBound: date.schedule.outerBound !== null ? date.schedule.outerBound : getScheduleOuterBound(date.schedule)
     })).map((date, index, arr) => ({
       ...date,
-      innerBound: date.schedule.innerBound !== null ? date.schedule.innerBound : (index === 0 ? firstBound : arr[index - 1].outerBound) - (24 * 60)
+      innerBound: date.schedule.innerBound !== null ? date.schedule.innerBound : ((index === 0 ? firstBound : arr[index - 1].outerBound) - (24 * 60))
     }))
     .map(date => ({
       ...date,
-      outerBound: addMinutes(date.date, date.outerBound).toISOString(),
-      innerBound: addMinutes(date.date, date.innerBound).toISOString()
+      outerBound: addMinutes(date.date, date.outerBound >= 0 ? date.outerBound : 0).toISOString(),
+      innerBound: addMinutes(date.date, date.innerBound >= 0 ? date.innerBound : 0).toISOString()
     }))
 }
 

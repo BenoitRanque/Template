@@ -11,6 +11,19 @@ query SchedulesPagination ($first: Int! $skip: Int! $where: ScheduleWhereInput) 
   }
 }
 
+query ScheduleCreditsPaginationQuery ($first: Int! $skip: Int! $orderBy: ScheduleCreditOrderByInput $where: ScheduleCreditWhereInput) {
+  meta: scheduleCreditsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: scheduleCredits (first: $first skip: $skip orderBy: $orderBy where: $where) {
+    id
+    category
+    sourceType
+		sourceDate
+  }
+}
 
 query EmployeeCalendarRangeSchedules ($employeeId: ID! $from: DateTime! $to: DateTime!) {
   employee (where: { id: $employeeId }) {

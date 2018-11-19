@@ -209,13 +209,15 @@ async function cancelException(obj, { where, data }, { prisma, session }, info) 
 
 async function deleteException(obj, { where }, { prisma, session }, info) {
 
-  const [ exceptionAuthorized, exceptionCancelled, exceptionOwner ] = await Promise.all([
+  const [ exceptionAuthorized, exceptionCancelled, userIsExceptionOwner ] = await Promise.all([
     prisma.client.$exists.exception({ ...where, authorization: { id_not: null } }),
-    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } })
+    prisma.client.$exists.exception({ ...where, cancellation: { id_not: null } }),
+    prisma.client.$exists.exception({ ...where, owner: { id: session.user.id } })
   ])
 
   if (exceptionAuthorized) throw new Error(`No se permite eliminar boleta authorizada`)
   if (exceptionCancelled) throw new Error(`No se permite eliminar boleta cancellada`)
+  if (!userIsExceptionOwner) throw new Error(`Usuario debe ser creador de boleta para eliminar`)
 
   const exception = await prisma.bindings.query.exception({ where }, info)
   await prisma.client.deleteException(where)

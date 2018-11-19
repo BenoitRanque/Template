@@ -51,15 +51,11 @@
               </q-icon>
             </template>
 
-            <!-- <template slot="offline1-source">
+            <template slot="offline1-source">
               <q-item>
                 <q-item-main class="text-center">
-                  <q-select placeholder="Seleccionar Fuente en misma boleta" :options="sourceOptions(slot.schedule.offline1)" v-model="slot.source1.exception"></q-select>
-                </q-item-main>
-              </q-item>
-              <q-item>
-                <q-item-main class="text-center">
-                  <credit-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1.category" v-model="slot.source1.debit"></credit-select>
+                  <!-- <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1.category" v-model="slot.source1.debit"></credit-select> -->
+                  <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
                 </q-item-main>
               </q-item>
             </template>
@@ -67,15 +63,11 @@
             <template slot="offline2-source">
               <q-item>
                 <q-item-main class="text-center">
-                  <q-select placeholder="Seleccionar Fuente en misma boleta" :options="sourceOptions(slot.schedule.offline2)" v-model="slot.source2.exception"></q-select>
+                  <!-- <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2.category" v-model="slot.source2.debit"></credit-select> -->
+                  <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
                 </q-item-main>
               </q-item>
-              <q-item>
-                <q-item-main class="text-center">
-                  <credit-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2.category" v-model="slot.source2.debit"></credit-select>
-                </q-item-main>
-              </q-item>
-            </template> -->
+            </template>
           </schedule-input>
         </q-card-main>
       </q-card>
@@ -84,7 +76,7 @@
       <q-btn @click="validateException" :disable="!valid" color="secondary" size="lg">Validar</q-btn>
     </div> -->
     <div class="text-center q-py-md">
-      <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solictar</q-btn>
+      <q-btn @click="createException" :disable="!valid" color="secondary" size="lg">Solicitar</q-btn>
     </div>
     <q-inner-loading :visible="loading">
       <q-spinner size="36px" color="primary"/>
