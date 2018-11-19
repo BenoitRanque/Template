@@ -1,5 +1,6 @@
 mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
   exception: createException (data: $data) {
+    id
     employee {
       nameFull
     }
@@ -11,6 +12,7 @@ mutation CreateExceptionMutation ($data: ExceptionCreateInput!) {
 
 mutation RejectExceptionMutation ($data: ExceptionRejectionCreateInput! $where: ExceptionWhereUniqueInput!) {
   exception: rejectException (where: $where data: $data) {
+    id
     employee {
       nameFull
     }
@@ -22,6 +24,7 @@ mutation RejectExceptionMutation ($data: ExceptionRejectionCreateInput! $where: 
 
 mutation AuthorizeExceptionMutation ($data: ExceptionAuthorizationCreateInput! $where: ExceptionWhereUniqueInput!) {
   exception: authorizeException (where: $where data: $data) {
+    id
     employee {
       nameFull
     }
@@ -33,6 +36,7 @@ mutation AuthorizeExceptionMutation ($data: ExceptionAuthorizationCreateInput! $
 
 mutation CancelExceptionMutation ($data: ExceptionCancellationCreateInput! $where: ExceptionWhereUniqueInput!) {
   exception: cancelException (where: $where data: $data) {
+    id
     employee {
       nameFull
     }
@@ -44,6 +48,7 @@ mutation CancelExceptionMutation ($data: ExceptionCancellationCreateInput! $wher
 
 mutation DeleteExceptionMutation ($where: ExceptionWhereUniqueInput!) {
   exception: deleteException (where: $where) {
+    id
     employee {
       nameFull
     }

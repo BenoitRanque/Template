@@ -217,7 +217,7 @@ async function deleteException(obj, { where }, { prisma, session }, info) {
   if (exceptionAuthorized) throw new Error(`No se permite eliminar boleta authorizada`)
   if (exceptionCancelled) throw new Error(`No se permite eliminar boleta cancellada`)
 
-  const exception = await prisma.bindings.query.deleteException({ where }, info)
+  const exception = await prisma.bindings.query.exception({ where }, info)
   await prisma.client.deleteException(where)
   return exception
 }

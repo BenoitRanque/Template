@@ -24,7 +24,7 @@
       </template>
 
       <template slot="top-right" slot-scope="props">
-        <q-btn round color="positive" @click="activeExceptionModal = true" icon="add"></q-btn>
+        <q-btn round color="positive" @click="createExceptionModal = true" icon="add"></q-btn>
       </template>
 
       <q-td slot="body-cell-employee" class="group" slot-scope="props" :props="props">
@@ -52,7 +52,7 @@
       <q-modal-layout>
         <q-toolbar slot="header">
           <q-toolbar-title>
-            Boleta
+            Ver Boleta
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
@@ -64,6 +64,21 @@
         </div>
       </q-modal-layout>
     </q-modal>
+    <q-modal v-model="createExceptionModal">
+      <q-modal-layout>
+        <q-toolbar slot="header">
+          <q-toolbar-title>
+            Crear Boleta
+          </q-toolbar-title>
+          <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
+        </q-toolbar>
+        <div class="q-pa-md">
+          <exception-form
+            @created="viewException"
+          ></exception-form>
+        </div>
+      </q-modal-layout>
+    </q-modal>
   </q-page>
 </template>
 
@@ -71,11 +86,12 @@
 import { ExceptionsPaginationQuery } from 'assets/queries/Exception.graphql'
 import EmployeeSelect from 'components/EmployeeSelect'
 import ExceptionAuthorizationForm from 'components/ExceptionAuthorizationForm'
+import ExceptionForm from 'components/ExceptionForm'
 import { date } from 'quasar'
 
 export default {
   name: 'Exceptions',
-  components: { EmployeeSelect, ExceptionAuthorizationForm },
+  components: { EmployeeSelect, ExceptionForm, ExceptionAuthorizationForm },
   data () {
     return {
       options: {
@@ -100,6 +116,7 @@ export default {
       },
       activeExceptionId: null,
       activeExceptionModal: false,
+      createExceptionModal: false,
       table: {
         statusFilter: ['PENDING'],
         data: [],
@@ -173,8 +190,8 @@ export default {
     }
   },
   methods: {
-    viewException (row) {
-      this.activeExceptionId = row.id
+    viewException (exception) {
+      this.activeExceptionId = exception.id
       this.activeExceptionModal = true
     },
     formatDate: date.formatDate,

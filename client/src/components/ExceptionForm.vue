@@ -180,7 +180,7 @@ export default {
       this.model.slots = []
     },
     validateException () {
-
+      // TODO: load current schedule, use it to validate schedule
     },
     createException () {
       const parameters = {
@@ -216,7 +216,7 @@ export default {
           this.loading = false
           // reset model
           this.reset()
-          this.$emit('created')
+          this.$emit('created', response.exception)
         })
         .catch(error => {
           console.log(error)

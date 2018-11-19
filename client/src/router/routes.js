@@ -7,14 +7,8 @@ const routes = [
       { path: '', component: () => import('pages/Index.vue'), meta: { label: 'Inicio' } },
       { path: 'Employees', component: () => import('pages/Employees.vue'), meta: { label: 'Empleados' } },
       { path: 'Shifts', component: () => import('pages/Shifts.vue'), meta: { label: 'Horarios' } },
+      { path: 'Reports', component: () => import('pages/Reports.vue'), meta: { label: 'Reportes' } },
       { path: 'Exceptions', component: () => import('pages/Exceptions.vue'), meta: { label: 'Boletas' } }
-    ]
-  },
-  {
-    path: '/',
-    component: () => import('layouts/ReportLayout.vue'),
-    children: [
-      { path: 'Reports', component: () => import('pages/Reports.vue'), meta: { label: 'Reportes' } }
     ]
   }
 ]
