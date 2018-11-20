@@ -86,16 +86,18 @@ type Exception {
   employee: Employee!
   description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
-  rejection: ExceptionRejection @relation(name: "ExceptionToExceptionRejection" onDelete: CASCADE)
-  authorization: ExceptionAuthorization @relation(name: "ExceptionToExceptionAuthorization")
-  cancellation: ExceptionCancellation @relation(name: "ExceptionToExceptionCancellation")
-  owner: User! @relation(name: "ExceptionToExceptionOwner")
+  rejection: ExceptionRejection
+  authorization: ExceptionAuthorization
+  cancellation: ExceptionCancellation
+  elimination: ExceptionElimination
+  owner: User!
   credits: [ScheduleCredit!]!
   debits: [ScheduleDebit!]!
 }
 
 enum ExceptionTypeEnum {
   MIXED
+  EXTRA_TIME
   VACATION
 }
 
@@ -107,12 +109,21 @@ type ExceptionSlot {
   source2: ScheduleCredit @relation(name: "ExceptionSlotToSource2ScheduleCredit")
 }
 
+type ExceptionElimination {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  exception: Exception!
+  owner: User!
+  description: String
+}
+
 type ExceptionRejection {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception! @relation(name: "ExceptionToExceptionRejection")
-  owner: User! @relation(name: "ExceptionRejectionToExceptionRejectionOwner")
+  exception: Exception!
+  owner: User!
   description: String
 }
 
@@ -120,8 +131,8 @@ type ExceptionAuthorization {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception! @relation(name: "ExceptionToExceptionAuthorization")
-  owner: User! @relation(name: "ExceptionAuthorizationToExceptionAuthorizationOwner")
+  exception: Exception!
+  owner: User!
   description: String
 }
 
@@ -129,8 +140,8 @@ type ExceptionCancellation {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  exception: Exception! @relation(name: "ExceptionToExceptionCancellation")
-  owner: User! @relation(name: "ExceptionCancellationToExceptionCancellationOwner")
+  exception: Exception!
+  owner: User!
   description: String
 }
 

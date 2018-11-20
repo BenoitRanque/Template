@@ -231,13 +231,17 @@ export default {
       this.$q.dialog({
         title: 'Eliminar Boleta',
         message: 'Eliminar esta boleta',
+        prompt: {
+          model: '',
+          type: 'text' // optional
+        },
         cancel: true,
         ok: true,
         color: 'primary'
       })
         .then(description => {
           this.loading = true
-          this.$gql.request(DeleteExceptionMutation, { where: { id: this.exceptionId } })
+          this.$gql.request(DeleteExceptionMutation, { where: { id: this.exceptionId }, data: { description } })
             .then(response => {
               this.$q.notify({
                 type: 'positive',

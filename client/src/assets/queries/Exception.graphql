@@ -46,8 +46,8 @@ mutation CancelExceptionMutation ($data: ExceptionCancellationCreateInput! $wher
   }
 }
 
-mutation DeleteExceptionMutation ($where: ExceptionWhereUniqueInput!) {
-  exception: deleteException (where: $where) {
+mutation DeleteExceptionMutation ($where: ExceptionWhereUniqueInput! $data: ExceptionEliminationCreateInput!) {
+  exception: deleteException (where: $where, data: $data) {
     id
     employee {
       nameFull

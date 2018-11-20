@@ -20,6 +20,10 @@ input ExceptionRejectionCreateInput {
   description: String!
 }
 
+input ExceptionEliminationCreateInput {
+  description: String!
+}
+
 input ExceptionCancellationCreateInput {
   description: String!
 }

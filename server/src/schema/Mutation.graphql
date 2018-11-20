@@ -11,7 +11,7 @@ type Mutation {
   authorizeException(where: ExceptionWhereUniqueInput! data: ExceptionAuthorizationCreateInput!): Exception!
   rejectException(where: ExceptionWhereUniqueInput! data: ExceptionRejectionCreateInput!): Exception!
   cancelException(where: ExceptionWhereUniqueInput! data: ExceptionCancellationCreateInput!): Exception!
-  deleteException(where: ExceptionWhereUniqueInput!): Exception!
+  deleteException(where: ExceptionWhereUniqueInput! data: ExceptionEliminationCreateInput!): Exception!
   createSchedule(data: ScheduleCreateInput!): Schedule!
   authenticate(username: String!, password: String!): AuthPayload
   createDepartment(data: DepartmentCreateInput!): Department!
