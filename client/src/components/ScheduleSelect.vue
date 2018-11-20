@@ -191,7 +191,7 @@ export default {
       switch (this.mode) {
         case 'date':
           this.$gql.request(EmployeeCalendarDateSchedule, {
-            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            employeeId: this.calendar.employee.id,
             date: this.calendar.dateA
           })
             .then(response => {
@@ -211,7 +211,7 @@ export default {
           break
         case 'range':
           this.$gql.request(EmployeeCalendarRangeSchedules, {
-            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            employeeId: this.calendar.employee.id,
             from: this.calendar.dateB,
             to: this.calendar.dateC
           })
@@ -231,7 +231,7 @@ export default {
           break
         case 'switch':
           this.$gql.request(EmployeeCalendarSwitchSchedule, {
-            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            employeeId: this.calendar.employee.id,
             dateA: this.calendar.dateD,
             dateB: this.calendar.dateE
           })
@@ -260,7 +260,7 @@ export default {
           break
         case 'vacation':
           this.$gql.request(EmployeeCalendarVacationSchedule, {
-            employeeId: this.employeeId ? this.employeeId : this.calendar.employee.id,
+            employeeId: this.calendar.employee.id,
             from: this.calendar.dateB,
             to: this.calendar.dateC
           })
