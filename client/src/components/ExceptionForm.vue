@@ -9,9 +9,9 @@
     </div>
     <employee-select v-model="model.employee.id"></employee-select>
     <div class="text-center group">
-      <schedule-select color="primary" size="md" dense @select="model.slots.push({ schedule: $event.schedule, valid: false })"></schedule-select>
-      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: null, schedule: $event.schedule, valid: true })" mode="preset"></schedule-select>
-      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: $event.date, schedule: $event.schedule, valid: true })" :employee-id="model.employee.id" mode="date"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ schedule: $event.schedule, valid: false, source1: null, source2: null })"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: null, schedule: $event.schedule, valid: true, source1: null, source2: null })" mode="preset"></schedule-select>
+      <schedule-select color="primary" size="md" dense @select="model.slots.push({ date: $event.date, schedule: $event.schedule, valid: true, source1: null, source2: null })" :employee-id="model.employee.id" mode="date"></schedule-select>
       <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="range"></schedule-select>
       <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="switch"></schedule-select>
       <schedule-select color="primary" size="md" dense @select="$event => model.slots.push(...$event.map(({ schedule, date }) => ({ schedule, date, valid: true })))" :employee-id="model.employee.id" mode="vacation"></schedule-select>
@@ -40,31 +40,62 @@
               </q-btn>
             </div>
 
-            <template slot="offline1-header">
-              <q-icon class="text-bold" style="font-size: 16px" name="check">
+            <span slot="offline1-header">
+              <q-icon v-if="slot.source1 !== null" class="text-bold" style="font-size: 16px" name="check">
                 <q-tooltip>Tiene Fuente</q-tooltip>
               </q-icon>
-            </template>
-            <template slot="offline2-header">
-              <q-icon class="text-bold" style="font-size: 16px" name="check">
+            </span>
+
+            <span slot="offline2-header">
+              <q-icon v-if="slot.source2 !== null" class="text-bold" style="font-size: 16px" name="check">
                 <q-tooltip>Tiene Fuente</q-tooltip>
               </q-icon>
-            </template>
+            </span>
 
             <template slot="offline1-source">
-              <q-item>
-                <q-item-main class="text-center">
-                  <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1 ? slot.schedule.offline1.category : null" :employee-id="model.employee.id" v-model="slot.source1"></source-select>
-                  <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
+              <q-item v-if="slot.schedule.offline1">
+                <template v-if="slot.source1">
+                  <q-item-main>
+                    {{formatDate(slot.source1.sourceDate, 'dddd')}} {{formatDate(slot.source1.sourceDate, 'D')}} de {{formatDate(slot.source1.sourceDate, 'MMMM YYYY')}}
+                  </q-item-main>
+                  <q-item-side>
+                    <q-btn dense color="negative" icon="close" @click="slot.source1 = null"></q-btn>
+                  </q-item-side>
+                </template>
+                <q-item-main v-else class="text-center">
+                  <credit-select
+                    v-close-overlay
+                    @select="$event => { slot.source1 = $event }"
+                    :employee-id="model.employee.id"
+                    :category="slot.schedule.offline1 ? slot.schedule.offline1.category : null"
+                    :exclude="usedCredits"
+                    label="Aggregar Fuente"
+                    color="secondary"
+                  ></credit-select>
                 </q-item-main>
               </q-item>
             </template>
 
             <template slot="offline2-source">
-              <q-item>
-                <q-item-main class="text-center">
-                  <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2 ? slot.schedule.offline2.category : null" :employee-id="model.employee.id" v-model="slot.source2"></source-select>
-                  <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
+              <q-item v-if="slot.schedule.offline2">
+                <template v-if="slot.source2">
+                  <q-item-main>
+                    {{formatDate(slot.source2.sourceDate, 'dddd')}} {{formatDate(slot.source2.sourceDate, 'D')}} de {{formatDate(slot.source2.sourceDate, 'MMMM YYYY')}}
+                  </q-item-main>
+                  <q-item-side>
+                    <q-btn dense color="negative" icon="close" @click="slot.source2 = null"></q-btn>
+                  </q-item-side>
+                </template>
+                <q-item-main v-else class="text-center">
+                  <credit-select
+                    v-close-overlay
+                    @select="$event => { slot.source2 = $event }"
+                    :employee-id="model.employee.id"
+                    :category="slot.schedule.offline2 ? slot.schedule.offline2.category : null"
+                    :exclude="usedCredits"
+                    label="Aggregar Fuente"
+                    color="secondary"
+                  ></credit-select>
                 </q-item-main>
               </q-item>
             </template>
@@ -91,10 +122,10 @@ import { date } from 'quasar'
 import ScheduleInput from 'components/ScheduleInput/index'
 import EmployeeSelect from 'components/EmployeeSelect'
 import ScheduleSelect from 'components/ScheduleSelect'
-import SourceSelect from 'components/SourceSelect'
+import CreditSelect from 'components/CreditSelect'
 export default {
   name: 'ExceptionForm',
-  components: { EmployeeSelect, ScheduleSelect, ScheduleInput, SourceSelect },
+  components: { EmployeeSelect, ScheduleSelect, ScheduleInput, CreditSelect },
   data () {
     return {
       loading: false,
@@ -111,6 +142,17 @@ export default {
     ...mapGetters('session', {
       isAuthorized: 'isAuthorized'
     }),
+    usedCredits () {
+      return this.model.slots.reduce((credits, slot) => {
+        if (slot.source1) {
+          credits.push(slot.source1.id)
+        }
+        if (slot.source2) {
+          credits.push(slot.source2.id)
+        }
+        return credits
+      }, [])
+    },
     validationCode () {
       const duplicateDates = this.model.slots
         .map(({ date }) => date ? new Date(date).getTime() : null)
@@ -182,8 +224,10 @@ export default {
             id: this.model.employee.id
           },
           type: this.model.type,
-          slots: this.model.slots.map(({ date, schedule }) => ({
+          slots: this.model.slots.map(({ date, schedule, source1, source2 }) => ({
             date,
+            source1: source1 && source1.id ? { id: source1.id } : null,
+            source2: source2 && source1.id ? { id: source2.id } : null,
             schedule: schedule.id
               ? { connect: { id: schedule.id } }
               : {

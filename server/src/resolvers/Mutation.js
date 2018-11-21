@@ -39,7 +39,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
   const exceptionDates = data.slots.map(({ date }) => date)
 
   const userIsSupervisor = await prisma.client.$exists.employee({ id: employeeId, department: { supervisors_some: { id: userId } } })
-  if (!userIsSupervisor) throw new Error(`Usuario no es supervisor authorizado`)
+  if (!userIsSupervisor) throw new Error(`Usuario no es supervisor autorizado`)
 
   const exceptionDateCollision = await prisma.client.$exists.exception({ employee: { id: employeeId }, slots_some: { date_in: exceptionDates }, authorization: { granted: true }, cancellation: null })
   if (exceptionDateCollision) throw new Error(`Conflicto de fecha con boletas existentes`)
@@ -127,7 +127,7 @@ async function rejectException(obj, { where, data }, { prisma, session }, info) 
 
   if (exceptionEliminated) throw new Error(`Boleta ya eliminada`)
   if (exceptionRejected) throw new Error(`Boleta ya rechazada`)
-  if (exceptionAuthorized) throw new Error(`Boleta ya authorizada`)
+  if (exceptionAuthorized) throw new Error(`Boleta ya autorizada`)
   if (exceptionCancelled) throw new Error(`Boleta ya cancellada`)
 
   return prisma.bindings.mutation.updateException({ where, data: {
@@ -149,9 +149,9 @@ async function authorizeException(obj, { where, data }, { prisma, session }, inf
   ])
 
   if (exceptionEliminated) throw new Error(`Boleta ya eliminada`)
-  if (exceptionRejected) throw new Error(`No se permite authorizar boleta rechazada`)
-  if (exceptionAuthorized) throw new Error(`No se permite authorizar boleta authorizada`)
-  if (exceptionCancelled) throw new Error(`No se permite authorizar boleta cancelada`)
+  if (exceptionRejected) throw new Error(`No se permite autorizar boleta rechazada`)
+  if (exceptionAuthorized) throw new Error(`No se permite autorizar boleta autorizada`)
+  if (exceptionCancelled) throw new Error(`No se permite autorizar boleta cancelada`)
 
   const exception = await prisma.bindings.query.exception({ where }, `
     {
@@ -187,8 +187,9 @@ async function authorizeException(obj, { where, data }, { prisma, session }, inf
 
   const balance = await loadExceptionBalance(prisma, employeeId, exception)
 
+
   const debitsWithoutSource =  getExceptionDebitsWithoutSource(balance)
-  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debitsWithoutSource.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
 
   const debits = getExceptionDebits(balance, exception)
   const credits = getExceptionCredits(balance, exception)
@@ -256,7 +257,7 @@ async function deleteException(obj, { where }, { prisma, session }, info) {
   if (!userIsExceptionOwner) throw new Error(`Usuario debe ser creador de boleta para eliminar`)
   if (exceptionEliminated) throw new Error(`Boleta ya eliminada`)
   if (exceptionRejected) throw new Error(`Boleta ya rechazada`)
-  if (exceptionAuthorized) throw new Error(`Boleta ya authorizada`)
+  if (exceptionAuthorized) throw new Error(`Boleta ya autorizada`)
   if (exceptionCancelled) throw new Error(`Boleta ya cancellada`)
 
   return prisma.bindings.mutation.updateException({ where, data: {

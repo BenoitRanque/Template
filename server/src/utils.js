@@ -937,7 +937,7 @@ function getExceptionDebits (balance, exception) {
 
     if (debitCount <= creditCount) return debits
     // slice out
-    return debits.concat(balance[category].debit.slice(creditCount - 1).map(debit => ({
+    return debits.concat(balance[category].debit.slice(creditCount).map(debit => ({
       credit: { connect: debit.source },
       employee: { connect: exception.employee },
       category,
@@ -953,7 +953,7 @@ function getExceptionCredits (balance, exception) {
 
     if (debitCount >= creditCount) return credits
     // slice out the credits that are already offset by debits
-    return credits.concat(balance[category].credit.slice(debitCount - 1).map(credit => ({
+    return credits.concat(balance[category].credit.slice(debitCount).map(credit => ({
       category,
       employee: { connect: exception.employee },
       sourceType: EXCEPTION,

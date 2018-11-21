@@ -36,7 +36,7 @@
     {{categoryDescription(value.category)}}
     <slot name="header"></slot>
     <q-tooltip>{{tooltip}}</q-tooltip>
-    <q-popover self="top middle" anchor="bottom middle" :disable="$parent.readonly">
+    <q-popover self="top middle" anchor="bottom middle">
       <q-list>
         <!-- <q-list-header>
           Tipo de Elemento
@@ -62,7 +62,7 @@
         <slot name="source"></slot>
         <q-item-separator></q-item-separator>
         <q-item>
-          <q-item-side>
+          <q-item-side v-if="!$parent.readonly">
             <q-btn rounded outline v-close-overlay color="negative" @click="remove">Quitar</q-btn>
           </q-item-side>
           <q-item-main></q-item-main>

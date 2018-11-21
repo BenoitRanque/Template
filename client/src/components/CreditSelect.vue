@@ -1,18 +1,16 @@
 <template>
-  <q-btn v-bind="$attrs" @click="mainBtnAction">
+  <q-btn v-bind="$attrs" @click="mainBtnAction" :disable="disable">
     {{label}}
-    <q-tooltip></q-tooltip>
+    <q-tooltip>Seleccionar Fuente</q-tooltip>
     <q-modal v-model="modal">
       <q-modal-layout>
         <q-toolbar slot="header" class="col">
           <q-toolbar-title>
-            {{tooltip}}
+            Seleccionar Fuente
           </q-toolbar-title>
           <q-icon class="cursor-pointer" color="white" v-close-overlay size="1.6em" name="close"></q-icon>
         </q-toolbar>
         <q-table
-          hide-header
-          title="Seleccionar Fuente"
           ref="table"
           :data="table.data"
           :columns="table.columns"
@@ -31,6 +29,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 import { CreditPaginationQuery } from 'assets/queries/Exception.graphql'
 export default {
   name: 'SourceSelect',
@@ -40,12 +39,12 @@ export default {
       default: ''
     },
     employeeId: {
-      type: [String, null],
-      required: true
+      type: String,
+      default: null
     },
     category: {
-      type: [String, null],
-      required: true
+      type: String,
+      default: null
     },
     exclude: {
       type: Array,
@@ -60,12 +59,20 @@ export default {
         columns: [
           {
             name: 'sourceDate',
-            field: 'sourceDate',
+            label: 'Fecha Fuente',
+            field: row => `${date.formatDate(row.sourceDate, 'dddd')} ${date.formatDate(row.sourceDate, 'D')} de ${date.formatDate(row.sourceDate, 'MMMM YYYY')}`,
             align: 'left'
           },
           {
             name: 'sourceType',
-            field: 'sourceType',
+            label: 'Tipo Fuente',
+            field: row => {
+              switch (row.sourceType) {
+                case 'EXCEPTION': return 'Boleta'
+                case 'CONCURRENT_HOLIDAY': return 'Feriado Concurente'
+                case 'DIRECT': return 'Subida Directa'
+              }
+            },
             align: 'left'
           },
           {
@@ -83,8 +90,8 @@ export default {
     }
   },
   computed: {
-    tooltip () {
-      return 'tooltip'
+    disable () {
+      return !this.employeeId || !this.category
     }
   },
   methods: {
@@ -92,8 +99,8 @@ export default {
       this.modal = true
       this.requestCredit()
     },
-    selectCredit (preset) {
-      this.$emit('select', { schedule: preset.schedule })
+    selectCredit (credit) {
+      this.$emit('select', credit)
       this.modal = false
     },
     requestCredit ({ pagination, filter } = { pagination: this.table.pagination, filter: this.table.filter }) {
@@ -106,8 +113,6 @@ export default {
           id_not_in: this.exclude
         }
       }
-      console.log(parameters)
-      console.log(CreditPaginationQuery)
       this.loading = true
       this.$gql.request(CreditPaginationQuery, parameters)
         .then(response => {
