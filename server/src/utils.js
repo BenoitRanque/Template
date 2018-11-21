@@ -83,7 +83,7 @@ async function loadCalendarRange({ id }, { from, to, withExceptions, withHoliday
 async function loadAttendanceReport({ id, zkTimePin }, { from, to, withExceptions, withHolidays }, { prisma }) {
 
   // we load the data for one day before in that day's schedule slightly overlaps the first day in this range
-  const references = await loadEmployeeReferencesForDateRange(prisma, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true })
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true, withEvents: true })
   const employeeEvents = await prisma.client.events({ where: { employee: { id } } })
   const events = references.events.map(({ time }) => time)
   // const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
