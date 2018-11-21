@@ -17,10 +17,10 @@ module.exports = {
   Mutation: {
     createUser: isAuthorized([ADMIN]),
     createException: isAuthorized([ADMIN, HR, SUPERVISOR]),
+    deleteException: isAuthorized([ADMIN, SUPERVISOR]),
     rejectException: isAuthorized([ADMIN, HR]),
     authorizeException: isAuthorized([ADMIN, HR]),
     cancelException: isAuthorized([ADMIN, HR]),
-    deleteException: isAuthorized([ADMIN, HR]),
     createEmployee: isAuthorized([ADMIN, HR]),
     updateEmployee: isAuthorized([ADMIN, HR]),
     createSchedule: isAuthorized([ADMIN, HR]),

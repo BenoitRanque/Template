@@ -14,11 +14,13 @@ function isAuthenticated (resolve, obj, args, ctx, info) {
 module.exports = {
   Query: {
     sessionUser: isAuthenticated,
+    employees: isAuthenticated,
+    exceptions: isAuthenticated,
+    exceptionsConnection: isAuthenticated,
+    employeesConnection: isAuthenticated,
     // user: isAuthenticated,
     // users: isAuthenticated,
     // employee: isAuthenticated,
-    // employees: isAuthenticated,
-    // employeesConnection: isAuthenticated,
     // schedule: isAuthenticated,
     // schedules: isAuthenticated,
     // schedulesConnection: isAuthenticated,
@@ -26,8 +28,6 @@ module.exports = {
     // shifts: isAuthenticated,
     // shiftsConnection: isAuthenticated,
     // exception: isAuthenticated,
-    // exceptions: isAuthenticated,
-    // exceptionsConnection: isAuthenticated,
     // department: isAuthenticated,
     // departments: isAuthenticated
   },
