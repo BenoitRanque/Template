@@ -55,7 +55,7 @@ function getUserId(context) {
 }
 
 async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, { prisma }) {
-  const references = await loadEmployeeReferencesForDateRange(prisma, id, date, date, { withExceptions, withHolidays, withScheduleData: false })
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, date, date, { withExceptions, withHolidays, withScheduleData: false, withEvents: false })
   return {
     date,
     ...getReferencesForDate(date, references)
@@ -64,15 +64,15 @@ async function loadCalendarDate({ id }, { date, withExceptions, withHolidays }, 
 
 async function loadCalendarDates({ id }, { dates, withExceptions, withHolidays }, { prisma }) {
   if (!dates.length) return []
-  const references = await loadEmployeeReferencesForDateRange(prisma, id, min(...dates), max(...dates), { withExceptions, withHolidays, withScheduleData: false })
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, min(...dates), max(...dates), { withExceptions, withHolidays, withScheduleData: false, withEvents: false })
   return dates.map(date => ({
     date,
     ...getReferencesForDate(date, references)
   }))
 }
 
-async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { prisma }, info, withScheduleData = false) {
-  const references = await loadEmployeeReferencesForDateRange(prisma, id, from, to, { withExceptions, withHolidays, withScheduleData })
+async function loadCalendarRange({ id }, { from, to, withExceptions, withHolidays }, { prisma }, info) {
+  const references = await loadEmployeeReferencesForDateRange(prisma, id, from, to, { withExceptions, withHolidays, withScheduleData: false, withEvents: false })
   const dates = eachDay(from, to)
   return dates.map(date => ({
     date,
@@ -116,18 +116,18 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
     .sort(compareAsc)
 }
 
-async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
+async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, { withExceptions, withHolidays, withScheduleData, withEvents } = { withScheduleData: false, withExceptions: false, withHolidays: false, withEvents: false }) {
   const innerBound = from
   const outerBound = addDays(to, 2)
   const data = await prisma.bindings.request(`
-  query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean! $innerBound: DateTime! $outerBound: DateTime!) {
+  query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean! $withEvents: Boolean! $innerBound: DateTime! $outerBound: DateTime!) {
     events (where: {
       employee: {
         id: $id
       }
       time_gte: $innerBound
       time_lte: $outerBound
-    }) {
+    }) @include(if: $withEvents) {
       time
     }
     shifts (where: {
@@ -215,7 +215,7 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
         category
       }
     }
-  `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData, innerBound, outerBound })
+  `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData, withEvents, innerBound, outerBound })
 
   const holidaySchedule = data.holidaySchedule ? data.holidaySchedule : null
 
@@ -839,7 +839,7 @@ function getAttendanceComplianceSummary (dates) {
 async function loadExceptionBalance (prisma, employeeId, exception) {
   const dates = exception.slots.map(({ date }) => date)
   if (!dates.length) throw new Error(`Exception must have at least one date`)
-  const references = await loadEmployeeReferencesForDateRange(prisma, employeeId, min(...dates), max(...dates), { withExceptions: true, withHolidays: true, withScheduleData: true })
+  const references = await loadEmployeeReferencesForDateRange(prisma, employeeId, min(...dates), max(...dates), { withExceptions: true, withHolidays: true, withScheduleData: true, withEvents: true })
   const exceptionWithReferences = {
     ...exception,
     slots: exception.slots.map(slot => ({
