@@ -27,6 +27,10 @@ type AggregateExceptionCancellation {
   count: Int!
 }
 
+type AggregateExceptionElimination {
+  count: Int!
+}
+
 type AggregateExceptionRejection {
   count: Int!
 }
@@ -1361,6 +1365,7 @@ type Exception {
   rejection: ExceptionRejection
   authorization: ExceptionAuthorization
   cancellation: ExceptionCancellation
+  elimination: ExceptionElimination
   owner: User!
   credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
   debits(where: ScheduleDebitWhereInput, orderBy: ScheduleDebitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleDebit!]
@@ -1694,6 +1699,7 @@ input ExceptionCreateInput {
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1724,6 +1730,11 @@ input ExceptionCreateOneWithoutDebitsInput {
   connect: ExceptionWhereUniqueInput
 }
 
+input ExceptionCreateOneWithoutEliminationInput {
+  create: ExceptionCreateWithoutEliminationInput
+  connect: ExceptionWhereUniqueInput
+}
+
 input ExceptionCreateOneWithoutRejectionInput {
   create: ExceptionCreateWithoutRejectionInput
   connect: ExceptionWhereUniqueInput
@@ -1736,6 +1747,7 @@ input ExceptionCreateWithoutAuthorizationInput {
   slots: ExceptionSlotCreateManyInput
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1748,6 +1760,7 @@ input ExceptionCreateWithoutCancellationInput {
   slots: ExceptionSlotCreateManyInput
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1761,6 +1774,7 @@ input ExceptionCreateWithoutCreditsInput {
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
@@ -1773,8 +1787,22 @@ input ExceptionCreateWithoutDebitsInput {
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+}
+
+input ExceptionCreateWithoutEliminationInput {
+  type: ExceptionTypeEnum!
+  employee: EmployeeCreateOneWithoutExceptionsInput!
+  description: String
+  slots: ExceptionSlotCreateManyInput
+  rejection: ExceptionRejectionCreateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  owner: UserCreateOneInput!
+  credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitCreateManyWithoutExceptionInput
 }
 
 input ExceptionCreateWithoutEmployeeInput {
@@ -1784,6 +1812,7 @@ input ExceptionCreateWithoutEmployeeInput {
   rejection: ExceptionRejectionCreateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1796,6 +1825,7 @@ input ExceptionCreateWithoutRejectionInput {
   slots: ExceptionSlotCreateManyInput
   authorization: ExceptionAuthorizationCreateOneWithoutExceptionInput
   cancellation: ExceptionCancellationCreateOneWithoutExceptionInput
+  elimination: ExceptionEliminationCreateOneWithoutExceptionInput
   owner: UserCreateOneInput!
   credits: ScheduleCreditCreateManyWithoutSourceExceptionInput
   debits: ScheduleDebitCreateManyWithoutExceptionInput
@@ -1804,6 +1834,163 @@ input ExceptionCreateWithoutRejectionInput {
 type ExceptionEdge {
   node: Exception!
   cursor: String!
+}
+
+type ExceptionElimination {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  exception: Exception!
+  owner: User!
+  description: String
+}
+
+type ExceptionEliminationConnection {
+  pageInfo: PageInfo!
+  edges: [ExceptionEliminationEdge]!
+  aggregate: AggregateExceptionElimination!
+}
+
+input ExceptionEliminationCreateInput {
+  exception: ExceptionCreateOneWithoutEliminationInput!
+  owner: UserCreateOneInput!
+  description: String
+}
+
+input ExceptionEliminationCreateOneWithoutExceptionInput {
+  create: ExceptionEliminationCreateWithoutExceptionInput
+  connect: ExceptionEliminationWhereUniqueInput
+}
+
+input ExceptionEliminationCreateWithoutExceptionInput {
+  owner: UserCreateOneInput!
+  description: String
+}
+
+type ExceptionEliminationEdge {
+  node: ExceptionElimination!
+  cursor: String!
+}
+
+enum ExceptionEliminationOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  description_ASC
+  description_DESC
+}
+
+type ExceptionEliminationPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  description: String
+}
+
+type ExceptionEliminationSubscriptionPayload {
+  mutation: MutationType!
+  node: ExceptionElimination
+  updatedFields: [String!]
+  previousValues: ExceptionEliminationPreviousValues
+}
+
+input ExceptionEliminationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ExceptionEliminationWhereInput
+  AND: [ExceptionEliminationSubscriptionWhereInput!]
+  OR: [ExceptionEliminationSubscriptionWhereInput!]
+  NOT: [ExceptionEliminationSubscriptionWhereInput!]
+}
+
+input ExceptionEliminationUpdateInput {
+  exception: ExceptionUpdateOneRequiredWithoutEliminationInput
+  owner: UserUpdateOneRequiredInput
+  description: String
+}
+
+input ExceptionEliminationUpdateManyMutationInput {
+  description: String
+}
+
+input ExceptionEliminationUpdateOneWithoutExceptionInput {
+  create: ExceptionEliminationCreateWithoutExceptionInput
+  update: ExceptionEliminationUpdateWithoutExceptionDataInput
+  upsert: ExceptionEliminationUpsertWithoutExceptionInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ExceptionEliminationWhereUniqueInput
+}
+
+input ExceptionEliminationUpdateWithoutExceptionDataInput {
+  owner: UserUpdateOneRequiredInput
+  description: String
+}
+
+input ExceptionEliminationUpsertWithoutExceptionInput {
+  update: ExceptionEliminationUpdateWithoutExceptionDataInput!
+  create: ExceptionEliminationCreateWithoutExceptionInput!
+}
+
+input ExceptionEliminationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  exception: ExceptionWhereInput
+  owner: UserWhereInput
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  AND: [ExceptionEliminationWhereInput!]
+  OR: [ExceptionEliminationWhereInput!]
+  NOT: [ExceptionEliminationWhereInput!]
+}
+
+input ExceptionEliminationWhereUniqueInput {
+  id: ID
 }
 
 enum ExceptionOrderByInput {
@@ -2142,6 +2329,7 @@ input ExceptionSubscriptionWhereInput {
 
 enum ExceptionTypeEnum {
   MIXED
+  EXTRA_TIME
   VACATION
 }
 
@@ -2153,6 +2341,7 @@ input ExceptionUpdateInput {
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2193,6 +2382,13 @@ input ExceptionUpdateOneRequiredWithoutDebitsInput {
   connect: ExceptionWhereUniqueInput
 }
 
+input ExceptionUpdateOneRequiredWithoutEliminationInput {
+  create: ExceptionCreateWithoutEliminationInput
+  update: ExceptionUpdateWithoutEliminationDataInput
+  upsert: ExceptionUpsertWithoutEliminationInput
+  connect: ExceptionWhereUniqueInput
+}
+
 input ExceptionUpdateOneRequiredWithoutRejectionInput {
   create: ExceptionCreateWithoutRejectionInput
   update: ExceptionUpdateWithoutRejectionDataInput
@@ -2216,6 +2412,7 @@ input ExceptionUpdateWithoutAuthorizationDataInput {
   slots: ExceptionSlotUpdateManyInput
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2228,6 +2425,7 @@ input ExceptionUpdateWithoutCancellationDataInput {
   slots: ExceptionSlotUpdateManyInput
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2241,6 +2439,7 @@ input ExceptionUpdateWithoutCreditsDataInput {
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
@@ -2253,8 +2452,22 @@ input ExceptionUpdateWithoutDebitsDataInput {
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+}
+
+input ExceptionUpdateWithoutEliminationDataInput {
+  type: ExceptionTypeEnum
+  employee: EmployeeUpdateOneRequiredWithoutExceptionsInput
+  description: String
+  slots: ExceptionSlotUpdateManyInput
+  rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
+  authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
+  cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  owner: UserUpdateOneRequiredInput
+  credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
+  debits: ScheduleDebitUpdateManyWithoutExceptionInput
 }
 
 input ExceptionUpdateWithoutEmployeeDataInput {
@@ -2264,6 +2477,7 @@ input ExceptionUpdateWithoutEmployeeDataInput {
   rejection: ExceptionRejectionUpdateOneWithoutExceptionInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2276,6 +2490,7 @@ input ExceptionUpdateWithoutRejectionDataInput {
   slots: ExceptionSlotUpdateManyInput
   authorization: ExceptionAuthorizationUpdateOneWithoutExceptionInput
   cancellation: ExceptionCancellationUpdateOneWithoutExceptionInput
+  elimination: ExceptionEliminationUpdateOneWithoutExceptionInput
   owner: UserUpdateOneRequiredInput
   credits: ScheduleCreditUpdateManyWithoutSourceExceptionInput
   debits: ScheduleDebitUpdateManyWithoutExceptionInput
@@ -2304,6 +2519,11 @@ input ExceptionUpsertWithoutCreditsInput {
 input ExceptionUpsertWithoutDebitsInput {
   update: ExceptionUpdateWithoutDebitsDataInput!
   create: ExceptionCreateWithoutDebitsInput!
+}
+
+input ExceptionUpsertWithoutEliminationInput {
+  update: ExceptionUpdateWithoutEliminationDataInput!
+  create: ExceptionCreateWithoutEliminationInput!
 }
 
 input ExceptionUpsertWithoutRejectionInput {
@@ -2373,6 +2593,7 @@ input ExceptionWhereInput {
   rejection: ExceptionRejectionWhereInput
   authorization: ExceptionAuthorizationWhereInput
   cancellation: ExceptionCancellationWhereInput
+  elimination: ExceptionEliminationWhereInput
   owner: UserWhereInput
   credits_every: ScheduleCreditWhereInput
   credits_some: ScheduleCreditWhereInput
@@ -2716,6 +2937,12 @@ type Mutation {
   upsertExceptionCancellation(where: ExceptionCancellationWhereUniqueInput!, create: ExceptionCancellationCreateInput!, update: ExceptionCancellationUpdateInput!): ExceptionCancellation!
   deleteExceptionCancellation(where: ExceptionCancellationWhereUniqueInput!): ExceptionCancellation
   deleteManyExceptionCancellations(where: ExceptionCancellationWhereInput): BatchPayload!
+  createExceptionElimination(data: ExceptionEliminationCreateInput!): ExceptionElimination!
+  updateExceptionElimination(data: ExceptionEliminationUpdateInput!, where: ExceptionEliminationWhereUniqueInput!): ExceptionElimination
+  updateManyExceptionEliminations(data: ExceptionEliminationUpdateManyMutationInput!, where: ExceptionEliminationWhereInput): BatchPayload!
+  upsertExceptionElimination(where: ExceptionEliminationWhereUniqueInput!, create: ExceptionEliminationCreateInput!, update: ExceptionEliminationUpdateInput!): ExceptionElimination!
+  deleteExceptionElimination(where: ExceptionEliminationWhereUniqueInput!): ExceptionElimination
+  deleteManyExceptionEliminations(where: ExceptionEliminationWhereInput): BatchPayload!
   createExceptionRejection(data: ExceptionRejectionCreateInput!): ExceptionRejection!
   updateExceptionRejection(data: ExceptionRejectionUpdateInput!, where: ExceptionRejectionWhereUniqueInput!): ExceptionRejection
   updateManyExceptionRejections(data: ExceptionRejectionUpdateManyMutationInput!, where: ExceptionRejectionWhereInput): BatchPayload!
@@ -2847,6 +3074,9 @@ type Query {
   exceptionCancellation(where: ExceptionCancellationWhereUniqueInput!): ExceptionCancellation
   exceptionCancellations(where: ExceptionCancellationWhereInput, orderBy: ExceptionCancellationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionCancellation]!
   exceptionCancellationsConnection(where: ExceptionCancellationWhereInput, orderBy: ExceptionCancellationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionCancellationConnection!
+  exceptionElimination(where: ExceptionEliminationWhereUniqueInput!): ExceptionElimination
+  exceptionEliminations(where: ExceptionEliminationWhereInput, orderBy: ExceptionEliminationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionElimination]!
+  exceptionEliminationsConnection(where: ExceptionEliminationWhereInput, orderBy: ExceptionEliminationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionEliminationConnection!
   exceptionRejection(where: ExceptionRejectionWhereUniqueInput!): ExceptionRejection
   exceptionRejections(where: ExceptionRejectionWhereInput, orderBy: ExceptionRejectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExceptionRejection]!
   exceptionRejectionsConnection(where: ExceptionRejectionWhereInput, orderBy: ExceptionRejectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionRejectionConnection!
@@ -4702,6 +4932,7 @@ type Subscription {
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
   exceptionCancellation(where: ExceptionCancellationSubscriptionWhereInput): ExceptionCancellationSubscriptionPayload
+  exceptionElimination(where: ExceptionEliminationSubscriptionWhereInput): ExceptionEliminationSubscriptionPayload
   exceptionRejection(where: ExceptionRejectionSubscriptionWhereInput): ExceptionRejectionSubscriptionPayload
   exceptionSlot(where: ExceptionSlotSubscriptionWhereInput): ExceptionSlotSubscriptionPayload
   fieldOptionLabel(where: FieldOptionLabelSubscriptionWhereInput): FieldOptionLabelSubscriptionPayload
