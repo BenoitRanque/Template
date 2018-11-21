@@ -11,7 +11,10 @@
       @request="request"
     >
       <template slot="top-left" slot-scope="props">
-        <div class="row full-width no-wrap">
+        <div class="row full-width no-wrap items-center">
+          <div class="col-auto q-pr-sm">
+            <q-btn round dense color="secondary" icon="refresh" @click="request"></q-btn>
+          </div>
           <div class="col-auto">
             <q-search hide-underline v-model="table.filter" />
           </div>
@@ -97,6 +100,9 @@
         ></attendance-report-cell>
       </template>
     </q-table>
+    <q-inner-loading :visible="table.loading">
+      <q-spinner size="36px" color="primary"/>
+    </q-inner-loading>
   </q-page>
 </template>
 
@@ -131,15 +137,16 @@ export default {
     }
   },
   watch: {
-    'table.employeesFilter': function () {
-      this.request()
-    },
-    'table.from': function () {
-      this.request()
-    },
-    'table.to': function () {
-      this.request()
-    }
+    // disabled for performance
+    // 'table.employeesFilter': function () {
+    //   this.request()
+    // },
+    // 'table.from': function () {
+    //   this.request()
+    // },
+    // 'table.to': function () {
+    //   this.request()
+    // }
   },
   computed: {
     dates () {
