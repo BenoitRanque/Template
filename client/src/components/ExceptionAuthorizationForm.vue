@@ -257,32 +257,6 @@ export default {
         })
         .catch(() => {})
     }
-    // createExceptionAuthorization (granted) {
-    //   const parameters = {
-    //     data: {
-    //       granted,
-    //       exception: {
-    //         id: this.exceptionId
-    //       }
-    //     }
-    //   }
-
-    //   this.loading = true
-    //   this.$gql.request(CreateExceptionAuthorizationMutation, parameters)
-    //     .then(response => {
-    //       this.$q.notify({
-    //         type: 'positive',
-    //         message: `Boleta ${response.authorization.granted ? 'authorizada' : 'denegada'}`
-    //       })
-    //       this.$emit('created')
-    //       this.loading = false
-    //     })
-    //     .catch(error => {
-    //       console.log(error)
-    //       this.$defaultErrorHandler(error)
-    //       this.loading = false
-    //     })
-    // }
   },
   mounted () {
     this.loadException()
