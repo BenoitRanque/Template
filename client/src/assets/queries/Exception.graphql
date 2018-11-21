@@ -74,6 +74,12 @@ query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhere
     owner {
       username
     }
+    elimination {
+      createdAt
+      owner {
+        username
+      }
+    }
     rejection {
       createdAt
       owner {
@@ -99,6 +105,14 @@ query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
 	exception (where: $where) {
     id
     createdAt
+    elimination {
+      id
+      createdAt
+      description
+      owner {
+        username
+      }
+    }
     authorization {
       id
       createdAt
