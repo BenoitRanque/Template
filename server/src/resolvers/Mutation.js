@@ -1,3 +1,4 @@
+const differenceInHours= require('date-fns/difference_in_hours')
 const isBefore = require('date-fns/is_before')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -44,6 +45,36 @@ async function createException (obj, { data }, { prisma, session }, info) {
 
   const debitsWithoutSource =  getExceptionDebitsWithoutSource(balance)
   if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+
+  const debitSources = data.slots.reduce((sources, { source1, source2}) => {
+    if (source1) {
+      sources.push(source1.id)
+    }
+    if (source2) {
+      sources.push(source2.id)
+    }
+    return sources
+  }, [])
+
+  if (debitSources.any((source, index) => debitSources.indexOf(source) !== index)) {
+    throw new Error(`No se permite duplicar fuentes de debitos`)
+  }
+
+  const pendingOrAuthorizedExceptionUsingSourceExists = await prisma.client.$exists.exception({
+    slots_any: {
+      OR: [
+        { source1: { id_in: debitSources } },
+        { source2: { id_in: debitSources } }
+      ]
+    },
+    rejection: null,
+    elimination: null,
+    cancellation: null
+  })
+
+  if (pendingOrAuthorizedExceptionUsingSourceExists) {
+    throw new Error(`Ya existe boleta autorizada o pendiente utilizando una de estas fuentes`)
+  }
 
   return prisma.bindings.mutation.createException({
     data: {
@@ -281,6 +312,7 @@ async function updateShift (obj, { where, data }, ctx, info) {
 
   const oldShift = await ctx.prisma.bindings.query.shift({ where }, `
     {
+      createdAt
       startDate
       endDate
       slots {
@@ -292,6 +324,10 @@ async function updateShift (obj, { where, data }, ctx, info) {
       }
     }
   `)
+
+  if (differenceInHours(new Date(), oldShift.createdAt) > 72) {
+    throw new Error(`Plazo de 72 horas para modificar horario exedido`)
+  }
 
   const newStartDate = data.startDate !== undefined ? data.startDate : oldShift.startDate
   const newEndDate = data.endDate !== undefined ? data.endDate : oldShift.endDate
@@ -347,6 +383,11 @@ module.exports = {
   createShift,
   updateShift,
   deleteShift: async (parent, args, ctx, info) => {
+    const shift = await ctx.prisma.client.shift(args.where)
+
+    if (differenceInHours(new Date(), shift.createdAt) > 72) {
+      throw new Error(`Plazo de 72 horas para eliminar horario exedido`)
+    }
     // workaround: cannot return relations on delete mutation
     const response = await ctx.prisma.bindings.query.shift(args, info)
     await ctx.prisma.bindings.mutation.deleteShift(args, `{ id }`)
