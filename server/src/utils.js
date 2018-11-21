@@ -917,12 +917,13 @@ function getExceptionBalance (exceptionWithReferences) {
 function getExceptionDebitsWithoutSource (balance) {
   // get debits that are not acounted for by source nor by existing credits in same exception
   return Object.keys(balance).reduce((debits, category) => {
+    const debitsWithoutSource = balance[category].debit.filter(({ source }) => !source)
+    const debitCount = debitsWithoutSource.length
     const creditCount = balance[category].credit.length
-    const debitCount = balance[category].debit.filter(({ source }) => !source).length
 
     if (debitCount <= creditCount) return debits
     // slice out
-    return debits.concat(balance[category].debit.slice(creditCount - 1).map(debit => ({
+    return debits.concat(debitsWithoutSource.slice(creditCount).map(debit => ({
       category,
       date: debit.date
     })))
@@ -932,12 +933,13 @@ function getExceptionDebitsWithoutSource (balance) {
 function getExceptionDebits (balance, exception) {
   // get debits that are not acounted for by source nor by existing credits in same exception
   return Object.keys(balance).reduce((debits, category) => {
+    const debitsWithSource = balance[category].debit.filter(({ source }) => source)
+    const debitCount = debitsWithSource.length
     const creditCount = balance[category].credit.length
-    const debitCount = balance[category].debit.filter(({ source }) => source).length
 
     if (debitCount <= creditCount) return debits
     // slice out
-    return debits.concat(balance[category].debit.slice(creditCount).map(debit => ({
+    return debits.concat(debitsWithSource.slice(creditCount).map(debit => ({
       credit: { connect: debit.source },
       employee: { connect: exception.employee },
       category,
@@ -948,8 +950,9 @@ function getExceptionDebits (balance, exception) {
 
 function getExceptionCredits (balance, exception) {
   return Object.keys(balance).reduce((credits, category) => {
+    const debitsWithoutSource = balance[category].debit.filter(({ source }) => !source)
+    const debitCount = debitsWithoutSource.length
     const creditCount = balance[category].credit.length
-    const debitCount = balance[category].debit.filter(({ source }) => source).length
 
     if (debitCount >= creditCount) return credits
     // slice out the credits that are already offset by debits

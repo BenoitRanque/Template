@@ -47,7 +47,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
   const balance = await loadExceptionBalance(prisma, employeeId, data)
 
   const debitsWithoutSource =  getExceptionDebitsWithoutSource(balance)
-  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debits.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
+  if (debitsWithoutSource.length) throw new Error(`Debitos sin fuente en fechas ${debitsWithoutSource.map(({ date }) => format(date, 'DD/MM/YYYY')).join(', ')}`)
 
   const debitSources = data.slots.reduce((sources, { source1, source2}) => {
     if (source1) {
@@ -77,6 +77,11 @@ async function createException (obj, { data }, { prisma, session }, info) {
 
   if (pendingOrAuthorizedExceptionUsingSourceExists) {
     throw new Error(`Ya existe boleta autorizada o pendiente utilizando una de estas fuentes`)
+  }
+
+  const employeeIsNotSourceOrigin = await prisma.client.$exists.credit({ id_in: debitSources, employee: { id_not: employeeId } })
+  if (employeeIsNotSourceOrigin) {
+    throw new Error('Empleado deber ser mismo que origen de devoluciones')
   }
 
   return prisma.bindings.mutation.createException({

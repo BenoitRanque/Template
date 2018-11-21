@@ -138,6 +138,14 @@ export default {
       }
     }
   },
+  watch: {
+    'model.employee.id': function () {
+      this.model.slots.forEach(slot => {
+        slot.source1 = null
+        slot.source2 = null
+      })
+    }
+  },
   computed: {
     ...mapGetters('session', {
       isAuthorized: 'isAuthorized'
