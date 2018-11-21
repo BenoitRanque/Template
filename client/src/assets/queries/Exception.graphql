@@ -101,6 +101,19 @@ query ExceptionsPaginationQuery ($first: Int! $skip: Int! $where: ExceptionWhere
   }
 }
 
+query CreditPaginationQuery ($first: Int! $skip: Int! $where: ScheduleCreditWhereInput) {
+  meta: scheduleCreditsConnection (where: $where) {
+    aggregate {
+      count
+    }
+  }
+  data: scheduleCredits (first: $first skip: $skip orderBy: createdAt_DESC where: $where) {
+    id
+    sourceDate
+    sourceType
+  }
+}
+
 query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
 	exception (where: $where) {
     id

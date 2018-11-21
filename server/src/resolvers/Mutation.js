@@ -59,7 +59,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
     return sources
   }, [])
 
-  if (debitSources.any((source, index) => debitSources.indexOf(source) !== index)) {
+  if (debitSources.some((source, index) => debitSources.indexOf(source) !== index)) {
     throw new Error(`No se permite duplicar fuentes de debitos`)
   }
 

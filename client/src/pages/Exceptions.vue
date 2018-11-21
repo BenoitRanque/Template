@@ -74,7 +74,7 @@
         </q-toolbar>
         <div class="q-pa-md">
           <exception-form
-            @created="viewException"
+            @created="exceptionCreated"
           ></exception-form>
         </div>
       </q-modal-layout>
@@ -195,6 +195,11 @@ export default {
     }
   },
   methods: {
+    exceptionCreated (exception) {
+      this.createExceptionModal = false
+      this.request()
+      this.viewException(exception)
+    },
     viewException (exception) {
       this.activeExceptionId = exception.id
       this.activeExceptionModal = true

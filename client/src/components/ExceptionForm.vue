@@ -54,7 +54,7 @@
             <template slot="offline1-source">
               <q-item>
                 <q-item-main class="text-center">
-                  <!-- <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1.category" v-model="slot.source1.debit"></credit-select> -->
+                  <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline1 ? slot.schedule.offline1.category : null" :employee-id="model.employee.id" v-model="slot.source1"></source-select>
                   <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
                 </q-item-main>
               </q-item>
@@ -63,7 +63,7 @@
             <template slot="offline2-source">
               <q-item>
                 <q-item-main class="text-center">
-                  <!-- <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2.category" v-model="slot.source2.debit"></credit-select> -->
+                  <source-select placeholder="Selecionar Fuente por devolucion" :category="slot.schedule.offline2 ? slot.schedule.offline2.category : null" :employee-id="model.employee.id" v-model="slot.source2"></source-select>
                   <q-btn label="Seleccionar Fuente" @click="$q.notify('Esto aun no hace nada')"></q-btn>
                 </q-item-main>
               </q-item>
@@ -91,9 +91,10 @@ import { date } from 'quasar'
 import ScheduleInput from 'components/ScheduleInput/index'
 import EmployeeSelect from 'components/EmployeeSelect'
 import ScheduleSelect from 'components/ScheduleSelect'
+import SourceSelect from 'components/SourceSelect'
 export default {
   name: 'ExceptionForm',
-  components: { EmployeeSelect, ScheduleSelect, ScheduleInput },
+  components: { EmployeeSelect, ScheduleSelect, ScheduleInput, SourceSelect },
   data () {
     return {
       loading: false,

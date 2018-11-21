@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { CreditPaginationQuery } from 'assets/queries/Exception.graphql'
 export default {
   name: 'SourceSelect',
   props: {
@@ -39,11 +40,11 @@ export default {
       default: ''
     },
     employeeId: {
-      type: String,
+      type: [String, null],
       required: true
     },
     category: {
-      type: String,
+      type: [String, null],
       required: true
     },
     exclude: {
@@ -82,7 +83,9 @@ export default {
     }
   },
   computed: {
-
+    tooltip () {
+      return 'tooltip'
+    }
   },
   methods: {
     mainBtnAction () {
@@ -103,8 +106,10 @@ export default {
           id_not_in: this.exclude
         }
       }
+      console.log(parameters)
+      console.log(CreditPaginationQuery)
       this.loading = true
-      this.$gql.request(SchedulesPagination, parameters)
+      this.$gql.request(CreditPaginationQuery, parameters)
         .then(response => {
           this.table.pagination = pagination
           this.table.pagination.rowsNumber = response.meta.aggregate.count
