@@ -101,6 +101,10 @@ export default {
             label: 'Pendientes'
           },
           {
+            value: 'ELIMINATED',
+            label: 'Eliminadas'
+          },
+          {
             value: 'AUTHORIZED',
             label: 'Autorizada'
           },
@@ -124,6 +128,7 @@ export default {
           {
             name: 'status',
             field: row => {
+              if (row.elimination) return 'ELIMINADA'
               if (row.cancellation) return 'ANULADA'
               if (row.authorization) return 'AUTORIZADA'
               if (row.rejection) return 'RECHAZADA'
@@ -232,7 +237,11 @@ export default {
         const statusFilter = []
 
         if (this.table.statusFilter.includes('PENDING')) {
-          statusFilter.push({ authorization: null, rejection: null })
+          statusFilter.push({ authorization: null, rejection: null, elimination: null, cancellation: null })
+        }
+
+        if (this.table.statusFilter.includes('ELIMINATED')) {
+          statusFilter.push({ elimination: { id_not: null } })
         }
 
         if (this.table.statusFilter.includes('AUTHORIZED')) {
