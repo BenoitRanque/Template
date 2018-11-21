@@ -1,5 +1,8 @@
 const differenceInHours= require('date-fns/difference_in_hours')
 const isBefore = require('date-fns/is_before')
+const format = require('date-fns/format')
+const parse = require('date-fns/parse')
+const addDays = require('date-fns/add_days')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, BCRYPT_SALT_ROUNDS, loadExceptionBalance, getExceptionCredits, getExceptionDebits, getExceptionDebitsWithoutSource } = require('../utils')
@@ -371,7 +374,56 @@ async function updateShift (obj, { where, data }, ctx, info) {
   return ctx.prisma.bindings.mutation.updateShift({ where, data: newShift }, info)
 }
 
+async function syncEvents (data, { from, to }, { prisma }, info) {
+  const ZKTIME_DB_PATH = process.env.ZKTIME_DB_PATH
+  const knex = require('knex')({
+    client: 'sqlite3',
+    useNullAsDefault: true,
+    connection: {
+      filename: ZKTIME_DB_PATH
+    }
+  })
+
+  if (!to) {
+    to = new Date()
+  }
+  const between = [format(from, 'YYYY-MM-DD'), format(addDays(to, 'YYYY-MM-DD'))]
+  const events = await knex('att_punches')
+    .innerJoin('hr_employee', 'hr_employee.id', 'att_punches.emp_id')
+    .select(['punch_time', 'emp_pin']) // posssibly interesting fields: 'punch_time', 'terminal_id', 'emp_pin'
+    .whereBetween('punch_time', between)
+    // .where({ 'emp_pin': employee.zkTimePin })
+
+  const deletedCount = await prisma.client.deleteManyEvents({
+    time_gte: from,
+    time_lte: to
+  })
+
+  const employees = await prisma.client.employees()
+
+  const count = events.filter(event => employees.some(({ zkTimePin }) => event.emp_pin === zkTimePin)).length
+
+  await Promise.all(employees.map(employee => {
+    const employeeEvents = events.filter(({ emp_pin }) => emp_pin === employee.zkTimePin).map(({ punch_time }) => punch_time)
+    return prisma.client.updateEmployee({
+      where: {
+        id: employee.id
+      },
+      data: {
+        events: {
+          create: employeeEvents.map(event => ({ time: parse(event) }))
+        }
+      }
+    })
+  }))
+
+  await prisma.client.createEventSyncLog({ from, to })
+
+  return count
+}
+
 module.exports = {
+  syncEvents,
   createUser,
   updateUser,
   authenticate,

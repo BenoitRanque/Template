@@ -15,6 +15,14 @@ type AggregateEmployee {
   count: Int!
 }
 
+type AggregateEvent {
+  count: Int!
+}
+
+type AggregateEventSyncLog {
+  count: Int!
+}
+
 type AggregateException {
   count: Int!
 }
@@ -590,6 +598,7 @@ type Employee {
   cargo: String
   zkTimePin: Int!
   department: Department
+  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event!]
   shifts(where: ShiftWhereInput, orderBy: ShiftOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Shift!]
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception!]
   credits(where: ScheduleCreditWhereInput, orderBy: ScheduleCreditOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScheduleCredit!]
@@ -638,6 +647,7 @@ input EmployeeCreateInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  events: EventCreateManyWithoutEmployeeInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
   credits: ScheduleCreditCreateManyWithoutEmployeeInput
@@ -661,6 +671,11 @@ input EmployeeCreateOneWithoutCreditsInput {
 
 input EmployeeCreateOneWithoutDebitsInput {
   create: EmployeeCreateWithoutDebitsInput
+  connect: EmployeeWhereUniqueInput
+}
+
+input EmployeeCreateOneWithoutEventsInput {
+  create: EmployeeCreateWithoutEventsInput
   connect: EmployeeWhereUniqueInput
 }
 
@@ -693,6 +708,7 @@ input EmployeeCreateWithoutCreditsInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  events: EventCreateManyWithoutEmployeeInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
   debits: ScheduleDebitCreateManyWithoutEmployeeInput
@@ -717,6 +733,7 @@ input EmployeeCreateWithoutDebitsInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  events: EventCreateManyWithoutEmployeeInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
   credits: ScheduleCreditCreateManyWithoutEmployeeInput
@@ -740,6 +757,32 @@ input EmployeeCreateWithoutDepartmentInput {
   AFP: EmployeeAFPEnum
   cargo: String
   zkTimePin: Int!
+  events: EventCreateManyWithoutEmployeeInput
+  shifts: ShiftCreateManyWithoutEmployeeInput
+  exceptions: ExceptionCreateManyWithoutEmployeeInput
+  credits: ScheduleCreditCreateManyWithoutEmployeeInput
+  debits: ScheduleDebitCreateManyWithoutEmployeeInput
+}
+
+input EmployeeCreateWithoutEventsInput {
+  nameFirst: String!
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int!
+  department: DepartmentCreateOneWithoutSubordinatesInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
   credits: ScheduleCreditCreateManyWithoutEmployeeInput
@@ -765,6 +808,7 @@ input EmployeeCreateWithoutExceptionsInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  events: EventCreateManyWithoutEmployeeInput
   shifts: ShiftCreateManyWithoutEmployeeInput
   credits: ScheduleCreditCreateManyWithoutEmployeeInput
   debits: ScheduleDebitCreateManyWithoutEmployeeInput
@@ -789,6 +833,7 @@ input EmployeeCreateWithoutShiftsInput {
   cargo: String
   zkTimePin: Int!
   department: DepartmentCreateOneWithoutSubordinatesInput
+  events: EventCreateManyWithoutEmployeeInput
   exceptions: ExceptionCreateManyWithoutEmployeeInput
   credits: ScheduleCreditCreateManyWithoutEmployeeInput
   debits: ScheduleDebitCreateManyWithoutEmployeeInput
@@ -912,6 +957,7 @@ input EmployeeUpdateDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
@@ -937,6 +983,7 @@ input EmployeeUpdateInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
@@ -993,6 +1040,13 @@ input EmployeeUpdateOneRequiredWithoutDebitsInput {
   connect: EmployeeWhereUniqueInput
 }
 
+input EmployeeUpdateOneRequiredWithoutEventsInput {
+  create: EmployeeCreateWithoutEventsInput
+  update: EmployeeUpdateWithoutEventsDataInput
+  upsert: EmployeeUpsertWithoutEventsInput
+  connect: EmployeeWhereUniqueInput
+}
+
 input EmployeeUpdateOneRequiredWithoutExceptionsInput {
   create: EmployeeCreateWithoutExceptionsInput
   update: EmployeeUpdateWithoutExceptionsDataInput
@@ -1026,6 +1080,7 @@ input EmployeeUpdateWithoutCreditsDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   debits: ScheduleDebitUpdateManyWithoutEmployeeInput
@@ -1050,6 +1105,7 @@ input EmployeeUpdateWithoutDebitsDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
@@ -1073,6 +1129,32 @@ input EmployeeUpdateWithoutDepartmentDataInput {
   AFP: EmployeeAFPEnum
   cargo: String
   zkTimePin: Int
+  events: EventUpdateManyWithoutEmployeeInput
+  shifts: ShiftUpdateManyWithoutEmployeeInput
+  exceptions: ExceptionUpdateManyWithoutEmployeeInput
+  credits: ScheduleCreditUpdateManyWithoutEmployeeInput
+  debits: ScheduleDebitUpdateManyWithoutEmployeeInput
+}
+
+input EmployeeUpdateWithoutEventsDataInput {
+  nameFirst: String
+  nameMiddle: String
+  namePaternal: String
+  nameMaternal: String
+  documentType: EmployeeDocumentTypeEnum
+  documentNumber: String
+  sex: EmployeeSexEnum
+  dateOfBirth: DateTime
+  nationality: String
+  jubilado: Boolean
+  personaConDiscapacidad: Boolean
+  tutorPersonaConDiscapacidad: Boolean
+  cajaDeSalud: EmployeeCajaDeSaludEnum
+  aportaAFP: Boolean
+  AFP: EmployeeAFPEnum
+  cargo: String
+  zkTimePin: Int
+  department: DepartmentUpdateOneWithoutSubordinatesInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
@@ -1098,6 +1180,7 @@ input EmployeeUpdateWithoutExceptionsDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   shifts: ShiftUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
   debits: ScheduleDebitUpdateManyWithoutEmployeeInput
@@ -1122,6 +1205,7 @@ input EmployeeUpdateWithoutShiftsDataInput {
   cargo: String
   zkTimePin: Int
   department: DepartmentUpdateOneWithoutSubordinatesInput
+  events: EventUpdateManyWithoutEmployeeInput
   exceptions: ExceptionUpdateManyWithoutEmployeeInput
   credits: ScheduleCreditUpdateManyWithoutEmployeeInput
   debits: ScheduleDebitUpdateManyWithoutEmployeeInput
@@ -1145,6 +1229,11 @@ input EmployeeUpsertWithoutCreditsInput {
 input EmployeeUpsertWithoutDebitsInput {
   update: EmployeeUpdateWithoutDebitsDataInput!
   create: EmployeeCreateWithoutDebitsInput!
+}
+
+input EmployeeUpsertWithoutEventsInput {
+  update: EmployeeUpdateWithoutEventsDataInput!
+  create: EmployeeCreateWithoutEventsInput!
 }
 
 input EmployeeUpsertWithoutExceptionsInput {
@@ -1333,6 +1422,9 @@ input EmployeeWhereInput {
   zkTimePin_gt: Int
   zkTimePin_gte: Int
   department: DepartmentWhereInput
+  events_every: EventWhereInput
+  events_some: EventWhereInput
+  events_none: EventWhereInput
   shifts_every: ShiftWhereInput
   shifts_some: ShiftWhereInput
   shifts_none: ShiftWhereInput
@@ -1351,6 +1443,286 @@ input EmployeeWhereInput {
 }
 
 input EmployeeWhereUniqueInput {
+  id: ID
+}
+
+type Event {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  employee: Employee!
+  time: DateTime!
+}
+
+type EventConnection {
+  pageInfo: PageInfo!
+  edges: [EventEdge]!
+  aggregate: AggregateEvent!
+}
+
+input EventCreateInput {
+  employee: EmployeeCreateOneWithoutEventsInput!
+  time: DateTime!
+}
+
+input EventCreateManyWithoutEmployeeInput {
+  create: [EventCreateWithoutEmployeeInput!]
+  connect: [EventWhereUniqueInput!]
+}
+
+input EventCreateWithoutEmployeeInput {
+  time: DateTime!
+}
+
+type EventEdge {
+  node: Event!
+  cursor: String!
+}
+
+enum EventOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  time_ASC
+  time_DESC
+}
+
+type EventPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  time: DateTime!
+}
+
+type EventSubscriptionPayload {
+  mutation: MutationType!
+  node: Event
+  updatedFields: [String!]
+  previousValues: EventPreviousValues
+}
+
+input EventSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EventWhereInput
+  AND: [EventSubscriptionWhereInput!]
+  OR: [EventSubscriptionWhereInput!]
+  NOT: [EventSubscriptionWhereInput!]
+}
+
+type EventSyncLog {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  from: DateTime!
+  to: DateTime!
+}
+
+type EventSyncLogConnection {
+  pageInfo: PageInfo!
+  edges: [EventSyncLogEdge]!
+  aggregate: AggregateEventSyncLog!
+}
+
+input EventSyncLogCreateInput {
+  from: DateTime!
+  to: DateTime!
+}
+
+type EventSyncLogEdge {
+  node: EventSyncLog!
+  cursor: String!
+}
+
+enum EventSyncLogOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  from_ASC
+  from_DESC
+  to_ASC
+  to_DESC
+}
+
+type EventSyncLogPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  from: DateTime!
+  to: DateTime!
+}
+
+type EventSyncLogSubscriptionPayload {
+  mutation: MutationType!
+  node: EventSyncLog
+  updatedFields: [String!]
+  previousValues: EventSyncLogPreviousValues
+}
+
+input EventSyncLogSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EventSyncLogWhereInput
+  AND: [EventSyncLogSubscriptionWhereInput!]
+  OR: [EventSyncLogSubscriptionWhereInput!]
+  NOT: [EventSyncLogSubscriptionWhereInput!]
+}
+
+input EventSyncLogUpdateInput {
+  from: DateTime
+  to: DateTime
+}
+
+input EventSyncLogUpdateManyMutationInput {
+  from: DateTime
+  to: DateTime
+}
+
+input EventSyncLogWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  from: DateTime
+  from_not: DateTime
+  from_in: [DateTime!]
+  from_not_in: [DateTime!]
+  from_lt: DateTime
+  from_lte: DateTime
+  from_gt: DateTime
+  from_gte: DateTime
+  to: DateTime
+  to_not: DateTime
+  to_in: [DateTime!]
+  to_not_in: [DateTime!]
+  to_lt: DateTime
+  to_lte: DateTime
+  to_gt: DateTime
+  to_gte: DateTime
+  AND: [EventSyncLogWhereInput!]
+  OR: [EventSyncLogWhereInput!]
+  NOT: [EventSyncLogWhereInput!]
+}
+
+input EventSyncLogWhereUniqueInput {
+  id: ID
+}
+
+input EventUpdateInput {
+  employee: EmployeeUpdateOneRequiredWithoutEventsInput
+  time: DateTime
+}
+
+input EventUpdateManyMutationInput {
+  time: DateTime
+}
+
+input EventUpdateManyWithoutEmployeeInput {
+  create: [EventCreateWithoutEmployeeInput!]
+  delete: [EventWhereUniqueInput!]
+  connect: [EventWhereUniqueInput!]
+  disconnect: [EventWhereUniqueInput!]
+  update: [EventUpdateWithWhereUniqueWithoutEmployeeInput!]
+  upsert: [EventUpsertWithWhereUniqueWithoutEmployeeInput!]
+}
+
+input EventUpdateWithoutEmployeeDataInput {
+  time: DateTime
+}
+
+input EventUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: EventWhereUniqueInput!
+  data: EventUpdateWithoutEmployeeDataInput!
+}
+
+input EventUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: EventWhereUniqueInput!
+  update: EventUpdateWithoutEmployeeDataInput!
+  create: EventCreateWithoutEmployeeInput!
+}
+
+input EventWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  employee: EmployeeWhereInput
+  time: DateTime
+  time_not: DateTime
+  time_in: [DateTime!]
+  time_not_in: [DateTime!]
+  time_lt: DateTime
+  time_lte: DateTime
+  time_gt: DateTime
+  time_gte: DateTime
+  AND: [EventWhereInput!]
+  OR: [EventWhereInput!]
+  NOT: [EventWhereInput!]
+}
+
+input EventWhereUniqueInput {
   id: ID
 }
 
@@ -2919,6 +3291,18 @@ type Mutation {
   upsertEmployee(where: EmployeeWhereUniqueInput!, create: EmployeeCreateInput!, update: EmployeeUpdateInput!): Employee!
   deleteEmployee(where: EmployeeWhereUniqueInput!): Employee
   deleteManyEmployees(where: EmployeeWhereInput): BatchPayload!
+  createEvent(data: EventCreateInput!): Event!
+  updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
+  updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
+  upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
+  deleteEvent(where: EventWhereUniqueInput!): Event
+  deleteManyEvents(where: EventWhereInput): BatchPayload!
+  createEventSyncLog(data: EventSyncLogCreateInput!): EventSyncLog!
+  updateEventSyncLog(data: EventSyncLogUpdateInput!, where: EventSyncLogWhereUniqueInput!): EventSyncLog
+  updateManyEventSyncLogs(data: EventSyncLogUpdateManyMutationInput!, where: EventSyncLogWhereInput): BatchPayload!
+  upsertEventSyncLog(where: EventSyncLogWhereUniqueInput!, create: EventSyncLogCreateInput!, update: EventSyncLogUpdateInput!): EventSyncLog!
+  deleteEventSyncLog(where: EventSyncLogWhereUniqueInput!): EventSyncLog
+  deleteManyEventSyncLogs(where: EventSyncLogWhereInput): BatchPayload!
   createException(data: ExceptionCreateInput!): Exception!
   updateException(data: ExceptionUpdateInput!, where: ExceptionWhereUniqueInput!): Exception
   updateManyExceptions(data: ExceptionUpdateManyMutationInput!, where: ExceptionWhereInput): BatchPayload!
@@ -3065,6 +3449,12 @@ type Query {
   employee(where: EmployeeWhereUniqueInput!): Employee
   employees(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Employee]!
   employeesConnection(where: EmployeeWhereInput, orderBy: EmployeeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmployeeConnection!
+  event(where: EventWhereUniqueInput!): Event
+  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
+  eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
+  eventSyncLog(where: EventSyncLogWhereUniqueInput!): EventSyncLog
+  eventSyncLogs(where: EventSyncLogWhereInput, orderBy: EventSyncLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EventSyncLog]!
+  eventSyncLogsConnection(where: EventSyncLogWhereInput, orderBy: EventSyncLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventSyncLogConnection!
   exception(where: ExceptionWhereUniqueInput!): Exception
   exceptions(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exception]!
   exceptionsConnection(where: ExceptionWhereInput, orderBy: ExceptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExceptionConnection!
@@ -4929,6 +5319,8 @@ type Subscription {
   department(where: DepartmentSubscriptionWhereInput): DepartmentSubscriptionPayload
   directCredit(where: DirectCreditSubscriptionWhereInput): DirectCreditSubscriptionPayload
   employee(where: EmployeeSubscriptionWhereInput): EmployeeSubscriptionPayload
+  event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
+  eventSyncLog(where: EventSyncLogSubscriptionWhereInput): EventSyncLogSubscriptionPayload
   exception(where: ExceptionSubscriptionWhereInput): ExceptionSubscriptionPayload
   exceptionAuthorization(where: ExceptionAuthorizationSubscriptionWhereInput): ExceptionAuthorizationSubscriptionPayload
   exceptionCancellation(where: ExceptionCancellationSubscriptionWhereInput): ExceptionCancellationSubscriptionPayload

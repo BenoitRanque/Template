@@ -23,6 +23,22 @@ enum UserRoleEnum {
   HR
 }
 
+type EventSyncLog {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  from: DateTime!
+  to: DateTime!
+}
+
+type Event {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  employee: Employee!
+  time: DateTime!
+}
+
 type Employee {
   id: ID! @unique
   createdAt: DateTime!
@@ -45,6 +61,7 @@ type Employee {
   cargo: String
   zkTimePin: Int!
   department: Department
+  events: [Event!]!
   shifts: [Shift!]!
   exceptions: [Exception!]!
   credits: [ScheduleCredit!]!

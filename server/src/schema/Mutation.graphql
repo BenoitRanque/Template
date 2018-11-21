@@ -17,6 +17,7 @@ type Mutation {
   createDepartment(data: DepartmentCreateInput!): Department!
   updateDepartment(data: DepartmentUpdateInput! where: DepartmentWhereUniqueInput!): Department!
   deleteDepartment(where: DepartmentWhereUniqueInput!): Department!
+  syncEvents(from: DateTime! to: DateTime): Int!
 }
 
 type AuthPayload {

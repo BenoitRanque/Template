@@ -14,6 +14,8 @@ export interface Exists {
   department: (where?: DepartmentWhereInput) => Promise<boolean>;
   directCredit: (where?: DirectCreditWhereInput) => Promise<boolean>;
   employee: (where?: EmployeeWhereInput) => Promise<boolean>;
+  event: (where?: EventWhereInput) => Promise<boolean>;
+  eventSyncLog: (where?: EventSyncLogWhereInput) => Promise<boolean>;
   exception: (where?: ExceptionWhereInput) => Promise<boolean>;
   exceptionAuthorization: (
     where?: ExceptionAuthorizationWhereInput
@@ -164,6 +166,52 @@ export interface Prisma {
       last?: Int;
     }
   ) => EmployeeConnectionPromise;
+  event: (where: EventWhereUniqueInput) => EventPromise;
+  events: (
+    args?: {
+      where?: EventWhereInput;
+      orderBy?: EventOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Event>;
+  eventsConnection: (
+    args?: {
+      where?: EventWhereInput;
+      orderBy?: EventOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => EventConnectionPromise;
+  eventSyncLog: (where: EventSyncLogWhereUniqueInput) => EventSyncLogPromise;
+  eventSyncLogs: (
+    args?: {
+      where?: EventSyncLogWhereInput;
+      orderBy?: EventSyncLogOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<EventSyncLog>;
+  eventSyncLogsConnection: (
+    args?: {
+      where?: EventSyncLogWhereInput;
+      orderBy?: EventSyncLogOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => EventSyncLogConnectionPromise;
   exception: (where: ExceptionWhereUniqueInput) => ExceptionPromise;
   exceptions: (
     args?: {
@@ -713,6 +761,45 @@ export interface Prisma {
   ) => EmployeePromise;
   deleteEmployee: (where: EmployeeWhereUniqueInput) => EmployeePromise;
   deleteManyEmployees: (where?: EmployeeWhereInput) => BatchPayloadPromise;
+  createEvent: (data: EventCreateInput) => EventPromise;
+  updateEvent: (
+    args: { data: EventUpdateInput; where: EventWhereUniqueInput }
+  ) => EventPromise;
+  updateManyEvents: (
+    args: { data: EventUpdateManyMutationInput; where?: EventWhereInput }
+  ) => BatchPayloadPromise;
+  upsertEvent: (
+    args: {
+      where: EventWhereUniqueInput;
+      create: EventCreateInput;
+      update: EventUpdateInput;
+    }
+  ) => EventPromise;
+  deleteEvent: (where: EventWhereUniqueInput) => EventPromise;
+  deleteManyEvents: (where?: EventWhereInput) => BatchPayloadPromise;
+  createEventSyncLog: (data: EventSyncLogCreateInput) => EventSyncLogPromise;
+  updateEventSyncLog: (
+    args: { data: EventSyncLogUpdateInput; where: EventSyncLogWhereUniqueInput }
+  ) => EventSyncLogPromise;
+  updateManyEventSyncLogs: (
+    args: {
+      data: EventSyncLogUpdateManyMutationInput;
+      where?: EventSyncLogWhereInput;
+    }
+  ) => BatchPayloadPromise;
+  upsertEventSyncLog: (
+    args: {
+      where: EventSyncLogWhereUniqueInput;
+      create: EventSyncLogCreateInput;
+      update: EventSyncLogUpdateInput;
+    }
+  ) => EventSyncLogPromise;
+  deleteEventSyncLog: (
+    where: EventSyncLogWhereUniqueInput
+  ) => EventSyncLogPromise;
+  deleteManyEventSyncLogs: (
+    where?: EventSyncLogWhereInput
+  ) => BatchPayloadPromise;
   createException: (data: ExceptionCreateInput) => ExceptionPromise;
   updateException: (
     args: { data: ExceptionUpdateInput; where: ExceptionWhereUniqueInput }
@@ -1184,6 +1271,12 @@ export interface Subscription {
   employee: (
     where?: EmployeeSubscriptionWhereInput
   ) => EmployeeSubscriptionPayloadSubscription;
+  event: (
+    where?: EventSubscriptionWhereInput
+  ) => EventSubscriptionPayloadSubscription;
+  eventSyncLog: (
+    where?: EventSyncLogSubscriptionWhereInput
+  ) => EventSyncLogSubscriptionPayloadSubscription;
   exception: (
     where?: ExceptionSubscriptionWhereInput
   ) => ExceptionSubscriptionPayloadSubscription;
@@ -1251,7 +1344,17 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type EmployeeAFPEnum = "OPTION_1" | "OPTION_2";
+export type UserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "username_ASC"
+  | "username_DESC"
+  | "password_ASC"
+  | "password_DESC";
 
 export type ScheduleCreditSourceEnum =
   | "EXCEPTION"
@@ -1412,17 +1515,15 @@ export type SystemScheduleIdentifierEnum =
   | "SYS_SCH_DAYOFF_VACATION"
   | "SYS_SCH_HOLIDAY_HOLIDAY";
 
-export type UserOrderByInput =
+export type DirectCreditOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "description_ASC"
+  | "description_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "username_ASC"
-  | "username_DESC"
-  | "password_ASC"
-  | "password_DESC";
+  | "updatedAt_DESC";
 
 export type ScheduleRestlineElementOrderByInput =
   | "id_ASC"
@@ -1452,7 +1553,7 @@ export type ScheduleTimelineCategory =
   | "SCH_TIME_MATERNAL"
   | "SCH_TIME_LEAVE";
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+export type EmployeeAFPEnum = "OPTION_1" | "OPTION_2";
 
 export type ScheduleTimelineElementOrderByInput =
   | "id_ASC"
@@ -1472,15 +1573,17 @@ export type ScheduleTimelineElementOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type AttendanceCycleOrderByInput =
+export type ScheduleCategoryConfigOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "startDate_ASC"
-  | "startDate_DESC"
-  | "endDate_ASC"
-  | "endDate_DESC"
+  | "category_ASC"
+  | "category_DESC"
+  | "backgroundColor_ASC"
+  | "backgroundColor_DESC"
+  | "foregroundColor_ASC"
+  | "foregroundColor_DESC"
+  | "description_ASC"
+  | "description_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1488,15 +1591,17 @@ export type AttendanceCycleOrderByInput =
 
 export type ScheduleRestlineCategory = "SCH_REST_LUNCH";
 
-export type ExceptionRejectionOrderByInput =
+export type HolidayOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "date_ASC"
+  | "date_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "description_ASC"
-  | "description_DESC";
+  | "updatedAt_DESC";
 
 export type ShiftSlotOrderByInput =
   | "id_ASC"
@@ -1508,15 +1613,25 @@ export type ShiftSlotOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type DirectCreditOrderByInput =
+export type ExceptionCancellationOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "description_ASC"
-  | "description_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "description_ASC"
+  | "description_DESC";
+
+export type ScheduleOfflineCategory =
+  | "SCH_DAY_OFF"
+  | "SCH_DAY_VACATION"
+  | "SCH_DAY_HOLIDAY"
+  | "SCH_DAY_SICK"
+  | "SCH_DAY_PAID"
+  | "SCH_DAY_UNPAID";
+
+export type EmployeeDocumentTypeEnum = "CI" | "PASSAPORTE";
 
 export type EmployeeOrderByInput =
   | "id_ASC"
@@ -1560,6 +1675,16 @@ export type EmployeeOrderByInput =
   | "zkTimePin_ASC"
   | "zkTimePin_DESC";
 
+export type EventOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "time_ASC"
+  | "time_DESC";
+
 export type ExceptionTypeEnum = "MIXED" | "EXTRA_TIME" | "VACATION";
 
 export type ShiftOrderByInput =
@@ -1576,54 +1701,6 @@ export type ShiftOrderByInput =
   | "endDate_ASC"
   | "endDate_DESC";
 
-export type ScheduleOfflineCategory =
-  | "SCH_DAY_OFF"
-  | "SCH_DAY_VACATION"
-  | "SCH_DAY_HOLIDAY"
-  | "SCH_DAY_SICK"
-  | "SCH_DAY_PAID"
-  | "SCH_DAY_UNPAID";
-
-export type EmployeeDocumentTypeEnum = "CI" | "PASSAPORTE";
-
-export type ExceptionCancellationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "description_ASC"
-  | "description_DESC";
-
-export type HolidayOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "date_ASC"
-  | "date_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type ScheduleCategoryConfigOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "category_ASC"
-  | "category_DESC"
-  | "backgroundColor_ASC"
-  | "backgroundColor_DESC"
-  | "foregroundColor_ASC"
-  | "foregroundColor_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type EmployeeCajaDeSaludEnum =
   | "OPTION_1"
   | "OPTION_2"
@@ -1635,14 +1712,106 @@ export type EmployeeCajaDeSaludEnum =
   | "OPTION_8"
   | "OPTION_9";
 
-export interface ShiftSlotUpdateWithWhereUniqueNestedInput {
-  where: ShiftSlotWhereUniqueInput;
-  data: ShiftSlotUpdateDataInput;
+export type EventSyncLogOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "from_ASC"
+  | "from_DESC"
+  | "to_ASC"
+  | "to_DESC";
+
+export type ExceptionRejectionOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "description_ASC"
+  | "description_DESC";
+
+export type AttendanceCycleOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "startDate_ASC"
+  | "startDate_DESC"
+  | "endDate_ASC"
+  | "endDate_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
+export interface ShiftSlotUpdateManyInput {
+  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
+  update?:
+    | ShiftSlotUpdateWithWhereUniqueNestedInput[]
+    | ShiftSlotUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | ShiftSlotUpsertWithWhereUniqueNestedInput[]
+    | ShiftSlotUpsertWithWhereUniqueNestedInput;
+  delete?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+  disconnect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
 }
 
 export type AttendanceCycleWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
+
+export interface UserUpdateDataInput {
+  username?: String;
+  password?: String;
+  departments?: DepartmentUpdateManyWithoutSupervisorsInput;
+  roles?: UserRoleUpdateManyInput;
+}
+
+export interface DirectCreditWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  owner?: UserWhereInput;
+  employee?: EmployeeWhereInput;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  credits_every?: ScheduleCreditWhereInput;
+  credits_some?: ScheduleCreditWhereInput;
+  credits_none?: ScheduleCreditWhereInput;
+  AND?: DirectCreditWhereInput[] | DirectCreditWhereInput;
+  OR?: DirectCreditWhereInput[] | DirectCreditWhereInput;
+  NOT?: DirectCreditWhereInput[] | DirectCreditWhereInput;
+}
 
 export interface DepartmentUpdateManyWithoutSupervisorsInput {
   create?:
@@ -1659,7 +1828,7 @@ export interface DepartmentUpdateManyWithoutSupervisorsInput {
     | DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput;
 }
 
-export interface ScheduleCreditWhereInput {
+export interface ScheduleDebitWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -1679,47 +1848,8 @@ export interface ScheduleCreditWhereInput {
   category_not?: ScheduleOfflineCategory;
   category_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
   category_not_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceType_not?: ScheduleCreditSourceEnum;
-  sourceType_in?: ScheduleCreditSourceEnum[] | ScheduleCreditSourceEnum;
-  sourceType_not_in?: ScheduleCreditSourceEnum[] | ScheduleCreditSourceEnum;
-  sourceException?: ExceptionWhereInput;
-  sourceDirect?: DirectCreditWhereInput;
-  sourceConcurentHoliday?: HolidayWhereInput;
-  sourceDate?: DateTimeInput;
-  sourceDate_not?: DateTimeInput;
-  sourceDate_in?: DateTimeInput[] | DateTimeInput;
-  sourceDate_not_in?: DateTimeInput[] | DateTimeInput;
-  sourceDate_lt?: DateTimeInput;
-  sourceDate_lte?: DateTimeInput;
-  sourceDate_gt?: DateTimeInput;
-  sourceDate_gte?: DateTimeInput;
-  debit?: ScheduleDebitWhereInput;
-  AND?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
-  OR?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
-  NOT?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
-}
-
-export interface DepartmentUpdateWithWhereUniqueWithoutSupervisorsInput {
-  where: DepartmentWhereUniqueInput;
-  data: DepartmentUpdateWithoutSupervisorsDataInput;
-}
-
-export interface HolidayWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
+  exception?: ExceptionWhereInput;
+  credit?: ScheduleCreditWhereInput;
   date?: DateTimeInput;
   date_not?: DateTimeInput;
   date_in?: DateTimeInput[] | DateTimeInput;
@@ -1728,31 +1858,17 @@ export interface HolidayWhereInput {
   date_lte?: DateTimeInput;
   date_gt?: DateTimeInput;
   date_gte?: DateTimeInput;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  AND?: HolidayWhereInput[] | HolidayWhereInput;
-  OR?: HolidayWhereInput[] | HolidayWhereInput;
-  NOT?: HolidayWhereInput[] | HolidayWhereInput;
+  AND?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
+  OR?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
+  NOT?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
 }
 
-export interface DepartmentUpdateWithoutSupervisorsDataInput {
-  name?: String;
-  subordinates?: EmployeeUpdateManyWithoutDepartmentInput;
+export interface DepartmentUpdateWithWhereUniqueWithoutSupervisorsInput {
+  where: DepartmentWhereUniqueInput;
+  data: DepartmentUpdateWithoutSupervisorsDataInput;
 }
 
-export interface ExceptionRejectionWhereInput {
+export interface ExceptionAuthorizationWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -1799,9 +1915,83 @@ export interface ExceptionRejectionWhereInput {
   description_not_starts_with?: String;
   description_ends_with?: String;
   description_not_ends_with?: String;
-  AND?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
-  OR?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
-  NOT?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
+  AND?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
+  OR?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
+  NOT?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
+}
+
+export interface DepartmentUpdateWithoutSupervisorsDataInput {
+  name?: String;
+  subordinates?: EmployeeUpdateManyWithoutDepartmentInput;
+}
+
+export interface ExceptionEliminationWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  exception?: ExceptionWhereInput;
+  owner?: UserWhereInput;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  AND?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
+  OR?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
+  NOT?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
+}
+
+export interface ExceptionSlotCreateManyInput {
+  create?: ExceptionSlotCreateInput[] | ExceptionSlotCreateInput;
+  connect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
+}
+
+export interface EmployeeCreateOneWithoutEventsInput {
+  create?: EmployeeCreateWithoutEventsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface ExceptionSlotCreateInput {
+  schedule: ScheduleCreateOneInput;
+  date: DateTimeInput;
+  source1?: ScheduleCreditCreateOneInput;
+  source2?: ScheduleCreditCreateOneInput;
 }
 
 export interface DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput {
@@ -1810,105 +2000,9 @@ export interface DepartmentUpsertWithWhereUniqueWithoutSupervisorsInput {
   create: DepartmentCreateWithoutSupervisorsInput;
 }
 
-export interface ExceptionCancellationWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  exception?: ExceptionWhereInput;
-  owner?: UserWhereInput;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  AND?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
-  OR?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
-  NOT?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
-}
-
-export interface UserRoleUpdateManyInput {
-  create?: UserRoleCreateInput[] | UserRoleCreateInput;
-  update?:
-    | UserRoleUpdateWithWhereUniqueNestedInput[]
-    | UserRoleUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | UserRoleUpsertWithWhereUniqueNestedInput[]
-    | UserRoleUpsertWithWhereUniqueNestedInput;
-  delete?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
-  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
-  disconnect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
-}
-
-export interface ExceptionSlotWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  schedule?: ScheduleWhereInput;
-  date?: DateTimeInput;
-  date_not?: DateTimeInput;
-  date_in?: DateTimeInput[] | DateTimeInput;
-  date_not_in?: DateTimeInput[] | DateTimeInput;
-  date_lt?: DateTimeInput;
-  date_lte?: DateTimeInput;
-  date_gt?: DateTimeInput;
-  date_gte?: DateTimeInput;
-  source1?: ScheduleCreditWhereInput;
-  source2?: ScheduleCreditWhereInput;
-  AND?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
-  OR?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
-  NOT?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
-}
-
-export interface UserRoleUpdateWithWhereUniqueNestedInput {
-  where: UserRoleWhereUniqueInput;
-  data: UserRoleUpdateDataInput;
+export interface ScheduleCreditCreateOneInput {
+  create?: ScheduleCreditCreateInput;
+  connect?: ScheduleCreditWhereUniqueInput;
 }
 
 export interface ExceptionWhereInput {
@@ -1980,9 +2074,15 @@ export interface ExceptionWhereInput {
   NOT?: ExceptionWhereInput[] | ExceptionWhereInput;
 }
 
-export interface UserRoleUpdateDataInput {
-  name?: String;
-  description?: String;
+export interface ScheduleCreditCreateInput {
+  employee: EmployeeCreateOneWithoutCreditsInput;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionCreateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+  debit?: ScheduleDebitCreateOneWithoutCreditInput;
 }
 
 export interface ScheduleOfflineElementWhereInput {
@@ -2009,15 +2109,84 @@ export interface ScheduleOfflineElementWhereInput {
   NOT?: ScheduleOfflineElementWhereInput[] | ScheduleOfflineElementWhereInput;
 }
 
+export interface EmployeeCreateOneWithoutCreditsInput {
+  create?: EmployeeCreateWithoutCreditsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface ShiftSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ShiftWhereInput;
+  AND?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
+  OR?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
+  NOT?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
+}
+
+export interface EmployeeCreateWithoutCreditsInput {
+  nameFirst: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin: Int;
+  department?: DepartmentCreateOneWithoutSubordinatesInput;
+  events?: EventCreateManyWithoutEmployeeInput;
+  shifts?: ShiftCreateManyWithoutEmployeeInput;
+  exceptions?: ExceptionCreateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
+}
+
+export interface ScheduleTimelineElementSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleTimelineElementWhereInput;
+  AND?:
+    | ScheduleTimelineElementSubscriptionWhereInput[]
+    | ScheduleTimelineElementSubscriptionWhereInput;
+  OR?:
+    | ScheduleTimelineElementSubscriptionWhereInput[]
+    | ScheduleTimelineElementSubscriptionWhereInput;
+  NOT?:
+    | ScheduleTimelineElementSubscriptionWhereInput[]
+    | ScheduleTimelineElementSubscriptionWhereInput;
+}
+
 export interface DepartmentCreateOneWithoutSubordinatesInput {
   create?: DepartmentCreateWithoutSubordinatesInput;
   connect?: DepartmentWhereUniqueInput;
 }
 
-export interface ScheduleCreditUpsertWithWhereUniqueWithoutSourceDirectInput {
-  where: ScheduleCreditWhereUniqueInput;
-  update: ScheduleCreditUpdateWithoutSourceDirectDataInput;
-  create: ScheduleCreditCreateWithoutSourceDirectInput;
+export interface ScheduleRestlineElementSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleRestlineElementWhereInput;
+  AND?:
+    | ScheduleRestlineElementSubscriptionWhereInput[]
+    | ScheduleRestlineElementSubscriptionWhereInput;
+  OR?:
+    | ScheduleRestlineElementSubscriptionWhereInput[]
+    | ScheduleRestlineElementSubscriptionWhereInput;
+  NOT?:
+    | ScheduleRestlineElementSubscriptionWhereInput[]
+    | ScheduleRestlineElementSubscriptionWhereInput;
 }
 
 export interface DepartmentCreateWithoutSubordinatesInput {
@@ -2025,10 +2194,21 @@ export interface DepartmentCreateWithoutSubordinatesInput {
   supervisors?: UserCreateManyWithoutDepartmentsInput;
 }
 
-export interface UserRoleUpsertWithWhereUniqueNestedInput {
-  where: UserRoleWhereUniqueInput;
-  update: UserRoleUpdateDataInput;
-  create: UserRoleCreateInput;
+export interface ScheduleDebitSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleDebitWhereInput;
+  AND?:
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
+  OR?:
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
+  NOT?:
+    | ScheduleDebitSubscriptionWhereInput[]
+    | ScheduleDebitSubscriptionWhereInput;
 }
 
 export interface UserCreateManyWithoutDepartmentsInput {
@@ -2038,7 +2218,7 @@ export interface UserCreateManyWithoutDepartmentsInput {
   connect?: UserWhereUniqueInput[] | UserWhereUniqueInput;
 }
 
-export interface ScheduleTimelineElementWhereInput {
+export interface ShiftSlotWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -2053,33 +2233,18 @@ export interface ScheduleTimelineElementWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  category?: ScheduleTimelineCategory;
-  category_not?: ScheduleTimelineCategory;
-  category_in?: ScheduleTimelineCategory[] | ScheduleTimelineCategory;
-  category_not_in?: ScheduleTimelineCategory[] | ScheduleTimelineCategory;
-  startTime?: Int;
-  startTime_not?: Int;
-  startTime_in?: Int[] | Int;
-  startTime_not_in?: Int[] | Int;
-  startTime_lt?: Int;
-  startTime_lte?: Int;
-  startTime_gt?: Int;
-  startTime_gte?: Int;
-  endTime?: Int;
-  endTime_not?: Int;
-  endTime_in?: Int[] | Int;
-  endTime_not_in?: Int[] | Int;
-  endTime_lt?: Int;
-  endTime_lte?: Int;
-  endTime_gt?: Int;
-  endTime_gte?: Int;
-  startEventRequired?: Boolean;
-  startEventRequired_not?: Boolean;
-  endEventRequired?: Boolean;
-  endEventRequired_not?: Boolean;
-  AND?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
-  OR?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
-  NOT?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
+  index?: Int;
+  index_not?: Int;
+  index_in?: Int[] | Int;
+  index_not_in?: Int[] | Int;
+  index_lt?: Int;
+  index_lte?: Int;
+  index_gt?: Int;
+  index_gte?: Int;
+  schedule?: ScheduleWhereInput;
+  AND?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
+  OR?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
+  NOT?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
 }
 
 export interface UserCreateWithoutDepartmentsInput {
@@ -2088,25 +2253,7 @@ export interface UserCreateWithoutDepartmentsInput {
   roles?: UserRoleCreateManyInput;
 }
 
-export interface ShiftSlotSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ShiftSlotWhereInput;
-  AND?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
-  OR?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
-  NOT?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
-}
-
-export interface ScheduleDebitCreateManyWithoutEmployeeInput {
-  create?:
-    | ScheduleDebitCreateWithoutEmployeeInput[]
-    | ScheduleDebitCreateWithoutEmployeeInput;
-  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-}
-
-export interface ScheduleWhereInput {
+export interface ShiftWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -2121,16 +2268,6 @@ export interface ScheduleWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  isPreset?: Boolean;
-  isPreset_not?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  systemScheduleIdentifier_not?: SystemScheduleIdentifierEnum;
-  systemScheduleIdentifier_in?:
-    | SystemScheduleIdentifierEnum[]
-    | SystemScheduleIdentifierEnum;
-  systemScheduleIdentifier_not_in?:
-    | SystemScheduleIdentifierEnum[]
-    | SystemScheduleIdentifierEnum;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -2161,41 +2298,82 @@ export interface ScheduleWhereInput {
   description_not_starts_with?: String;
   description_ends_with?: String;
   description_not_ends_with?: String;
-  baseTime?: Int;
-  baseTime_not?: Int;
-  baseTime_in?: Int[] | Int;
-  baseTime_not_in?: Int[] | Int;
-  baseTime_lt?: Int;
-  baseTime_lte?: Int;
-  baseTime_gt?: Int;
-  baseTime_gte?: Int;
-  innerBound?: Int;
-  innerBound_not?: Int;
-  innerBound_in?: Int[] | Int;
-  innerBound_not_in?: Int[] | Int;
-  innerBound_lt?: Int;
-  innerBound_lte?: Int;
-  innerBound_gt?: Int;
-  innerBound_gte?: Int;
-  outerBound?: Int;
-  outerBound_not?: Int;
-  outerBound_in?: Int[] | Int;
-  outerBound_not_in?: Int[] | Int;
-  outerBound_lt?: Int;
-  outerBound_lte?: Int;
-  outerBound_gt?: Int;
-  outerBound_gte?: Int;
-  timeline_every?: ScheduleTimelineElementWhereInput;
-  timeline_some?: ScheduleTimelineElementWhereInput;
-  timeline_none?: ScheduleTimelineElementWhereInput;
-  restline_every?: ScheduleRestlineElementWhereInput;
-  restline_some?: ScheduleRestlineElementWhereInput;
-  restline_none?: ScheduleRestlineElementWhereInput;
-  offline1?: ScheduleOfflineElementWhereInput;
-  offline2?: ScheduleOfflineElementWhereInput;
-  AND?: ScheduleWhereInput[] | ScheduleWhereInput;
-  OR?: ScheduleWhereInput[] | ScheduleWhereInput;
-  NOT?: ScheduleWhereInput[] | ScheduleWhereInput;
+  employee?: EmployeeWhereInput;
+  startDate?: DateTimeInput;
+  startDate_not?: DateTimeInput;
+  startDate_in?: DateTimeInput[] | DateTimeInput;
+  startDate_not_in?: DateTimeInput[] | DateTimeInput;
+  startDate_lt?: DateTimeInput;
+  startDate_lte?: DateTimeInput;
+  startDate_gt?: DateTimeInput;
+  startDate_gte?: DateTimeInput;
+  endDate?: DateTimeInput;
+  endDate_not?: DateTimeInput;
+  endDate_in?: DateTimeInput[] | DateTimeInput;
+  endDate_not_in?: DateTimeInput[] | DateTimeInput;
+  endDate_lt?: DateTimeInput;
+  endDate_lte?: DateTimeInput;
+  endDate_gt?: DateTimeInput;
+  endDate_gte?: DateTimeInput;
+  slots_every?: ShiftSlotWhereInput;
+  slots_some?: ShiftSlotWhereInput;
+  slots_none?: ShiftSlotWhereInput;
+  owner?: UserWhereInput;
+  AND?: ShiftWhereInput[] | ShiftWhereInput;
+  OR?: ShiftWhereInput[] | ShiftWhereInput;
+  NOT?: ShiftWhereInput[] | ShiftWhereInput;
+}
+
+export interface ScheduleDebitCreateManyWithoutEmployeeInput {
+  create?:
+    | ScheduleDebitCreateWithoutEmployeeInput[]
+    | ScheduleDebitCreateWithoutEmployeeInput;
+  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+}
+
+export interface EventWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  employee?: EmployeeWhereInput;
+  time?: DateTimeInput;
+  time_not?: DateTimeInput;
+  time_in?: DateTimeInput[] | DateTimeInput;
+  time_not_in?: DateTimeInput[] | DateTimeInput;
+  time_lt?: DateTimeInput;
+  time_lte?: DateTimeInput;
+  time_gt?: DateTimeInput;
+  time_gte?: DateTimeInput;
+  AND?: EventWhereInput[] | EventWhereInput;
+  OR?: EventWhereInput[] | EventWhereInput;
+  NOT?: EventWhereInput[] | EventWhereInput;
 }
 
 export interface ScheduleDebitCreateWithoutEmployeeInput {
@@ -2205,21 +2383,15 @@ export interface ScheduleDebitCreateWithoutEmployeeInput {
   date: DateTimeInput;
 }
 
-export interface ScheduleTimelineElementSubscriptionWhereInput {
+export interface HolidaySubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ScheduleTimelineElementWhereInput;
-  AND?:
-    | ScheduleTimelineElementSubscriptionWhereInput[]
-    | ScheduleTimelineElementSubscriptionWhereInput;
-  OR?:
-    | ScheduleTimelineElementSubscriptionWhereInput[]
-    | ScheduleTimelineElementSubscriptionWhereInput;
-  NOT?:
-    | ScheduleTimelineElementSubscriptionWhereInput[]
-    | ScheduleTimelineElementSubscriptionWhereInput;
+  node?: HolidayWhereInput;
+  AND?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
+  OR?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
+  NOT?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
 }
 
 export interface ExceptionCreateOneWithoutDebitsInput {
@@ -2227,21 +2399,52 @@ export interface ExceptionCreateOneWithoutDebitsInput {
   connect?: ExceptionWhereUniqueInput;
 }
 
-export interface ScheduleRestlineElementSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ScheduleRestlineElementWhereInput;
-  AND?:
-    | ScheduleRestlineElementSubscriptionWhereInput[]
-    | ScheduleRestlineElementSubscriptionWhereInput;
-  OR?:
-    | ScheduleRestlineElementSubscriptionWhereInput[]
-    | ScheduleRestlineElementSubscriptionWhereInput;
-  NOT?:
-    | ScheduleRestlineElementSubscriptionWhereInput[]
-    | ScheduleRestlineElementSubscriptionWhereInput;
+export interface UserRoleWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  AND?: UserRoleWhereInput[] | UserRoleWhereInput;
+  OR?: UserRoleWhereInput[] | UserRoleWhereInput;
+  NOT?: UserRoleWhereInput[] | UserRoleWhereInput;
 }
 
 export interface ExceptionCreateWithoutDebitsInput {
@@ -2257,21 +2460,21 @@ export interface ExceptionCreateWithoutDebitsInput {
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
 }
 
-export interface ScheduleOfflineElementSubscriptionWhereInput {
+export interface ExceptionRejectionSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ScheduleOfflineElementWhereInput;
+  node?: ExceptionRejectionWhereInput;
   AND?:
-    | ScheduleOfflineElementSubscriptionWhereInput[]
-    | ScheduleOfflineElementSubscriptionWhereInput;
+    | ExceptionRejectionSubscriptionWhereInput[]
+    | ExceptionRejectionSubscriptionWhereInput;
   OR?:
-    | ScheduleOfflineElementSubscriptionWhereInput[]
-    | ScheduleOfflineElementSubscriptionWhereInput;
+    | ExceptionRejectionSubscriptionWhereInput[]
+    | ExceptionRejectionSubscriptionWhereInput;
   NOT?:
-    | ScheduleOfflineElementSubscriptionWhereInput[]
-    | ScheduleOfflineElementSubscriptionWhereInput;
+    | ExceptionRejectionSubscriptionWhereInput[]
+    | ExceptionRejectionSubscriptionWhereInput;
 }
 
 export interface EmployeeCreateOneWithoutExceptionsInput {
@@ -2279,21 +2482,21 @@ export interface EmployeeCreateOneWithoutExceptionsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface ScheduleCreditSubscriptionWhereInput {
+export interface ExceptionCancellationSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ScheduleCreditWhereInput;
+  node?: ExceptionCancellationWhereInput;
   AND?:
-    | ScheduleCreditSubscriptionWhereInput[]
-    | ScheduleCreditSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
   OR?:
-    | ScheduleCreditSubscriptionWhereInput[]
-    | ScheduleCreditSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
   NOT?:
-    | ScheduleCreditSubscriptionWhereInput[]
-    | ScheduleCreditSubscriptionWhereInput;
+    | ExceptionCancellationSubscriptionWhereInput[]
+    | ExceptionCancellationSubscriptionWhereInput;
 }
 
 export interface EmployeeCreateWithoutExceptionsInput {
@@ -2315,26 +2518,21 @@ export interface EmployeeCreateWithoutExceptionsInput {
   cargo?: String;
   zkTimePin: Int;
   department?: DepartmentCreateOneWithoutSubordinatesInput;
+  events?: EventCreateManyWithoutEmployeeInput;
   shifts?: ShiftCreateManyWithoutEmployeeInput;
   credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
   debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export interface ScheduleCategoryConfigSubscriptionWhereInput {
+export interface ExceptionSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: ScheduleCategoryConfigWhereInput;
-  AND?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
-  OR?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
-  NOT?:
-    | ScheduleCategoryConfigSubscriptionWhereInput[]
-    | ScheduleCategoryConfigSubscriptionWhereInput;
+  node?: ExceptionWhereInput;
+  AND?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
+  OR?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
+  NOT?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
 }
 
 export interface ScheduleCreditCreateManyWithoutEmployeeInput {
@@ -2342,49 +2540,6 @@ export interface ScheduleCreditCreateManyWithoutEmployeeInput {
     | ScheduleCreditCreateWithoutEmployeeInput[]
     | ScheduleCreditCreateWithoutEmployeeInput;
   connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-}
-
-export interface HolidaySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: HolidayWhereInput;
-  AND?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-  OR?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-  NOT?: HolidaySubscriptionWhereInput[] | HolidaySubscriptionWhereInput;
-}
-
-export interface ScheduleCreditCreateWithoutEmployeeInput {
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionCreateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-  debit?: ScheduleDebitCreateOneWithoutCreditInput;
-}
-
-export interface ExceptionSlotSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionSlotWhereInput;
-  AND?:
-    | ExceptionSlotSubscriptionWhereInput[]
-    | ExceptionSlotSubscriptionWhereInput;
-  OR?:
-    | ExceptionSlotSubscriptionWhereInput[]
-    | ExceptionSlotSubscriptionWhereInput;
-  NOT?:
-    | ExceptionSlotSubscriptionWhereInput[]
-    | ExceptionSlotSubscriptionWhereInput;
-}
-
-export interface ExceptionCreateOneWithoutCreditsInput {
-  create?: ExceptionCreateWithoutCreditsInput;
-  connect?: ExceptionWhereUniqueInput;
 }
 
 export interface DepartmentWhereInput {
@@ -2443,6 +2598,36 @@ export interface DepartmentWhereInput {
   NOT?: DepartmentWhereInput[] | DepartmentWhereInput;
 }
 
+export interface ScheduleCreditCreateWithoutEmployeeInput {
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionCreateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+  debit?: ScheduleDebitCreateOneWithoutCreditInput;
+}
+
+export interface EventSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: EventWhereInput;
+  AND?: EventSubscriptionWhereInput[] | EventSubscriptionWhereInput;
+  OR?: EventSubscriptionWhereInput[] | EventSubscriptionWhereInput;
+  NOT?: EventSubscriptionWhereInput[] | EventSubscriptionWhereInput;
+}
+
+export interface ExceptionCreateOneWithoutCreditsInput {
+  create?: ExceptionCreateWithoutCreditsInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export type DirectCreditWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
 export interface ExceptionCreateWithoutCreditsInput {
   type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
@@ -2454,66 +2639,6 @@ export interface ExceptionCreateWithoutCreditsInput {
   elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
-
-export interface ExceptionEliminationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionEliminationWhereInput;
-  AND?:
-    | ExceptionEliminationSubscriptionWhereInput[]
-    | ExceptionEliminationSubscriptionWhereInput;
-  OR?:
-    | ExceptionEliminationSubscriptionWhereInput[]
-    | ExceptionEliminationSubscriptionWhereInput;
-  NOT?:
-    | ExceptionEliminationSubscriptionWhereInput[]
-    | ExceptionEliminationSubscriptionWhereInput;
-}
-
-export interface ExceptionRejectionCreateOneWithoutExceptionInput {
-  create?: ExceptionRejectionCreateWithoutExceptionInput;
-  connect?: ExceptionRejectionWhereUniqueInput;
-}
-
-export interface ExceptionAuthorizationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionAuthorizationWhereInput;
-  AND?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-  OR?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-  NOT?:
-    | ExceptionAuthorizationSubscriptionWhereInput[]
-    | ExceptionAuthorizationSubscriptionWhereInput;
-}
-
-export interface ExceptionRejectionCreateWithoutExceptionInput {
-  owner: UserCreateOneInput;
-  description?: String;
-}
-
-export interface ExceptionSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionWhereInput;
-  AND?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
-  OR?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
-  NOT?: ExceptionSubscriptionWhereInput[] | ExceptionSubscriptionWhereInput;
-}
-
-export interface ExceptionAuthorizationCreateOneWithoutExceptionInput {
-  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
-  connect?: ExceptionAuthorizationWhereUniqueInput;
 }
 
 export interface DirectCreditSubscriptionWhereInput {
@@ -2533,18 +2658,31 @@ export interface DirectCreditSubscriptionWhereInput {
     | DirectCreditSubscriptionWhereInput;
 }
 
-export interface ExceptionAuthorizationCreateWithoutExceptionInput {
-  owner: UserCreateOneInput;
-  description?: String;
+export interface ExceptionRejectionCreateOneWithoutExceptionInput {
+  create?: ExceptionRejectionCreateWithoutExceptionInput;
+  connect?: ExceptionRejectionWhereUniqueInput;
 }
 
-export type EmployeeWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface AttendanceCycleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AttendanceCycleWhereInput;
+  AND?:
+    | AttendanceCycleSubscriptionWhereInput[]
+    | AttendanceCycleSubscriptionWhereInput;
+  OR?:
+    | AttendanceCycleSubscriptionWhereInput[]
+    | AttendanceCycleSubscriptionWhereInput;
+  NOT?:
+    | AttendanceCycleSubscriptionWhereInput[]
+    | AttendanceCycleSubscriptionWhereInput;
+}
 
-export interface ExceptionCancellationCreateOneWithoutExceptionInput {
-  create?: ExceptionCancellationCreateWithoutExceptionInput;
-  connect?: ExceptionCancellationWhereUniqueInput;
+export interface ExceptionRejectionCreateWithoutExceptionInput {
+  owner: UserCreateOneInput;
+  description?: String;
 }
 
 export interface UserRoleUpdateManyMutationInput {
@@ -2552,18 +2690,19 @@ export interface UserRoleUpdateManyMutationInput {
   description?: String;
 }
 
-export interface ExceptionCancellationCreateWithoutExceptionInput {
-  owner: UserCreateOneInput;
-  description?: String;
+export interface ExceptionAuthorizationCreateOneWithoutExceptionInput {
+  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
+  connect?: ExceptionAuthorizationWhereUniqueInput;
 }
 
-export type ExceptionWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface UserUpdateManyMutationInput {
+  username?: String;
+  password?: String;
+}
 
-export interface ExceptionEliminationCreateOneWithoutExceptionInput {
-  create?: ExceptionEliminationCreateWithoutExceptionInput;
-  connect?: ExceptionEliminationWhereUniqueInput;
+export interface ExceptionAuthorizationCreateWithoutExceptionInput {
+  owner: UserCreateOneInput;
+  description?: String;
 }
 
 export interface UserUpdateInput {
@@ -2573,14 +2712,48 @@ export interface UserUpdateInput {
   roles?: UserRoleUpdateManyInput;
 }
 
+export interface ExceptionCancellationCreateOneWithoutExceptionInput {
+  create?: ExceptionCancellationCreateWithoutExceptionInput;
+  connect?: ExceptionCancellationWhereUniqueInput;
+}
+
+export interface ShiftSlotUpdateInput {
+  index?: Int;
+  schedule?: ScheduleUpdateOneRequiredInput;
+}
+
+export interface ExceptionCancellationCreateWithoutExceptionInput {
+  owner: UserCreateOneInput;
+  description?: String;
+}
+
+export interface ShiftUpdateManyMutationInput {
+  description?: String;
+  startDate?: DateTimeInput;
+  endDate?: DateTimeInput;
+}
+
+export interface ExceptionEliminationCreateOneWithoutExceptionInput {
+  create?: ExceptionEliminationCreateWithoutExceptionInput;
+  connect?: ExceptionEliminationWhereUniqueInput;
+}
+
+export interface EmployeeUpsertWithoutShiftsInput {
+  update: EmployeeUpdateWithoutShiftsDataInput;
+  create: EmployeeCreateWithoutShiftsInput;
+}
+
 export interface ExceptionEliminationCreateWithoutExceptionInput {
   owner: UserCreateOneInput;
   description?: String;
 }
 
-export type ExceptionAuthorizationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface EmployeeUpdateOneRequiredWithoutShiftsInput {
+  create?: EmployeeCreateWithoutShiftsInput;
+  update?: EmployeeUpdateWithoutShiftsDataInput;
+  upsert?: EmployeeUpsertWithoutShiftsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
 
 export interface ScheduleDebitCreateManyWithoutExceptionInput {
   create?:
@@ -2589,10 +2762,9 @@ export interface ScheduleDebitCreateManyWithoutExceptionInput {
   connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
 }
 
-export interface ShiftSlotUpdateInput {
-  index?: Int;
-  schedule?: ScheduleUpdateOneRequiredInput;
-}
+export type ExceptionWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleDebitCreateWithoutExceptionInput {
   employee: EmployeeCreateOneWithoutDebitsInput;
@@ -2601,9 +2773,9 @@ export interface ScheduleDebitCreateWithoutExceptionInput {
   date: DateTimeInput;
 }
 
-export interface EmployeeUpsertWithoutShiftsInput {
-  update: EmployeeUpdateWithoutShiftsDataInput;
-  create: EmployeeCreateWithoutShiftsInput;
+export interface EmployeeCreateOneWithoutShiftsInput {
+  create?: EmployeeCreateWithoutShiftsInput;
+  connect?: EmployeeWhereUniqueInput;
 }
 
 export interface EmployeeCreateOneWithoutDebitsInput {
@@ -2611,29 +2783,9 @@ export interface EmployeeCreateOneWithoutDebitsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface EmployeeUpdateWithoutShiftsDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
-}
+export type ExceptionAuthorizationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface EmployeeCreateWithoutDebitsInput {
   nameFirst: String;
@@ -2654,54 +2806,13 @@ export interface EmployeeCreateWithoutDebitsInput {
   cargo?: String;
   zkTimePin: Int;
   department?: DepartmentCreateOneWithoutSubordinatesInput;
+  events?: EventCreateManyWithoutEmployeeInput;
   shifts?: ShiftCreateManyWithoutEmployeeInput;
   exceptions?: ExceptionCreateManyWithoutEmployeeInput;
   credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
 }
 
-export interface ShiftUpdateInput {
-  description?: String;
-  employee?: EmployeeUpdateOneRequiredWithoutShiftsInput;
-  startDate?: DateTimeInput;
-  endDate?: DateTimeInput;
-  slots?: ShiftSlotUpdateManyInput;
-  owner?: UserUpdateOneRequiredInput;
-}
-
-export interface ScheduleCreditCreateOneWithoutDebitInput {
-  create?: ScheduleCreditCreateWithoutDebitInput;
-  connect?: ScheduleCreditWhereUniqueInput;
-}
-
-export type ExceptionEliminationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleCreditCreateWithoutDebitInput {
-  employee: EmployeeCreateOneWithoutCreditsInput;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionCreateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-}
-
-export interface ShiftCreateInput {
-  description?: String;
-  employee: EmployeeCreateOneWithoutShiftsInput;
-  startDate: DateTimeInput;
-  endDate?: DateTimeInput;
-  slots?: ShiftSlotCreateManyInput;
-  owner: UserCreateOneInput;
-}
-
-export interface DirectCreditCreateOneWithoutCreditsInput {
-  create?: DirectCreditCreateWithoutCreditsInput;
-  connect?: DirectCreditWhereUniqueInput;
-}
-
-export interface ScheduleTimelineElementUpdateInput {
+export interface ScheduleTimelineElementUpdateManyMutationInput {
   category?: ScheduleTimelineCategory;
   startTime?: Int;
   endTime?: Int;
@@ -2709,10 +2820,9 @@ export interface ScheduleTimelineElementUpdateInput {
   endEventRequired?: Boolean;
 }
 
-export interface DirectCreditCreateWithoutCreditsInput {
-  owner: UserCreateOneInput;
-  employee: EmployeeCreateOneInput;
-  description?: String;
+export interface ScheduleCreditCreateOneWithoutDebitInput {
+  create?: ScheduleCreditCreateWithoutDebitInput;
+  connect?: ScheduleCreditWhereUniqueInput;
 }
 
 export interface ScheduleRestlineElementUpdateManyMutationInput {
@@ -2724,13 +2834,55 @@ export interface ScheduleRestlineElementUpdateManyMutationInput {
   endEventRequired?: Boolean;
 }
 
+export interface ScheduleCreditCreateWithoutDebitInput {
+  employee: EmployeeCreateOneWithoutCreditsInput;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionCreateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+}
+
+export interface ScheduleRestlineElementUpdateInput {
+  category?: ScheduleRestlineCategory;
+  duration?: Int;
+  startTime?: Int;
+  endTime?: Int;
+  startEventRequired?: Boolean;
+  endEventRequired?: Boolean;
+}
+
+export interface DirectCreditCreateOneWithoutCreditsInput {
+  create?: DirectCreditCreateWithoutCreditsInput;
+  connect?: DirectCreditWhereUniqueInput;
+}
+
+export interface ScheduleOfflineElementUpdateInput {
+  category?: ScheduleOfflineCategory;
+}
+
+export interface DirectCreditCreateWithoutCreditsInput {
+  owner: UserCreateOneInput;
+  employee: EmployeeCreateOneInput;
+  description?: String;
+}
+
+export type ExceptionEliminationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
 export interface EmployeeCreateOneInput {
   create?: EmployeeCreateInput;
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface ScheduleOfflineElementUpdateManyMutationInput {
-  category?: ScheduleOfflineCategory;
+export interface ScheduleDebitCreateInput {
+  employee: EmployeeCreateOneWithoutDebitsInput;
+  category: ScheduleOfflineCategory;
+  exception: ExceptionCreateOneWithoutDebitsInput;
+  credit: ScheduleCreditCreateOneWithoutDebitInput;
+  date: DateTimeInput;
 }
 
 export interface EmployeeCreateInput {
@@ -2752,27 +2904,34 @@ export interface EmployeeCreateInput {
   cargo?: String;
   zkTimePin: Int;
   department?: DepartmentCreateOneWithoutSubordinatesInput;
+  events?: EventCreateManyWithoutEmployeeInput;
   shifts?: ShiftCreateManyWithoutEmployeeInput;
   exceptions?: ExceptionCreateManyWithoutEmployeeInput;
   credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
   debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export type ExceptionSlotWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ScheduleCreditUpdateInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
+  category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+}
 
 export interface HolidayCreateOneInput {
   create?: HolidayCreateInput;
   connect?: HolidayWhereUniqueInput;
 }
 
-export interface ScheduleDebitUpdateInput {
-  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
-  category?: ScheduleOfflineCategory;
-  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
-  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
-  date?: DateTimeInput;
+export interface ScheduleCategoryConfigUpdateManyMutationInput {
+  category?: ScheduleCategory;
+  backgroundColor?: String;
+  foregroundColor?: String;
+  description?: String;
 }
 
 export interface HolidayCreateInput {
@@ -2780,13 +2939,53 @@ export interface HolidayCreateInput {
   name: String;
 }
 
-export type FieldOptionLabelWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ScheduleCategoryConfigCreateInput {
+  category?: ScheduleCategory;
+  backgroundColor?: String;
+  foregroundColor?: String;
+  description?: String;
+}
 
 export interface ScheduleDebitCreateOneWithoutCreditInput {
   create?: ScheduleDebitCreateWithoutCreditInput;
   connect?: ScheduleDebitWhereUniqueInput;
+}
+
+export type ExceptionSlotWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ScheduleDebitCreateWithoutCreditInput {
+  employee: EmployeeCreateOneWithoutDebitsInput;
+  category: ScheduleOfflineCategory;
+  exception: ExceptionCreateOneWithoutDebitsInput;
+  date: DateTimeInput;
+}
+
+export interface HolidayUpdateManyMutationInput {
+  date?: DateTimeInput;
+  name?: String;
+}
+
+export interface ScheduleCreditCreateManyWithoutSourceExceptionInput {
+  create?:
+    | ScheduleCreditCreateWithoutSourceExceptionInput[]
+    | ScheduleCreditCreateWithoutSourceExceptionInput;
+  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+}
+
+export type FieldOptionLabelWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ScheduleCreditCreateWithoutSourceExceptionInput {
+  employee: EmployeeCreateOneWithoutCreditsInput;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayCreateOneInput;
+  sourceDate: DateTimeInput;
+  debit?: ScheduleDebitCreateOneWithoutCreditInput;
 }
 
 export interface FieldOptionLabelWhereInput {
@@ -2851,62 +3050,16 @@ export interface FieldOptionLabelWhereInput {
   NOT?: FieldOptionLabelWhereInput[] | FieldOptionLabelWhereInput;
 }
 
-export interface ScheduleDebitCreateWithoutCreditInput {
-  employee: EmployeeCreateOneWithoutDebitsInput;
-  category: ScheduleOfflineCategory;
-  exception: ExceptionCreateOneWithoutDebitsInput;
-  date: DateTimeInput;
-}
-
-export interface ScheduleCategoryConfigUpdateManyMutationInput {
-  category?: ScheduleCategory;
-  backgroundColor?: String;
-  foregroundColor?: String;
-  description?: String;
-}
-
-export interface ScheduleCreditCreateManyWithoutSourceExceptionInput {
-  create?:
-    | ScheduleCreditCreateWithoutSourceExceptionInput[]
-    | ScheduleCreditCreateWithoutSourceExceptionInput;
-  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-}
-
-export interface ScheduleCategoryConfigCreateInput {
-  category?: ScheduleCategory;
-  backgroundColor?: String;
-  foregroundColor?: String;
-  description?: String;
-}
-
-export interface ScheduleCreditCreateWithoutSourceExceptionInput {
-  employee: EmployeeCreateOneWithoutCreditsInput;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-  debit?: ScheduleDebitCreateOneWithoutCreditInput;
-}
-
-export interface ScheduleUpdateManyMutationInput {
-  isPreset?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  description?: String;
-  baseTime?: Int;
-  innerBound?: Int;
-  outerBound?: Int;
-}
-
 export interface DepartmentUpdateInput {
   name?: String;
   subordinates?: EmployeeUpdateManyWithoutDepartmentInput;
   supervisors?: UserUpdateManyWithoutDepartmentsInput;
 }
 
-export interface HolidayUpdateManyMutationInput {
-  date?: DateTimeInput;
-  name?: String;
+export interface FieldOptionLabelCreateInput {
+  field: String;
+  value: String;
+  label?: String;
 }
 
 export interface EmployeeUpdateManyWithoutDepartmentInput {
@@ -2924,20 +3077,20 @@ export interface EmployeeUpdateManyWithoutDepartmentInput {
     | EmployeeUpsertWithWhereUniqueWithoutDepartmentInput;
 }
 
-export type ScheduleWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-}>;
+export interface ExceptionSlotUpdateInput {
+  schedule?: ScheduleUpdateOneRequiredInput;
+  date?: DateTimeInput;
+  source1?: ScheduleCreditUpdateOneInput;
+  source2?: ScheduleCreditUpdateOneInput;
+}
 
 export interface EmployeeUpdateWithWhereUniqueWithoutDepartmentInput {
   where: EmployeeWhereUniqueInput;
   data: EmployeeUpdateWithoutDepartmentDataInput;
 }
 
-export interface FieldOptionLabelUpdateInput {
-  field?: String;
-  value?: String;
-  label?: String;
+export interface ExceptionRejectionUpdateManyMutationInput {
+  description?: String;
 }
 
 export interface EmployeeUpdateWithoutDepartmentDataInput {
@@ -2958,14 +3111,80 @@ export interface EmployeeUpdateWithoutDepartmentDataInput {
   AFP?: EmployeeAFPEnum;
   cargo?: String;
   zkTimePin?: Int;
+  events?: EventUpdateManyWithoutEmployeeInput;
   shifts?: ShiftUpdateManyWithoutEmployeeInput;
   exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
   credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
   debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
 }
 
-export interface ExceptionSlotUpdateManyMutationInput {
-  date?: DateTimeInput;
+export interface ExceptionUpdateWithoutRejectionDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
+
+export interface EventUpdateManyWithoutEmployeeInput {
+  create?: EventCreateWithoutEmployeeInput[] | EventCreateWithoutEmployeeInput;
+  delete?: EventWhereUniqueInput[] | EventWhereUniqueInput;
+  connect?: EventWhereUniqueInput[] | EventWhereUniqueInput;
+  disconnect?: EventWhereUniqueInput[] | EventWhereUniqueInput;
+  update?:
+    | EventUpdateWithWhereUniqueWithoutEmployeeInput[]
+    | EventUpdateWithWhereUniqueWithoutEmployeeInput;
+  upsert?:
+    | EventUpsertWithWhereUniqueWithoutEmployeeInput[]
+    | EventUpsertWithWhereUniqueWithoutEmployeeInput;
+}
+
+export type ScheduleWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+}>;
+
+export interface EventUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: EventWhereUniqueInput;
+  data: EventUpdateWithoutEmployeeDataInput;
+}
+
+export interface ExceptionCreateWithoutRejectionInput {
+  type: ExceptionTypeEnum;
+  employee: EmployeeCreateOneWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotCreateManyInput;
+  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
+  owner: UserCreateOneInput;
+  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
+}
+
+export interface EventUpdateWithoutEmployeeDataInput {
+  time?: DateTimeInput;
+}
+
+export interface ExceptionRejectionCreateInput {
+  exception: ExceptionCreateOneWithoutRejectionInput;
+  owner: UserCreateOneInput;
+  description?: String;
+}
+
+export interface EventUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: EventWhereUniqueInput;
+  update: EventUpdateWithoutEmployeeDataInput;
+  create: EventCreateWithoutEmployeeInput;
+}
+
+export interface ExceptionEliminationUpdateManyMutationInput {
+  description?: String;
 }
 
 export interface ShiftUpdateManyWithoutEmployeeInput {
@@ -2979,18 +3198,6 @@ export interface ShiftUpdateManyWithoutEmployeeInput {
   upsert?:
     | ShiftUpsertWithWhereUniqueWithoutEmployeeInput[]
     | ShiftUpsertWithWhereUniqueWithoutEmployeeInput;
-}
-
-export interface ExceptionSlotUpdateInput {
-  schedule?: ScheduleUpdateOneRequiredInput;
-  date?: DateTimeInput;
-  source1?: ScheduleCreditUpdateOneInput;
-  source2?: ScheduleCreditUpdateOneInput;
-}
-
-export interface ShiftUpdateWithWhereUniqueWithoutEmployeeInput {
-  where: ShiftWhereUniqueInput;
-  data: ShiftUpdateWithoutEmployeeDataInput;
 }
 
 export interface ScheduleCategoryConfigWhereInput {
@@ -3059,6 +3266,24 @@ export interface ScheduleCategoryConfigWhereInput {
   NOT?: ScheduleCategoryConfigWhereInput[] | ScheduleCategoryConfigWhereInput;
 }
 
+export interface ShiftUpdateWithWhereUniqueWithoutEmployeeInput {
+  where: ShiftWhereUniqueInput;
+  data: ShiftUpdateWithoutEmployeeDataInput;
+}
+
+export interface ExceptionUpdateWithoutEliminationDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
+
 export interface ShiftUpdateWithoutEmployeeDataInput {
   description?: String;
   startDate?: DateTimeInput;
@@ -3067,32 +3292,38 @@ export interface ShiftUpdateWithoutEmployeeDataInput {
   owner?: UserUpdateOneRequiredInput;
 }
 
-export interface ExceptionUpsertWithoutRejectionInput {
-  update: ExceptionUpdateWithoutRejectionDataInput;
-  create: ExceptionCreateWithoutRejectionInput;
+export interface ExceptionEliminationUpdateInput {
+  exception?: ExceptionUpdateOneRequiredWithoutEliminationInput;
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
 }
 
-export interface ShiftSlotUpdateManyInput {
-  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
-  update?:
-    | ShiftSlotUpdateWithWhereUniqueNestedInput[]
-    | ShiftSlotUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | ShiftSlotUpsertWithWhereUniqueNestedInput[]
-    | ShiftSlotUpsertWithWhereUniqueNestedInput;
-  delete?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
-  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
-  disconnect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+export interface EmployeeCreateWithoutEventsInput {
+  nameFirst: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin: Int;
+  department?: DepartmentCreateOneWithoutSubordinatesInput;
+  shifts?: ShiftCreateManyWithoutEmployeeInput;
+  exceptions?: ExceptionCreateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export interface ExceptionUpdateOneRequiredWithoutRejectionInput {
-  create?: ExceptionCreateWithoutRejectionInput;
-  update?: ExceptionUpdateWithoutRejectionDataInput;
-  upsert?: ExceptionUpsertWithoutRejectionInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface ExceptionCreateInput {
+export interface ExceptionCreateWithoutEliminationInput {
   type: ExceptionTypeEnum;
   employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
@@ -3100,15 +3331,19 @@ export interface ExceptionCreateInput {
   rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
   authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
   cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
   owner: UserCreateOneInput;
   credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
   debits?: ScheduleDebitCreateManyWithoutExceptionInput;
 }
 
-export interface ExceptionRejectionUpdateInput {
-  exception?: ExceptionUpdateOneRequiredWithoutRejectionInput;
-  owner?: UserUpdateOneRequiredInput;
+export interface ShiftSlotUpdateWithWhereUniqueNestedInput {
+  where: ShiftSlotWhereUniqueInput;
+  data: ShiftSlotUpdateDataInput;
+}
+
+export interface ExceptionEliminationCreateInput {
+  exception: ExceptionCreateOneWithoutEliminationInput;
+  owner: UserCreateOneInput;
   description?: String;
 }
 
@@ -3117,9 +3352,8 @@ export interface ShiftSlotUpdateDataInput {
   schedule?: ScheduleUpdateOneRequiredInput;
 }
 
-export interface ExceptionCreateOneWithoutRejectionInput {
-  create?: ExceptionCreateWithoutRejectionInput;
-  connect?: ExceptionWhereUniqueInput;
+export interface ExceptionCancellationUpdateManyMutationInput {
+  description?: String;
 }
 
 export interface ScheduleUpdateOneRequiredInput {
@@ -3129,10 +3363,17 @@ export interface ScheduleUpdateOneRequiredInput {
   connect?: ScheduleWhereUniqueInput;
 }
 
-export interface ExceptionRejectionCreateInput {
-  exception: ExceptionCreateOneWithoutRejectionInput;
-  owner: UserCreateOneInput;
+export interface ExceptionUpdateWithoutCancellationDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
   description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
 }
 
 export interface ScheduleUpdateDataInput {
@@ -3148,9 +3389,11 @@ export interface ScheduleUpdateDataInput {
   offline2?: ScheduleOfflineElementUpdateOneInput;
 }
 
-export interface ExceptionUpsertWithoutEliminationInput {
-  update: ExceptionUpdateWithoutEliminationDataInput;
-  create: ExceptionCreateWithoutEliminationInput;
+export interface ExceptionUpdateOneRequiredWithoutCancellationInput {
+  create?: ExceptionCreateWithoutCancellationInput;
+  update?: ExceptionUpdateWithoutCancellationDataInput;
+  upsert?: ExceptionUpsertWithoutCancellationInput;
+  connect?: ExceptionWhereUniqueInput;
 }
 
 export interface ScheduleTimelineElementUpdateManyInput {
@@ -3174,17 +3417,17 @@ export interface ScheduleTimelineElementUpdateManyInput {
     | ScheduleTimelineElementWhereUniqueInput;
 }
 
-export interface ExceptionUpdateWithoutEliminationDataInput {
-  type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+export interface ExceptionCreateWithoutCancellationInput {
+  type: ExceptionTypeEnum;
+  employee: EmployeeCreateOneWithoutExceptionsInput;
   description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+  slots?: ExceptionSlotCreateManyInput;
+  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
+  owner: UserCreateOneInput;
+  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
 }
 
 export interface ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
@@ -3192,11 +3435,9 @@ export interface ScheduleTimelineElementUpdateWithWhereUniqueNestedInput {
   data: ScheduleTimelineElementUpdateDataInput;
 }
 
-export interface ExceptionEliminationUpdateInput {
-  exception?: ExceptionUpdateOneRequiredWithoutEliminationInput;
-  owner?: UserUpdateOneRequiredInput;
-  description?: String;
-}
+export type ScheduleRestlineElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleTimelineElementUpdateDataInput {
   category?: ScheduleTimelineCategory;
@@ -3206,9 +3447,9 @@ export interface ScheduleTimelineElementUpdateDataInput {
   endEventRequired?: Boolean;
 }
 
-export type ScheduleRestlineElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ExceptionAuthorizationUpdateManyMutationInput {
+  description?: String;
+}
 
 export interface ScheduleTimelineElementUpsertWithWhereUniqueNestedInput {
   where: ScheduleTimelineElementWhereUniqueInput;
@@ -3216,11 +3457,9 @@ export interface ScheduleTimelineElementUpsertWithWhereUniqueNestedInput {
   create: ScheduleTimelineElementCreateInput;
 }
 
-export interface ExceptionEliminationCreateInput {
-  exception: ExceptionCreateOneWithoutEliminationInput;
-  owner: UserCreateOneInput;
-  description?: String;
-}
+export type ScheduleTimelineElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleRestlineElementUpdateManyInput {
   create?:
@@ -3243,27 +3482,21 @@ export interface ScheduleRestlineElementUpdateManyInput {
     | ScheduleRestlineElementWhereUniqueInput;
 }
 
-export type ScheduleTimelineElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ExceptionUpdateOneRequiredWithoutAuthorizationInput {
+  create?: ExceptionCreateWithoutAuthorizationInput;
+  update?: ExceptionUpdateWithoutAuthorizationDataInput;
+  upsert?: ExceptionUpsertWithoutAuthorizationInput;
+  connect?: ExceptionWhereUniqueInput;
+}
 
 export interface ScheduleRestlineElementUpdateWithWhereUniqueNestedInput {
   where: ScheduleRestlineElementWhereUniqueInput;
   data: ScheduleRestlineElementUpdateDataInput;
 }
 
-export interface ExceptionUpdateWithoutCancellationDataInput {
-  type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
+export type ShiftWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleRestlineElementUpdateDataInput {
   category?: ScheduleRestlineCategory;
@@ -3274,9 +3507,10 @@ export interface ScheduleRestlineElementUpdateDataInput {
   endEventRequired?: Boolean;
 }
 
-export type ShiftWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ExceptionCreateOneWithoutAuthorizationInput {
+  create?: ExceptionCreateWithoutAuthorizationInput;
+  connect?: ExceptionWhereUniqueInput;
+}
 
 export interface ScheduleRestlineElementUpsertWithWhereUniqueNestedInput {
   where: ScheduleRestlineElementWhereUniqueInput;
@@ -3284,18 +3518,9 @@ export interface ScheduleRestlineElementUpsertWithWhereUniqueNestedInput {
   create: ScheduleRestlineElementCreateInput;
 }
 
-export interface ExceptionCreateWithoutCancellationInput {
-  type: ExceptionTypeEnum;
-  employee: EmployeeCreateOneWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotCreateManyInput;
-  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
-  owner: UserCreateOneInput;
-  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
+export type ShiftSlotWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleOfflineElementUpdateOneInput {
   create?: ScheduleOfflineElementCreateInput;
@@ -3306,21 +3531,22 @@ export interface ScheduleOfflineElementUpdateOneInput {
   connect?: ScheduleOfflineElementWhereUniqueInput;
 }
 
-export type ShiftSlotWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ExceptionUpdateInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
 
 export interface ScheduleOfflineElementUpdateDataInput {
   category?: ScheduleOfflineCategory;
-}
-
-export interface ExceptionAuthorizationUpdateManyMutationInput {
-  description?: String;
-}
-
-export interface ScheduleOfflineElementUpsertNestedInput {
-  update: ScheduleOfflineElementUpdateDataInput;
-  create: ScheduleOfflineElementCreateInput;
 }
 
 export type UserWhereUniqueInput = AtLeastOne<{
@@ -3328,17 +3554,25 @@ export type UserWhereUniqueInput = AtLeastOne<{
   username?: String;
 }>;
 
+export interface ScheduleOfflineElementUpsertNestedInput {
+  update: ScheduleOfflineElementUpdateDataInput;
+  create: ScheduleOfflineElementCreateInput;
+}
+
+export interface EventSyncLogUpdateInput {
+  from?: DateTimeInput;
+  to?: DateTimeInput;
+}
+
 export interface ScheduleUpsertNestedInput {
   update: ScheduleUpdateDataInput;
   create: ScheduleCreateInput;
 }
 
-export interface ExceptionUpdateOneRequiredWithoutAuthorizationInput {
-  create?: ExceptionCreateWithoutAuthorizationInput;
-  update?: ExceptionUpdateWithoutAuthorizationDataInput;
-  upsert?: ExceptionUpsertWithoutAuthorizationInput;
-  connect?: ExceptionWhereUniqueInput;
-}
+export type UserRoleWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
 
 export interface ShiftSlotUpsertWithWhereUniqueNestedInput {
   where: ShiftSlotWhereUniqueInput;
@@ -3346,10 +3580,10 @@ export interface ShiftSlotUpsertWithWhereUniqueNestedInput {
   create: ShiftSlotCreateInput;
 }
 
-export type UserRoleWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
+export interface EmployeeUpsertWithoutEventsInput {
+  update: EmployeeUpdateWithoutEventsDataInput;
+  create: EmployeeCreateWithoutEventsInput;
+}
 
 export interface UserUpdateOneRequiredInput {
   create?: UserCreateInput;
@@ -3358,25 +3592,13 @@ export interface UserUpdateOneRequiredInput {
   connect?: UserWhereUniqueInput;
 }
 
-export interface ExceptionCreateOneWithoutAuthorizationInput {
-  create?: ExceptionCreateWithoutAuthorizationInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface UserUpdateDataInput {
-  username?: String;
-  password?: String;
-  departments?: DepartmentUpdateManyWithoutSupervisorsInput;
-  roles?: UserRoleUpdateManyInput;
-}
-
 export interface AttendanceCycleUpdateInput {
   name?: String;
   startDate?: DateTimeInput;
   endDate?: DateTimeInput;
 }
 
-export interface DirectCreditWhereInput {
+export interface HolidayWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -3391,57 +3613,6 @@ export interface DirectCreditWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  owner?: UserWhereInput;
-  employee?: EmployeeWhereInput;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  credits_every?: ScheduleCreditWhereInput;
-  credits_some?: ScheduleCreditWhereInput;
-  credits_none?: ScheduleCreditWhereInput;
-  AND?: DirectCreditWhereInput[] | DirectCreditWhereInput;
-  OR?: DirectCreditWhereInput[] | DirectCreditWhereInput;
-  NOT?: DirectCreditWhereInput[] | DirectCreditWhereInput;
-}
-
-export interface ExceptionUpdateManyMutationInput {
-  type?: ExceptionTypeEnum;
-  description?: String;
-}
-
-export interface ScheduleDebitWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  employee?: EmployeeWhereInput;
-  category?: ScheduleOfflineCategory;
-  category_not?: ScheduleOfflineCategory;
-  category_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
-  category_not_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
-  exception?: ExceptionWhereInput;
-  credit?: ScheduleCreditWhereInput;
   date?: DateTimeInput;
   date_not?: DateTimeInput;
   date_in?: DateTimeInput[] | DateTimeInput;
@@ -3450,18 +3621,33 @@ export interface ScheduleDebitWhereInput {
   date_lte?: DateTimeInput;
   date_gt?: DateTimeInput;
   date_gte?: DateTimeInput;
-  AND?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
-  OR?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
-  NOT?: ScheduleDebitWhereInput[] | ScheduleDebitWhereInput;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: HolidayWhereInput[] | HolidayWhereInput;
+  OR?: HolidayWhereInput[] | HolidayWhereInput;
+  NOT?: HolidayWhereInput[] | HolidayWhereInput;
 }
 
-export interface DepartmentCreateInput {
-  name: String;
-  subordinates?: EmployeeCreateManyWithoutDepartmentInput;
-  supervisors?: UserCreateManyWithoutDepartmentsInput;
+export interface EmployeeUpdateOneRequiredWithoutEventsInput {
+  create?: EmployeeCreateWithoutEventsInput;
+  update?: EmployeeUpdateWithoutEventsDataInput;
+  upsert?: EmployeeUpsertWithoutEventsInput;
+  connect?: EmployeeWhereUniqueInput;
 }
 
-export interface ExceptionAuthorizationWhereInput {
+export interface ExceptionRejectionWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -3508,9 +3694,67 @@ export interface ExceptionAuthorizationWhereInput {
   description_not_starts_with?: String;
   description_ends_with?: String;
   description_not_ends_with?: String;
-  AND?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
-  OR?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
-  NOT?: ExceptionAuthorizationWhereInput[] | ExceptionAuthorizationWhereInput;
+  AND?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
+  OR?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
+  NOT?: ExceptionRejectionWhereInput[] | ExceptionRejectionWhereInput;
+}
+
+export interface DepartmentCreateInput {
+  name: String;
+  subordinates?: EmployeeCreateManyWithoutDepartmentInput;
+  supervisors?: UserCreateManyWithoutDepartmentsInput;
+}
+
+export interface ExceptionCancellationWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  exception?: ExceptionWhereInput;
+  owner?: UserWhereInput;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  AND?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
+  OR?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
+  NOT?: ExceptionCancellationWhereInput[] | ExceptionCancellationWhereInput;
 }
 
 export interface EmployeeCreateWithoutDepartmentInput {
@@ -3531,13 +3775,14 @@ export interface EmployeeCreateWithoutDepartmentInput {
   AFP?: EmployeeAFPEnum;
   cargo?: String;
   zkTimePin: Int;
+  events?: EventCreateManyWithoutEmployeeInput;
   shifts?: ShiftCreateManyWithoutEmployeeInput;
   exceptions?: ExceptionCreateManyWithoutEmployeeInput;
   credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
   debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
-export interface ExceptionEliminationWhereInput {
+export interface ScheduleCreditWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -3552,41 +3797,65 @@ export interface ExceptionEliminationWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  exception?: ExceptionWhereInput;
-  owner?: UserWhereInput;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  AND?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
-  OR?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
-  NOT?: ExceptionEliminationWhereInput[] | ExceptionEliminationWhereInput;
+  employee?: EmployeeWhereInput;
+  category?: ScheduleOfflineCategory;
+  category_not?: ScheduleOfflineCategory;
+  category_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
+  category_not_in?: ScheduleOfflineCategory[] | ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceType_not?: ScheduleCreditSourceEnum;
+  sourceType_in?: ScheduleCreditSourceEnum[] | ScheduleCreditSourceEnum;
+  sourceType_not_in?: ScheduleCreditSourceEnum[] | ScheduleCreditSourceEnum;
+  sourceException?: ExceptionWhereInput;
+  sourceDirect?: DirectCreditWhereInput;
+  sourceConcurentHoliday?: HolidayWhereInput;
+  sourceDate?: DateTimeInput;
+  sourceDate_not?: DateTimeInput;
+  sourceDate_in?: DateTimeInput[] | DateTimeInput;
+  sourceDate_not_in?: DateTimeInput[] | DateTimeInput;
+  sourceDate_lt?: DateTimeInput;
+  sourceDate_lte?: DateTimeInput;
+  sourceDate_gt?: DateTimeInput;
+  sourceDate_gte?: DateTimeInput;
+  debit?: ScheduleDebitWhereInput;
+  AND?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
+  OR?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
+  NOT?: ScheduleCreditWhereInput[] | ScheduleCreditWhereInput;
+}
+
+export interface EventCreateWithoutEmployeeInput {
+  time: DateTimeInput;
+}
+
+export interface ExceptionSlotWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  schedule?: ScheduleWhereInput;
+  date?: DateTimeInput;
+  date_not?: DateTimeInput;
+  date_in?: DateTimeInput[] | DateTimeInput;
+  date_not_in?: DateTimeInput[] | DateTimeInput;
+  date_lt?: DateTimeInput;
+  date_lte?: DateTimeInput;
+  date_gt?: DateTimeInput;
+  date_gte?: DateTimeInput;
+  source1?: ScheduleCreditWhereInput;
+  source2?: ScheduleCreditWhereInput;
+  AND?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
+  OR?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
+  NOT?: ExceptionSlotWhereInput[] | ExceptionSlotWhereInput;
 }
 
 export interface ShiftCreateWithoutEmployeeInput {
@@ -3597,24 +3866,17 @@ export interface ShiftCreateWithoutEmployeeInput {
   owner: UserCreateOneInput;
 }
 
-export interface EmployeeUpdateManyMutationInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
+export interface UserRoleUpdateManyInput {
+  create?: UserRoleCreateInput[] | UserRoleCreateInput;
+  update?:
+    | UserRoleUpdateWithWhereUniqueNestedInput[]
+    | UserRoleUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | UserRoleUpsertWithWhereUniqueNestedInput[]
+    | UserRoleUpsertWithWhereUniqueNestedInput;
+  delete?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
+  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
+  disconnect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
 }
 
 export interface ShiftSlotCreateInput {
@@ -3622,29 +3884,9 @@ export interface ShiftSlotCreateInput {
   schedule: ScheduleCreateOneInput;
 }
 
-export interface EmployeeUpdateInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+export interface UserRoleUpdateWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput;
+  data: UserRoleUpdateDataInput;
 }
 
 export interface ScheduleCreateInput {
@@ -3660,7 +3902,8 @@ export interface ScheduleCreateInput {
   offline2?: ScheduleOfflineElementCreateOneInput;
 }
 
-export interface DirectCreditUpdateManyMutationInput {
+export interface UserRoleUpdateDataInput {
+  name?: String;
   description?: String;
 }
 
@@ -3672,56 +3915,10 @@ export interface ScheduleTimelineElementCreateInput {
   endEventRequired: Boolean;
 }
 
-export interface ScheduleRestlineElementWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  category?: ScheduleRestlineCategory;
-  category_not?: ScheduleRestlineCategory;
-  category_in?: ScheduleRestlineCategory[] | ScheduleRestlineCategory;
-  category_not_in?: ScheduleRestlineCategory[] | ScheduleRestlineCategory;
-  duration?: Int;
-  duration_not?: Int;
-  duration_in?: Int[] | Int;
-  duration_not_in?: Int[] | Int;
-  duration_lt?: Int;
-  duration_lte?: Int;
-  duration_gt?: Int;
-  duration_gte?: Int;
-  startTime?: Int;
-  startTime_not?: Int;
-  startTime_in?: Int[] | Int;
-  startTime_not_in?: Int[] | Int;
-  startTime_lt?: Int;
-  startTime_lte?: Int;
-  startTime_gt?: Int;
-  startTime_gte?: Int;
-  endTime?: Int;
-  endTime_not?: Int;
-  endTime_in?: Int[] | Int;
-  endTime_not_in?: Int[] | Int;
-  endTime_lt?: Int;
-  endTime_lte?: Int;
-  endTime_gt?: Int;
-  endTime_gte?: Int;
-  startEventRequired?: Boolean;
-  startEventRequired_not?: Boolean;
-  endEventRequired?: Boolean;
-  endEventRequired_not?: Boolean;
-  AND?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
-  OR?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
-  NOT?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
+export interface UserRoleUpsertWithWhereUniqueNestedInput {
+  where: UserRoleWhereUniqueInput;
+  update: UserRoleUpdateDataInput;
+  create: UserRoleCreateInput;
 }
 
 export interface ScheduleRestlineElementCreateInput {
@@ -3824,11 +4021,15 @@ export interface ExceptionSlotUpdateManyInput {
   disconnect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
 }
 
-export interface ExceptionSlotCreateInput {
-  schedule: ScheduleCreateOneInput;
-  date: DateTimeInput;
-  source1?: ScheduleCreditCreateOneInput;
-  source2?: ScheduleCreditCreateOneInput;
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
 export interface ExceptionSlotUpdateWithWhereUniqueNestedInput {
@@ -3836,15 +4037,56 @@ export interface ExceptionSlotUpdateWithWhereUniqueNestedInput {
   data: ExceptionSlotUpdateDataInput;
 }
 
-export interface ScheduleCreditCreateInput {
-  employee: EmployeeCreateOneWithoutCreditsInput;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionCreateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditCreateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayCreateOneInput;
-  sourceDate: DateTimeInput;
-  debit?: ScheduleDebitCreateOneWithoutCreditInput;
+export interface ScheduleRestlineElementWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  category?: ScheduleRestlineCategory;
+  category_not?: ScheduleRestlineCategory;
+  category_in?: ScheduleRestlineCategory[] | ScheduleRestlineCategory;
+  category_not_in?: ScheduleRestlineCategory[] | ScheduleRestlineCategory;
+  duration?: Int;
+  duration_not?: Int;
+  duration_in?: Int[] | Int;
+  duration_not_in?: Int[] | Int;
+  duration_lt?: Int;
+  duration_lte?: Int;
+  duration_gt?: Int;
+  duration_gte?: Int;
+  startTime?: Int;
+  startTime_not?: Int;
+  startTime_in?: Int[] | Int;
+  startTime_not_in?: Int[] | Int;
+  startTime_lt?: Int;
+  startTime_lte?: Int;
+  startTime_gt?: Int;
+  startTime_gte?: Int;
+  endTime?: Int;
+  endTime_not?: Int;
+  endTime_in?: Int[] | Int;
+  endTime_not_in?: Int[] | Int;
+  endTime_lt?: Int;
+  endTime_lte?: Int;
+  endTime_gt?: Int;
+  endTime_gte?: Int;
+  startEventRequired?: Boolean;
+  startEventRequired_not?: Boolean;
+  endEventRequired?: Boolean;
+  endEventRequired_not?: Boolean;
+  AND?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
+  OR?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
+  NOT?: ScheduleRestlineElementWhereInput[] | ScheduleRestlineElementWhereInput;
 }
 
 export interface ExceptionSlotUpdateDataInput {
@@ -3854,28 +4096,21 @@ export interface ExceptionSlotUpdateDataInput {
   source2?: ScheduleCreditUpdateOneInput;
 }
 
-export interface EmployeeCreateWithoutCreditsInput {
-  nameFirst: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin: Int;
-  department?: DepartmentCreateOneWithoutSubordinatesInput;
-  shifts?: ShiftCreateManyWithoutEmployeeInput;
-  exceptions?: ExceptionCreateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
+export interface ScheduleOfflineElementSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleOfflineElementWhereInput;
+  AND?:
+    | ScheduleOfflineElementSubscriptionWhereInput[]
+    | ScheduleOfflineElementSubscriptionWhereInput;
+  OR?:
+    | ScheduleOfflineElementSubscriptionWhereInput[]
+    | ScheduleOfflineElementSubscriptionWhereInput;
+  NOT?:
+    | ScheduleOfflineElementSubscriptionWhereInput[]
+    | ScheduleOfflineElementSubscriptionWhereInput;
 }
 
 export interface ScheduleCreditUpdateOneInput {
@@ -3887,15 +4122,21 @@ export interface ScheduleCreditUpdateOneInput {
   connect?: ScheduleCreditWhereUniqueInput;
 }
 
-export interface UserSubscriptionWhereInput {
+export interface ScheduleCreditSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  node?: ScheduleCreditWhereInput;
+  AND?:
+    | ScheduleCreditSubscriptionWhereInput[]
+    | ScheduleCreditSubscriptionWhereInput;
+  OR?:
+    | ScheduleCreditSubscriptionWhereInput[]
+    | ScheduleCreditSubscriptionWhereInput;
+  NOT?:
+    | ScheduleCreditSubscriptionWhereInput[]
+    | ScheduleCreditSubscriptionWhereInput;
 }
 
 export interface ScheduleCreditUpdateDataInput {
@@ -3909,33 +4150,15 @@ export interface ScheduleCreditUpdateDataInput {
   debit?: ScheduleDebitUpdateOneWithoutCreditInput;
 }
 
-export interface ShiftSlotWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  index?: Int;
-  index_not?: Int;
-  index_in?: Int[] | Int;
-  index_not_in?: Int[] | Int;
-  index_lt?: Int;
-  index_lte?: Int;
-  index_gt?: Int;
-  index_gte?: Int;
-  schedule?: ScheduleWhereInput;
-  AND?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
-  OR?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
-  NOT?: ShiftSlotWhereInput[] | ShiftSlotWhereInput;
+export interface ScheduleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleWhereInput;
+  AND?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
+  OR?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
+  NOT?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
 }
 
 export interface EmployeeUpdateOneRequiredWithoutCreditsInput {
@@ -3945,52 +4168,21 @@ export interface EmployeeUpdateOneRequiredWithoutCreditsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface UserRoleWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  AND?: UserRoleWhereInput[] | UserRoleWhereInput;
-  OR?: UserRoleWhereInput[] | UserRoleWhereInput;
-  NOT?: UserRoleWhereInput[] | UserRoleWhereInput;
+export interface ExceptionSlotSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ExceptionSlotWhereInput;
+  AND?:
+    | ExceptionSlotSubscriptionWhereInput[]
+    | ExceptionSlotSubscriptionWhereInput;
+  OR?:
+    | ExceptionSlotSubscriptionWhereInput[]
+    | ExceptionSlotSubscriptionWhereInput;
+  NOT?:
+    | ExceptionSlotSubscriptionWhereInput[]
+    | ExceptionSlotSubscriptionWhereInput;
 }
 
 export interface EmployeeUpdateWithoutCreditsDataInput {
@@ -4012,79 +4204,27 @@ export interface EmployeeUpdateWithoutCreditsDataInput {
   cargo?: String;
   zkTimePin?: Int;
   department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
   shifts?: ShiftUpdateManyWithoutEmployeeInput;
   exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
   debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
 }
 
-export interface UserWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  username?: String;
-  username_not?: String;
-  username_in?: String[] | String;
-  username_not_in?: String[] | String;
-  username_lt?: String;
-  username_lte?: String;
-  username_gt?: String;
-  username_gte?: String;
-  username_contains?: String;
-  username_not_contains?: String;
-  username_starts_with?: String;
-  username_not_starts_with?: String;
-  username_ends_with?: String;
-  username_not_ends_with?: String;
-  password?: String;
-  password_not?: String;
-  password_in?: String[] | String;
-  password_not_in?: String[] | String;
-  password_lt?: String;
-  password_lte?: String;
-  password_gt?: String;
-  password_gte?: String;
-  password_contains?: String;
-  password_not_contains?: String;
-  password_starts_with?: String;
-  password_not_starts_with?: String;
-  password_ends_with?: String;
-  password_not_ends_with?: String;
-  departments_every?: DepartmentWhereInput;
-  departments_some?: DepartmentWhereInput;
-  departments_none?: DepartmentWhereInput;
-  roles_every?: UserRoleWhereInput;
-  roles_some?: UserRoleWhereInput;
-  roles_none?: UserRoleWhereInput;
-  AND?: UserWhereInput[] | UserWhereInput;
-  OR?: UserWhereInput[] | UserWhereInput;
-  NOT?: UserWhereInput[] | UserWhereInput;
+export interface ExceptionAuthorizationSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ExceptionAuthorizationWhereInput;
+  AND?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
+  OR?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
+  NOT?:
+    | ExceptionAuthorizationSubscriptionWhereInput[]
+    | ExceptionAuthorizationSubscriptionWhereInput;
 }
 
 export interface DepartmentUpdateOneWithoutSubordinatesInput {
@@ -4096,21 +4236,21 @@ export interface DepartmentUpdateOneWithoutSubordinatesInput {
   connect?: DepartmentWhereUniqueInput;
 }
 
-export interface FieldOptionLabelSubscriptionWhereInput {
+export interface EventSyncLogSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: FieldOptionLabelWhereInput;
+  node?: EventSyncLogWhereInput;
   AND?:
-    | FieldOptionLabelSubscriptionWhereInput[]
-    | FieldOptionLabelSubscriptionWhereInput;
+    | EventSyncLogSubscriptionWhereInput[]
+    | EventSyncLogSubscriptionWhereInput;
   OR?:
-    | FieldOptionLabelSubscriptionWhereInput[]
-    | FieldOptionLabelSubscriptionWhereInput;
+    | EventSyncLogSubscriptionWhereInput[]
+    | EventSyncLogSubscriptionWhereInput;
   NOT?:
-    | FieldOptionLabelSubscriptionWhereInput[]
-    | FieldOptionLabelSubscriptionWhereInput;
+    | EventSyncLogSubscriptionWhereInput[]
+    | EventSyncLogSubscriptionWhereInput;
 }
 
 export interface DepartmentUpdateWithoutSubordinatesDataInput {
@@ -4288,6 +4428,9 @@ export interface EmployeeWhereInput {
   zkTimePin_gt?: Int;
   zkTimePin_gte?: Int;
   department?: DepartmentWhereInput;
+  events_every?: EventWhereInput;
+  events_some?: EventWhereInput;
+  events_none?: EventWhereInput;
   shifts_every?: ShiftWhereInput;
   shifts_some?: ShiftWhereInput;
   shifts_none?: ShiftWhereInput;
@@ -4320,7 +4463,7 @@ export interface UserUpdateManyWithoutDepartmentsInput {
     | UserUpsertWithWhereUniqueWithoutDepartmentsInput;
 }
 
-export type DirectCreditWhereUniqueInput = AtLeastOne<{
+export type EmployeeWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
@@ -4329,16 +4472,9 @@ export interface UserUpdateWithWhereUniqueWithoutDepartmentsInput {
   data: UserUpdateWithoutDepartmentsDataInput;
 }
 
-export interface DepartmentSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: DepartmentWhereInput;
-  AND?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
-  OR?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
-  NOT?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
-}
+export type EventWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface UserUpdateWithoutDepartmentsDataInput {
   username?: String;
@@ -4346,10 +4482,9 @@ export interface UserUpdateWithoutDepartmentsDataInput {
   roles?: UserRoleUpdateManyInput;
 }
 
-export interface UserRoleUpdateInput {
-  name?: String;
-  description?: String;
-}
+export type EventSyncLogWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface UserUpsertWithWhereUniqueWithoutDepartmentsInput {
   where: UserWhereUniqueInput;
@@ -4357,8 +4492,29 @@ export interface UserUpsertWithWhereUniqueWithoutDepartmentsInput {
   create: UserCreateWithoutDepartmentsInput;
 }
 
-export interface ShiftSlotUpdateManyMutationInput {
-  index?: Int;
+export interface EmployeeUpdateWithoutShiftsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
 }
 
 export interface DepartmentUpsertWithoutSubordinatesInput {
@@ -4366,10 +4522,29 @@ export interface DepartmentUpsertWithoutSubordinatesInput {
   create: DepartmentCreateWithoutSubordinatesInput;
 }
 
-export interface ShiftUpdateManyMutationInput {
-  description?: String;
-  startDate?: DateTimeInput;
-  endDate?: DateTimeInput;
+export interface EmployeeCreateWithoutShiftsInput {
+  nameFirst: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin: Int;
+  department?: DepartmentCreateOneWithoutSubordinatesInput;
+  events?: EventCreateManyWithoutEmployeeInput;
+  exceptions?: ExceptionCreateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
 }
 
 export interface ScheduleDebitUpdateManyWithoutEmployeeInput {
@@ -4387,22 +4562,18 @@ export interface ScheduleDebitUpdateManyWithoutEmployeeInput {
     | ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput;
 }
 
-export interface EmployeeUpdateOneRequiredWithoutShiftsInput {
-  create?: EmployeeCreateWithoutShiftsInput;
-  update?: EmployeeUpdateWithoutShiftsDataInput;
-  upsert?: EmployeeUpsertWithoutShiftsInput;
-  connect?: EmployeeWhereUniqueInput;
-}
+export type DepartmentWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleDebitUpdateWithWhereUniqueWithoutEmployeeInput {
   where: ScheduleDebitWhereUniqueInput;
   data: ScheduleDebitUpdateWithoutEmployeeDataInput;
 }
 
-export interface EmployeeCreateOneWithoutShiftsInput {
-  create?: EmployeeCreateWithoutShiftsInput;
-  connect?: EmployeeWhereUniqueInput;
-}
+export type ExceptionCancellationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
   category?: ScheduleOfflineCategory;
@@ -4411,9 +4582,10 @@ export interface ScheduleDebitUpdateWithoutEmployeeDataInput {
   date?: DateTimeInput;
 }
 
-export type ExceptionRejectionWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ScheduleDebitUpdateManyMutationInput {
+  category?: ScheduleOfflineCategory;
+  date?: DateTimeInput;
+}
 
 export interface ExceptionUpdateOneRequiredWithoutDebitsInput {
   create?: ExceptionCreateWithoutDebitsInput;
@@ -4422,8 +4594,10 @@ export interface ExceptionUpdateOneRequiredWithoutDebitsInput {
   connect?: ExceptionWhereUniqueInput;
 }
 
-export interface ScheduleOfflineElementUpdateInput {
+export interface ScheduleCreditUpdateManyMutationInput {
   category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceDate?: DateTimeInput;
 }
 
 export interface ExceptionUpdateWithoutDebitsDataInput {
@@ -4439,12 +4613,11 @@ export interface ExceptionUpdateWithoutDebitsDataInput {
   credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
 }
 
-export interface ScheduleDebitCreateInput {
-  employee: EmployeeCreateOneWithoutDebitsInput;
-  category: ScheduleOfflineCategory;
-  exception: ExceptionCreateOneWithoutDebitsInput;
-  credit: ScheduleCreditCreateOneWithoutDebitInput;
-  date: DateTimeInput;
+export interface ScheduleCategoryConfigUpdateInput {
+  category?: ScheduleCategory;
+  backgroundColor?: String;
+  foregroundColor?: String;
+  description?: String;
 }
 
 export interface EmployeeUpdateOneRequiredWithoutExceptionsInput {
@@ -4454,15 +4627,17 @@ export interface EmployeeUpdateOneRequiredWithoutExceptionsInput {
   connect?: EmployeeWhereUniqueInput;
 }
 
-export interface ScheduleCreditUpdateInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+export interface ScheduleUpdateInput {
+  isPreset?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  description?: String;
+  baseTime?: Int;
+  innerBound?: Int;
+  outerBound?: Int;
+  timeline?: ScheduleTimelineElementUpdateManyInput;
+  restline?: ScheduleRestlineElementUpdateManyInput;
+  offline1?: ScheduleOfflineElementUpdateOneInput;
+  offline2?: ScheduleOfflineElementUpdateOneInput;
 }
 
 export interface EmployeeUpdateWithoutExceptionsDataInput {
@@ -4484,15 +4659,17 @@ export interface EmployeeUpdateWithoutExceptionsDataInput {
   cargo?: String;
   zkTimePin?: Int;
   department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
   shifts?: ShiftUpdateManyWithoutEmployeeInput;
   credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
   debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
 }
 
-export type HolidayWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  date?: DateTimeInput;
-}>;
+export interface FieldOptionLabelUpdateManyMutationInput {
+  field?: String;
+  value?: String;
+  label?: String;
+}
 
 export interface ScheduleCreditUpdateManyWithoutEmployeeInput {
   create?:
@@ -4511,9 +4688,8 @@ export interface ScheduleCreditUpdateManyWithoutEmployeeInput {
     | ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput;
 }
 
-export interface HolidayUpdateInput {
+export interface ExceptionSlotUpdateManyMutationInput {
   date?: DateTimeInput;
-  name?: String;
 }
 
 export interface ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput {
@@ -4521,10 +4697,9 @@ export interface ScheduleCreditUpdateWithWhereUniqueWithoutEmployeeInput {
   data: ScheduleCreditUpdateWithoutEmployeeDataInput;
 }
 
-export interface FieldOptionLabelCreateInput {
-  field: String;
-  value: String;
-  label?: String;
+export interface ExceptionUpsertWithoutRejectionInput {
+  update: ExceptionUpdateWithoutRejectionDataInput;
+  create: ExceptionCreateWithoutRejectionInput;
 }
 
 export interface ScheduleCreditUpdateWithoutEmployeeDataInput {
@@ -4535,6 +4710,824 @@ export interface ScheduleCreditUpdateWithoutEmployeeDataInput {
   sourceConcurentHoliday?: HolidayUpdateOneInput;
   sourceDate?: DateTimeInput;
   debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+}
+
+export interface ExceptionRejectionUpdateInput {
+  exception?: ExceptionUpdateOneRequiredWithoutRejectionInput;
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface ExceptionUpdateOneWithoutCreditsInput {
+  create?: ExceptionCreateWithoutCreditsInput;
+  update?: ExceptionUpdateWithoutCreditsDataInput;
+  upsert?: ExceptionUpsertWithoutCreditsInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export type ScheduleCategoryConfigWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ExceptionUpdateWithoutCreditsDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
+}
+
+export interface ExceptionUpsertWithoutEliminationInput {
+  update: ExceptionUpdateWithoutEliminationDataInput;
+  create: ExceptionCreateWithoutEliminationInput;
+}
+
+export interface ExceptionRejectionUpdateOneWithoutExceptionInput {
+  create?: ExceptionRejectionCreateWithoutExceptionInput;
+  update?: ExceptionRejectionUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionRejectionUpsertWithoutExceptionInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionRejectionWhereUniqueInput;
+}
+
+export type ScheduleCreditWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ExceptionRejectionUpdateWithoutExceptionDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export type ScheduleDebitWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ExceptionRejectionUpsertWithoutExceptionInput {
+  update: ExceptionRejectionUpdateWithoutExceptionDataInput;
+  create: ExceptionRejectionCreateWithoutExceptionInput;
+}
+
+export type ScheduleOfflineElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ExceptionAuthorizationUpdateOneWithoutExceptionInput {
+  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
+  update?: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionAuthorizationUpsertWithoutExceptionInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionAuthorizationWhereUniqueInput;
+}
+
+export interface ExceptionCreateOneWithoutCancellationInput {
+  create?: ExceptionCreateWithoutCancellationInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface ExceptionAuthorizationUpdateWithoutExceptionDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface ExceptionUpsertWithoutAuthorizationInput {
+  update: ExceptionUpdateWithoutAuthorizationDataInput;
+  create: ExceptionCreateWithoutAuthorizationInput;
+}
+
+export interface ExceptionAuthorizationUpsertWithoutExceptionInput {
+  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
+  create: ExceptionAuthorizationCreateWithoutExceptionInput;
+}
+
+export interface ExceptionAuthorizationUpdateInput {
+  exception?: ExceptionUpdateOneRequiredWithoutAuthorizationInput;
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface ExceptionCancellationUpdateOneWithoutExceptionInput {
+  create?: ExceptionCancellationCreateWithoutExceptionInput;
+  update?: ExceptionCancellationUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionCancellationUpsertWithoutExceptionInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionCancellationWhereUniqueInput;
+}
+
+export interface ExceptionAuthorizationCreateInput {
+  exception: ExceptionCreateOneWithoutAuthorizationInput;
+  owner: UserCreateOneInput;
+  description?: String;
+}
+
+export interface ExceptionCancellationUpdateWithoutExceptionDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface ExceptionCreateInput {
+  type: ExceptionTypeEnum;
+  employee: EmployeeCreateOneWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotCreateManyInput;
+  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
+  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
+  owner: UserCreateOneInput;
+  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
+}
+
+export interface ExceptionCancellationUpsertWithoutExceptionInput {
+  update: ExceptionCancellationUpdateWithoutExceptionDataInput;
+  create: ExceptionCancellationCreateWithoutExceptionInput;
+}
+
+export interface EventSyncLogCreateInput {
+  from: DateTimeInput;
+  to: DateTimeInput;
+}
+
+export interface ExceptionEliminationUpdateOneWithoutExceptionInput {
+  create?: ExceptionEliminationCreateWithoutExceptionInput;
+  update?: ExceptionEliminationUpdateWithoutExceptionDataInput;
+  upsert?: ExceptionEliminationUpsertWithoutExceptionInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ExceptionEliminationWhereUniqueInput;
+}
+
+export interface EmployeeUpdateWithoutEventsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface ExceptionEliminationUpdateWithoutExceptionDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface AttendanceCycleUpdateManyMutationInput {
+  name?: String;
+  startDate?: DateTimeInput;
+  endDate?: DateTimeInput;
+}
+
+export interface ExceptionEliminationUpsertWithoutExceptionInput {
+  update: ExceptionEliminationUpdateWithoutExceptionDataInput;
+  create: ExceptionEliminationCreateWithoutExceptionInput;
+}
+
+export interface EmployeeCreateManyWithoutDepartmentInput {
+  create?:
+    | EmployeeCreateWithoutDepartmentInput[]
+    | EmployeeCreateWithoutDepartmentInput;
+  connect?: EmployeeWhereUniqueInput[] | EmployeeWhereUniqueInput;
+}
+
+export interface ScheduleDebitUpdateManyWithoutExceptionInput {
+  create?:
+    | ScheduleDebitCreateWithoutExceptionInput[]
+    | ScheduleDebitCreateWithoutExceptionInput;
+  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
+  update?:
+    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput[]
+    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput;
+  upsert?:
+    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput[]
+    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput;
+}
+
+export interface ShiftCreateManyWithoutEmployeeInput {
+  create?: ShiftCreateWithoutEmployeeInput[] | ShiftCreateWithoutEmployeeInput;
+  connect?: ShiftWhereUniqueInput[] | ShiftWhereUniqueInput;
+}
+
+export interface ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput {
+  where: ScheduleDebitWhereUniqueInput;
+  data: ScheduleDebitUpdateWithoutExceptionDataInput;
+}
+
+export interface ScheduleCreateOneInput {
+  create?: ScheduleCreateInput;
+  connect?: ScheduleWhereUniqueInput;
+}
+
+export interface ScheduleDebitUpdateWithoutExceptionDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
+  category?: ScheduleOfflineCategory;
+  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  date?: DateTimeInput;
+}
+
+export interface ScheduleRestlineElementCreateManyInput {
+  create?:
+    | ScheduleRestlineElementCreateInput[]
+    | ScheduleRestlineElementCreateInput;
+  connect?:
+    | ScheduleRestlineElementWhereUniqueInput[]
+    | ScheduleRestlineElementWhereUniqueInput;
+}
+
+export interface EmployeeUpdateOneRequiredWithoutDebitsInput {
+  create?: EmployeeCreateWithoutDebitsInput;
+  update?: EmployeeUpdateWithoutDebitsDataInput;
+  upsert?: EmployeeUpsertWithoutDebitsInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface UserCreateOneInput {
+  create?: UserCreateInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface EmployeeUpdateWithoutDebitsDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+}
+
+export interface UserRoleCreateManyInput {
+  create?: UserRoleCreateInput[] | UserRoleCreateInput;
+  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
+}
+
+export interface EmployeeUpsertWithoutDebitsInput {
+  update: EmployeeUpdateWithoutDebitsDataInput;
+  create: EmployeeCreateWithoutDebitsInput;
+}
+
+export interface UserRoleSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserRoleWhereInput;
+  AND?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+  OR?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+  NOT?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+}
+
+export interface ScheduleCreditUpdateOneRequiredWithoutDebitInput {
+  create?: ScheduleCreditCreateWithoutDebitInput;
+  update?: ScheduleCreditUpdateWithoutDebitDataInput;
+  upsert?: ScheduleCreditUpsertWithoutDebitInput;
+  connect?: ScheduleCreditWhereUniqueInput;
+}
+
+export interface ScheduleTimelineElementWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  category?: ScheduleTimelineCategory;
+  category_not?: ScheduleTimelineCategory;
+  category_in?: ScheduleTimelineCategory[] | ScheduleTimelineCategory;
+  category_not_in?: ScheduleTimelineCategory[] | ScheduleTimelineCategory;
+  startTime?: Int;
+  startTime_not?: Int;
+  startTime_in?: Int[] | Int;
+  startTime_not_in?: Int[] | Int;
+  startTime_lt?: Int;
+  startTime_lte?: Int;
+  startTime_gt?: Int;
+  startTime_gte?: Int;
+  endTime?: Int;
+  endTime_not?: Int;
+  endTime_in?: Int[] | Int;
+  endTime_not_in?: Int[] | Int;
+  endTime_lt?: Int;
+  endTime_lte?: Int;
+  endTime_gt?: Int;
+  endTime_gte?: Int;
+  startEventRequired?: Boolean;
+  startEventRequired_not?: Boolean;
+  endEventRequired?: Boolean;
+  endEventRequired_not?: Boolean;
+  AND?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
+  OR?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
+  NOT?: ScheduleTimelineElementWhereInput[] | ScheduleTimelineElementWhereInput;
+}
+
+export interface ScheduleCreditUpdateWithoutDebitDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
+  category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+}
+
+export interface ScheduleCategoryConfigSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ScheduleCategoryConfigWhereInput;
+  AND?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+  OR?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+  NOT?:
+    | ScheduleCategoryConfigSubscriptionWhereInput[]
+    | ScheduleCategoryConfigSubscriptionWhereInput;
+}
+
+export interface DirectCreditUpdateOneWithoutCreditsInput {
+  create?: DirectCreditCreateWithoutCreditsInput;
+  update?: DirectCreditUpdateWithoutCreditsDataInput;
+  upsert?: DirectCreditUpsertWithoutCreditsInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: DirectCreditWhereUniqueInput;
+}
+
+export interface ExceptionEliminationSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ExceptionEliminationWhereInput;
+  AND?:
+    | ExceptionEliminationSubscriptionWhereInput[]
+    | ExceptionEliminationSubscriptionWhereInput;
+  OR?:
+    | ExceptionEliminationSubscriptionWhereInput[]
+    | ExceptionEliminationSubscriptionWhereInput;
+  NOT?:
+    | ExceptionEliminationSubscriptionWhereInput[]
+    | ExceptionEliminationSubscriptionWhereInput;
+}
+
+export interface DirectCreditUpdateWithoutCreditsDataInput {
+  owner?: UserUpdateOneRequiredInput;
+  employee?: EmployeeUpdateOneRequiredInput;
+  description?: String;
+}
+
+export interface EmployeeSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: EmployeeWhereInput;
+  AND?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+  OR?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+  NOT?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
+}
+
+export interface EmployeeUpdateOneRequiredInput {
+  create?: EmployeeCreateInput;
+  update?: EmployeeUpdateDataInput;
+  upsert?: EmployeeUpsertNestedInput;
+  connect?: EmployeeWhereUniqueInput;
+}
+
+export interface UserRoleUpdateInput {
+  name?: String;
+  description?: String;
+}
+
+export interface EmployeeUpdateDataInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface EventSyncLogWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  from?: DateTimeInput;
+  from_not?: DateTimeInput;
+  from_in?: DateTimeInput[] | DateTimeInput;
+  from_not_in?: DateTimeInput[] | DateTimeInput;
+  from_lt?: DateTimeInput;
+  from_lte?: DateTimeInput;
+  from_gt?: DateTimeInput;
+  from_gte?: DateTimeInput;
+  to?: DateTimeInput;
+  to_not?: DateTimeInput;
+  to_in?: DateTimeInput[] | DateTimeInput;
+  to_not_in?: DateTimeInput[] | DateTimeInput;
+  to_lt?: DateTimeInput;
+  to_lte?: DateTimeInput;
+  to_gt?: DateTimeInput;
+  to_gte?: DateTimeInput;
+  AND?: EventSyncLogWhereInput[] | EventSyncLogWhereInput;
+  OR?: EventSyncLogWhereInput[] | EventSyncLogWhereInput;
+  NOT?: EventSyncLogWhereInput[] | EventSyncLogWhereInput;
+}
+
+export interface EmployeeUpsertNestedInput {
+  update: EmployeeUpdateDataInput;
+  create: EmployeeCreateInput;
+}
+
+export interface ShiftCreateInput {
+  description?: String;
+  employee: EmployeeCreateOneWithoutShiftsInput;
+  startDate: DateTimeInput;
+  endDate?: DateTimeInput;
+  slots?: ShiftSlotCreateManyInput;
+  owner: UserCreateOneInput;
+}
+
+export interface DirectCreditUpsertWithoutCreditsInput {
+  update: DirectCreditUpdateWithoutCreditsDataInput;
+  create: DirectCreditCreateWithoutCreditsInput;
+}
+
+export interface ScheduleOfflineElementUpdateManyMutationInput {
+  category?: ScheduleOfflineCategory;
+}
+
+export interface HolidayUpdateOneInput {
+  create?: HolidayCreateInput;
+  update?: HolidayUpdateDataInput;
+  upsert?: HolidayUpsertNestedInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: HolidayWhereUniqueInput;
+}
+
+export type ExceptionRejectionWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface HolidayUpdateDataInput {
+  date?: DateTimeInput;
+  name?: String;
+}
+
+export interface HolidayUpdateInput {
+  date?: DateTimeInput;
+  name?: String;
+}
+
+export interface HolidayUpsertNestedInput {
+  update: HolidayUpdateDataInput;
+  create: HolidayCreateInput;
+}
+
+export type HolidayWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  date?: DateTimeInput;
+}>;
+
+export interface ScheduleCreditUpsertWithoutDebitInput {
+  update: ScheduleCreditUpdateWithoutDebitDataInput;
+  create: ScheduleCreditCreateWithoutDebitInput;
+}
+
+export interface ExceptionCreateOneWithoutRejectionInput {
+  create?: ExceptionCreateWithoutRejectionInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput {
+  where: ScheduleDebitWhereUniqueInput;
+  update: ScheduleDebitUpdateWithoutExceptionDataInput;
+  create: ScheduleDebitCreateWithoutExceptionInput;
+}
+
+export interface ExceptionUpdateOneRequiredWithoutEliminationInput {
+  create?: ExceptionCreateWithoutEliminationInput;
+  update?: ExceptionUpdateWithoutEliminationDataInput;
+  upsert?: ExceptionUpsertWithoutEliminationInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface ExceptionUpsertWithoutCreditsInput {
+  update: ExceptionUpdateWithoutCreditsDataInput;
+  create: ExceptionCreateWithoutCreditsInput;
+}
+
+export interface ExceptionUpsertWithoutCancellationInput {
+  update: ExceptionUpdateWithoutCancellationDataInput;
+  create: ExceptionCreateWithoutCancellationInput;
+}
+
+export interface ScheduleDebitUpdateOneWithoutCreditInput {
+  create?: ScheduleDebitCreateWithoutCreditInput;
+  update?: ScheduleDebitUpdateWithoutCreditDataInput;
+  upsert?: ScheduleDebitUpsertWithoutCreditInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ScheduleDebitWhereUniqueInput;
+}
+
+export interface ExceptionCancellationCreateInput {
+  exception: ExceptionCreateOneWithoutCancellationInput;
+  owner: UserCreateOneInput;
+  description?: String;
+}
+
+export interface ScheduleDebitUpdateWithoutCreditDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
+  category?: ScheduleOfflineCategory;
+  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
+  date?: DateTimeInput;
+}
+
+export interface ExceptionCreateWithoutAuthorizationInput {
+  type: ExceptionTypeEnum;
+  employee: EmployeeCreateOneWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotCreateManyInput;
+  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
+  owner: UserCreateOneInput;
+  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
+}
+
+export interface ScheduleDebitUpsertWithoutCreditInput {
+  update: ScheduleDebitUpdateWithoutCreditDataInput;
+  create: ScheduleDebitCreateWithoutCreditInput;
+}
+
+export interface EventSyncLogUpdateManyMutationInput {
+  from?: DateTimeInput;
+  to?: DateTimeInput;
+}
+
+export interface ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleCreditWhereUniqueInput;
+  update: ScheduleCreditUpdateWithoutEmployeeDataInput;
+  create: ScheduleCreditCreateWithoutEmployeeInput;
+}
+
+export interface AttendanceCycleCreateInput {
+  name: String;
+  startDate: DateTimeInput;
+  endDate: DateTimeInput;
+}
+
+export interface EmployeeUpsertWithoutExceptionsInput {
+  update: EmployeeUpdateWithoutExceptionsDataInput;
+  create: EmployeeCreateWithoutExceptionsInput;
+}
+
+export interface EventCreateManyWithoutEmployeeInput {
+  create?: EventCreateWithoutEmployeeInput[] | EventCreateWithoutEmployeeInput;
+  connect?: EventWhereUniqueInput[] | EventWhereUniqueInput;
+}
+
+export interface ScheduleCreditUpdateManyWithoutSourceExceptionInput {
+  create?:
+    | ScheduleCreditCreateWithoutSourceExceptionInput[]
+    | ScheduleCreditCreateWithoutSourceExceptionInput;
+  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+  disconnect?:
+    | ScheduleCreditWhereUniqueInput[]
+    | ScheduleCreditWhereUniqueInput;
+  update?:
+    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput[]
+    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput;
+  upsert?:
+    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput[]
+    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput;
+}
+
+export interface ScheduleTimelineElementCreateManyInput {
+  create?:
+    | ScheduleTimelineElementCreateInput[]
+    | ScheduleTimelineElementCreateInput;
+  connect?:
+    | ScheduleTimelineElementWhereUniqueInput[]
+    | ScheduleTimelineElementWhereUniqueInput;
+}
+
+export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput {
+  where: ScheduleCreditWhereUniqueInput;
+  data: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
+}
+
+export interface DepartmentCreateManyWithoutSupervisorsInput {
+  create?:
+    | DepartmentCreateWithoutSupervisorsInput[]
+    | DepartmentCreateWithoutSupervisorsInput;
+  connect?: DepartmentWhereUniqueInput[] | DepartmentWhereUniqueInput;
+}
+
+export interface ScheduleCreditUpdateWithoutSourceExceptionDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
+  category?: ScheduleOfflineCategory;
+  sourceType?: ScheduleCreditSourceEnum;
+  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
+  sourceDate?: DateTimeInput;
+  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+}
+
+export interface ShiftSlotSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ShiftSlotWhereInput;
+  AND?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
+  OR?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
+  NOT?: ShiftSlotSubscriptionWhereInput[] | ShiftSlotSubscriptionWhereInput;
+}
+
+export interface ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput {
+  where: ScheduleCreditWhereUniqueInput;
+  update: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
+  create: ScheduleCreditCreateWithoutSourceExceptionInput;
+}
+
+export interface FieldOptionLabelSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FieldOptionLabelWhereInput;
+  AND?:
+    | FieldOptionLabelSubscriptionWhereInput[]
+    | FieldOptionLabelSubscriptionWhereInput;
+  OR?:
+    | FieldOptionLabelSubscriptionWhereInput[]
+    | FieldOptionLabelSubscriptionWhereInput;
+  NOT?:
+    | FieldOptionLabelSubscriptionWhereInput[]
+    | FieldOptionLabelSubscriptionWhereInput;
+}
+
+export interface ExceptionUpsertWithoutDebitsInput {
+  update: ExceptionUpdateWithoutDebitsDataInput;
+  create: ExceptionCreateWithoutDebitsInput;
+}
+
+export interface DepartmentSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: DepartmentWhereInput;
+  AND?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
+  OR?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
+  NOT?: DepartmentSubscriptionWhereInput[] | DepartmentSubscriptionWhereInput;
+}
+
+export interface ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ScheduleDebitWhereUniqueInput;
+  update: ScheduleDebitUpdateWithoutEmployeeDataInput;
+  create: ScheduleDebitCreateWithoutEmployeeInput;
+}
+
+export interface ShiftUpdateInput {
+  description?: String;
+  employee?: EmployeeUpdateOneRequiredWithoutShiftsInput;
+  startDate?: DateTimeInput;
+  endDate?: DateTimeInput;
+  slots?: ShiftSlotUpdateManyInput;
+  owner?: UserUpdateOneRequiredInput;
+}
+
+export interface EmployeeUpsertWithoutCreditsInput {
+  update: EmployeeUpdateWithoutCreditsDataInput;
+  create: EmployeeCreateWithoutCreditsInput;
+}
+
+export interface ScheduleDebitUpdateInput {
+  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
+  category?: ScheduleOfflineCategory;
+  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
+  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
+  date?: DateTimeInput;
+}
+
+export interface ScheduleCreditUpsertNestedInput {
+  update: ScheduleCreditUpdateDataInput;
+  create: ScheduleCreditCreateInput;
+}
+
+export interface FieldOptionLabelUpdateInput {
+  field?: String;
+  value?: String;
+  label?: String;
+}
+
+export interface ExceptionSlotUpsertWithWhereUniqueNestedInput {
+  where: ExceptionSlotWhereUniqueInput;
+  update: ExceptionSlotUpdateDataInput;
+  create: ExceptionSlotCreateInput;
 }
 
 export interface AttendanceCycleWhereInput {
@@ -4587,106 +5580,10 @@ export interface AttendanceCycleWhereInput {
   NOT?: AttendanceCycleWhereInput[] | AttendanceCycleWhereInput;
 }
 
-export interface ExceptionUpdateOneWithoutCreditsInput {
-  create?: ExceptionCreateWithoutCreditsInput;
-  update?: ExceptionUpdateWithoutCreditsDataInput;
-  upsert?: ExceptionUpsertWithoutCreditsInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface ExceptionUpdateWithoutRejectionDataInput {
-  type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
-
-export interface ExceptionUpdateWithoutCreditsDataInput {
-  type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
-
-export interface ExceptionCreateWithoutRejectionInput {
-  type: ExceptionTypeEnum;
-  employee: EmployeeCreateOneWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotCreateManyInput;
-  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
-  owner: UserCreateOneInput;
-  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
-
-export interface ExceptionRejectionUpdateOneWithoutExceptionInput {
-  create?: ExceptionRejectionCreateWithoutExceptionInput;
-  update?: ExceptionRejectionUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionRejectionUpsertWithoutExceptionInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionRejectionWhereUniqueInput;
-}
-
-export interface ExceptionEliminationUpdateManyMutationInput {
-  description?: String;
-}
-
-export interface ExceptionRejectionUpdateWithoutExceptionDataInput {
-  owner?: UserUpdateOneRequiredInput;
-  description?: String;
-}
-
-export interface ExceptionUpdateOneRequiredWithoutEliminationInput {
-  create?: ExceptionCreateWithoutEliminationInput;
-  update?: ExceptionUpdateWithoutEliminationDataInput;
-  upsert?: ExceptionUpsertWithoutEliminationInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface ExceptionRejectionUpsertWithoutExceptionInput {
-  update: ExceptionRejectionUpdateWithoutExceptionDataInput;
-  create: ExceptionRejectionCreateWithoutExceptionInput;
-}
-
-export interface ExceptionCreateOneWithoutEliminationInput {
-  create?: ExceptionCreateWithoutEliminationInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface ExceptionAuthorizationUpdateOneWithoutExceptionInput {
-  create?: ExceptionAuthorizationCreateWithoutExceptionInput;
-  update?: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionAuthorizationUpsertWithoutExceptionInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionAuthorizationWhereUniqueInput;
-}
-
-export interface ExceptionUpsertWithoutCancellationInput {
-  update: ExceptionUpdateWithoutCancellationDataInput;
-  create: ExceptionCreateWithoutCancellationInput;
-}
-
-export interface ExceptionAuthorizationUpdateWithoutExceptionDataInput {
-  owner?: UserUpdateOneRequiredInput;
-  description?: String;
+export interface ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
+  where: ExceptionWhereUniqueInput;
+  update: ExceptionUpdateWithoutEmployeeDataInput;
+  create: ExceptionCreateWithoutEmployeeInput;
 }
 
 export interface ExceptionCancellationUpdateInput {
@@ -4695,520 +5592,46 @@ export interface ExceptionCancellationUpdateInput {
   description?: String;
 }
 
-export interface ExceptionAuthorizationUpsertWithoutExceptionInput {
-  update: ExceptionAuthorizationUpdateWithoutExceptionDataInput;
-  create: ExceptionAuthorizationCreateWithoutExceptionInput;
+export interface EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
+  where: EmployeeWhereUniqueInput;
+  update: EmployeeUpdateWithoutDepartmentDataInput;
+  create: EmployeeCreateWithoutDepartmentInput;
 }
 
-export interface ExceptionCancellationCreateInput {
-  exception: ExceptionCreateOneWithoutCancellationInput;
-  owner: UserCreateOneInput;
-  description?: String;
-}
-
-export interface ExceptionCancellationUpdateOneWithoutExceptionInput {
-  create?: ExceptionCancellationCreateWithoutExceptionInput;
-  update?: ExceptionCancellationUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionCancellationUpsertWithoutExceptionInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionCancellationWhereUniqueInput;
-}
-
-export interface ExceptionUpdateWithoutAuthorizationDataInput {
+export interface ExceptionUpdateManyMutationInput {
   type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
-
-export interface ExceptionCancellationUpdateWithoutExceptionDataInput {
-  owner?: UserUpdateOneRequiredInput;
   description?: String;
 }
 
-export interface ExceptionCreateWithoutAuthorizationInput {
-  type: ExceptionTypeEnum;
-  employee: EmployeeCreateOneWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotCreateManyInput;
-  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationCreateOneWithoutExceptionInput;
-  owner: UserCreateOneInput;
-  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
-
-export interface ExceptionCancellationUpsertWithoutExceptionInput {
-  update: ExceptionCancellationUpdateWithoutExceptionDataInput;
-  create: ExceptionCancellationCreateWithoutExceptionInput;
-}
-
-export interface AttendanceCycleCreateInput {
-  name: String;
-  startDate: DateTimeInput;
-  endDate: DateTimeInput;
-}
-
-export interface ExceptionEliminationUpdateOneWithoutExceptionInput {
-  create?: ExceptionEliminationCreateWithoutExceptionInput;
-  update?: ExceptionEliminationUpdateWithoutExceptionDataInput;
-  upsert?: ExceptionEliminationUpsertWithoutExceptionInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ExceptionEliminationWhereUniqueInput;
-}
-
-export interface ExceptionUpdateInput {
-  type?: ExceptionTypeEnum;
-  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotUpdateManyInput;
-  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationUpdateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
-  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
-  owner?: UserUpdateOneRequiredInput;
-  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
-}
-
-export interface ExceptionEliminationUpdateWithoutExceptionDataInput {
-  owner?: UserUpdateOneRequiredInput;
-  description?: String;
-}
-
-export interface ShiftCreateManyWithoutEmployeeInput {
-  create?: ShiftCreateWithoutEmployeeInput[] | ShiftCreateWithoutEmployeeInput;
-  connect?: ShiftWhereUniqueInput[] | ShiftWhereUniqueInput;
-}
-
-export interface ExceptionEliminationUpsertWithoutExceptionInput {
-  update: ExceptionEliminationUpdateWithoutExceptionDataInput;
-  create: ExceptionEliminationCreateWithoutExceptionInput;
-}
-
-export interface ScheduleCreateOneInput {
-  create?: ScheduleCreateInput;
-  connect?: ScheduleWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateManyWithoutExceptionInput {
-  create?:
-    | ScheduleDebitCreateWithoutExceptionInput[]
-    | ScheduleDebitCreateWithoutExceptionInput;
-  delete?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  connect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  disconnect?: ScheduleDebitWhereUniqueInput[] | ScheduleDebitWhereUniqueInput;
-  update?:
-    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput[]
-    | ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput;
-  upsert?:
-    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput[]
-    | ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput;
-}
-
-export interface ScheduleRestlineElementCreateManyInput {
-  create?:
-    | ScheduleRestlineElementCreateInput[]
-    | ScheduleRestlineElementCreateInput;
-  connect?:
-    | ScheduleRestlineElementWhereUniqueInput[]
-    | ScheduleRestlineElementWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateWithWhereUniqueWithoutExceptionInput {
-  where: ScheduleDebitWhereUniqueInput;
-  data: ScheduleDebitUpdateWithoutExceptionDataInput;
-}
-
-export interface UserCreateOneInput {
-  create?: UserCreateInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpdateWithoutExceptionDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
-  category?: ScheduleOfflineCategory;
-  credit?: ScheduleCreditUpdateOneRequiredWithoutDebitInput;
-  date?: DateTimeInput;
-}
-
-export interface UserRoleCreateManyInput {
-  create?: UserRoleCreateInput[] | UserRoleCreateInput;
-  connect?: UserRoleWhereUniqueInput[] | UserRoleWhereUniqueInput;
-}
-
-export interface EmployeeUpdateOneRequiredWithoutDebitsInput {
-  create?: EmployeeCreateWithoutDebitsInput;
-  update?: EmployeeUpdateWithoutDebitsDataInput;
-  upsert?: EmployeeUpsertWithoutDebitsInput;
-  connect?: EmployeeWhereUniqueInput;
-}
-
-export interface ExceptionSlotCreateManyInput {
-  create?: ExceptionSlotCreateInput[] | ExceptionSlotCreateInput;
-  connect?: ExceptionSlotWhereUniqueInput[] | ExceptionSlotWhereUniqueInput;
-}
-
-export interface EmployeeUpdateWithoutDebitsDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-}
-
-export interface EmployeeCreateOneWithoutCreditsInput {
-  create?: EmployeeCreateWithoutCreditsInput;
-  connect?: EmployeeWhereUniqueInput;
-}
-
-export interface EmployeeUpsertWithoutDebitsInput {
-  update: EmployeeUpdateWithoutDebitsDataInput;
-  create: EmployeeCreateWithoutDebitsInput;
-}
-
-export interface ShiftSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ShiftWhereInput;
-  AND?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-  OR?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-  NOT?: ShiftSubscriptionWhereInput[] | ShiftSubscriptionWhereInput;
-}
-
-export interface ScheduleCreditUpdateOneRequiredWithoutDebitInput {
-  create?: ScheduleCreditCreateWithoutDebitInput;
-  update?: ScheduleCreditUpdateWithoutDebitDataInput;
-  upsert?: ScheduleCreditUpsertWithoutDebitInput;
-  connect?: ScheduleCreditWhereUniqueInput;
-}
-
-export interface ScheduleDebitSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ScheduleDebitWhereInput;
-  AND?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-  OR?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-  NOT?:
-    | ScheduleDebitSubscriptionWhereInput[]
-    | ScheduleDebitSubscriptionWhereInput;
-}
-
-export interface ScheduleCreditUpdateWithoutDebitDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-}
-
-export interface ExceptionRejectionSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionRejectionWhereInput;
-  AND?:
-    | ExceptionRejectionSubscriptionWhereInput[]
-    | ExceptionRejectionSubscriptionWhereInput;
-  OR?:
-    | ExceptionRejectionSubscriptionWhereInput[]
-    | ExceptionRejectionSubscriptionWhereInput;
-  NOT?:
-    | ExceptionRejectionSubscriptionWhereInput[]
-    | ExceptionRejectionSubscriptionWhereInput;
-}
-
-export interface DirectCreditUpdateOneWithoutCreditsInput {
-  create?: DirectCreditCreateWithoutCreditsInput;
-  update?: DirectCreditUpdateWithoutCreditsDataInput;
-  upsert?: DirectCreditUpsertWithoutCreditsInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: DirectCreditWhereUniqueInput;
-}
-
-export interface EmployeeSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: EmployeeWhereInput;
-  AND?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
-  OR?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
-  NOT?: EmployeeSubscriptionWhereInput[] | EmployeeSubscriptionWhereInput;
-}
-
-export interface DirectCreditUpdateWithoutCreditsDataInput {
-  owner?: UserUpdateOneRequiredInput;
-  employee?: EmployeeUpdateOneRequiredInput;
-  description?: String;
-}
-
-export interface UserUpdateManyMutationInput {
-  username?: String;
-  password?: String;
-}
-
-export interface EmployeeUpdateOneRequiredInput {
-  create?: EmployeeCreateInput;
-  update?: EmployeeUpdateDataInput;
-  upsert?: EmployeeUpsertNestedInput;
-  connect?: EmployeeWhereUniqueInput;
-}
-
-export type ExceptionCancellationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface EmployeeUpdateDataInput {
-  nameFirst?: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin?: Int;
-  department?: DepartmentUpdateOneWithoutSubordinatesInput;
-  shifts?: ShiftUpdateManyWithoutEmployeeInput;
-  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
-}
-
-export interface ScheduleTimelineElementUpdateManyMutationInput {
-  category?: ScheduleTimelineCategory;
-  startTime?: Int;
-  endTime?: Int;
-  startEventRequired?: Boolean;
-  endEventRequired?: Boolean;
-}
-
-export interface EmployeeUpsertNestedInput {
-  update: EmployeeUpdateDataInput;
-  create: EmployeeCreateInput;
-}
-
-export interface ScheduleDebitUpdateManyMutationInput {
-  category?: ScheduleOfflineCategory;
-  date?: DateTimeInput;
-}
-
-export interface DirectCreditUpsertWithoutCreditsInput {
-  update: DirectCreditUpdateWithoutCreditsDataInput;
-  create: DirectCreditCreateWithoutCreditsInput;
-}
-
-export interface ScheduleCategoryConfigUpdateInput {
-  category?: ScheduleCategory;
-  backgroundColor?: String;
-  foregroundColor?: String;
-  description?: String;
-}
-
-export interface HolidayUpdateOneInput {
-  create?: HolidayCreateInput;
-  update?: HolidayUpdateDataInput;
-  upsert?: HolidayUpsertNestedInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: HolidayWhereUniqueInput;
-}
-
-export interface FieldOptionLabelUpdateManyMutationInput {
-  field?: String;
-  value?: String;
-  label?: String;
-}
-
-export interface HolidayUpdateDataInput {
-  date?: DateTimeInput;
+export interface DepartmentUpdateManyMutationInput {
   name?: String;
 }
 
-export interface ExceptionRejectionUpdateManyMutationInput {
-  description?: String;
+export interface EventUpdateInput {
+  employee?: EmployeeUpdateOneRequiredWithoutEventsInput;
+  time?: DateTimeInput;
 }
 
-export interface HolidayUpsertNestedInput {
-  update: HolidayUpdateDataInput;
-  create: HolidayCreateInput;
-}
-
-export type ScheduleDebitWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleCreditUpsertWithoutDebitInput {
-  update: ScheduleCreditUpdateWithoutDebitDataInput;
-  create: ScheduleCreditCreateWithoutDebitInput;
-}
-
-export interface ExceptionCreateWithoutEliminationInput {
-  type: ExceptionTypeEnum;
-  employee: EmployeeCreateOneWithoutExceptionsInput;
-  description?: String;
-  slots?: ExceptionSlotCreateManyInput;
-  rejection?: ExceptionRejectionCreateOneWithoutExceptionInput;
-  authorization?: ExceptionAuthorizationCreateOneWithoutExceptionInput;
-  cancellation?: ExceptionCancellationCreateOneWithoutExceptionInput;
+export interface DirectCreditCreateInput {
   owner: UserCreateOneInput;
-  credits?: ScheduleCreditCreateManyWithoutSourceExceptionInput;
-  debits?: ScheduleDebitCreateManyWithoutExceptionInput;
-}
-
-export interface ScheduleDebitUpsertWithWhereUniqueWithoutExceptionInput {
-  where: ScheduleDebitWhereUniqueInput;
-  update: ScheduleDebitUpdateWithoutExceptionDataInput;
-  create: ScheduleDebitCreateWithoutExceptionInput;
-}
-
-export interface ExceptionUpdateOneRequiredWithoutCancellationInput {
-  create?: ExceptionCreateWithoutCancellationInput;
-  update?: ExceptionUpdateWithoutCancellationDataInput;
-  upsert?: ExceptionUpsertWithoutCancellationInput;
-  connect?: ExceptionWhereUniqueInput;
-}
-
-export interface ExceptionUpsertWithoutCreditsInput {
-  update: ExceptionUpdateWithoutCreditsDataInput;
-  create: ExceptionCreateWithoutCreditsInput;
-}
-
-export interface ExceptionUpsertWithoutAuthorizationInput {
-  update: ExceptionUpdateWithoutAuthorizationDataInput;
-  create: ExceptionCreateWithoutAuthorizationInput;
-}
-
-export interface ScheduleDebitUpdateOneWithoutCreditInput {
-  create?: ScheduleDebitCreateWithoutCreditInput;
-  update?: ScheduleDebitUpdateWithoutCreditDataInput;
-  upsert?: ScheduleDebitUpsertWithoutCreditInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ScheduleDebitWhereUniqueInput;
-}
-
-export interface ExceptionAuthorizationCreateInput {
-  exception: ExceptionCreateOneWithoutAuthorizationInput;
-  owner: UserCreateOneInput;
+  employee: EmployeeCreateOneInput;
   description?: String;
+  credits?: ScheduleCreditCreateManyWithoutSourceDirectInput;
 }
 
-export interface ScheduleDebitUpdateWithoutCreditDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutDebitsInput;
-  category?: ScheduleOfflineCategory;
-  exception?: ExceptionUpdateOneRequiredWithoutDebitsInput;
-  date?: DateTimeInput;
+export interface ScheduleOfflineElementCreateOneInput {
+  create?: ScheduleOfflineElementCreateInput;
+  connect?: ScheduleOfflineElementWhereUniqueInput;
 }
 
-export interface EmployeeCreateManyWithoutDepartmentInput {
+export interface ScheduleCreditCreateManyWithoutSourceDirectInput {
   create?:
-    | EmployeeCreateWithoutDepartmentInput[]
-    | EmployeeCreateWithoutDepartmentInput;
-  connect?: EmployeeWhereUniqueInput[] | EmployeeWhereUniqueInput;
-}
-
-export interface ScheduleDebitUpsertWithoutCreditInput {
-  update: ScheduleDebitUpdateWithoutCreditDataInput;
-  create: ScheduleDebitCreateWithoutCreditInput;
-}
-
-export interface ScheduleTimelineElementCreateManyInput {
-  create?:
-    | ScheduleTimelineElementCreateInput[]
-    | ScheduleTimelineElementCreateInput;
-  connect?:
-    | ScheduleTimelineElementWhereUniqueInput[]
-    | ScheduleTimelineElementWhereUniqueInput;
-}
-
-export interface ScheduleCreditUpsertWithWhereUniqueWithoutEmployeeInput {
-  where: ScheduleCreditWhereUniqueInput;
-  update: ScheduleCreditUpdateWithoutEmployeeDataInput;
-  create: ScheduleCreditCreateWithoutEmployeeInput;
-}
-
-export interface DepartmentCreateManyWithoutSupervisorsInput {
-  create?:
-    | DepartmentCreateWithoutSupervisorsInput[]
-    | DepartmentCreateWithoutSupervisorsInput;
-  connect?: DepartmentWhereUniqueInput[] | DepartmentWhereUniqueInput;
-}
-
-export interface EmployeeUpsertWithoutExceptionsInput {
-  update: EmployeeUpdateWithoutExceptionsDataInput;
-  create: EmployeeCreateWithoutExceptionsInput;
-}
-
-export interface ScheduleCreditCreateOneInput {
-  create?: ScheduleCreditCreateInput;
-  connect?: ScheduleCreditWhereUniqueInput;
-}
-
-export interface ScheduleCreditUpdateManyWithoutSourceExceptionInput {
-  create?:
-    | ScheduleCreditCreateWithoutSourceExceptionInput[]
-    | ScheduleCreditCreateWithoutSourceExceptionInput;
-  delete?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
+    | ScheduleCreditCreateWithoutSourceDirectInput[]
+    | ScheduleCreditCreateWithoutSourceDirectInput;
   connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-  disconnect?:
-    | ScheduleCreditWhereUniqueInput[]
-    | ScheduleCreditWhereUniqueInput;
-  update?:
-    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput[]
-    | ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput;
-  upsert?:
-    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput[]
-    | ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput;
 }
 
-export interface ShiftWhereInput {
+export interface ScheduleWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -5223,6 +5646,16 @@ export interface ShiftWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
+  isPreset?: Boolean;
+  isPreset_not?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  systemScheduleIdentifier_not?: SystemScheduleIdentifierEnum;
+  systemScheduleIdentifier_in?:
+    | SystemScheduleIdentifierEnum[]
+    | SystemScheduleIdentifierEnum;
+  systemScheduleIdentifier_not_in?:
+    | SystemScheduleIdentifierEnum[]
+    | SystemScheduleIdentifierEnum;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -5253,221 +5686,41 @@ export interface ShiftWhereInput {
   description_not_starts_with?: String;
   description_ends_with?: String;
   description_not_ends_with?: String;
-  employee?: EmployeeWhereInput;
-  startDate?: DateTimeInput;
-  startDate_not?: DateTimeInput;
-  startDate_in?: DateTimeInput[] | DateTimeInput;
-  startDate_not_in?: DateTimeInput[] | DateTimeInput;
-  startDate_lt?: DateTimeInput;
-  startDate_lte?: DateTimeInput;
-  startDate_gt?: DateTimeInput;
-  startDate_gte?: DateTimeInput;
-  endDate?: DateTimeInput;
-  endDate_not?: DateTimeInput;
-  endDate_in?: DateTimeInput[] | DateTimeInput;
-  endDate_not_in?: DateTimeInput[] | DateTimeInput;
-  endDate_lt?: DateTimeInput;
-  endDate_lte?: DateTimeInput;
-  endDate_gt?: DateTimeInput;
-  endDate_gte?: DateTimeInput;
-  slots_every?: ShiftSlotWhereInput;
-  slots_some?: ShiftSlotWhereInput;
-  slots_none?: ShiftSlotWhereInput;
-  owner?: UserWhereInput;
-  AND?: ShiftWhereInput[] | ShiftWhereInput;
-  OR?: ShiftWhereInput[] | ShiftWhereInput;
-  NOT?: ShiftWhereInput[] | ShiftWhereInput;
-}
-
-export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceExceptionInput {
-  where: ScheduleCreditWhereUniqueInput;
-  data: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
-}
-
-export interface ExceptionCancellationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ExceptionCancellationWhereInput;
-  AND?:
-    | ExceptionCancellationSubscriptionWhereInput[]
-    | ExceptionCancellationSubscriptionWhereInput;
-  OR?:
-    | ExceptionCancellationSubscriptionWhereInput[]
-    | ExceptionCancellationSubscriptionWhereInput;
-  NOT?:
-    | ExceptionCancellationSubscriptionWhereInput[]
-    | ExceptionCancellationSubscriptionWhereInput;
-}
-
-export interface ScheduleCreditUpdateWithoutSourceExceptionDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceDirect?: DirectCreditUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
-}
-
-export type DepartmentWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleCreditUpsertWithWhereUniqueWithoutSourceExceptionInput {
-  where: ScheduleCreditWhereUniqueInput;
-  update: ScheduleCreditUpdateWithoutSourceExceptionDataInput;
-  create: ScheduleCreditCreateWithoutSourceExceptionInput;
-}
-
-export interface ScheduleRestlineElementUpdateInput {
-  category?: ScheduleRestlineCategory;
-  duration?: Int;
-  startTime?: Int;
-  endTime?: Int;
-  startEventRequired?: Boolean;
-  endEventRequired?: Boolean;
-}
-
-export interface ExceptionUpsertWithoutDebitsInput {
-  update: ExceptionUpdateWithoutDebitsDataInput;
-  create: ExceptionCreateWithoutDebitsInput;
-}
-
-export interface ScheduleUpdateInput {
-  isPreset?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  description?: String;
   baseTime?: Int;
+  baseTime_not?: Int;
+  baseTime_in?: Int[] | Int;
+  baseTime_not_in?: Int[] | Int;
+  baseTime_lt?: Int;
+  baseTime_lte?: Int;
+  baseTime_gt?: Int;
+  baseTime_gte?: Int;
   innerBound?: Int;
+  innerBound_not?: Int;
+  innerBound_in?: Int[] | Int;
+  innerBound_not_in?: Int[] | Int;
+  innerBound_lt?: Int;
+  innerBound_lte?: Int;
+  innerBound_gt?: Int;
+  innerBound_gte?: Int;
   outerBound?: Int;
-  timeline?: ScheduleTimelineElementUpdateManyInput;
-  restline?: ScheduleRestlineElementUpdateManyInput;
-  offline1?: ScheduleOfflineElementUpdateOneInput;
-  offline2?: ScheduleOfflineElementUpdateOneInput;
-}
-
-export interface ScheduleDebitUpsertWithWhereUniqueWithoutEmployeeInput {
-  where: ScheduleDebitWhereUniqueInput;
-  update: ScheduleDebitUpdateWithoutEmployeeDataInput;
-  create: ScheduleDebitCreateWithoutEmployeeInput;
-}
-
-export type ScheduleCreditWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface EmployeeUpsertWithoutCreditsInput {
-  update: EmployeeUpdateWithoutCreditsDataInput;
-  create: EmployeeCreateWithoutCreditsInput;
-}
-
-export interface ExceptionCancellationUpdateManyMutationInput {
-  description?: String;
-}
-
-export interface ScheduleCreditUpsertNestedInput {
-  update: ScheduleCreditUpdateDataInput;
-  create: ScheduleCreditCreateInput;
-}
-
-export interface ExceptionAuthorizationUpdateInput {
-  exception?: ExceptionUpdateOneRequiredWithoutAuthorizationInput;
-  owner?: UserUpdateOneRequiredInput;
-  description?: String;
-}
-
-export interface ExceptionSlotUpsertWithWhereUniqueNestedInput {
-  where: ExceptionSlotWhereUniqueInput;
-  update: ExceptionSlotUpdateDataInput;
-  create: ExceptionSlotCreateInput;
-}
-
-export interface ShiftSlotCreateManyInput {
-  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
-  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
-}
-
-export interface ExceptionUpsertWithWhereUniqueWithoutEmployeeInput {
-  where: ExceptionWhereUniqueInput;
-  update: ExceptionUpdateWithoutEmployeeDataInput;
-  create: ExceptionCreateWithoutEmployeeInput;
-}
-
-export interface ExceptionCreateManyWithoutEmployeeInput {
-  create?:
-    | ExceptionCreateWithoutEmployeeInput[]
-    | ExceptionCreateWithoutEmployeeInput;
-  connect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
-}
-
-export interface EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
-  where: EmployeeWhereUniqueInput;
-  update: EmployeeUpdateWithoutDepartmentDataInput;
-  create: EmployeeCreateWithoutDepartmentInput;
-}
-
-export interface ScheduleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ScheduleWhereInput;
-  AND?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
-  OR?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
-  NOT?: ScheduleSubscriptionWhereInput[] | ScheduleSubscriptionWhereInput;
-}
-
-export interface DepartmentUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface EmployeeCreateWithoutShiftsInput {
-  nameFirst: String;
-  nameMiddle?: String;
-  namePaternal?: String;
-  nameMaternal?: String;
-  documentType?: EmployeeDocumentTypeEnum;
-  documentNumber?: String;
-  sex?: EmployeeSexEnum;
-  dateOfBirth?: DateTimeInput;
-  nationality?: String;
-  jubilado?: Boolean;
-  personaConDiscapacidad?: Boolean;
-  tutorPersonaConDiscapacidad?: Boolean;
-  cajaDeSalud?: EmployeeCajaDeSaludEnum;
-  aportaAFP?: Boolean;
-  AFP?: EmployeeAFPEnum;
-  cargo?: String;
-  zkTimePin: Int;
-  department?: DepartmentCreateOneWithoutSubordinatesInput;
-  exceptions?: ExceptionCreateManyWithoutEmployeeInput;
-  credits?: ScheduleCreditCreateManyWithoutEmployeeInput;
-  debits?: ScheduleDebitCreateManyWithoutEmployeeInput;
-}
-
-export interface DirectCreditCreateInput {
-  owner: UserCreateOneInput;
-  employee: EmployeeCreateOneInput;
-  description?: String;
-  credits?: ScheduleCreditCreateManyWithoutSourceDirectInput;
-}
-
-export type ScheduleCategoryConfigWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleCreditCreateManyWithoutSourceDirectInput {
-  create?:
-    | ScheduleCreditCreateWithoutSourceDirectInput[]
-    | ScheduleCreditCreateWithoutSourceDirectInput;
-  connect?: ScheduleCreditWhereUniqueInput[] | ScheduleCreditWhereUniqueInput;
-}
-
-export interface ExceptionCreateOneWithoutCancellationInput {
-  create?: ExceptionCreateWithoutCancellationInput;
-  connect?: ExceptionWhereUniqueInput;
+  outerBound_not?: Int;
+  outerBound_in?: Int[] | Int;
+  outerBound_not_in?: Int[] | Int;
+  outerBound_lt?: Int;
+  outerBound_lte?: Int;
+  outerBound_gt?: Int;
+  outerBound_gte?: Int;
+  timeline_every?: ScheduleTimelineElementWhereInput;
+  timeline_some?: ScheduleTimelineElementWhereInput;
+  timeline_none?: ScheduleTimelineElementWhereInput;
+  restline_every?: ScheduleRestlineElementWhereInput;
+  restline_some?: ScheduleRestlineElementWhereInput;
+  restline_none?: ScheduleRestlineElementWhereInput;
+  offline1?: ScheduleOfflineElementWhereInput;
+  offline2?: ScheduleOfflineElementWhereInput;
+  AND?: ScheduleWhereInput[] | ScheduleWhereInput;
+  OR?: ScheduleWhereInput[] | ScheduleWhereInput;
+  NOT?: ScheduleWhereInput[] | ScheduleWhereInput;
 }
 
 export interface ScheduleCreditCreateWithoutSourceDirectInput {
@@ -5480,24 +5733,24 @@ export interface ScheduleCreditCreateWithoutSourceDirectInput {
   debit?: ScheduleDebitCreateOneWithoutCreditInput;
 }
 
-export interface ScheduleOfflineElementCreateOneInput {
-  create?: ScheduleOfflineElementCreateInput;
-  connect?: ScheduleOfflineElementWhereUniqueInput;
+export interface ShiftSlotUpdateManyMutationInput {
+  index?: Int;
 }
 
-export interface ScheduleCreditUpdateWithoutSourceDirectDataInput {
-  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
-  category?: ScheduleOfflineCategory;
-  sourceType?: ScheduleCreditSourceEnum;
-  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
-  sourceConcurentHoliday?: HolidayUpdateOneInput;
-  sourceDate?: DateTimeInput;
-  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
+export interface DirectCreditUpdateInput {
+  owner?: UserUpdateOneRequiredInput;
+  employee?: EmployeeUpdateOneRequiredInput;
+  description?: String;
+  credits?: ScheduleCreditUpdateManyWithoutSourceDirectInput;
 }
 
-export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput {
-  where: ScheduleCreditWhereUniqueInput;
-  data: ScheduleCreditUpdateWithoutSourceDirectDataInput;
+export interface ScheduleUpdateManyMutationInput {
+  isPreset?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  description?: String;
+  baseTime?: Int;
+  innerBound?: Int;
+  outerBound?: Int;
 }
 
 export interface ScheduleCreditUpdateManyWithoutSourceDirectInput {
@@ -5517,55 +5770,199 @@ export interface ScheduleCreditUpdateManyWithoutSourceDirectInput {
     | ScheduleCreditUpsertWithWhereUniqueWithoutSourceDirectInput;
 }
 
-export interface DirectCreditUpdateInput {
-  owner?: UserUpdateOneRequiredInput;
-  employee?: EmployeeUpdateOneRequiredInput;
-  description?: String;
-  credits?: ScheduleCreditUpdateManyWithoutSourceDirectInput;
+export interface ExceptionCreateOneWithoutEliminationInput {
+  create?: ExceptionCreateWithoutEliminationInput;
+  connect?: ExceptionWhereUniqueInput;
 }
 
-export interface UserRoleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserRoleWhereInput;
-  AND?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
-  OR?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
-  NOT?: UserRoleSubscriptionWhereInput[] | UserRoleSubscriptionWhereInput;
+export interface ScheduleCreditUpdateWithWhereUniqueWithoutSourceDirectInput {
+  where: ScheduleCreditWhereUniqueInput;
+  data: ScheduleCreditUpdateWithoutSourceDirectDataInput;
 }
 
-export interface AttendanceCycleUpdateManyMutationInput {
-  name?: String;
-  startDate?: DateTimeInput;
-  endDate?: DateTimeInput;
+export interface EventUpdateManyMutationInput {
+  time?: DateTimeInput;
 }
 
-export type ScheduleOfflineElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface ScheduleCreditUpdateManyMutationInput {
+export interface ScheduleCreditUpdateWithoutSourceDirectDataInput {
+  employee?: EmployeeUpdateOneRequiredWithoutCreditsInput;
   category?: ScheduleOfflineCategory;
   sourceType?: ScheduleCreditSourceEnum;
+  sourceException?: ExceptionUpdateOneWithoutCreditsInput;
+  sourceConcurentHoliday?: HolidayUpdateOneInput;
   sourceDate?: DateTimeInput;
+  debit?: ScheduleDebitUpdateOneWithoutCreditInput;
 }
 
-export interface AttendanceCycleSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AttendanceCycleWhereInput;
-  AND?:
-    | AttendanceCycleSubscriptionWhereInput[]
-    | AttendanceCycleSubscriptionWhereInput;
-  OR?:
-    | AttendanceCycleSubscriptionWhereInput[]
-    | AttendanceCycleSubscriptionWhereInput;
-  NOT?:
-    | AttendanceCycleSubscriptionWhereInput[]
-    | AttendanceCycleSubscriptionWhereInput;
+export interface ExceptionCreateManyWithoutEmployeeInput {
+  create?:
+    | ExceptionCreateWithoutEmployeeInput[]
+    | ExceptionCreateWithoutEmployeeInput;
+  connect?: ExceptionWhereUniqueInput[] | ExceptionWhereUniqueInput;
+}
+
+export interface ScheduleCreditUpsertWithWhereUniqueWithoutSourceDirectInput {
+  where: ScheduleCreditWhereUniqueInput;
+  update: ScheduleCreditUpdateWithoutSourceDirectDataInput;
+  create: ScheduleCreditCreateWithoutSourceDirectInput;
+}
+
+export interface ScheduleTimelineElementUpdateInput {
+  category?: ScheduleTimelineCategory;
+  startTime?: Int;
+  endTime?: Int;
+  startEventRequired?: Boolean;
+  endEventRequired?: Boolean;
+}
+
+export interface EventCreateInput {
+  employee: EmployeeCreateOneWithoutEventsInput;
+  time: DateTimeInput;
+}
+
+export interface EmployeeUpdateManyMutationInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+}
+
+export interface EmployeeUpdateInput {
+  nameFirst?: String;
+  nameMiddle?: String;
+  namePaternal?: String;
+  nameMaternal?: String;
+  documentType?: EmployeeDocumentTypeEnum;
+  documentNumber?: String;
+  sex?: EmployeeSexEnum;
+  dateOfBirth?: DateTimeInput;
+  nationality?: String;
+  jubilado?: Boolean;
+  personaConDiscapacidad?: Boolean;
+  tutorPersonaConDiscapacidad?: Boolean;
+  cajaDeSalud?: EmployeeCajaDeSaludEnum;
+  aportaAFP?: Boolean;
+  AFP?: EmployeeAFPEnum;
+  cargo?: String;
+  zkTimePin?: Int;
+  department?: DepartmentUpdateOneWithoutSubordinatesInput;
+  events?: EventUpdateManyWithoutEmployeeInput;
+  shifts?: ShiftUpdateManyWithoutEmployeeInput;
+  exceptions?: ExceptionUpdateManyWithoutEmployeeInput;
+  credits?: ScheduleCreditUpdateManyWithoutEmployeeInput;
+  debits?: ScheduleDebitUpdateManyWithoutEmployeeInput;
+}
+
+export interface DirectCreditUpdateManyMutationInput {
+  description?: String;
+}
+
+export interface ExceptionUpdateOneRequiredWithoutRejectionInput {
+  create?: ExceptionCreateWithoutRejectionInput;
+  update?: ExceptionUpdateWithoutRejectionDataInput;
+  upsert?: ExceptionUpsertWithoutRejectionInput;
+  connect?: ExceptionWhereUniqueInput;
+}
+
+export interface UserWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  username?: String;
+  username_not?: String;
+  username_in?: String[] | String;
+  username_not_in?: String[] | String;
+  username_lt?: String;
+  username_lte?: String;
+  username_gt?: String;
+  username_gte?: String;
+  username_contains?: String;
+  username_not_contains?: String;
+  username_starts_with?: String;
+  username_not_starts_with?: String;
+  username_ends_with?: String;
+  username_not_ends_with?: String;
+  password?: String;
+  password_not?: String;
+  password_in?: String[] | String;
+  password_not_in?: String[] | String;
+  password_lt?: String;
+  password_lte?: String;
+  password_gt?: String;
+  password_gte?: String;
+  password_contains?: String;
+  password_not_contains?: String;
+  password_starts_with?: String;
+  password_not_starts_with?: String;
+  password_ends_with?: String;
+  password_not_ends_with?: String;
+  departments_every?: DepartmentWhereInput;
+  departments_some?: DepartmentWhereInput;
+  departments_none?: DepartmentWhereInput;
+  roles_every?: UserRoleWhereInput;
+  roles_some?: UserRoleWhereInput;
+  roles_none?: UserRoleWhereInput;
+  AND?: UserWhereInput[] | UserWhereInput;
+  OR?: UserWhereInput[] | UserWhereInput;
+  NOT?: UserWhereInput[] | UserWhereInput;
+}
+
+export interface ShiftSlotCreateManyInput {
+  create?: ShiftSlotCreateInput[] | ShiftSlotCreateInput;
+  connect?: ShiftSlotWhereUniqueInput[] | ShiftSlotWhereUniqueInput;
+}
+
+export interface ExceptionUpdateWithoutAuthorizationDataInput {
+  type?: ExceptionTypeEnum;
+  employee?: EmployeeUpdateOneRequiredWithoutExceptionsInput;
+  description?: String;
+  slots?: ExceptionSlotUpdateManyInput;
+  rejection?: ExceptionRejectionUpdateOneWithoutExceptionInput;
+  cancellation?: ExceptionCancellationUpdateOneWithoutExceptionInput;
+  elimination?: ExceptionEliminationUpdateOneWithoutExceptionInput;
+  owner?: UserUpdateOneRequiredInput;
+  credits?: ScheduleCreditUpdateManyWithoutSourceExceptionInput;
+  debits?: ScheduleDebitUpdateManyWithoutExceptionInput;
 }
 
 export interface NodeNode {
@@ -5594,112 +5991,6 @@ export interface UserRolePreviousValuesSubscription
   description: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ExceptionConnection {}
-
-export interface ExceptionConnectionPromise
-  extends Promise<ExceptionConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionEdge>>() => T;
-  aggregate: <T = AggregateExceptionPromise>() => T;
-}
-
-export interface ExceptionConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ExceptionEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateExceptionSubscription>() => T;
-}
-
-export interface Schedule {
-  id: ID_Output;
-  isPreset?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-  baseTime: Int;
-  innerBound?: Int;
-  outerBound?: Int;
-}
-
-export interface SchedulePromise extends Promise<Schedule>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  isPreset: () => Promise<Boolean>;
-  systemScheduleIdentifier: () => Promise<SystemScheduleIdentifierEnum>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-  baseTime: () => Promise<Int>;
-  innerBound: () => Promise<Int>;
-  outerBound: () => Promise<Int>;
-  timeline: <T = FragmentableArray<ScheduleTimelineElement>>(
-    args?: {
-      where?: ScheduleTimelineElementWhereInput;
-      orderBy?: ScheduleTimelineElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  restline: <T = FragmentableArray<ScheduleRestlineElement>>(
-    args?: {
-      where?: ScheduleRestlineElementWhereInput;
-      orderBy?: ScheduleRestlineElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  offline1: <T = ScheduleOfflineElementPromise>() => T;
-  offline2: <T = ScheduleOfflineElementPromise>() => T;
-}
-
-export interface ScheduleSubscription
-  extends Promise<AsyncIterator<Schedule>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  isPreset: () => Promise<AsyncIterator<Boolean>>;
-  systemScheduleIdentifier: () => Promise<
-    AsyncIterator<SystemScheduleIdentifierEnum>
-  >;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-  baseTime: () => Promise<AsyncIterator<Int>>;
-  innerBound: () => Promise<AsyncIterator<Int>>;
-  outerBound: () => Promise<AsyncIterator<Int>>;
-  timeline: <T = Promise<AsyncIterator<ScheduleTimelineElementSubscription>>>(
-    args?: {
-      where?: ScheduleTimelineElementWhereInput;
-      orderBy?: ScheduleTimelineElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  restline: <T = Promise<AsyncIterator<ScheduleRestlineElementSubscription>>>(
-    args?: {
-      where?: ScheduleRestlineElementWhereInput;
-      orderBy?: ScheduleRestlineElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  offline1: <T = ScheduleOfflineElementSubscription>() => T;
-  offline2: <T = ScheduleOfflineElementSubscription>() => T;
-}
-
 export interface AggregateEmployee {
   count: Int;
 }
@@ -5714,43 +6005,6 @@ export interface AggregateEmployeeSubscription
   extends Promise<AsyncIterator<AggregateEmployee>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ShiftSlot {
-  id: ID_Output;
-  index: Int;
-}
-
-export interface ShiftSlotPromise extends Promise<ShiftSlot>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  index: () => Promise<Int>;
-  schedule: <T = SchedulePromise>() => T;
-}
-
-export interface ShiftSlotSubscription
-  extends Promise<AsyncIterator<ShiftSlot>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  index: () => Promise<AsyncIterator<Int>>;
-  schedule: <T = ScheduleSubscription>() => T;
-}
-
-export interface EmployeeEdge {
-  cursor: String;
-}
-
-export interface EmployeeEdgePromise
-  extends Promise<EmployeeEdge>,
-    Fragmentable {
-  node: <T = EmployeePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface EmployeeEdgeSubscription
-  extends Promise<AsyncIterator<EmployeeEdge>>,
-    Fragmentable {
-  node: <T = EmployeeSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface Employee {
@@ -5798,6 +6052,17 @@ export interface EmployeePromise extends Promise<Employee>, Fragmentable {
   cargo: () => Promise<String>;
   zkTimePin: () => Promise<Int>;
   department: <T = DepartmentPromise>() => T;
+  events: <T = FragmentableArray<Event>>(
+    args?: {
+      where?: EventWhereInput;
+      orderBy?: EventOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
   shifts: <T = FragmentableArray<Shift>>(
     args?: {
       where?: ShiftWhereInput;
@@ -5868,6 +6133,17 @@ export interface EmployeeSubscription
   cargo: () => Promise<AsyncIterator<String>>;
   zkTimePin: () => Promise<AsyncIterator<Int>>;
   department: <T = DepartmentSubscription>() => T;
+  events: <T = Promise<AsyncIterator<EventSubscription>>>(
+    args?: {
+      where?: EventWhereInput;
+      orderBy?: EventOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
   shifts: <T = Promise<AsyncIterator<ShiftSubscription>>>(
     args?: {
       where?: ShiftWhereInput;
@@ -5914,6 +6190,40 @@ export interface EmployeeSubscription
   ) => T;
 }
 
+export interface EmployeeEdge {
+  cursor: String;
+}
+
+export interface EmployeeEdgePromise
+  extends Promise<EmployeeEdge>,
+    Fragmentable {
+  node: <T = EmployeePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EmployeeEdgeSubscription
+  extends Promise<AsyncIterator<EmployeeEdge>>,
+    Fragmentable {
+  node: <T = EmployeeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
 export interface EmployeeConnection {}
 
 export interface EmployeeConnectionPromise
@@ -5932,18 +6242,52 @@ export interface EmployeeConnectionSubscription
   aggregate: <T = AggregateEmployeeSubscription>() => T;
 }
 
-export interface AggregateUserRole {
+export interface UserRoleEdge {
+  cursor: String;
+}
+
+export interface UserRoleEdgePromise
+  extends Promise<UserRoleEdge>,
+    Fragmentable {
+  node: <T = UserRolePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserRoleEdgeSubscription
+  extends Promise<AsyncIterator<UserRoleEdge>>,
+    Fragmentable {
+  node: <T = UserRoleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateDirectCredit {
   count: Int;
 }
 
-export interface AggregateUserRolePromise
-  extends Promise<AggregateUserRole>,
+export interface AggregateDirectCreditPromise
+  extends Promise<AggregateDirectCredit>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateUserRoleSubscription
-  extends Promise<AsyncIterator<AggregateUserRole>>,
+export interface AggregateDirectCreditSubscription
+  extends Promise<AsyncIterator<AggregateDirectCredit>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -5973,22 +6317,22 @@ export interface AttendanceCycleSubscription
   endDate: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface UserRoleConnection {}
+export interface UserConnection {}
 
-export interface UserRoleConnectionPromise
-  extends Promise<UserRoleConnection>,
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserRoleEdge>>() => T;
-  aggregate: <T = AggregateUserRolePromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
 }
 
-export interface UserRoleConnectionSubscription
-  extends Promise<AsyncIterator<UserRoleConnection>>,
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserRoleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserRoleSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
 }
 
 export interface AttendanceCycleSubscriptionPayload {
@@ -6014,19 +6358,21 @@ export interface AttendanceCycleSubscriptionPayloadSubscription
   previousValues: <T = AttendanceCyclePreviousValuesSubscription>() => T;
 }
 
-export interface UserEdge {
+export interface ShiftSlotEdge {
   cursor: String;
 }
 
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
+export interface ShiftSlotEdgePromise
+  extends Promise<ShiftSlotEdge>,
+    Fragmentable {
+  node: <T = ShiftSlotPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
+export interface ShiftSlotEdgeSubscription
+  extends Promise<AsyncIterator<ShiftSlotEdge>>,
     Fragmentable {
-  node: <T = UserSubscription>() => T;
+  node: <T = ShiftSlotSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -6055,54 +6401,56 @@ export interface AttendanceCyclePreviousValuesSubscription
   endDate: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface AggregateShiftSlot {
+export interface AggregateShift {
   count: Int;
 }
 
-export interface AggregateShiftSlotPromise
-  extends Promise<AggregateShiftSlot>,
+export interface AggregateShiftPromise
+  extends Promise<AggregateShift>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateShiftSlotSubscription
-  extends Promise<AsyncIterator<AggregateShiftSlot>>,
+export interface AggregateShiftSubscription
+  extends Promise<AsyncIterator<AggregateShift>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface AggregateDirectCredit {
-  count: Int;
+export interface DirectCreditEdge {
+  cursor: String;
 }
 
-export interface AggregateDirectCreditPromise
-  extends Promise<AggregateDirectCredit>,
+export interface DirectCreditEdgePromise
+  extends Promise<DirectCreditEdge>,
     Fragmentable {
-  count: () => Promise<Int>;
+  node: <T = DirectCreditPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface AggregateDirectCreditSubscription
-  extends Promise<AsyncIterator<AggregateDirectCredit>>,
+export interface DirectCreditEdgeSubscription
+  extends Promise<AsyncIterator<DirectCreditEdge>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  node: <T = DirectCreditSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ShiftSlotConnection {}
+export interface ShiftConnection {}
 
-export interface ShiftSlotConnectionPromise
-  extends Promise<ShiftSlotConnection>,
+export interface ShiftConnectionPromise
+  extends Promise<ShiftConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ShiftSlotEdge>>() => T;
-  aggregate: <T = AggregateShiftSlotPromise>() => T;
+  edges: <T = FragmentableArray<ShiftEdge>>() => T;
+  aggregate: <T = AggregateShiftPromise>() => T;
 }
 
-export interface ShiftSlotConnectionSubscription
-  extends Promise<AsyncIterator<ShiftSlotConnection>>,
+export interface ShiftConnectionSubscription
+  extends Promise<AsyncIterator<ShiftConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ShiftSlotEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateShiftSlotSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ShiftEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateShiftSubscription>() => T;
 }
 
 export interface DepartmentSubscriptionPayload {
@@ -6128,19 +6476,21 @@ export interface DepartmentSubscriptionPayloadSubscription
   previousValues: <T = DepartmentPreviousValuesSubscription>() => T;
 }
 
-export interface ShiftEdge {
+export interface ScheduleTimelineElementEdge {
   cursor: String;
 }
 
-export interface ShiftEdgePromise extends Promise<ShiftEdge>, Fragmentable {
-  node: <T = ShiftPromise>() => T;
+export interface ScheduleTimelineElementEdgePromise
+  extends Promise<ScheduleTimelineElementEdge>,
+    Fragmentable {
+  node: <T = ScheduleTimelineElementPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ShiftEdgeSubscription
-  extends Promise<AsyncIterator<ShiftEdge>>,
+export interface ScheduleTimelineElementEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleTimelineElementEdge>>,
     Fragmentable {
-  node: <T = ShiftSubscription>() => T;
+  node: <T = ScheduleTimelineElementSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -6169,58 +6519,58 @@ export interface DepartmentPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateScheduleTimelineElement {
+export interface AggregateScheduleRestlineElement {
   count: Int;
 }
 
-export interface AggregateScheduleTimelineElementPromise
-  extends Promise<AggregateScheduleTimelineElement>,
+export interface AggregateScheduleRestlineElementPromise
+  extends Promise<AggregateScheduleRestlineElement>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateScheduleTimelineElementSubscription
-  extends Promise<AsyncIterator<AggregateScheduleTimelineElement>>,
+export interface AggregateScheduleRestlineElementSubscription
+  extends Promise<AsyncIterator<AggregateScheduleRestlineElement>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface DirectCreditEdge {
-  cursor: String;
-}
+export interface DirectCreditConnection {}
 
-export interface DirectCreditEdgePromise
-  extends Promise<DirectCreditEdge>,
-    Fragmentable {
-  node: <T = DirectCreditPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface DirectCreditEdgeSubscription
-  extends Promise<AsyncIterator<DirectCreditEdge>>,
-    Fragmentable {
-  node: <T = DirectCreditSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleTimelineElementConnection {}
-
-export interface ScheduleTimelineElementConnectionPromise
-  extends Promise<ScheduleTimelineElementConnection>,
+export interface DirectCreditConnectionPromise
+  extends Promise<DirectCreditConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleTimelineElementEdge>>() => T;
-  aggregate: <T = AggregateScheduleTimelineElementPromise>() => T;
+  edges: <T = FragmentableArray<DirectCreditEdge>>() => T;
+  aggregate: <T = AggregateDirectCreditPromise>() => T;
 }
 
-export interface ScheduleTimelineElementConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleTimelineElementConnection>>,
+export interface DirectCreditConnectionSubscription
+  extends Promise<AsyncIterator<DirectCreditConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<DirectCreditEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateDirectCreditSubscription>() => T;
+}
+
+export interface ScheduleRestlineElementConnection {}
+
+export interface ScheduleRestlineElementConnectionPromise
+  extends Promise<ScheduleRestlineElementConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleRestlineElementEdge>>() => T;
+  aggregate: <T = AggregateScheduleRestlineElementPromise>() => T;
+}
+
+export interface ScheduleRestlineElementConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleRestlineElementConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
-    T = Promise<AsyncIterator<ScheduleTimelineElementEdgeSubscription>>
+    T = Promise<AsyncIterator<ScheduleRestlineElementEdgeSubscription>>
   >() => T;
-  aggregate: <T = AggregateScheduleTimelineElementSubscription>() => T;
+  aggregate: <T = AggregateScheduleRestlineElementSubscription>() => T;
 }
 
 export interface DirectCreditSubscriptionPayload {
@@ -6246,22 +6596,113 @@ export interface DirectCreditSubscriptionPayloadSubscription
   previousValues: <T = DirectCreditPreviousValuesSubscription>() => T;
 }
 
-export interface ScheduleRestlineElementEdge {
+export interface ScheduleOfflineElementEdge {
   cursor: String;
 }
 
-export interface ScheduleRestlineElementEdgePromise
-  extends Promise<ScheduleRestlineElementEdge>,
+export interface ScheduleOfflineElementEdgePromise
+  extends Promise<ScheduleOfflineElementEdge>,
     Fragmentable {
-  node: <T = ScheduleRestlineElementPromise>() => T;
+  node: <T = ScheduleOfflineElementPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ScheduleRestlineElementEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleRestlineElementEdge>>,
+export interface ScheduleOfflineElementEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleOfflineElementEdge>>,
     Fragmentable {
-  node: <T = ScheduleRestlineElementSubscription>() => T;
+  node: <T = ScheduleOfflineElementSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateScheduleOfflineElement {
+  count: Int;
+}
+
+export interface AggregateScheduleOfflineElementPromise
+  extends Promise<AggregateScheduleOfflineElement>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateScheduleOfflineElementSubscription
+  extends Promise<AsyncIterator<AggregateScheduleOfflineElement>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Shift {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+  startDate: DateTimeOutput;
+  endDate?: DateTimeOutput;
+}
+
+export interface ShiftPromise extends Promise<Shift>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+  employee: <T = EmployeePromise>() => T;
+  startDate: () => Promise<DateTimeOutput>;
+  endDate: () => Promise<DateTimeOutput>;
+  slots: <T = FragmentableArray<ShiftSlot>>(
+    args?: {
+      where?: ShiftSlotWhereInput;
+      orderBy?: ShiftSlotOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  owner: <T = UserPromise>() => T;
+}
+
+export interface ShiftSubscription
+  extends Promise<AsyncIterator<Shift>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+  employee: <T = EmployeeSubscription>() => T;
+  startDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  endDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  slots: <T = Promise<AsyncIterator<ShiftSlotSubscription>>>(
+    args?: {
+      where?: ShiftSlotWhereInput;
+      orderBy?: ShiftSlotOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  owner: <T = UserSubscription>() => T;
+}
+
+export interface ScheduleOfflineElementConnection {}
+
+export interface ScheduleOfflineElementConnectionPromise
+  extends Promise<ScheduleOfflineElementConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleOfflineElementEdge>>() => T;
+  aggregate: <T = AggregateScheduleOfflineElementPromise>() => T;
+}
+
+export interface ScheduleOfflineElementConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleOfflineElementConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ScheduleOfflineElementEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateScheduleOfflineElementSubscription>() => T;
 }
 
 export interface DirectCreditPreviousValues {
@@ -6283,58 +6724,72 @@ export interface DirectCreditPreviousValuesSubscription
   description: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateScheduleOfflineElement {
+export interface AggregateScheduleDebit {
   count: Int;
 }
 
-export interface AggregateScheduleOfflineElementPromise
-  extends Promise<AggregateScheduleOfflineElement>,
+export interface AggregateScheduleDebitPromise
+  extends Promise<AggregateScheduleDebit>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateScheduleOfflineElementSubscription
-  extends Promise<AsyncIterator<AggregateScheduleOfflineElement>>,
+export interface AggregateScheduleDebitSubscription
+  extends Promise<AsyncIterator<AggregateScheduleDebit>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface DirectCreditConnection {}
+export interface ScheduleDebitConnection {}
 
-export interface DirectCreditConnectionPromise
-  extends Promise<DirectCreditConnection>,
+export interface ScheduleDebitConnectionPromise
+  extends Promise<ScheduleDebitConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<DirectCreditEdge>>() => T;
-  aggregate: <T = AggregateDirectCreditPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleDebitEdge>>() => T;
+  aggregate: <T = AggregateScheduleDebitPromise>() => T;
 }
 
-export interface DirectCreditConnectionSubscription
-  extends Promise<AsyncIterator<DirectCreditConnection>>,
+export interface ScheduleDebitConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleDebitConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<DirectCreditEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateDirectCreditSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ScheduleDebitEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateScheduleDebitSubscription>() => T;
 }
 
-export interface ScheduleOfflineElementConnection {}
-
-export interface ScheduleOfflineElementConnectionPromise
-  extends Promise<ScheduleOfflineElementConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleOfflineElementEdge>>() => T;
-  aggregate: <T = AggregateScheduleOfflineElementPromise>() => T;
+export interface AggregateDepartment {
+  count: Int;
 }
 
-export interface ScheduleOfflineElementConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleOfflineElementConnection>>,
+export interface AggregateDepartmentPromise
+  extends Promise<AggregateDepartment>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ScheduleOfflineElementEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateScheduleOfflineElementSubscription>() => T;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateDepartmentSubscription
+  extends Promise<AsyncIterator<AggregateDepartment>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ScheduleCreditEdge {
+  cursor: String;
+}
+
+export interface ScheduleCreditEdgePromise
+  extends Promise<ScheduleCreditEdge>,
+    Fragmentable {
+  node: <T = ScheduleCreditPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ScheduleCreditEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleCreditEdge>>,
+    Fragmentable {
+  node: <T = ScheduleCreditSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface EmployeeSubscriptionPayload {
@@ -6360,18 +6815,18 @@ export interface EmployeeSubscriptionPayloadSubscription
   previousValues: <T = EmployeePreviousValuesSubscription>() => T;
 }
 
-export interface AggregateScheduleDebit {
+export interface AggregateScheduleCategoryConfig {
   count: Int;
 }
 
-export interface AggregateScheduleDebitPromise
-  extends Promise<AggregateScheduleDebit>,
+export interface AggregateScheduleCategoryConfigPromise
+  extends Promise<AggregateScheduleCategoryConfig>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateScheduleDebitSubscription
-  extends Promise<AsyncIterator<AggregateScheduleDebit>>,
+export interface AggregateScheduleCategoryConfigSubscription
+  extends Promise<AsyncIterator<AggregateScheduleCategoryConfig>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -6449,22 +6904,887 @@ export interface EmployeePreviousValuesSubscription
   zkTimePin: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleDebitConnection {}
+export interface ScheduleCategoryConfigConnection {}
 
-export interface ScheduleDebitConnectionPromise
-  extends Promise<ScheduleDebitConnection>,
+export interface ScheduleCategoryConfigConnectionPromise
+  extends Promise<ScheduleCategoryConfigConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleDebitEdge>>() => T;
-  aggregate: <T = AggregateScheduleDebitPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleCategoryConfigEdge>>() => T;
+  aggregate: <T = AggregateScheduleCategoryConfigPromise>() => T;
 }
 
-export interface ScheduleDebitConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleDebitConnection>>,
+export interface ScheduleCategoryConfigConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleCategoryConfigConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ScheduleDebitEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateScheduleDebitSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ScheduleCategoryConfigEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateScheduleCategoryConfigSubscription>() => T;
+}
+
+export interface DepartmentEdge {
+  cursor: String;
+}
+
+export interface DepartmentEdgePromise
+  extends Promise<DepartmentEdge>,
+    Fragmentable {
+  node: <T = DepartmentPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface DepartmentEdgeSubscription
+  extends Promise<AsyncIterator<DepartmentEdge>>,
+    Fragmentable {
+  node: <T = DepartmentSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleCategoryConfig {
+  id: ID_Output;
+  category?: ScheduleCategory;
+  backgroundColor: String;
+  foregroundColor: String;
+  description?: String;
+}
+
+export interface ScheduleCategoryConfigPromise
+  extends Promise<ScheduleCategoryConfig>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleCategory>;
+  backgroundColor: () => Promise<String>;
+  foregroundColor: () => Promise<String>;
+  description: () => Promise<String>;
+}
+
+export interface ScheduleCategoryConfigSubscription
+  extends Promise<AsyncIterator<ScheduleCategoryConfig>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleCategory>>;
+  backgroundColor: () => Promise<AsyncIterator<String>>;
+  foregroundColor: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface EventSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface EventSubscriptionPayloadPromise
+  extends Promise<EventSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = EventPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = EventPreviousValuesPromise>() => T;
+}
+
+export interface EventSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EventSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = EventSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = EventPreviousValuesSubscription>() => T;
+}
+
+export interface ScheduleEdge {
+  cursor: String;
+}
+
+export interface ScheduleEdgePromise
+  extends Promise<ScheduleEdge>,
+    Fragmentable {
+  node: <T = SchedulePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ScheduleEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleEdge>>,
+    Fragmentable {
+  node: <T = ScheduleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface EventPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  time: DateTimeOutput;
+}
+
+export interface EventPreviousValuesPromise
+  extends Promise<EventPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  time: () => Promise<DateTimeOutput>;
+}
+
+export interface EventPreviousValuesSubscription
+  extends Promise<AsyncIterator<EventPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  time: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface Event {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  time: DateTimeOutput;
+}
+
+export interface EventPromise extends Promise<Event>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  employee: <T = EmployeePromise>() => T;
+  time: () => Promise<DateTimeOutput>;
+}
+
+export interface EventSubscription
+  extends Promise<AsyncIterator<Event>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  employee: <T = EmployeeSubscription>() => T;
+  time: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface DepartmentConnection {}
+
+export interface DepartmentConnectionPromise
+  extends Promise<DepartmentConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<DepartmentEdge>>() => T;
+  aggregate: <T = AggregateDepartmentPromise>() => T;
+}
+
+export interface DepartmentConnectionSubscription
+  extends Promise<AsyncIterator<DepartmentConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<DepartmentEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateDepartmentSubscription>() => T;
+}
+
+export interface HolidayEdge {
+  cursor: String;
+}
+
+export interface HolidayEdgePromise extends Promise<HolidayEdge>, Fragmentable {
+  node: <T = HolidayPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface HolidayEdgeSubscription
+  extends Promise<AsyncIterator<HolidayEdge>>,
+    Fragmentable {
+  node: <T = HolidaySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface EventSyncLogSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface EventSyncLogSubscriptionPayloadPromise
+  extends Promise<EventSyncLogSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = EventSyncLogPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = EventSyncLogPreviousValuesPromise>() => T;
+}
+
+export interface EventSyncLogSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EventSyncLogSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = EventSyncLogSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = EventSyncLogPreviousValuesSubscription>() => T;
+}
+
+export interface AttendanceCycleConnection {}
+
+export interface AttendanceCycleConnectionPromise
+  extends Promise<AttendanceCycleConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AttendanceCycleEdge>>() => T;
+  aggregate: <T = AggregateAttendanceCyclePromise>() => T;
+}
+
+export interface AttendanceCycleConnectionSubscription
+  extends Promise<AsyncIterator<AttendanceCycleConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AttendanceCycleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAttendanceCycleSubscription>() => T;
+}
+
+export interface EventSyncLogPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  from: DateTimeOutput;
+  to: DateTimeOutput;
+}
+
+export interface EventSyncLogPreviousValuesPromise
+  extends Promise<EventSyncLogPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  from: () => Promise<DateTimeOutput>;
+  to: () => Promise<DateTimeOutput>;
+}
+
+export interface EventSyncLogPreviousValuesSubscription
+  extends Promise<AsyncIterator<EventSyncLogPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  from: () => Promise<AsyncIterator<DateTimeOutput>>;
+  to: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FieldOptionLabelEdge {
+  cursor: String;
+}
+
+export interface FieldOptionLabelEdgePromise
+  extends Promise<FieldOptionLabelEdge>,
+    Fragmentable {
+  node: <T = FieldOptionLabelPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FieldOptionLabelEdgeSubscription
+  extends Promise<AsyncIterator<FieldOptionLabelEdge>>,
+    Fragmentable {
+  node: <T = FieldOptionLabelSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionElimination {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionEliminationPromise
+  extends Promise<ExceptionElimination>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  exception: <T = ExceptionPromise>() => T;
+  owner: <T = UserPromise>() => T;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionEliminationSubscription
+  extends Promise<AsyncIterator<ExceptionElimination>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  exception: <T = ExceptionSubscription>() => T;
+  owner: <T = UserSubscription>() => T;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ExceptionSubscriptionPayloadPromise
+  extends Promise<ExceptionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExceptionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExceptionPreviousValuesPromise>() => T;
+}
+
+export interface ExceptionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExceptionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ExceptionPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateExceptionSlot {
+  count: Int;
+}
+
+export interface AggregateExceptionSlotPromise
+  extends Promise<AggregateExceptionSlot>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateExceptionSlotSubscription
+  extends Promise<AsyncIterator<AggregateExceptionSlot>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ExceptionPreviousValues {
+  id: ID_Output;
+  type: ExceptionTypeEnum;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionPreviousValuesPromise
+  extends Promise<ExceptionPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<ExceptionTypeEnum>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExceptionPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<ExceptionTypeEnum>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionSlotConnection {}
+
+export interface ExceptionSlotConnectionPromise
+  extends Promise<ExceptionSlotConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionSlotEdge>>() => T;
+  aggregate: <T = AggregateExceptionSlotPromise>() => T;
+}
+
+export interface ExceptionSlotConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionSlotConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ExceptionSlotEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateExceptionSlotSubscription>() => T;
+}
+
+export interface ExceptionCancellation {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionCancellationPromise
+  extends Promise<ExceptionCancellation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  exception: <T = ExceptionPromise>() => T;
+  owner: <T = UserPromise>() => T;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionCancellationSubscription
+  extends Promise<AsyncIterator<ExceptionCancellation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  exception: <T = ExceptionSubscription>() => T;
+  owner: <T = UserSubscription>() => T;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionRejectionEdge {
+  cursor: String;
+}
+
+export interface ExceptionRejectionEdgePromise
+  extends Promise<ExceptionRejectionEdge>,
+    Fragmentable {
+  node: <T = ExceptionRejectionPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExceptionRejectionEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionRejectionEdge>>,
+    Fragmentable {
+  node: <T = ExceptionRejectionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionAuthorizationSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ExceptionAuthorizationSubscriptionPayloadPromise
+  extends Promise<ExceptionAuthorizationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExceptionAuthorizationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExceptionAuthorizationPreviousValuesPromise>() => T;
+}
+
+export interface ExceptionAuthorizationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionAuthorizationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExceptionAuthorizationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ExceptionAuthorizationPreviousValuesSubscription>() => T;
+}
+
+export interface UserPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  username: String;
+  password: String;
+}
+
+export interface UserPreviousValuesPromise
+  extends Promise<UserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  username: () => Promise<String>;
+  password: () => Promise<String>;
+}
+
+export interface UserPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  username: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionAuthorizationPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionAuthorizationPreviousValuesPromise
+  extends Promise<ExceptionAuthorizationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionAuthorizationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExceptionAuthorizationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionEliminationEdge {
+  cursor: String;
+}
+
+export interface ExceptionEliminationEdgePromise
+  extends Promise<ExceptionEliminationEdge>,
+    Fragmentable {
+  node: <T = ExceptionEliminationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExceptionEliminationEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionEliminationEdge>>,
+    Fragmentable {
+  node: <T = ExceptionEliminationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionAuthorization {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionAuthorizationPromise
+  extends Promise<ExceptionAuthorization>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  exception: <T = ExceptionPromise>() => T;
+  owner: <T = UserPromise>() => T;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionAuthorizationSubscription
+  extends Promise<AsyncIterator<ExceptionAuthorization>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  exception: <T = ExceptionSubscription>() => T;
+  owner: <T = UserSubscription>() => T;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AttendanceCycleEdge {
+  cursor: String;
+}
+
+export interface AttendanceCycleEdgePromise
+  extends Promise<AttendanceCycleEdge>,
+    Fragmentable {
+  node: <T = AttendanceCyclePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AttendanceCycleEdgeSubscription
+  extends Promise<AsyncIterator<AttendanceCycleEdge>>,
+    Fragmentable {
+  node: <T = AttendanceCycleSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionCancellationSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ExceptionCancellationSubscriptionPayloadPromise
+  extends Promise<ExceptionCancellationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExceptionCancellationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExceptionCancellationPreviousValuesPromise>() => T;
+}
+
+export interface ExceptionCancellationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExceptionCancellationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ExceptionCancellationPreviousValuesSubscription>() => T;
+}
+
+export interface ExceptionCancellationEdge {
+  cursor: String;
+}
+
+export interface ExceptionCancellationEdgePromise
+  extends Promise<ExceptionCancellationEdge>,
+    Fragmentable {
+  node: <T = ExceptionCancellationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExceptionCancellationEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationEdge>>,
+    Fragmentable {
+  node: <T = ExceptionCancellationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionCancellationPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionCancellationPreviousValuesPromise
+  extends Promise<ExceptionCancellationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionCancellationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateAttendanceCycle {
+  count: Int;
+}
+
+export interface AggregateAttendanceCyclePromise
+  extends Promise<AggregateAttendanceCycle>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAttendanceCycleSubscription
+  extends Promise<AsyncIterator<AggregateAttendanceCycle>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ExceptionRejection {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionRejectionPromise
+  extends Promise<ExceptionRejection>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  exception: <T = ExceptionPromise>() => T;
+  owner: <T = UserPromise>() => T;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionRejectionSubscription
+  extends Promise<AsyncIterator<ExceptionRejection>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  exception: <T = ExceptionSubscription>() => T;
+  owner: <T = UserSubscription>() => T;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionAuthorizationEdge {
+  cursor: String;
+}
+
+export interface ExceptionAuthorizationEdgePromise
+  extends Promise<ExceptionAuthorizationEdge>,
+    Fragmentable {
+  node: <T = ExceptionAuthorizationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExceptionAuthorizationEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionAuthorizationEdge>>,
+    Fragmentable {
+  node: <T = ExceptionAuthorizationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionEliminationSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ExceptionEliminationSubscriptionPayloadPromise
+  extends Promise<ExceptionEliminationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExceptionEliminationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExceptionEliminationPreviousValuesPromise>() => T;
+}
+
+export interface ExceptionEliminationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionEliminationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExceptionEliminationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ExceptionEliminationPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateException {
+  count: Int;
+}
+
+export interface AggregateExceptionPromise
+  extends Promise<AggregateException>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateExceptionSubscription
+  extends Promise<AsyncIterator<AggregateException>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ExceptionEliminationPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+}
+
+export interface ExceptionEliminationPreviousValuesPromise
+  extends Promise<ExceptionEliminationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+}
+
+export interface ExceptionEliminationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExceptionEliminationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionConnection {}
+
+export interface ExceptionConnectionPromise
+  extends Promise<ExceptionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionEdge>>() => T;
+  aggregate: <T = AggregateExceptionPromise>() => T;
+}
+
+export interface ExceptionConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ExceptionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateExceptionSubscription>() => T;
+}
+
+export interface ScheduleDebit {
+  id: ID_Output;
+  category: ScheduleOfflineCategory;
+  date: DateTimeOutput;
+}
+
+export interface ScheduleDebitPromise
+  extends Promise<ScheduleDebit>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  employee: <T = EmployeePromise>() => T;
+  category: () => Promise<ScheduleOfflineCategory>;
+  exception: <T = ExceptionPromise>() => T;
+  credit: <T = ScheduleCreditPromise>() => T;
+  date: () => Promise<DateTimeOutput>;
+}
+
+export interface ScheduleDebitSubscription
+  extends Promise<AsyncIterator<ScheduleDebit>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  employee: <T = EmployeeSubscription>() => T;
+  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  exception: <T = ExceptionSubscription>() => T;
+  credit: <T = ScheduleCreditSubscription>() => T;
+  date: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface EventSyncLogEdge {
+  cursor: String;
+}
+
+export interface EventSyncLogEdgePromise
+  extends Promise<EventSyncLogEdge>,
+    Fragmentable {
+  node: <T = EventSyncLogPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EventSyncLogEdgeSubscription
+  extends Promise<AsyncIterator<EventSyncLogEdge>>,
+    Fragmentable {
+  node: <T = EventSyncLogSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExceptionRejectionSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ExceptionRejectionSubscriptionPayloadPromise
+  extends Promise<ExceptionRejectionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExceptionRejectionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExceptionRejectionPreviousValuesPromise>() => T;
+}
+
+export interface ExceptionRejectionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExceptionRejectionSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExceptionRejectionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ExceptionRejectionPreviousValuesSubscription>() => T;
 }
 
 export interface Department {
@@ -6534,656 +7854,6 @@ export interface DepartmentSubscription
   ) => T;
 }
 
-export interface ScheduleCreditEdge {
-  cursor: String;
-}
-
-export interface ScheduleCreditEdgePromise
-  extends Promise<ScheduleCreditEdge>,
-    Fragmentable {
-  node: <T = ScheduleCreditPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ScheduleCreditEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleCreditEdge>>,
-    Fragmentable {
-  node: <T = ScheduleCreditSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ExceptionSubscriptionPayloadPromise
-  extends Promise<ExceptionSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExceptionPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionPreviousValuesPromise>() => T;
-}
-
-export interface ExceptionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateScheduleCategoryConfig {
-  count: Int;
-}
-
-export interface AggregateScheduleCategoryConfigPromise
-  extends Promise<AggregateScheduleCategoryConfig>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateScheduleCategoryConfigSubscription
-  extends Promise<AsyncIterator<AggregateScheduleCategoryConfig>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ExceptionPreviousValues {
-  id: ID_Output;
-  type: ExceptionTypeEnum;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionPreviousValuesPromise
-  extends Promise<ExceptionPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<ExceptionTypeEnum>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExceptionPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  type: () => Promise<AsyncIterator<ExceptionTypeEnum>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleCategoryConfigConnection {}
-
-export interface ScheduleCategoryConfigConnectionPromise
-  extends Promise<ScheduleCategoryConfigConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleCategoryConfigEdge>>() => T;
-  aggregate: <T = AggregateScheduleCategoryConfigPromise>() => T;
-}
-
-export interface ScheduleCategoryConfigConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleCategoryConfigConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ScheduleCategoryConfigEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateScheduleCategoryConfigSubscription>() => T;
-}
-
-export interface AggregateDepartment {
-  count: Int;
-}
-
-export interface AggregateDepartmentPromise
-  extends Promise<AggregateDepartment>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateDepartmentSubscription
-  extends Promise<AsyncIterator<AggregateDepartment>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ScheduleCategoryConfig {
-  id: ID_Output;
-  category?: ScheduleCategory;
-  backgroundColor: String;
-  foregroundColor: String;
-  description?: String;
-}
-
-export interface ScheduleCategoryConfigPromise
-  extends Promise<ScheduleCategoryConfig>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleCategory>;
-  backgroundColor: () => Promise<String>;
-  foregroundColor: () => Promise<String>;
-  description: () => Promise<String>;
-}
-
-export interface ScheduleCategoryConfigSubscription
-  extends Promise<AsyncIterator<ScheduleCategoryConfig>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleCategory>>;
-  backgroundColor: () => Promise<AsyncIterator<String>>;
-  foregroundColor: () => Promise<AsyncIterator<String>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionAuthorizationSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ExceptionAuthorizationSubscriptionPayloadPromise
-  extends Promise<ExceptionAuthorizationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExceptionAuthorizationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionAuthorizationPreviousValuesPromise>() => T;
-}
-
-export interface ExceptionAuthorizationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionAuthorizationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionAuthorizationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionAuthorizationPreviousValuesSubscription>() => T;
-}
-
-export interface ScheduleEdge {
-  cursor: String;
-}
-
-export interface ScheduleEdgePromise
-  extends Promise<ScheduleEdge>,
-    Fragmentable {
-  node: <T = SchedulePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ScheduleEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleEdge>>,
-    Fragmentable {
-  node: <T = ScheduleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateSchedule {
-  count: Int;
-}
-
-export interface AggregateSchedulePromise
-  extends Promise<AggregateSchedule>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateScheduleSubscription
-  extends Promise<AsyncIterator<AggregateSchedule>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ScheduleRestlineElement {
-  id: ID_Output;
-  category: ScheduleRestlineCategory;
-  duration: Int;
-  startTime: Int;
-  endTime: Int;
-  startEventRequired: Boolean;
-  endEventRequired: Boolean;
-}
-
-export interface ScheduleRestlineElementPromise
-  extends Promise<ScheduleRestlineElement>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleRestlineCategory>;
-  duration: () => Promise<Int>;
-  startTime: () => Promise<Int>;
-  endTime: () => Promise<Int>;
-  startEventRequired: () => Promise<Boolean>;
-  endEventRequired: () => Promise<Boolean>;
-}
-
-export interface ScheduleRestlineElementSubscription
-  extends Promise<AsyncIterator<ScheduleRestlineElement>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleRestlineCategory>>;
-  duration: () => Promise<AsyncIterator<Int>>;
-  startTime: () => Promise<AsyncIterator<Int>>;
-  endTime: () => Promise<AsyncIterator<Int>>;
-  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
-  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface ScheduleConnection {}
-
-export interface ScheduleConnectionPromise
-  extends Promise<ScheduleConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleEdge>>() => T;
-  aggregate: <T = AggregateSchedulePromise>() => T;
-}
-
-export interface ScheduleConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ScheduleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateScheduleSubscription>() => T;
-}
-
-export interface ExceptionAuthorizationPreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionAuthorizationPreviousValuesPromise
-  extends Promise<ExceptionAuthorizationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionAuthorizationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExceptionAuthorizationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateHoliday {
-  count: Int;
-}
-
-export interface AggregateHolidayPromise
-  extends Promise<AggregateHoliday>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateHolidaySubscription
-  extends Promise<AsyncIterator<AggregateHoliday>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface HolidayConnection {}
-
-export interface HolidayConnectionPromise
-  extends Promise<HolidayConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<HolidayEdge>>() => T;
-  aggregate: <T = AggregateHolidayPromise>() => T;
-}
-
-export interface HolidayConnectionSubscription
-  extends Promise<AsyncIterator<HolidayConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<HolidayEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateHolidaySubscription>() => T;
-}
-
-export interface DepartmentEdge {
-  cursor: String;
-}
-
-export interface DepartmentEdgePromise
-  extends Promise<DepartmentEdge>,
-    Fragmentable {
-  node: <T = DepartmentPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface DepartmentEdgeSubscription
-  extends Promise<AsyncIterator<DepartmentEdge>>,
-    Fragmentable {
-  node: <T = DepartmentSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateFieldOptionLabel {
-  count: Int;
-}
-
-export interface AggregateFieldOptionLabelPromise
-  extends Promise<AggregateFieldOptionLabel>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateFieldOptionLabelSubscription
-  extends Promise<AsyncIterator<AggregateFieldOptionLabel>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ExceptionCancellationSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ExceptionCancellationSubscriptionPayloadPromise
-  extends Promise<ExceptionCancellationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExceptionCancellationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionCancellationPreviousValuesPromise>() => T;
-}
-
-export interface ExceptionCancellationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionCancellationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionCancellationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionCancellationPreviousValuesSubscription>() => T;
-}
-
-export interface FieldOptionLabelConnection {}
-
-export interface FieldOptionLabelConnectionPromise
-  extends Promise<FieldOptionLabelConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<FieldOptionLabelEdge>>() => T;
-  aggregate: <T = AggregateFieldOptionLabelPromise>() => T;
-}
-
-export interface FieldOptionLabelConnectionSubscription
-  extends Promise<AsyncIterator<FieldOptionLabelConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<FieldOptionLabelEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateFieldOptionLabelSubscription>() => T;
-}
-
-export interface ExceptionCancellationPreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionCancellationPreviousValuesPromise
-  extends Promise<ExceptionCancellationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionCancellationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExceptionCancellationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface FieldOptionLabel {
-  id: ID_Output;
-  field: String;
-  value: String;
-  label?: String;
-}
-
-export interface FieldOptionLabelPromise
-  extends Promise<FieldOptionLabel>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  field: () => Promise<String>;
-  value: () => Promise<String>;
-  label: () => Promise<String>;
-}
-
-export interface FieldOptionLabelSubscription
-  extends Promise<AsyncIterator<FieldOptionLabel>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  field: () => Promise<AsyncIterator<String>>;
-  value: () => Promise<AsyncIterator<String>>;
-  label: () => Promise<AsyncIterator<String>>;
-}
-
-export interface DepartmentConnection {}
-
-export interface DepartmentConnectionPromise
-  extends Promise<DepartmentConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<DepartmentEdge>>() => T;
-  aggregate: <T = AggregateDepartmentPromise>() => T;
-}
-
-export interface DepartmentConnectionSubscription
-  extends Promise<AsyncIterator<DepartmentConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<DepartmentEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateDepartmentSubscription>() => T;
-}
-
-export interface ExceptionSlotEdge {
-  cursor: String;
-}
-
-export interface ExceptionSlotEdgePromise
-  extends Promise<ExceptionSlotEdge>,
-    Fragmentable {
-  node: <T = ExceptionSlotPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ExceptionSlotEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionSlotEdge>>,
-    Fragmentable {
-  node: <T = ExceptionSlotSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionEliminationSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ExceptionEliminationSubscriptionPayloadPromise
-  extends Promise<ExceptionEliminationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExceptionEliminationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionEliminationPreviousValuesPromise>() => T;
-}
-
-export interface ExceptionEliminationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionEliminationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionEliminationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionEliminationPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateExceptionRejection {
-  count: Int;
-}
-
-export interface AggregateExceptionRejectionPromise
-  extends Promise<AggregateExceptionRejection>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateExceptionRejectionSubscription
-  extends Promise<AsyncIterator<AggregateExceptionRejection>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ExceptionEliminationPreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionEliminationPreviousValuesPromise
-  extends Promise<ExceptionEliminationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionEliminationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExceptionEliminationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionRejectionConnection {}
-
-export interface ExceptionRejectionConnectionPromise
-  extends Promise<ExceptionRejectionConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionRejectionEdge>>() => T;
-  aggregate: <T = AggregateExceptionRejectionPromise>() => T;
-}
-
-export interface ExceptionRejectionConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionRejectionConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExceptionRejectionEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExceptionRejectionSubscription>() => T;
-}
-
-export interface ExceptionElimination {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionEliminationPromise
-  extends Promise<ExceptionElimination>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  exception: <T = ExceptionPromise>() => T;
-  owner: <T = UserPromise>() => T;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionEliminationSubscription
-  extends Promise<AsyncIterator<ExceptionElimination>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  exception: <T = ExceptionSubscription>() => T;
-  owner: <T = UserSubscription>() => T;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateExceptionElimination {
-  count: Int;
-}
-
-export interface AggregateExceptionEliminationPromise
-  extends Promise<AggregateExceptionElimination>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateExceptionEliminationSubscription
-  extends Promise<AsyncIterator<AggregateExceptionElimination>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ExceptionRejectionSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ExceptionRejectionSubscriptionPayloadPromise
-  extends Promise<ExceptionRejectionSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExceptionRejectionPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExceptionRejectionPreviousValuesPromise>() => T;
-}
-
-export interface ExceptionRejectionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExceptionRejectionSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExceptionRejectionSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ExceptionRejectionPreviousValuesSubscription>() => T;
-}
-
-export interface ExceptionEliminationConnection {}
-
-export interface ExceptionEliminationConnectionPromise
-  extends Promise<ExceptionEliminationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionEliminationEdge>>() => T;
-  aggregate: <T = AggregateExceptionEliminationPromise>() => T;
-}
-
-export interface ExceptionEliminationConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionEliminationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExceptionEliminationEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExceptionEliminationSubscription>() => T;
-}
-
 export interface ExceptionRejectionPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
@@ -7209,69 +7879,58 @@ export interface ExceptionRejectionPreviousValuesSubscription
   description: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateExceptionCancellation {
+export interface AggregateEvent {
   count: Int;
 }
 
-export interface AggregateExceptionCancellationPromise
-  extends Promise<AggregateExceptionCancellation>,
+export interface AggregateEventPromise
+  extends Promise<AggregateEvent>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateExceptionCancellationSubscription
-  extends Promise<AsyncIterator<AggregateExceptionCancellation>>,
+export interface AggregateEventSubscription
+  extends Promise<AsyncIterator<AggregateEvent>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ExceptionCancellation {
+export interface Holiday {
   id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
+  date: DateTimeOutput;
+  name: String;
 }
 
-export interface ExceptionCancellationPromise
-  extends Promise<ExceptionCancellation>,
-    Fragmentable {
+export interface HolidayPromise extends Promise<Holiday>, Fragmentable {
   id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  exception: <T = ExceptionPromise>() => T;
-  owner: <T = UserPromise>() => T;
-  description: () => Promise<String>;
+  date: () => Promise<DateTimeOutput>;
+  name: () => Promise<String>;
 }
 
-export interface ExceptionCancellationSubscription
-  extends Promise<AsyncIterator<ExceptionCancellation>>,
+export interface HolidaySubscription
+  extends Promise<AsyncIterator<Holiday>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  exception: <T = ExceptionSubscription>() => T;
-  owner: <T = UserSubscription>() => T;
-  description: () => Promise<AsyncIterator<String>>;
+  date: () => Promise<AsyncIterator<DateTimeOutput>>;
+  name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ExceptionCancellationConnection {}
+export interface EventConnection {}
 
-export interface ExceptionCancellationConnectionPromise
-  extends Promise<ExceptionCancellationConnection>,
+export interface EventConnectionPromise
+  extends Promise<EventConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionCancellationEdge>>() => T;
-  aggregate: <T = AggregateExceptionCancellationPromise>() => T;
+  edges: <T = FragmentableArray<EventEdge>>() => T;
+  aggregate: <T = AggregateEventPromise>() => T;
 }
 
-export interface ExceptionCancellationConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionCancellationConnection>>,
+export interface EventConnectionSubscription
+  extends Promise<AsyncIterator<EventConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExceptionCancellationEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExceptionCancellationSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<EventEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateEventSubscription>() => T;
 }
 
 export interface ExceptionSlotSubscriptionPayload {
@@ -7297,18 +7956,18 @@ export interface ExceptionSlotSubscriptionPayloadSubscription
   previousValues: <T = ExceptionSlotPreviousValuesSubscription>() => T;
 }
 
-export interface AggregateExceptionAuthorization {
+export interface AggregateUserRole {
   count: Int;
 }
 
-export interface AggregateExceptionAuthorizationPromise
-  extends Promise<AggregateExceptionAuthorization>,
+export interface AggregateUserRolePromise
+  extends Promise<AggregateUserRole>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateExceptionAuthorizationSubscription
-  extends Promise<AsyncIterator<AggregateExceptionAuthorization>>,
+export interface AggregateUserRoleSubscription
+  extends Promise<AsyncIterator<AggregateUserRole>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -7332,573 +7991,19 @@ export interface ExceptionSlotPreviousValuesSubscription
   date: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface ExceptionAuthorizationConnection {}
-
-export interface ExceptionAuthorizationConnectionPromise
-  extends Promise<ExceptionAuthorizationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionAuthorizationEdge>>() => T;
-  aggregate: <T = AggregateExceptionAuthorizationPromise>() => T;
-}
-
-export interface ExceptionAuthorizationConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionAuthorizationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExceptionAuthorizationEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExceptionAuthorizationSubscription>() => T;
-}
-
-export interface ExceptionAuthorization {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionAuthorizationPromise
-  extends Promise<ExceptionAuthorization>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  exception: <T = ExceptionPromise>() => T;
-  owner: <T = UserPromise>() => T;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionAuthorizationSubscription
-  extends Promise<AsyncIterator<ExceptionAuthorization>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  exception: <T = ExceptionSubscription>() => T;
-  owner: <T = UserSubscription>() => T;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionEdge {
+export interface UserEdge {
   cursor: String;
 }
 
-export interface ExceptionEdgePromise
-  extends Promise<ExceptionEdge>,
-    Fragmentable {
-  node: <T = ExceptionPromise>() => T;
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ExceptionEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionEdge>>,
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
     Fragmentable {
-  node: <T = ExceptionSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface FieldOptionLabelSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface FieldOptionLabelSubscriptionPayloadPromise
-  extends Promise<FieldOptionLabelSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = FieldOptionLabelPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = FieldOptionLabelPreviousValuesPromise>() => T;
-}
-
-export interface FieldOptionLabelSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<FieldOptionLabelSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = FieldOptionLabelSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = FieldOptionLabelPreviousValuesSubscription>() => T;
-}
-
-export interface ScheduleTimelineElement {
-  id: ID_Output;
-  category: ScheduleTimelineCategory;
-  startTime: Int;
-  endTime: Int;
-  startEventRequired: Boolean;
-  endEventRequired: Boolean;
-}
-
-export interface ScheduleTimelineElementPromise
-  extends Promise<ScheduleTimelineElement>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleTimelineCategory>;
-  startTime: () => Promise<Int>;
-  endTime: () => Promise<Int>;
-  startEventRequired: () => Promise<Boolean>;
-  endEventRequired: () => Promise<Boolean>;
-}
-
-export interface ScheduleTimelineElementSubscription
-  extends Promise<AsyncIterator<ScheduleTimelineElement>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleTimelineCategory>>;
-  startTime: () => Promise<AsyncIterator<Int>>;
-  endTime: () => Promise<AsyncIterator<Int>>;
-  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
-  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface FieldOptionLabelPreviousValues {
-  id: ID_Output;
-  field: String;
-  value: String;
-  label?: String;
-}
-
-export interface FieldOptionLabelPreviousValuesPromise
-  extends Promise<FieldOptionLabelPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  field: () => Promise<String>;
-  value: () => Promise<String>;
-  label: () => Promise<String>;
-}
-
-export interface FieldOptionLabelPreviousValuesSubscription
-  extends Promise<AsyncIterator<FieldOptionLabelPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  field: () => Promise<AsyncIterator<String>>;
-  value: () => Promise<AsyncIterator<String>>;
-  label: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserRoleEdge {
-  cursor: String;
-}
-
-export interface UserRoleEdgePromise
-  extends Promise<UserRoleEdge>,
-    Fragmentable {
-  node: <T = UserRolePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserRoleEdgeSubscription
-  extends Promise<AsyncIterator<UserRoleEdge>>,
-    Fragmentable {
-  node: <T = UserRoleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ExceptionRejection {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-}
-
-export interface ExceptionRejectionPromise
-  extends Promise<ExceptionRejection>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  exception: <T = ExceptionPromise>() => T;
-  owner: <T = UserPromise>() => T;
-  description: () => Promise<String>;
-}
-
-export interface ExceptionRejectionSubscription
-  extends Promise<AsyncIterator<ExceptionRejection>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  exception: <T = ExceptionSubscription>() => T;
-  owner: <T = UserSubscription>() => T;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserConnection {}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
-export interface HolidaySubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface HolidaySubscriptionPayloadPromise
-  extends Promise<HolidaySubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = HolidayPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = HolidayPreviousValuesPromise>() => T;
-}
-
-export interface HolidaySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<HolidaySubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = HolidaySubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = HolidayPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateShift {
-  count: Int;
-}
-
-export interface AggregateShiftPromise
-  extends Promise<AggregateShift>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateShiftSubscription
-  extends Promise<AsyncIterator<AggregateShift>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface HolidayPreviousValues {
-  id: ID_Output;
-  date: DateTimeOutput;
-  name: String;
-}
-
-export interface HolidayPreviousValuesPromise
-  extends Promise<HolidayPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  date: () => Promise<DateTimeOutput>;
-  name: () => Promise<String>;
-}
-
-export interface HolidayPreviousValuesSubscription
-  extends Promise<AsyncIterator<HolidayPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  date: () => Promise<AsyncIterator<DateTimeOutput>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleTimelineElementEdge {
-  cursor: String;
-}
-
-export interface ScheduleTimelineElementEdgePromise
-  extends Promise<ScheduleTimelineElementEdge>,
-    Fragmentable {
-  node: <T = ScheduleTimelineElementPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ScheduleTimelineElementEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleTimelineElementEdge>>,
-    Fragmentable {
-  node: <T = ScheduleTimelineElementSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleDebit {
-  id: ID_Output;
-  category: ScheduleOfflineCategory;
-  date: DateTimeOutput;
-}
-
-export interface ScheduleDebitPromise
-  extends Promise<ScheduleDebit>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  employee: <T = EmployeePromise>() => T;
-  category: () => Promise<ScheduleOfflineCategory>;
-  exception: <T = ExceptionPromise>() => T;
-  credit: <T = ScheduleCreditPromise>() => T;
-  date: () => Promise<DateTimeOutput>;
-}
-
-export interface ScheduleDebitSubscription
-  extends Promise<AsyncIterator<ScheduleDebit>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  employee: <T = EmployeeSubscription>() => T;
-  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
-  exception: <T = ExceptionSubscription>() => T;
-  credit: <T = ScheduleCreditSubscription>() => T;
-  date: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ScheduleRestlineElementConnection {}
-
-export interface ScheduleRestlineElementConnectionPromise
-  extends Promise<ScheduleRestlineElementConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleRestlineElementEdge>>() => T;
-  aggregate: <T = AggregateScheduleRestlineElementPromise>() => T;
-}
-
-export interface ScheduleRestlineElementConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleRestlineElementConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ScheduleRestlineElementEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateScheduleRestlineElementSubscription>() => T;
-}
-
-export interface ScheduleSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ScheduleSubscriptionPayloadPromise
-  extends Promise<ScheduleSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = SchedulePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = SchedulePreviousValuesPromise>() => T;
-}
-
-export interface ScheduleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = SchedulePreviousValuesSubscription>() => T;
-}
-
-export interface UserPreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  username: String;
-  password: String;
-}
-
-export interface UserPreviousValuesPromise
-  extends Promise<UserPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  username: () => Promise<String>;
-  password: () => Promise<String>;
-}
-
-export interface UserPreviousValuesSubscription
-  extends Promise<AsyncIterator<UserPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  username: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-}
-
-export interface SchedulePreviousValues {
-  id: ID_Output;
-  isPreset?: Boolean;
-  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-  baseTime: Int;
-  innerBound?: Int;
-  outerBound?: Int;
-}
-
-export interface SchedulePreviousValuesPromise
-  extends Promise<SchedulePreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  isPreset: () => Promise<Boolean>;
-  systemScheduleIdentifier: () => Promise<SystemScheduleIdentifierEnum>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-  baseTime: () => Promise<Int>;
-  innerBound: () => Promise<Int>;
-  outerBound: () => Promise<Int>;
-}
-
-export interface SchedulePreviousValuesSubscription
-  extends Promise<AsyncIterator<SchedulePreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  isPreset: () => Promise<AsyncIterator<Boolean>>;
-  systemScheduleIdentifier: () => Promise<
-    AsyncIterator<SystemScheduleIdentifierEnum>
-  >;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-  baseTime: () => Promise<AsyncIterator<Int>>;
-  innerBound: () => Promise<AsyncIterator<Int>>;
-  outerBound: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AggregateScheduleCredit {
-  count: Int;
-}
-
-export interface AggregateScheduleCreditPromise
-  extends Promise<AggregateScheduleCredit>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateScheduleCreditSubscription
-  extends Promise<AsyncIterator<AggregateScheduleCredit>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Holiday {
-  id: ID_Output;
-  date: DateTimeOutput;
-  name: String;
-}
-
-export interface HolidayPromise extends Promise<Holiday>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  date: () => Promise<DateTimeOutput>;
-  name: () => Promise<String>;
-}
-
-export interface HolidaySubscription
-  extends Promise<AsyncIterator<Holiday>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  date: () => Promise<AsyncIterator<DateTimeOutput>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleCategoryConfigEdge {
-  cursor: String;
-}
-
-export interface ScheduleCategoryConfigEdgePromise
-  extends Promise<ScheduleCategoryConfigEdge>,
-    Fragmentable {
-  node: <T = ScheduleCategoryConfigPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ScheduleCategoryConfigEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleCategoryConfigEdge>>,
-    Fragmentable {
-  node: <T = ScheduleCategoryConfigSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleCategoryConfigSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ScheduleCategoryConfigSubscriptionPayloadPromise
-  extends Promise<ScheduleCategoryConfigSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ScheduleCategoryConfigPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleCategoryConfigPreviousValuesPromise>() => T;
-}
-
-export interface ScheduleCategoryConfigSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleCategoryConfigSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleCategoryConfigSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ScheduleCategoryConfigPreviousValuesSubscription>() => T;
-}
-
-export interface HolidayEdge {
-  cursor: String;
-}
-
-export interface HolidayEdgePromise extends Promise<HolidayEdge>, Fragmentable {
-  node: <T = HolidayPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface HolidayEdgeSubscription
-  extends Promise<AsyncIterator<HolidayEdge>>,
-    Fragmentable {
-  node: <T = HolidaySubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleCategoryConfigPreviousValues {
-  id: ID_Output;
-  category?: ScheduleCategory;
-  backgroundColor: String;
-  foregroundColor: String;
-  description?: String;
-}
-
-export interface ScheduleCategoryConfigPreviousValuesPromise
-  extends Promise<ScheduleCategoryConfigPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleCategory>;
-  backgroundColor: () => Promise<String>;
-  foregroundColor: () => Promise<String>;
-  description: () => Promise<String>;
-}
-
-export interface ScheduleCategoryConfigPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleCategoryConfigPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleCategory>>;
-  backgroundColor: () => Promise<AsyncIterator<String>>;
-  foregroundColor: () => Promise<AsyncIterator<String>>;
-  description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface FieldOptionLabelEdge {
-  cursor: String;
-}
-
-export interface FieldOptionLabelEdgePromise
-  extends Promise<FieldOptionLabelEdge>,
-    Fragmentable {
-  node: <T = FieldOptionLabelPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface FieldOptionLabelEdgeSubscription
-  extends Promise<AsyncIterator<FieldOptionLabelEdge>>,
-    Fragmentable {
-  node: <T = FieldOptionLabelSubscription>() => T;
+  node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -7947,103 +8052,103 @@ export interface DirectCreditSubscription
   ) => T;
 }
 
-export interface AggregateExceptionSlot {
-  count: Int;
-}
+export interface ShiftSlotConnection {}
 
-export interface AggregateExceptionSlotPromise
-  extends Promise<AggregateExceptionSlot>,
+export interface ShiftSlotConnectionPromise
+  extends Promise<ShiftSlotConnection>,
     Fragmentable {
-  count: () => Promise<Int>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ShiftSlotEdge>>() => T;
+  aggregate: <T = AggregateShiftSlotPromise>() => T;
 }
 
-export interface AggregateExceptionSlotSubscription
-  extends Promise<AsyncIterator<AggregateExceptionSlot>>,
+export interface ShiftSlotConnectionSubscription
+  extends Promise<AsyncIterator<ShiftSlotConnection>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ShiftSlotEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateShiftSlotSubscription>() => T;
 }
 
-export interface ScheduleCreditSubscriptionPayload {
+export interface FieldOptionLabelSubscriptionPayload {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ScheduleCreditSubscriptionPayloadPromise
-  extends Promise<ScheduleCreditSubscriptionPayload>,
+export interface FieldOptionLabelSubscriptionPayloadPromise
+  extends Promise<FieldOptionLabelSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ScheduleCreditPromise>() => T;
+  node: <T = FieldOptionLabelPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleCreditPreviousValuesPromise>() => T;
+  previousValues: <T = FieldOptionLabelPreviousValuesPromise>() => T;
 }
 
-export interface ScheduleCreditSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleCreditSubscriptionPayload>>,
+export interface FieldOptionLabelSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FieldOptionLabelSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleCreditSubscription>() => T;
+  node: <T = FieldOptionLabelSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ScheduleCreditPreviousValuesSubscription>() => T;
+  previousValues: <T = FieldOptionLabelPreviousValuesSubscription>() => T;
 }
 
-export interface ExceptionRejectionEdge {
-  cursor: String;
+export interface AggregateScheduleTimelineElement {
+  count: Int;
 }
 
-export interface ExceptionRejectionEdgePromise
-  extends Promise<ExceptionRejectionEdge>,
+export interface AggregateScheduleTimelineElementPromise
+  extends Promise<AggregateScheduleTimelineElement>,
     Fragmentable {
-  node: <T = ExceptionRejectionPromise>() => T;
-  cursor: () => Promise<String>;
+  count: () => Promise<Int>;
 }
 
-export interface ExceptionRejectionEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionRejectionEdge>>,
+export interface AggregateScheduleTimelineElementSubscription
+  extends Promise<AsyncIterator<AggregateScheduleTimelineElement>>,
     Fragmentable {
-  node: <T = ExceptionRejectionSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleCreditPreviousValues {
+export interface FieldOptionLabelPreviousValues {
   id: ID_Output;
-  category: ScheduleOfflineCategory;
-  sourceType: ScheduleCreditSourceEnum;
-  sourceDate: DateTimeOutput;
+  field: String;
+  value: String;
+  label?: String;
 }
 
-export interface ScheduleCreditPreviousValuesPromise
-  extends Promise<ScheduleCreditPreviousValues>,
+export interface FieldOptionLabelPreviousValuesPromise
+  extends Promise<FieldOptionLabelPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleOfflineCategory>;
-  sourceType: () => Promise<ScheduleCreditSourceEnum>;
-  sourceDate: () => Promise<DateTimeOutput>;
+  field: () => Promise<String>;
+  value: () => Promise<String>;
+  label: () => Promise<String>;
 }
 
-export interface ScheduleCreditPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleCreditPreviousValues>>,
+export interface FieldOptionLabelPreviousValuesSubscription
+  extends Promise<AsyncIterator<FieldOptionLabelPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
-  sourceType: () => Promise<AsyncIterator<ScheduleCreditSourceEnum>>;
-  sourceDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  field: () => Promise<AsyncIterator<String>>;
+  value: () => Promise<AsyncIterator<String>>;
+  label: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ExceptionEliminationEdge {
+export interface ScheduleRestlineElementEdge {
   cursor: String;
 }
 
-export interface ExceptionEliminationEdgePromise
-  extends Promise<ExceptionEliminationEdge>,
+export interface ScheduleRestlineElementEdgePromise
+  extends Promise<ScheduleRestlineElementEdge>,
     Fragmentable {
-  node: <T = ExceptionEliminationPromise>() => T;
+  node: <T = ScheduleRestlineElementPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ExceptionEliminationEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionEliminationEdge>>,
+export interface ScheduleRestlineElementEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleRestlineElementEdge>>,
     Fragmentable {
-  node: <T = ExceptionEliminationSubscription>() => T;
+  node: <T = ScheduleRestlineElementSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -8082,140 +8187,99 @@ export interface ScheduleCreditSubscription
   debit: <T = ScheduleDebitSubscription>() => T;
 }
 
-export interface ExceptionCancellationEdge {
-  cursor: String;
+export interface AggregateScheduleCredit {
+  count: Int;
 }
 
-export interface ExceptionCancellationEdgePromise
-  extends Promise<ExceptionCancellationEdge>,
+export interface AggregateScheduleCreditPromise
+  extends Promise<AggregateScheduleCredit>,
     Fragmentable {
-  node: <T = ExceptionCancellationPromise>() => T;
-  cursor: () => Promise<String>;
+  count: () => Promise<Int>;
 }
 
-export interface ExceptionCancellationEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionCancellationEdge>>,
+export interface AggregateScheduleCreditSubscription
+  extends Promise<AsyncIterator<AggregateScheduleCredit>>,
     Fragmentable {
-  node: <T = ExceptionCancellationSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleDebitSubscriptionPayload {
+export interface HolidaySubscriptionPayload {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ScheduleDebitSubscriptionPayloadPromise
-  extends Promise<ScheduleDebitSubscriptionPayload>,
+export interface HolidaySubscriptionPayloadPromise
+  extends Promise<HolidaySubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ScheduleDebitPromise>() => T;
+  node: <T = HolidayPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleDebitPreviousValuesPromise>() => T;
+  previousValues: <T = HolidayPreviousValuesPromise>() => T;
 }
 
-export interface ScheduleDebitSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleDebitSubscriptionPayload>>,
+export interface HolidaySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<HolidaySubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleDebitSubscription>() => T;
+  node: <T = HolidaySubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ScheduleDebitPreviousValuesSubscription>() => T;
+  previousValues: <T = HolidayPreviousValuesSubscription>() => T;
 }
 
-export interface ExceptionAuthorizationEdge {
+export interface ScheduleCategoryConfigEdge {
   cursor: String;
 }
 
-export interface ExceptionAuthorizationEdgePromise
-  extends Promise<ExceptionAuthorizationEdge>,
+export interface ScheduleCategoryConfigEdgePromise
+  extends Promise<ScheduleCategoryConfigEdge>,
     Fragmentable {
-  node: <T = ExceptionAuthorizationPromise>() => T;
+  node: <T = ScheduleCategoryConfigPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ExceptionAuthorizationEdgeSubscription
-  extends Promise<AsyncIterator<ExceptionAuthorizationEdge>>,
+export interface ScheduleCategoryConfigEdgeSubscription
+  extends Promise<AsyncIterator<ScheduleCategoryConfigEdge>>,
     Fragmentable {
-  node: <T = ExceptionAuthorizationSubscription>() => T;
+  node: <T = ScheduleCategoryConfigSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ScheduleDebitPreviousValues {
+export interface HolidayPreviousValues {
   id: ID_Output;
-  category: ScheduleOfflineCategory;
   date: DateTimeOutput;
+  name: String;
 }
 
-export interface ScheduleDebitPreviousValuesPromise
-  extends Promise<ScheduleDebitPreviousValues>,
+export interface HolidayPreviousValuesPromise
+  extends Promise<HolidayPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleOfflineCategory>;
   date: () => Promise<DateTimeOutput>;
+  name: () => Promise<String>;
 }
 
-export interface ScheduleDebitPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleDebitPreviousValues>>,
+export interface HolidayPreviousValuesSubscription
+  extends Promise<AsyncIterator<HolidayPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
   date: () => Promise<AsyncIterator<DateTimeOutput>>;
+  name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface Shift {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  description?: String;
-  startDate: DateTimeOutput;
-  endDate?: DateTimeOutput;
+export interface AggregateSchedule {
+  count: Int;
 }
 
-export interface ShiftPromise extends Promise<Shift>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  description: () => Promise<String>;
-  employee: <T = EmployeePromise>() => T;
-  startDate: () => Promise<DateTimeOutput>;
-  endDate: () => Promise<DateTimeOutput>;
-  slots: <T = FragmentableArray<ShiftSlot>>(
-    args?: {
-      where?: ShiftSlotWhereInput;
-      orderBy?: ShiftSlotOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  owner: <T = UserPromise>() => T;
-}
-
-export interface ShiftSubscription
-  extends Promise<AsyncIterator<Shift>>,
+export interface AggregateSchedulePromise
+  extends Promise<AggregateSchedule>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  description: () => Promise<AsyncIterator<String>>;
-  employee: <T = EmployeeSubscription>() => T;
-  startDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  endDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  slots: <T = Promise<AsyncIterator<ShiftSlotSubscription>>>(
-    args?: {
-      where?: ShiftSlotWhereInput;
-      orderBy?: ShiftSlotOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  owner: <T = UserSubscription>() => T;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateScheduleSubscription
+  extends Promise<AsyncIterator<AggregateSchedule>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ExceptionSlot {
@@ -8243,98 +8307,126 @@ export interface ExceptionSlotSubscription
   source2: <T = ScheduleCreditSubscription>() => T;
 }
 
-export interface AggregateUser {
+export interface AggregateHoliday {
   count: Int;
 }
 
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
+export interface AggregateHolidayPromise
+  extends Promise<AggregateHoliday>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
+export interface AggregateHolidaySubscription
+  extends Promise<AsyncIterator<AggregateHoliday>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleOfflineElementSubscriptionPayload {
+export interface ScheduleSubscriptionPayload {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ScheduleOfflineElementSubscriptionPayloadPromise
-  extends Promise<ScheduleOfflineElementSubscriptionPayload>,
+export interface ScheduleSubscriptionPayloadPromise
+  extends Promise<ScheduleSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ScheduleOfflineElementPromise>() => T;
+  node: <T = SchedulePromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleOfflineElementPreviousValuesPromise>() => T;
+  previousValues: <T = SchedulePreviousValuesPromise>() => T;
 }
 
-export interface ScheduleOfflineElementSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleOfflineElementSubscriptionPayload>>,
+export interface ScheduleSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleOfflineElementSubscription>() => T;
+  node: <T = ScheduleSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ScheduleOfflineElementPreviousValuesSubscription>() => T;
+  previousValues: <T = SchedulePreviousValuesSubscription>() => T;
 }
 
-export interface ShiftConnection {}
+export interface AggregateFieldOptionLabel {
+  count: Int;
+}
 
-export interface ShiftConnectionPromise
-  extends Promise<ShiftConnection>,
+export interface AggregateFieldOptionLabelPromise
+  extends Promise<AggregateFieldOptionLabel>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ShiftEdge>>() => T;
-  aggregate: <T = AggregateShiftPromise>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface ShiftConnectionSubscription
-  extends Promise<AsyncIterator<ShiftConnection>>,
+export interface AggregateFieldOptionLabelSubscription
+  extends Promise<AsyncIterator<AggregateFieldOptionLabel>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ShiftEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateShiftSubscription>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleOfflineElementPreviousValues {
+export interface SchedulePreviousValues {
   id: ID_Output;
-  category: ScheduleOfflineCategory;
+  isPreset?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+  baseTime: Int;
+  innerBound?: Int;
+  outerBound?: Int;
 }
 
-export interface ScheduleOfflineElementPreviousValuesPromise
-  extends Promise<ScheduleOfflineElementPreviousValues>,
+export interface SchedulePreviousValuesPromise
+  extends Promise<SchedulePreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleOfflineCategory>;
+  isPreset: () => Promise<Boolean>;
+  systemScheduleIdentifier: () => Promise<SystemScheduleIdentifierEnum>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+  baseTime: () => Promise<Int>;
+  innerBound: () => Promise<Int>;
+  outerBound: () => Promise<Int>;
 }
 
-export interface ScheduleOfflineElementPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleOfflineElementPreviousValues>>,
+export interface SchedulePreviousValuesSubscription
+  extends Promise<AsyncIterator<SchedulePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  isPreset: () => Promise<AsyncIterator<Boolean>>;
+  systemScheduleIdentifier: () => Promise<
+    AsyncIterator<SystemScheduleIdentifierEnum>
+  >;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+  baseTime: () => Promise<AsyncIterator<Int>>;
+  innerBound: () => Promise<AsyncIterator<Int>>;
+  outerBound: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleOfflineElementEdge {
-  cursor: String;
+export interface FieldOptionLabel {
+  id: ID_Output;
+  field: String;
+  value: String;
+  label?: String;
 }
 
-export interface ScheduleOfflineElementEdgePromise
-  extends Promise<ScheduleOfflineElementEdge>,
+export interface FieldOptionLabelPromise
+  extends Promise<FieldOptionLabel>,
     Fragmentable {
-  node: <T = ScheduleOfflineElementPromise>() => T;
-  cursor: () => Promise<String>;
+  id: () => Promise<ID_Output>;
+  field: () => Promise<String>;
+  value: () => Promise<String>;
+  label: () => Promise<String>;
 }
 
-export interface ScheduleOfflineElementEdgeSubscription
-  extends Promise<AsyncIterator<ScheduleOfflineElementEdge>>,
+export interface FieldOptionLabelSubscription
+  extends Promise<AsyncIterator<FieldOptionLabel>>,
     Fragmentable {
-  node: <T = ScheduleOfflineElementSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  field: () => Promise<AsyncIterator<String>>;
+  value: () => Promise<AsyncIterator<String>>;
+  label: () => Promise<AsyncIterator<String>>;
 }
 
 export interface Exception {
@@ -8441,117 +8533,103 @@ export interface ExceptionSubscription
   ) => T;
 }
 
-export interface ScheduleCreditConnection {}
-
-export interface ScheduleCreditConnectionPromise
-  extends Promise<ScheduleCreditConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ScheduleCreditEdge>>() => T;
-  aggregate: <T = AggregateScheduleCreditPromise>() => T;
+export interface AggregateExceptionRejection {
+  count: Int;
 }
 
-export interface ScheduleCreditConnectionSubscription
-  extends Promise<AsyncIterator<ScheduleCreditConnection>>,
+export interface AggregateExceptionRejectionPromise
+  extends Promise<AggregateExceptionRejection>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ScheduleCreditEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateScheduleCreditSubscription>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface ScheduleRestlineElementSubscriptionPayload {
+export interface AggregateExceptionRejectionSubscription
+  extends Promise<AsyncIterator<AggregateExceptionRejection>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ScheduleCategoryConfigSubscriptionPayload {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ScheduleRestlineElementSubscriptionPayloadPromise
-  extends Promise<ScheduleRestlineElementSubscriptionPayload>,
+export interface ScheduleCategoryConfigSubscriptionPayloadPromise
+  extends Promise<ScheduleCategoryConfigSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ScheduleRestlineElementPromise>() => T;
+  node: <T = ScheduleCategoryConfigPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleRestlineElementPreviousValuesPromise>() => T;
+  previousValues: <T = ScheduleCategoryConfigPreviousValuesPromise>() => T;
 }
 
-export interface ScheduleRestlineElementSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleRestlineElementSubscriptionPayload>>,
+export interface ScheduleCategoryConfigSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleCategoryConfigSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleRestlineElementSubscription>() => T;
+  node: <T = ScheduleCategoryConfigSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = ScheduleRestlineElementPreviousValuesSubscription
-  >() => T;
+  previousValues: <T = ScheduleCategoryConfigPreviousValuesSubscription>() => T;
 }
 
-export interface AttendanceCycleConnection {}
+export interface AggregateExceptionElimination {
+  count: Int;
+}
 
-export interface AttendanceCycleConnectionPromise
-  extends Promise<AttendanceCycleConnection>,
+export interface AggregateExceptionEliminationPromise
+  extends Promise<AggregateExceptionElimination>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AttendanceCycleEdge>>() => T;
-  aggregate: <T = AggregateAttendanceCyclePromise>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface AttendanceCycleConnectionSubscription
-  extends Promise<AsyncIterator<AttendanceCycleConnection>>,
+export interface AggregateExceptionEliminationSubscription
+  extends Promise<AsyncIterator<AggregateExceptionElimination>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AttendanceCycleEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAttendanceCycleSubscription>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleRestlineElementPreviousValues {
+export interface ScheduleCategoryConfigPreviousValues {
   id: ID_Output;
-  category: ScheduleRestlineCategory;
-  duration: Int;
-  startTime: Int;
-  endTime: Int;
-  startEventRequired: Boolean;
-  endEventRequired: Boolean;
+  category?: ScheduleCategory;
+  backgroundColor: String;
+  foregroundColor: String;
+  description?: String;
 }
 
-export interface ScheduleRestlineElementPreviousValuesPromise
-  extends Promise<ScheduleRestlineElementPreviousValues>,
+export interface ScheduleCategoryConfigPreviousValuesPromise
+  extends Promise<ScheduleCategoryConfigPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleRestlineCategory>;
-  duration: () => Promise<Int>;
-  startTime: () => Promise<Int>;
-  endTime: () => Promise<Int>;
-  startEventRequired: () => Promise<Boolean>;
-  endEventRequired: () => Promise<Boolean>;
+  category: () => Promise<ScheduleCategory>;
+  backgroundColor: () => Promise<String>;
+  foregroundColor: () => Promise<String>;
+  description: () => Promise<String>;
 }
 
-export interface ScheduleRestlineElementPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleRestlineElementPreviousValues>>,
+export interface ScheduleCategoryConfigPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleCategoryConfigPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleRestlineCategory>>;
-  duration: () => Promise<AsyncIterator<Int>>;
-  startTime: () => Promise<AsyncIterator<Int>>;
-  endTime: () => Promise<AsyncIterator<Int>>;
-  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
-  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  category: () => Promise<AsyncIterator<ScheduleCategory>>;
+  backgroundColor: () => Promise<AsyncIterator<String>>;
+  foregroundColor: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ExceptionSlotConnection {}
-
-export interface ExceptionSlotConnectionPromise
-  extends Promise<ExceptionSlotConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExceptionSlotEdge>>() => T;
-  aggregate: <T = AggregateExceptionSlotPromise>() => T;
+export interface AggregateExceptionCancellation {
+  count: Int;
 }
 
-export interface ExceptionSlotConnectionSubscription
-  extends Promise<AsyncIterator<ExceptionSlotConnection>>,
+export interface AggregateExceptionCancellationPromise
+  extends Promise<AggregateExceptionCancellation>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ExceptionSlotEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateExceptionSlotSubscription>() => T;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateExceptionCancellationSubscription
+  extends Promise<AsyncIterator<AggregateExceptionCancellation>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserRole {
@@ -8574,112 +8652,104 @@ export interface UserRoleSubscription
   description: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AttendanceCycleEdge {
-  cursor: String;
-}
-
-export interface AttendanceCycleEdgePromise
-  extends Promise<AttendanceCycleEdge>,
-    Fragmentable {
-  node: <T = AttendanceCyclePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface AttendanceCycleEdgeSubscription
-  extends Promise<AsyncIterator<AttendanceCycleEdge>>,
-    Fragmentable {
-  node: <T = AttendanceCycleSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ScheduleTimelineElementSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface ScheduleTimelineElementSubscriptionPayloadPromise
-  extends Promise<ScheduleTimelineElementSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ScheduleTimelineElementPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ScheduleTimelineElementPreviousValuesPromise>() => T;
-}
-
-export interface ScheduleTimelineElementSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ScheduleTimelineElementSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ScheduleTimelineElementSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = ScheduleTimelineElementPreviousValuesSubscription
-  >() => T;
-}
-
-export interface AggregateException {
+export interface AggregateExceptionAuthorization {
   count: Int;
 }
 
-export interface AggregateExceptionPromise
-  extends Promise<AggregateException>,
+export interface AggregateExceptionAuthorizationPromise
+  extends Promise<AggregateExceptionAuthorization>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateExceptionSubscription
-  extends Promise<AsyncIterator<AggregateException>>,
+export interface AggregateExceptionAuthorizationSubscription
+  extends Promise<AsyncIterator<AggregateExceptionAuthorization>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ScheduleTimelineElementPreviousValues {
-  id: ID_Output;
-  category: ScheduleTimelineCategory;
-  startTime: Int;
-  endTime: Int;
-  startEventRequired: Boolean;
-  endEventRequired: Boolean;
+export interface ScheduleCreditSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
 }
 
-export interface ScheduleTimelineElementPreviousValuesPromise
-  extends Promise<ScheduleTimelineElementPreviousValues>,
+export interface ScheduleCreditSubscriptionPayloadPromise
+  extends Promise<ScheduleCreditSubscriptionPayload>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleTimelineCategory>;
-  startTime: () => Promise<Int>;
-  endTime: () => Promise<Int>;
-  startEventRequired: () => Promise<Boolean>;
-  endEventRequired: () => Promise<Boolean>;
+  mutation: () => Promise<MutationType>;
+  node: <T = ScheduleCreditPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ScheduleCreditPreviousValuesPromise>() => T;
 }
 
-export interface ScheduleTimelineElementPreviousValuesSubscription
-  extends Promise<AsyncIterator<ScheduleTimelineElementPreviousValues>>,
+export interface ScheduleCreditSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleCreditSubscriptionPayload>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleTimelineCategory>>;
-  startTime: () => Promise<AsyncIterator<Int>>;
-  endTime: () => Promise<AsyncIterator<Int>>;
-  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
-  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ScheduleCreditSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ScheduleCreditPreviousValuesSubscription>() => T;
 }
 
-export interface ShiftSlotEdge {
+export interface ExceptionEdge {
   cursor: String;
 }
 
-export interface ShiftSlotEdgePromise
-  extends Promise<ShiftSlotEdge>,
+export interface ExceptionEdgePromise
+  extends Promise<ExceptionEdge>,
     Fragmentable {
-  node: <T = ShiftSlotPromise>() => T;
+  node: <T = ExceptionPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ShiftSlotEdgeSubscription
-  extends Promise<AsyncIterator<ShiftSlotEdge>>,
+export interface ExceptionEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionEdge>>,
     Fragmentable {
-  node: <T = ShiftSlotSubscription>() => T;
+  node: <T = ExceptionSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleCreditPreviousValues {
+  id: ID_Output;
+  category: ScheduleOfflineCategory;
+  sourceType: ScheduleCreditSourceEnum;
+  sourceDate: DateTimeOutput;
+}
+
+export interface ScheduleCreditPreviousValuesPromise
+  extends Promise<ScheduleCreditPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleOfflineCategory>;
+  sourceType: () => Promise<ScheduleCreditSourceEnum>;
+  sourceDate: () => Promise<DateTimeOutput>;
+}
+
+export interface ScheduleCreditPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleCreditPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  sourceType: () => Promise<AsyncIterator<ScheduleCreditSourceEnum>>;
+  sourceDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface EventSyncLogConnection {}
+
+export interface EventSyncLogConnectionPromise
+  extends Promise<EventSyncLogConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<EventSyncLogEdge>>() => T;
+  aggregate: <T = AggregateEventSyncLogPromise>() => T;
+}
+
+export interface EventSyncLogConnectionSubscription
+  extends Promise<AsyncIterator<EventSyncLogConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<EventSyncLogEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateEventSyncLogSubscription>() => T;
 }
 
 export interface User {
@@ -8752,6 +8822,120 @@ export interface UserSubscription
   ) => T;
 }
 
+export interface EventEdge {
+  cursor: String;
+}
+
+export interface EventEdgePromise extends Promise<EventEdge>, Fragmentable {
+  node: <T = EventPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EventEdgeSubscription
+  extends Promise<AsyncIterator<EventEdge>>,
+    Fragmentable {
+  node: <T = EventSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleDebitSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ScheduleDebitSubscriptionPayloadPromise
+  extends Promise<ScheduleDebitSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ScheduleDebitPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ScheduleDebitPreviousValuesPromise>() => T;
+}
+
+export interface ScheduleDebitSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleDebitSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ScheduleDebitSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ScheduleDebitPreviousValuesSubscription>() => T;
+}
+
+export interface UserRoleConnection {}
+
+export interface UserRoleConnectionPromise
+  extends Promise<UserRoleConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserRoleEdge>>() => T;
+  aggregate: <T = AggregateUserRolePromise>() => T;
+}
+
+export interface UserRoleConnectionSubscription
+  extends Promise<AsyncIterator<UserRoleConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserRoleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserRoleSubscription>() => T;
+}
+
+export interface ScheduleDebitPreviousValues {
+  id: ID_Output;
+  category: ScheduleOfflineCategory;
+  date: DateTimeOutput;
+}
+
+export interface ScheduleDebitPreviousValuesPromise
+  extends Promise<ScheduleDebitPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleOfflineCategory>;
+  date: () => Promise<DateTimeOutput>;
+}
+
+export interface ScheduleDebitPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleDebitPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  date: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ShiftEdge {
+  cursor: String;
+}
+
+export interface ShiftEdgePromise extends Promise<ShiftEdge>, Fragmentable {
+  node: <T = ShiftPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ShiftEdgeSubscription
+  extends Promise<AsyncIterator<ShiftEdge>>,
+    Fragmentable {
+  node: <T = ShiftSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleOfflineElement {
+  id: ID_Output;
+  category: ScheduleOfflineCategory;
+}
+
+export interface ScheduleOfflineElementPromise
+  extends Promise<ScheduleOfflineElement>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleOfflineCategory>;
+}
+
+export interface ScheduleOfflineElementSubscription
+  extends Promise<AsyncIterator<ScheduleOfflineElement>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+}
+
 export interface ScheduleDebitEdge {
   cursor: String;
 }
@@ -8768,6 +8952,495 @@ export interface ScheduleDebitEdgeSubscription
     Fragmentable {
   node: <T = ScheduleDebitSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleOfflineElementSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ScheduleOfflineElementSubscriptionPayloadPromise
+  extends Promise<ScheduleOfflineElementSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ScheduleOfflineElementPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ScheduleOfflineElementPreviousValuesPromise>() => T;
+}
+
+export interface ScheduleOfflineElementSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleOfflineElementSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ScheduleOfflineElementSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ScheduleOfflineElementPreviousValuesSubscription>() => T;
+}
+
+export interface UserRoleSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface UserRoleSubscriptionPayloadPromise
+  extends Promise<UserRoleSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UserRolePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserRolePreviousValuesPromise>() => T;
+}
+
+export interface UserRoleSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserRoleSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserRoleSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserRolePreviousValuesSubscription>() => T;
+}
+
+export interface ScheduleOfflineElementPreviousValues {
+  id: ID_Output;
+  category: ScheduleOfflineCategory;
+}
+
+export interface ScheduleOfflineElementPreviousValuesPromise
+  extends Promise<ScheduleOfflineElementPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleOfflineCategory>;
+}
+
+export interface ScheduleOfflineElementPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleOfflineElementPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+}
+
+export interface HolidayConnection {}
+
+export interface HolidayConnectionPromise
+  extends Promise<HolidayConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<HolidayEdge>>() => T;
+  aggregate: <T = AggregateHolidayPromise>() => T;
+}
+
+export interface HolidayConnectionSubscription
+  extends Promise<AsyncIterator<HolidayConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<HolidayEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateHolidaySubscription>() => T;
+}
+
+export interface ScheduleRestlineElement {
+  id: ID_Output;
+  category: ScheduleRestlineCategory;
+  duration: Int;
+  startTime: Int;
+  endTime: Int;
+  startEventRequired: Boolean;
+  endEventRequired: Boolean;
+}
+
+export interface ScheduleRestlineElementPromise
+  extends Promise<ScheduleRestlineElement>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleRestlineCategory>;
+  duration: () => Promise<Int>;
+  startTime: () => Promise<Int>;
+  endTime: () => Promise<Int>;
+  startEventRequired: () => Promise<Boolean>;
+  endEventRequired: () => Promise<Boolean>;
+}
+
+export interface ScheduleRestlineElementSubscription
+  extends Promise<AsyncIterator<ScheduleRestlineElement>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleRestlineCategory>>;
+  duration: () => Promise<AsyncIterator<Int>>;
+  startTime: () => Promise<AsyncIterator<Int>>;
+  endTime: () => Promise<AsyncIterator<Int>>;
+  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface ExceptionSlotEdge {
+  cursor: String;
+}
+
+export interface ExceptionSlotEdgePromise
+  extends Promise<ExceptionSlotEdge>,
+    Fragmentable {
+  node: <T = ExceptionSlotPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExceptionSlotEdgeSubscription
+  extends Promise<AsyncIterator<ExceptionSlotEdge>>,
+    Fragmentable {
+  node: <T = ExceptionSlotSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ScheduleRestlineElementSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ScheduleRestlineElementSubscriptionPayloadPromise
+  extends Promise<ScheduleRestlineElementSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ScheduleRestlineElementPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ScheduleRestlineElementPreviousValuesPromise>() => T;
+}
+
+export interface ScheduleRestlineElementSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleRestlineElementSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ScheduleRestlineElementSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = ScheduleRestlineElementPreviousValuesSubscription
+  >() => T;
+}
+
+export interface ExceptionEliminationConnection {}
+
+export interface ExceptionEliminationConnectionPromise
+  extends Promise<ExceptionEliminationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionEliminationEdge>>() => T;
+  aggregate: <T = AggregateExceptionEliminationPromise>() => T;
+}
+
+export interface ExceptionEliminationConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionEliminationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ExceptionEliminationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateExceptionEliminationSubscription>() => T;
+}
+
+export interface ScheduleRestlineElementPreviousValues {
+  id: ID_Output;
+  category: ScheduleRestlineCategory;
+  duration: Int;
+  startTime: Int;
+  endTime: Int;
+  startEventRequired: Boolean;
+  endEventRequired: Boolean;
+}
+
+export interface ScheduleRestlineElementPreviousValuesPromise
+  extends Promise<ScheduleRestlineElementPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleRestlineCategory>;
+  duration: () => Promise<Int>;
+  startTime: () => Promise<Int>;
+  endTime: () => Promise<Int>;
+  startEventRequired: () => Promise<Boolean>;
+  endEventRequired: () => Promise<Boolean>;
+}
+
+export interface ScheduleRestlineElementPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleRestlineElementPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleRestlineCategory>>;
+  duration: () => Promise<AsyncIterator<Int>>;
+  startTime: () => Promise<AsyncIterator<Int>>;
+  endTime: () => Promise<AsyncIterator<Int>>;
+  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface ExceptionAuthorizationConnection {}
+
+export interface ExceptionAuthorizationConnectionPromise
+  extends Promise<ExceptionAuthorizationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionAuthorizationEdge>>() => T;
+  aggregate: <T = AggregateExceptionAuthorizationPromise>() => T;
+}
+
+export interface ExceptionAuthorizationConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionAuthorizationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ExceptionAuthorizationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateExceptionAuthorizationSubscription>() => T;
+}
+
+export interface ScheduleTimelineElement {
+  id: ID_Output;
+  category: ScheduleTimelineCategory;
+  startTime: Int;
+  endTime: Int;
+  startEventRequired: Boolean;
+  endEventRequired: Boolean;
+}
+
+export interface ScheduleTimelineElementPromise
+  extends Promise<ScheduleTimelineElement>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleTimelineCategory>;
+  startTime: () => Promise<Int>;
+  endTime: () => Promise<Int>;
+  startEventRequired: () => Promise<Boolean>;
+  endEventRequired: () => Promise<Boolean>;
+}
+
+export interface ScheduleTimelineElementSubscription
+  extends Promise<AsyncIterator<ScheduleTimelineElement>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleTimelineCategory>>;
+  startTime: () => Promise<AsyncIterator<Int>>;
+  endTime: () => Promise<AsyncIterator<Int>>;
+  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface EventSyncLog {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  from: DateTimeOutput;
+  to: DateTimeOutput;
+}
+
+export interface EventSyncLogPromise
+  extends Promise<EventSyncLog>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  from: () => Promise<DateTimeOutput>;
+  to: () => Promise<DateTimeOutput>;
+}
+
+export interface EventSyncLogSubscription
+  extends Promise<AsyncIterator<EventSyncLog>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  from: () => Promise<AsyncIterator<DateTimeOutput>>;
+  to: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ScheduleTimelineElementSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ScheduleTimelineElementSubscriptionPayloadPromise
+  extends Promise<ScheduleTimelineElementSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ScheduleTimelineElementPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ScheduleTimelineElementPreviousValuesPromise>() => T;
+}
+
+export interface ScheduleTimelineElementSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ScheduleTimelineElementSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ScheduleTimelineElementSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = ScheduleTimelineElementPreviousValuesSubscription
+  >() => T;
+}
+
+export interface AggregateShiftSlot {
+  count: Int;
+}
+
+export interface AggregateShiftSlotPromise
+  extends Promise<AggregateShiftSlot>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateShiftSlotSubscription
+  extends Promise<AsyncIterator<AggregateShiftSlot>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ScheduleTimelineElementPreviousValues {
+  id: ID_Output;
+  category: ScheduleTimelineCategory;
+  startTime: Int;
+  endTime: Int;
+  startEventRequired: Boolean;
+  endEventRequired: Boolean;
+}
+
+export interface ScheduleTimelineElementPreviousValuesPromise
+  extends Promise<ScheduleTimelineElementPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: () => Promise<ScheduleTimelineCategory>;
+  startTime: () => Promise<Int>;
+  endTime: () => Promise<Int>;
+  startEventRequired: () => Promise<Boolean>;
+  endEventRequired: () => Promise<Boolean>;
+}
+
+export interface ScheduleTimelineElementPreviousValuesSubscription
+  extends Promise<AsyncIterator<ScheduleTimelineElementPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: () => Promise<AsyncIterator<ScheduleTimelineCategory>>;
+  startTime: () => Promise<AsyncIterator<Int>>;
+  endTime: () => Promise<AsyncIterator<Int>>;
+  startEventRequired: () => Promise<AsyncIterator<Boolean>>;
+  endEventRequired: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface ScheduleCreditConnection {}
+
+export interface ScheduleCreditConnectionPromise
+  extends Promise<ScheduleCreditConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleCreditEdge>>() => T;
+  aggregate: <T = AggregateScheduleCreditPromise>() => T;
+}
+
+export interface ScheduleCreditConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleCreditConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ScheduleCreditEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateScheduleCreditSubscription>() => T;
+}
+
+export interface Schedule {
+  id: ID_Output;
+  isPreset?: Boolean;
+  systemScheduleIdentifier?: SystemScheduleIdentifierEnum;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  description?: String;
+  baseTime: Int;
+  innerBound?: Int;
+  outerBound?: Int;
+}
+
+export interface SchedulePromise extends Promise<Schedule>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  isPreset: () => Promise<Boolean>;
+  systemScheduleIdentifier: () => Promise<SystemScheduleIdentifierEnum>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  description: () => Promise<String>;
+  baseTime: () => Promise<Int>;
+  innerBound: () => Promise<Int>;
+  outerBound: () => Promise<Int>;
+  timeline: <T = FragmentableArray<ScheduleTimelineElement>>(
+    args?: {
+      where?: ScheduleTimelineElementWhereInput;
+      orderBy?: ScheduleTimelineElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  restline: <T = FragmentableArray<ScheduleRestlineElement>>(
+    args?: {
+      where?: ScheduleRestlineElementWhereInput;
+      orderBy?: ScheduleRestlineElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  offline1: <T = ScheduleOfflineElementPromise>() => T;
+  offline2: <T = ScheduleOfflineElementPromise>() => T;
+}
+
+export interface ScheduleSubscription
+  extends Promise<AsyncIterator<Schedule>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  isPreset: () => Promise<AsyncIterator<Boolean>>;
+  systemScheduleIdentifier: () => Promise<
+    AsyncIterator<SystemScheduleIdentifierEnum>
+  >;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  description: () => Promise<AsyncIterator<String>>;
+  baseTime: () => Promise<AsyncIterator<Int>>;
+  innerBound: () => Promise<AsyncIterator<Int>>;
+  outerBound: () => Promise<AsyncIterator<Int>>;
+  timeline: <T = Promise<AsyncIterator<ScheduleTimelineElementSubscription>>>(
+    args?: {
+      where?: ScheduleTimelineElementWhereInput;
+      orderBy?: ScheduleTimelineElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  restline: <T = Promise<AsyncIterator<ScheduleRestlineElementSubscription>>>(
+    args?: {
+      where?: ScheduleRestlineElementWhereInput;
+      orderBy?: ScheduleRestlineElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  offline1: <T = ScheduleOfflineElementSubscription>() => T;
+  offline2: <T = ScheduleOfflineElementSubscription>() => T;
+}
+
+export interface FieldOptionLabelConnection {}
+
+export interface FieldOptionLabelConnectionPromise
+  extends Promise<FieldOptionLabelConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FieldOptionLabelEdge>>() => T;
+  aggregate: <T = AggregateFieldOptionLabelPromise>() => T;
+}
+
+export interface FieldOptionLabelConnectionSubscription
+  extends Promise<AsyncIterator<FieldOptionLabelConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FieldOptionLabelEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFieldOptionLabelSubscription>() => T;
 }
 
 export interface ShiftSubscriptionPayload {
@@ -8793,43 +9466,47 @@ export interface ShiftSubscriptionPayloadSubscription
   previousValues: <T = ShiftPreviousValuesSubscription>() => T;
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
+export interface ExceptionCancellationConnection {}
 
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
+export interface ExceptionCancellationConnectionPromise
+  extends Promise<ExceptionCancellationConnection>,
     Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionCancellationEdge>>() => T;
+  aggregate: <T = AggregateExceptionCancellationPromise>() => T;
 }
 
-export interface AggregateAttendanceCycle {
-  count: Int;
-}
-
-export interface AggregateAttendanceCyclePromise
-  extends Promise<AggregateAttendanceCycle>,
+export interface ExceptionCancellationConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionCancellationConnection>>,
     Fragmentable {
-  count: () => Promise<Int>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ExceptionCancellationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateExceptionCancellationSubscription>() => T;
 }
 
-export interface AggregateAttendanceCycleSubscription
-  extends Promise<AsyncIterator<AggregateAttendanceCycle>>,
+export interface UserSubscriptionPayload {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = UserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
 export interface ShiftSlotPreviousValues {
@@ -8874,23 +9551,23 @@ export interface ShiftSlotSubscriptionPayloadSubscription
   previousValues: <T = ShiftSlotPreviousValuesSubscription>() => T;
 }
 
-export interface ScheduleOfflineElement {
+export interface ShiftSlot {
   id: ID_Output;
-  category: ScheduleOfflineCategory;
+  index: Int;
 }
 
-export interface ScheduleOfflineElementPromise
-  extends Promise<ScheduleOfflineElement>,
-    Fragmentable {
+export interface ShiftSlotPromise extends Promise<ShiftSlot>, Fragmentable {
   id: () => Promise<ID_Output>;
-  category: () => Promise<ScheduleOfflineCategory>;
+  index: () => Promise<Int>;
+  schedule: <T = SchedulePromise>() => T;
 }
 
-export interface ScheduleOfflineElementSubscription
-  extends Promise<AsyncIterator<ScheduleOfflineElement>>,
+export interface ShiftSlotSubscription
+  extends Promise<AsyncIterator<ShiftSlot>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  category: () => Promise<AsyncIterator<ScheduleOfflineCategory>>;
+  index: () => Promise<AsyncIterator<Int>>;
+  schedule: <T = ScheduleSubscription>() => T;
 }
 
 export interface ShiftPreviousValues {
@@ -8924,95 +9601,79 @@ export interface ShiftPreviousValuesSubscription
   endDate: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface BatchPayload {
-  count: Long;
-}
+export interface ScheduleTimelineElementConnection {}
 
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface ScheduleTimelineElementConnectionPromise
+  extends Promise<ScheduleTimelineElementConnection>,
     Fragmentable {
-  count: () => Promise<Long>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleTimelineElementEdge>>() => T;
+  aggregate: <T = AggregateScheduleTimelineElementPromise>() => T;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface ScheduleTimelineElementConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleTimelineElementConnection>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ScheduleTimelineElementEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateScheduleTimelineElementSubscription>() => T;
 }
 
-export interface UserRoleSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface UserRoleSubscriptionPayloadPromise
-  extends Promise<UserRoleSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserRolePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserRolePreviousValuesPromise>() => T;
-}
-
-export interface UserRoleSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserRoleSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserRoleSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserRolePreviousValuesSubscription>() => T;
-}
-
-export interface UserSubscriptionPayload {
-  mutation: MutationType;
-  updatedFields?: String[];
-}
-
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValuesPromise>() => T;
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateScheduleRestlineElement {
+export interface AggregateEventSyncLog {
   count: Int;
 }
 
-export interface AggregateScheduleRestlineElementPromise
-  extends Promise<AggregateScheduleRestlineElement>,
+export interface AggregateEventSyncLogPromise
+  extends Promise<AggregateEventSyncLog>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateScheduleRestlineElementSubscription
-  extends Promise<AsyncIterator<AggregateScheduleRestlineElement>>,
+export interface AggregateEventSyncLogSubscription
+  extends Promise<AsyncIterator<AggregateEventSyncLog>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export type Long = string;
+export interface ExceptionRejectionConnection {}
 
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
-*/
-export type Int = number;
+export interface ExceptionRejectionConnectionPromise
+  extends Promise<ExceptionRejectionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExceptionRejectionEdge>>() => T;
+  aggregate: <T = AggregateExceptionRejectionPromise>() => T;
+}
 
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
+export interface ExceptionRejectionConnectionSubscription
+  extends Promise<AsyncIterator<ExceptionRejectionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ExceptionRejectionEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateExceptionRejectionSubscription>() => T;
+}
+
+export interface ScheduleConnection {}
+
+export interface ScheduleConnectionPromise
+  extends Promise<ScheduleConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ScheduleEdge>>() => T;
+  aggregate: <T = AggregateSchedulePromise>() => T;
+}
+
+export interface ScheduleConnectionSubscription
+  extends Promise<AsyncIterator<ScheduleConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ScheduleEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateScheduleSubscription>() => T;
+}
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
@@ -9034,6 +9695,18 @@ export type DateTimeInput = Date | string;
 DateTime scalar output type, which is always a string
 */
 export type DateTimeOutput = string;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
+*/
+export type Int = number;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
+
+export type Long = string;
 
 /**
  * Model Metadata
@@ -9090,6 +9763,14 @@ export const models = [
   },
   {
     name: "EmployeeSexEnum",
+    embedded: false
+  },
+  {
+    name: "Event",
+    embedded: false
+  },
+  {
+    name: "EventSyncLog",
     embedded: false
   },
   {

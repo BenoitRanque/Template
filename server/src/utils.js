@@ -84,7 +84,9 @@ async function loadAttendanceReport({ id, zkTimePin }, { from, to, withException
 
   // we load the data for one day before in that day's schedule slightly overlaps the first day in this range
   const references = await loadEmployeeReferencesForDateRange(prisma, id, subDays(from, 1), to, { withExceptions, withHolidays, withScheduleData: true })
-  const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
+  const employeeEvents = await prisma.client.events({ where: { employee: { id } } })
+  const events = references.events.map(({ time }) => time)
+  // const events = await loadEmployeeEventsForDateRange(zkTimePin, from, to)
 
   const dates = getAttendanceDates(from, to, references, events)
   const complianceSummary = getAttendanceComplianceSummary(dates)
@@ -115,9 +117,20 @@ async function loadEmployeeEventsForDateRange(zkTimePin, from, to) {
 }
 
 async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, { withExceptions, withHolidays, withScheduleData } = { withScheduleData: false, withExceptions: false, withHolidays: false }) {
+  const innerBound = from
+  const outerBound = addDays(to, 2)
   const data = await prisma.bindings.request(`
-    query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean!) {
-      shifts (where: {
+  query ($id: ID! $from: DateTime! $to: DateTime! $withHolidays: Boolean! $withExceptions: Boolean! $withScheduleData: Boolean! $innerBound: DateTime! $outerBound: DateTime!) {
+    events (where: {
+      employee: {
+        id: $id
+      }
+      time_gte: $innerBound
+      time_lte: $outerBound
+    }) {
+      time
+    }
+    shifts (where: {
         employee: {
           id: $id
         }
@@ -202,11 +215,12 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
         category
       }
     }
-  `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData })
+  `, { id: employeeId, from, to, withExceptions, withHolidays, withScheduleData, innerBound, outerBound })
 
   const holidaySchedule = data.holidaySchedule ? data.holidaySchedule : null
 
   return {
+    events: data.events ? data.events : [],
     shifts: data.shifts ? data.shifts : [],
     exceptions: data.exceptions ? data.exceptions : [],
     holidays: data.holidays ? data.holidays.map(holiday => ({ ...holiday, schedule: holidaySchedule })) : []

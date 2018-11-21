@@ -57,6 +57,14 @@ var models = [
     embedded: false
   },
   {
+    name: "Event",
+    embedded: false
+  },
+  {
+    name: "EventSyncLog",
+    embedded: false
+  },
+  {
     name: "Exception",
     embedded: false
   },
