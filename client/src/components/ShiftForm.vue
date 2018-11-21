@@ -99,7 +99,7 @@ export default {
       return this.model.employee.id && this.modelCopy && this.modelCopy.employee && this.modelCopy.employee.id !== this.model.employee.id
     },
     canCreate () {
-      return this.valid && (!this.model.id || this.employeeChanged)
+      return this.valid
     },
     canUpdate () {
       return this.modified && this.valid && this.model.id && !this.employeeChanged
