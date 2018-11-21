@@ -29,7 +29,6 @@
             </q-item-main>
           </q-item>
         </q-list>
-        <slot name="source"></slot>
       </q-modal-layout>
     </q-modal>
   </div>
