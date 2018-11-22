@@ -934,12 +934,8 @@ function getExceptionDebits (balance, exception) {
   // get debits that are not acounted for by source nor by existing credits in same exception
   return Object.keys(balance).reduce((debits, category) => {
     const debitsWithSource = balance[category].debit.filter(({ source }) => source)
-    const debitCount = debitsWithSource.length
-    const creditCount = balance[category].credit.length
-
-    if (debitCount <= creditCount) return debits
     // slice out
-    return debits.concat(debitsWithSource.slice(creditCount).map(debit => ({
+    return debits.concat(debitsWithSource.map(debit => ({
       credit: { connect: debit.source },
       employee: { connect: exception.employee },
       category,
