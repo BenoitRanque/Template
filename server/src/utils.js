@@ -25,6 +25,7 @@ const addHours = require('date-fns/add_hours')
 const addMinutes = require('date-fns/add_minutes')
 const getMinutes = require('date-fns/get_minutes')
 const isWeekend = require('date-fns/is_weekend')
+const parse = require('date-fns/parse')
 
 const SCH_TIME_EXTRA = 'SCH_TIME_EXTRA'
 const SCH_TIME_WORK = 'SCH_TIME_WORK'
@@ -961,6 +962,54 @@ function getExceptionCredits (balance, exception) {
   }, [])
 }
 
+async function syncEvents (from, to, prisma) {
+  const ZKTIME_DB_PATH = process.env.ZKTIME_DB_PATH
+  const knex = require('knex')({
+    client: 'sqlite3',
+    useNullAsDefault: true,
+    connection: {
+      filename: ZKTIME_DB_PATH
+    }
+  })
+
+  if (!to) {
+    to = new Date()
+  }
+  const between = [format(from, 'YYYY-MM-DD'), format(addDays(to, 'YYYY-MM-DD'))]
+  const events = await knex('att_punches')
+    .innerJoin('hr_employee', 'hr_employee.id', 'att_punches.emp_id')
+    .select(['punch_time', 'emp_pin']) // posssibly interesting fields: 'punch_time', 'terminal_id', 'emp_pin'
+    .whereBetween('punch_time', between)
+    // .where({ 'emp_pin': employee.zkTimePin })
+
+  const deletedCount = await prisma.client.deleteManyEvents({
+    time_gte: from,
+    time_lte: to
+  })
+
+  const employees = await prisma.client.employees()
+
+  const count = events.filter(event => employees.some(({ zkTimePin }) => event.emp_pin === zkTimePin)).length
+
+  await Promise.all(employees.map(employee => {
+    const employeeEvents = events.filter(({ emp_pin }) => emp_pin === employee.zkTimePin).map(({ punch_time }) => punch_time)
+    return prisma.client.updateEmployee({
+      where: {
+        id: employee.id
+      },
+      data: {
+        events: {
+          create: employeeEvents.map(event => ({ time: parse(event) }))
+        }
+      }
+    })
+  }))
+
+  await prisma.client.createEventSyncLog({ from, to })
+
+  return count
+}
+
 module.exports = {
   APP_SECRET,
   BCRYPT_SALT_ROUNDS,
@@ -975,5 +1024,6 @@ module.exports = {
   loadExceptionBalance,
   getExceptionCredits,
   getExceptionDebits,
-  getExceptionDebitsWithoutSource
+  getExceptionDebitsWithoutSource,
+  syncEvents
 }
