@@ -113,7 +113,6 @@ query CreditPaginationQuery ($first: Int! $skip: Int! $where: ScheduleCreditWher
     sourceType
   }
 }
-
 query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
 	exception (where: $where) {
     id
@@ -159,6 +158,12 @@ query ExceptionWithScheduleDataQuery ($where: ExceptionWhereUniqueInput!) {
     }
     slots {
       date
+      source1 {
+        sourceDate
+      }
+      source2 {
+        sourceDate
+      }
       schedule {
         id
         ...AllScheduleData
