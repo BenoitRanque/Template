@@ -128,7 +128,7 @@ async function loadEmployeeReferencesForDateRange(prisma, employeeId, from, to, 
       }
       time_gte: $innerBound
       time_lte: $outerBound
-    }) @include(if: $withEvents) {
+    } orderBy: time_ASC) @include(if: $withEvents) {
       time
     }
     shifts (where: {
@@ -333,7 +333,7 @@ function getAttendanceDates (from, to, references, events) {
 function getDatesWithEvents(dates, events) {
   return dates.map(date => ({
     ...date,
-    events: events.filter(event => isWithinRange(event, date.innerBound, date.outerBound))
+    events: events.filter(event => isWithinRange(event, date.innerBound, date.outerBound)).sort((a, b) => compareAsc(a, b))
   }))
 }
 
