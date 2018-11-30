@@ -79,7 +79,7 @@ async function createException (obj, { data }, { prisma, session }, info) {
     throw new Error(`Ya existe boleta autorizada o pendiente utilizando una de estas fuentes`)
   }
 
-  const employeeIsNotSourceOrigin = await prisma.client.$exists.credit({ id_in: debitSources, employee: { id_not: employeeId } })
+  const employeeIsNotSourceOrigin = await prisma.client.$exists.scheduleCredit({ id_in: debitSources, employee: { id_not: employeeId } })
   if (employeeIsNotSourceOrigin) {
     throw new Error('Empleado deber ser mismo que origen de devoluciones')
   }
