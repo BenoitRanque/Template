@@ -24,6 +24,35 @@
             <template slot="top-left">
               {{slotLabel(slot)}}
             </template>
+
+            <span slot="offline1-header">
+              <q-icon v-if="slot.source1 !== null" class="text-bold" style="font-size: 16px" name="check">
+                <q-tooltip>Tiene Fuente</q-tooltip>
+              </q-icon>
+            </span>
+
+            <span slot="offline2-header">
+              <q-icon v-if="slot.source2 !== null" class="text-bold" style="font-size: 16px" name="check">
+                <q-tooltip>Tiene Fuente</q-tooltip>
+              </q-icon>
+            </span>
+
+            <template slot="offline1-source">
+              <q-item v-if="slot.source1">
+                <q-item-main>
+                  {{formatDate(slot.source1.sourceDate, 'dddd')}} {{formatDate(slot.source1.sourceDate, 'D')}} de {{formatDate(slot.source1.sourceDate, 'MMMM YYYY')}}
+                </q-item-main>
+              </q-item>
+            </template>
+
+            <template slot="offline2-source">
+              <q-item v-if="slot.source2">
+                <q-item-main>
+                  {{formatDate(slot.source2.sourceDate, 'dddd')}} {{formatDate(slot.source2.sourceDate, 'D')}} de {{formatDate(slot.source2.sourceDate, 'MMMM YYYY')}}
+                </q-item-main>
+              </q-item>
+            </template>
+
           </schedule-input>
         </q-card-main>
       </q-card>
