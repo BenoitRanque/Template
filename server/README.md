@@ -11,6 +11,7 @@ This file should be placed in the project root folder
 PG_USERNAME=
 PG_PASSWORD=
 PG_DATABASE=
+PG_PORT=5432
 
 # Managment Secret: used to deploy service. Only used during setup and deployment
 PRISMA_MANAGEMENT_API_SECRET=

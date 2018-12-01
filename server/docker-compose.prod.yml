@@ -18,7 +18,7 @@ services:
             host: postgres-db
             port: '5432'
             database: ${PG_DATABASE}
-            schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
+            # schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
             user: ${PG_USERNAME}
             password: ${PG_PASSWORD}
             migrations: true
