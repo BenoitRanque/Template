@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres-db:
+    image: postgres:10-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+  wasp:
+    command: npm run start
+volumes:
+  postgres:

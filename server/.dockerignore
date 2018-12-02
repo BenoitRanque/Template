@@ -1,8 +1,6 @@
 .env
 dist
-package-lock.json
-node_modules
-data
+database
 .idea
 .vscode
 *.log

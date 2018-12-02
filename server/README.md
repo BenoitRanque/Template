@@ -12,6 +12,7 @@ PG_USERNAME=
 PG_PASSWORD=
 PG_DATABASE=
 PG_PORT=5432
+PG_HOST=postgres-db
 
 # Managment Secret: used to deploy service. Only used during setup and deployment
 PRISMA_MANAGEMENT_API_SECRET=
