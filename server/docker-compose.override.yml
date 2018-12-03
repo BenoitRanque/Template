@@ -9,6 +9,6 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
   wasp:
-    command: npm run start
+    command: nodemon src/index.js
 volumes:
   postgres:
