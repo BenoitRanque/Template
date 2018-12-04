@@ -9,27 +9,27 @@ services:
     environment:
       PRISMA_CONFIG: |
         port: 4466
-        # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
-        # managementApiSecret: my-secret
         managementApiSecret: ${PRISMA_MANAGEMENT_API_SECRET}
         databases:
           default:
             connector: postgres
-            host: ${PG_HOST-host.docker.internal}
-            port: ${PG_PORT-5432}
+            host: ${PG_HOST:-host.docker.internal}
+            port: ${PG_PORT:-5432}
             database: ${PG_DATABASE}
-            # schema: dev # cannot enable this option for now. the option will be used on data seed but not by the rest of prisma
             user: ${PG_USERNAME}
             password: ${PG_PASSWORD}
-            migrations: true
+            migrations: true # allow prisma to change the database structure
+            # connectionLimit: 50
   wasp:
-    image: wasp:latest
-    command: node src/index.js
+    build:
+      context: .
+      args:
+        NODE_ENV: production
     ports:
       - "4000:4000"
     restart: always
     environment:
-      NODE_ENV: ${NODE_ENV-production}
+      NODE_ENV: production
       PRISMA_ENDPOINT: ${PRISMA_ENDPOINT}
       PRISMA_SECRET: ${PRISMA_SECRET}
       APP_SECRET: ${APP_SECRET}

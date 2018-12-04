@@ -13,4 +13,9 @@ const server = new GraphQLServer({
   })
 })
 
-server.start(() => console.log(`Server is running on http://localhost:4000`))
+const options = {
+  // only enable playground during development
+  playground: process.env.NODE_ENV === 'development' ? '/' : false
+}
+
+server.start(options, ({ port, endpoint }) => console.log(`Server is running on http://localhost:${port}${endpoint === '/' ? '' : endpoint }`))

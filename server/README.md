@@ -7,69 +7,50 @@ This file should be placed in the project root folder
 
 ```.env
 
-# Postgres Database configuation. Only used during setup
-PG_USERNAME=
+# Example .env file
+
+# Database configurations
+PG_USERNAME=          # username cannot be "postgres" in development
 PG_PASSWORD=
 PG_DATABASE=
-PG_PORT=5432
-PG_HOST=postgres-db
+# PG_HOST=            # optional. use host.docker.internal to refer to host machine, else use postgres service name
+# PG_PORT=            # optional. The port for our postgres database
 
-# Managment Secret: used to deploy service. Only used during setup and deployment
-PRISMA_MANAGEMENT_API_SECRET=
+# Prisma Configurations
+PRISMA_MANAGEMENT_API_SECRET=         # optional. used for administrative prisma tasks (deployement, migrations)
+PRISMA_ENDPOINT=                      # example: http://localhost:4466/project/dev
+PRISMA_SECRET=                        # Used to access the Prisma API
 
-# Enpoint where Prisma is deployed. Example http://localhost:4466/project/dev
-PRISMA_ENDPOINT=
-# Used to access the Prisma API
-PRISMA_SECRET=
-
-# Used to validate user sessions
-APP_SECRET=
-
-# See BYCRYPT docs
-BCRYPT_SALT_ROUNDS=
-
-# Location of ZKTime database file, used to load employee events
-ZKTIME_DB_PATH=
+# Application Configurations
+APP_SECRET=ApplicationSecret          # Used to validate user sessions
+BCRYPT_SALT_ROUNDS=12                 # See BYCRYPT docs
+ZKTIME_DB_PATH=data/ZKTimeNet.db      # Location of ZKTime database file, used to load employee events
 
 ```
-
-### 2. Install dependencies
-
-```sh
-npm install
-```
-
-### 3. Deploy the Prisma database service
+### 2. Deploy the Prisma database service
 
 Docker must be installed and running
 
 ```sh
-docker-compose -f database/docker-compose.yml up -d
-# or
-npm run docker-compose
+# development
+docker-compose up -d
+# production
+docker-compose -f docker-compose.yml up -d
 ```
 
-### 4. Deploy the Prisma database service
+### 3. Deploy the Prisma datamodel to the prisma service
 
 The prisma CLI must be installed globally
 
 ```sh
 prisma deploy
-# or
-npm run prisma-deploy
 ```
 
-##### 4.1 Server utils
+##### 3.1 Server utils
 
 ```sh
-prisma reset # remove all server data
-prisma seed # seed startign data
-```
-
-### 5. Start the server
-
-```sh
-npm run dev # start dev server & open playground
-# or
-npm run start # start production server
+prisma reset            # remove all server data
+prisma delete           # delete service
+prisma seed             # seed starting data
+prisma generate         # generate schema and client based on datamodel
 ```
