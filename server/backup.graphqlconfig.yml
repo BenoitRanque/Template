@@ -1,3 +1,4 @@
+# currently renamed to see if anythign breaks
 projects:
   app:
     schemaPath: src/schema/index.graphql
