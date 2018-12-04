@@ -9,12 +9,10 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
   wasp:
+    build: .
     command: nodemon -L src/index.js
-    # ports:
-    #   - "4000:4000"
-    #   - "5858:5858"
     volumes:
-      - .:/usr/app
-      - /usr/app/node_modules
+      - ./src:/usr/app/src
+      - ./data:/usr/app/data
 volumes:
   postgres:

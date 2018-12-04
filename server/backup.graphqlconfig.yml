@@ -1,4 +1,4 @@
-# currently renamed to see if anythign breaks
+# this file is used by graphl-playground to identify endpoints
 projects:
   app:
     schemaPath: src/schema/index.graphql

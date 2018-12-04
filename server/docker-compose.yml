@@ -23,7 +23,7 @@ services:
             password: ${PG_PASSWORD}
             migrations: true
   wasp:
-    build: .
+    image: wasp:latest
     command: node src/index.js
     ports:
       - "4000:4000"
