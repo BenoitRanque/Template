@@ -21,6 +21,7 @@ services:
             migrations: true # allow prisma to change the database structure
             # connectionLimit: 50
   wasp:
+    image: wasp:latest-prod
     build:
       context: .
       args:
