@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
+  "description": "WASP HR server",
+  "repository": "https://github.com/BenoitRanque/wasp",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "date-fns": "^1.29.0",
