@@ -16,7 +16,7 @@ services:
             migrations: true # allow prisma to change the database structure
             # connectionLimit: 50
   postgres-db:
-    image: postgres:10-alpine
+    image: postgres:alpine
     restart: always
     ports:
       - "5432:5432"
