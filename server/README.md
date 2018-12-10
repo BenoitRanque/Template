@@ -38,8 +38,10 @@ ZKTIME_DB_PATH=dev_events_data/ZKTimeNet.db
 
 ```
 # Example production .env file. Used to deploy and manage production environment.
-
 # Variables values here must be the same as the ones in the production environment
+
+# optional. used for administrative prisma tasks (deployement, migrations)
+PRISMA_MANAGEMENT_API_SECRET=PrimaManagmentSecret
 # example: http://host:4466/project/prod
 PRISMA_ENDPOINT=http://wasp:4466/wasp/prod
 # Used to access the Prisma API
