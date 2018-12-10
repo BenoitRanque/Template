@@ -21,8 +21,10 @@ PG_DATABASE=wasp
 # Prisma Configurations
 # optional. used for administrative prisma tasks (deployement, migrations)
 PRISMA_MANAGEMENT_API_SECRET=PrimaManagmentSecret
-# example: http://localhost:4466/project/dev
-PRISMA_ENDPOINT=http://localhost:4466/wasp/dev
+# example: http://host:4466/service/stage
+PRISMA_HOST=localhost
+PRISMA_SERVICE=wasp
+PRISMA_STAGE=dev
 # Used to access the Prisma API
 PRISMA_SECRET=PrismaSecret
 
@@ -40,10 +42,12 @@ ZKTIME_DB_PATH=dev_events_data/ZKTimeNet.db
 # Example production .env file. Used to deploy and manage production environment.
 # Variables values here must be the same as the ones in the production environment
 
-# optional. used for administrative prisma tasks (deployement, migrations)
+# Prisma Configurations
 PRISMA_MANAGEMENT_API_SECRET=PrimaManagmentSecret
-# example: http://host:4466/project/prod
-PRISMA_ENDPOINT=http://wasp:4466/wasp/prod
+# example: http://host:4466/service/stage
+PRISMA_HOST=wasp
+PRISMA_SERVICE=wasp
+PRISMA_STAGE=prod
 # Used to access the Prisma API
 PRISMA_SECRET=PrismaSecret
 
