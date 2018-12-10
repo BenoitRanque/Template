@@ -10,21 +10,29 @@ This file should be placed in the project root folder
 # Example .env file
 
 # Database configurations
-PG_USERNAME=          # username cannot be "postgres" in development
-PG_PASSWORD=
-PG_DATABASE=
-# PG_HOST=            # optional. use host.docker.internal to refer to host machine, else use postgres service name
-# PG_PORT=            # optional. The port for our postgres database
+PG_USERNAME=wasp
+PG_PASSWORD=wasp
+PG_DATABASE=wasp
+# optional. use host.docker.internal to refer to host machine, else use postgres service name
+# PG_HOST=
+# optional. The port for our postgres database
+# PG_PORT=
 
 # Prisma Configurations
-PRISMA_MANAGEMENT_API_SECRET=         # optional. used for administrative prisma tasks (deployement, migrations)
-PRISMA_ENDPOINT=                      # example: http://localhost:4466/project/dev
-PRISMA_SECRET=                        # Used to access the Prisma API
+# optional. used for administrative prisma tasks (deployement, migrations)
+PRISMA_MANAGEMENT_API_SECRET=PrimaManagmentSecret
+# example: http://localhost:4466/project/dev
+PRISMA_ENDPOINT=http://localhost:4466/wasp/dev
+# Used to access the Prisma API
+PRISMA_SECRET=PrismaSecret
 
 # Application Configurations
-APP_SECRET=ApplicationSecret          # Used to validate user sessions
-BCRYPT_SALT_ROUNDS=12                 # See BYCRYPT docs
-ZKTIME_DB_PATH=data/ZKTimeNet.db      # Location of ZKTime database file, used to load employee events
+# Used to validate user sessions
+APP_SECRET=ApplicationSecret
+# See BYCRYPT docs
+BCRYPT_SALT_ROUNDS=12
+# Location of ZKTime database file, used to load employee events
+ZKTIME_DB_PATH=dev_events_data/ZKTimeNet.db
 
 ```
 ### 2. Deploy the Prisma database service
