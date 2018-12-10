@@ -1,8 +1,8 @@
 
 type User {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   username: String! @unique
   password: String!
   departments: [Department!]!
@@ -10,7 +10,7 @@ type User {
 }
 
 type UserRole {
-  id: ID! @id
+  id: ID! @unique
   name: String! @unique
   description: String
   # privileges: [String!]!
@@ -24,25 +24,25 @@ enum UserRoleEnum {
 }
 
 type EventSyncLog {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   from: DateTime!
   to: DateTime!
 }
 
 type Event {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   employee: Employee!
   time: DateTime!
 }
 
 type Employee {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   nameFirst: String!
   nameMiddle: String
   namePaternal: String
@@ -69,18 +69,18 @@ type Employee {
 }
 
 type Department {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   subordinates: [Employee!]!
   supervisors: [User!]!
 }
 
 type Shift {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   description: String
   employee: Employee!
   startDate: DateTime!
@@ -90,16 +90,16 @@ type Shift {
 }
 
 type ShiftSlot {
-  id: ID! @id
+  id: ID! @unique
   index: Int!
   schedule: Schedule!
 }
 
 type Exception {
-  id: ID! @id
+  id: ID! @unique
   type: ExceptionTypeEnum!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime!
+  updatedAt: DateTime!
   employee: Employee!
   description: String
   slots: [ExceptionSlot!]! @relation(name: "ExceptionToExceptionSlot" onDelete: CASCADE)
@@ -119,7 +119,7 @@ enum ExceptionTypeEnum {
 }
 
 type ExceptionSlot {
-  id: ID! @id
+  id: ID! @unique
   schedule: Schedule!
   date: DateTime!
   source1: ScheduleCredit @relation(name: "ExceptionSlotToSource1ScheduleCredit")
@@ -127,47 +127,47 @@ type ExceptionSlot {
 }
 
 type ExceptionElimination {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   exception: Exception!
   owner: User!
   description: String
 }
 
 type ExceptionRejection {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   exception: Exception!
   owner: User!
   description: String
 }
 
 type ExceptionAuthorization {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   exception: Exception!
   owner: User!
   description: String
 }
 
 type ExceptionCancellation {
-  id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   exception: Exception!
   owner: User!
   description: String
 }
 
 type Schedule {
-  id: ID! @id
+  id: ID! @unique
   isPreset: Boolean @default(value: "false")
   systemScheduleIdentifier: SystemScheduleIdentifierEnum @unique
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime!
+  updatedAt: DateTime!
   description: String
   baseTime: Int!
   innerBound: Int
@@ -187,7 +187,7 @@ enum SystemScheduleIdentifierEnum {
 }
 
 type ScheduleTimelineElement {
-  id: ID! @id
+  id: ID! @unique
   category: ScheduleTimelineCategory!
   startTime: Int!
   endTime: Int!
@@ -196,7 +196,7 @@ type ScheduleTimelineElement {
 }
 
 type ScheduleRestlineElement {
-  id: ID! @id
+  id: ID! @unique
   category: ScheduleRestlineCategory!
   duration: Int!
   startTime: Int!
@@ -206,12 +206,12 @@ type ScheduleRestlineElement {
 }
 
 type ScheduleOfflineElement {
-  id: ID! @id
+  id: ID! @unique
   category: ScheduleOfflineCategory!
 }
 
 type ScheduleCredit {
-  id: ID! @id
+  id: ID! @unique
   employee: Employee!
   category: ScheduleOfflineCategory! # use this as main filter
   sourceType: ScheduleCreditSourceEnum!
@@ -230,7 +230,7 @@ enum ScheduleCreditSourceEnum {
 }
 
 type ScheduleDebit {
-  id: ID! @id
+  id: ID! @unique
   employee: Employee!
   category: ScheduleOfflineCategory!
   exception: Exception!
@@ -239,7 +239,7 @@ type ScheduleDebit {
 }
 
 type DirectCredit {
-  id: ID! @id
+  id: ID! @unique
   owner: User!
   employee: Employee!
   description: String
@@ -247,13 +247,13 @@ type DirectCredit {
 }
 
 type Holiday {
-  id: ID! @id
+  id: ID! @unique
   date: DateTime! @unique
   name: String!
 }
 
 type AttendanceCycle {
-  id: ID! @id
+  id: ID! @unique
   name: String!
   startDate: DateTime!
   endDate: DateTime!
@@ -307,7 +307,7 @@ enum AttendanceCategory {
 }
 
 type ScheduleCategoryConfig {
-  id: ID! @id
+  id: ID! @unique
   category: ScheduleCategory
   backgroundColor: String! @default(value: "#FFF")
   foregroundColor: String! @default(value: "#000")
@@ -315,7 +315,7 @@ type ScheduleCategoryConfig {
 }
 
 type FieldOptionLabel {
-  id: ID! @id
+  id: ID! @unique
   field: String!
   value: String!
   label: String
