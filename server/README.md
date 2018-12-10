@@ -1,9 +1,9 @@
 
 ## Usage
 
-### 1. Create  a .env file
+### 1. Create  .env files
 
-This file should be placed in the project root folder
+These files should be placed in the project root folder
 
 ```.env
 
@@ -33,6 +33,17 @@ APP_SECRET=ApplicationSecret
 BCRYPT_SALT_ROUNDS=12
 # Location of ZKTime database file, used to load employee events
 ZKTIME_DB_PATH=dev_events_data/ZKTimeNet.db
+
+```
+
+```
+# Example production .env file. Used to deploy and manage production environment.
+
+# Variables values here must be the same as the ones in the production environment
+# example: http://host:4466/project/prod
+PRISMA_ENDPOINT=http://wasp:4466/wasp/prod
+# Used to access the Prisma API
+PRISMA_SECRET=PrismaSecret
 
 ```
 ### 2. Deploy the Prisma database service
