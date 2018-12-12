@@ -16,7 +16,9 @@ services:
       PRISMA_SECRET: ${PRISMA_SECRET}
       APP_SECRET: ${APP_SECRET}
       BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS-12}
-      ZKTIME_DB_PATH: ${ZKTIME_DB_PATH}
+      ZKTIME_DB_PATH: /mnt/ZKTimeNet/${ZKTIME_DB_FILE}
+    volumes:
+      - ${ZKTIME_DB_PATH}/${ZKTIME_DB_FILE}:/mnt/ZKTimeNet/${ZKTIME_DB_FILE}
     depends_on:
       - prisma
   prisma:

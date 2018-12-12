@@ -35,7 +35,8 @@ APP_SECRET=ApplicationSecret
 # See BYCRYPT docs
 BCRYPT_SALT_ROUNDS=12
 # Location of ZKTime database file, used to load employee events
-ZKTIME_DB_PATH=dev_events_data/ZKTimeNet.db
+ZKTIME_DB_PATH=dev_events_data
+ZKTIME_DB_FILE=ZKTimeNet.db
 
 ```
 ### 2. Deploy docker containers
